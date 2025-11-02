@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quiz App Permissions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#4A90E2",
+              "background-light": "#F7F8FC",
+              "background-dark": "#1A202C",
+              "text-light": "#2D3748",
+              "text-dark": "#E2E8F0"
+            },
+            fontFamily: {
+              "display": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<!-- Top App Bar with Skip button -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 justify-end">
+<button class="text-primary text-sm font-medium">Skip for now</button>
+</div>
+<div class="flex flex-col flex-grow px-6 pt-4 pb-8 text-center">
+<!-- Illustration/Icon -->
+<div class="flex-grow flex items-center justify-center">
+<div class="relative flex h-auto w-full flex-col items-center justify-center py-8">
+<div class="flex h-48 w-48 items-center justify-center rounded-full bg-primary/10">
+<div class="flex h-36 w-36 items-center justify-center rounded-full bg-primary/20">
+<span class="material-symbols-outlined text-primary text-7xl">
+                           notifications_active
+                           </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Headline Text -->
+<div class="flex flex-col items-center gap-4">
+<h1 class="text-text-light dark:text-text-dark tracking-tight text-[32px] font-bold leading-tight">Don't Miss a Challenge!</h1>
+<!-- Body Text -->
+<p class="text-text-light/80 dark:text-text-dark/80 text-base font-normal leading-normal max-w-sm">
+                    We'd like to send you notifications for daily quiz reminders and updates on new challenges. This helps you stay on track and never miss a chance to play.
+                </p>
+</div>
+<!-- Page Indicators -->
+<div class="flex w-full flex-row items-center justify-center gap-2 py-8">
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2.5 w-6 rounded-full bg-primary"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+</div>
+<!-- Buttons -->
+<div class="flex w-full flex-col items-center gap-3 pt-4">
+<button class="flex h-12 w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-semibold text-white transition-colors hover:bg-primary/90">Allow</button>
+<button class="flex h-12 w-full items-center justify-center rounded-xl px-6 text-base font-semibold text-primary transition-colors hover:bg-primary/10">Maybe Later</button>
+</div>
+</div>
+</div>
+</body></html>

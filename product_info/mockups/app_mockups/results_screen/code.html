@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quiz Results</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#4A90E2",
+            "background-light": "#F8F9FA",
+            "background-dark": "#121212",
+            "card-light": "#FFFFFF",
+            "card-dark": "#1E1E1E",
+            "text-light": "#212529",
+            "text-dark": "#EAEAEA",
+            "subtext-light": "#6c757d",
+            "subtext-dark": "#96a8c5",
+            "success": "#7ED321",
+            "warning": "#F5A623",
+            "error": "#D0021B",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full flex-col">
+<!-- Top App Bar -->
+<header class="flex items-center bg-card-light dark:bg-card-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-white/10 dark:border-white/10">
+<button class="text-text-light dark:text-text-dark flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Results</h1>
+</header>
+<main class="flex-grow px-4 pt-6 pb-28">
+<!-- Score Display Card -->
+<div class="flex flex-col items-center justify-center rounded-xl bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
+<div class="relative size-40">
+<svg class="size-full" height="36" viewbox="0 0 36 36" width="36" xmlns="http://www.w3.org/2000/svg">
+<circle class="stroke-slate-200 dark:stroke-slate-700" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-success" cx="18" cy="18" fill="none" r="16" stroke-dasharray="100" stroke-dashoffset="20" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<p class="text-success text-5xl font-extrabold">80%</p>
+</div>
+</div>
+<p class="text-text-light dark:text-text-dark text-xl font-bold mt-4">Great Job!</p>
+<p class="text-subtext-light dark:text-subtext-dark mt-1">You answered 4 out of 5 questions correctly.</p>
+</div>
+<!-- Section Header -->
+<h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pt-8 pb-3">Review Your Answers</h2>
+<!-- Question List -->
+<div class="flex flex-col space-y-2">
+<!-- List Item Correct -->
+<div class="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-lg min-h-[72px] justify-between">
+<div class="flex items-center gap-4">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-success/10 text-success">
+<span class="material-symbols-outlined">check</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-2">What is the capital of France?</p>
+<p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal line-clamp-1">Your answer: Paris</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="flex size-7 items-center justify-center">
+<div class="size-3 rounded-full bg-success"></div>
+</div>
+</div>
+</div>
+<!-- List Item Correct -->
+<div class="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-lg min-h-[72px] justify-between">
+<div class="flex items-center gap-4">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-success/10 text-success">
+<span class="material-symbols-outlined">check</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-2">Which planet is known as the Red Planet?</p>
+<p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal line-clamp-1">Your answer: Mars</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="flex size-7 items-center justify-center">
+<div class="size-3 rounded-full bg-success"></div>
+</div>
+</div>
+</div>
+<!-- List Item Incorrect -->
+<div class="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-lg min-h-[72px] justify-between">
+<div class="flex items-center gap-4">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-error/10 text-error">
+<span class="material-symbols-outlined">close</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-2">What is the largest mammal on Earth?</p>
+<p class="text-error text-sm font-normal leading-normal line-clamp-1">Your answer: Elephant</p>
+<p class="text-success text-sm font-normal leading-normal line-clamp-1">Correct answer: Blue Whale</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="flex size-7 items-center justify-center">
+<div class="size-3 rounded-full bg-error"></div>
+</div>
+</div>
+</div>
+<!-- List Item Correct -->
+<div class="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-lg min-h-[72px] justify-between">
+<div class="flex items-center gap-4">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-success/10 text-success">
+<span class="material-symbols-outlined">check</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-2">What year did the Titanic sink?</p>
+<p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal line-clamp-1">Your answer: 1912</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="flex size-7 items-center justify-center">
+<div class="size-3 rounded-full bg-success"></div>
+</div>
+</div>
+</div>
+<!-- List Item Correct -->
+<div class="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-lg min-h-[72px] justify-between">
+<div class="flex items-center gap-4">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-success/10 text-success">
+<span class="material-symbols-outlined">check</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-2">Who wrote 'To Kill a Mockingbird'?</p>
+<p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal line-clamp-1">Your answer: Harper Lee</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="flex size-7 items-center justify-center">
+<div class="size-3 rounded-full bg-success"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Actions & Navigation -->
+<div class="fixed bottom-0 left-0 w-full bg-card-light dark:bg-card-dark border-t border-slate-200 dark:border-slate-800">
+<!-- CTA Button -->
+<div class="p-4">
+<button class="w-full rounded-xl bg-primary py-4 text-center font-bold text-white hover:bg-primary/90">
+          Try Another Topic
+        </button>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="flex h-16 items-center justify-around border-t border-slate-200 dark:border-slate-800">
+<a class="flex flex-col items-center gap-1 text-subtext-light dark:text-subtext-dark" href="#">
+<span class="material-symbols-outlined !font-light">home</span>
+<span class="text-xs">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="text-xs font-semibold">Topics</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-subtext-light dark:text-subtext-dark" href="#">
+<span class="material-symbols-outlined !font-light">person</span>
+<span class="text-xs">Profile</span>
+</a>
+</nav>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reset Password</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#4b91e2",
+            "background-light": "#f6f7f8",
+            "background-dark": "#121820",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex flex-col flex-1">
+<!-- TopAppBar -->
+<header class="flex items-center p-4 pb-2 justify-between shrink-0">
+<button aria-label="Go back" class="text-gray-900 dark:text-white flex size-12 shrink-0 items-center justify-center">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<h1 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Reset Password</h1>
+</header>
+<main class="flex-grow flex flex-col justify-center px-4">
+<div class="flex flex-col gap-8 w-full max-w-md mx-auto">
+<!-- BodyText -->
+<div>
+<p class="text-gray-600 dark:text-gray-300 text-base font-normal leading-normal text-center">Enter the email associated with your account and we'll send a link to reset your password.</p>
+</div>
+<!-- TextField -->
+<div class="flex w-full flex-col gap-4 py-3">
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-gray-800 dark:text-gray-100 text-base font-medium leading-normal pb-2">Email Address</p>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">mail</span>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-4 py-[15px] text-base font-normal leading-normal" placeholder="you@example.com" type="email" value=""/>
+</div>
+</label>
+</div>
+<!-- SingleButton -->
+<div class="flex py-3">
+<button class="flex min-w-[84px] max-w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 flex-1 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark">
+<span class="truncate">Send Reset Link</span>
+</button>
+</div>
+</div>
+</main>
+<!-- MetaText -->
+<footer class="py-6 px-4 shrink-0">
+<p class="text-primary text-sm font-medium leading-normal text-center underline cursor-pointer">Back to Sign In</p>
+</footer>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quiz App Welcome</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#4A90E2",
+            "background-light": "#F7F8FA",
+            "background-dark": "#1C2128",
+            "text-light": "#2D3748",
+            "text-dark": "#E2E8F0",
+            "icon-bg-light": "#E2E8F0",
+            "icon-bg-dark": "#2D3748"
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .radial-gradient-light {
+      background-image: radial-gradient(circle at 50% 30%, rgba(74, 144, 226, 0.1), transparent 70%);
+    }
+    .radial-gradient-dark {
+      background-image: radial-gradient(circle at 50% 30%, rgba(74, 144, 226, 0.15), transparent 70%);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col dark group/design-root overflow-x-hidden">
+<div class="flex w-full grow flex-col justify-between p-6 pt-12 sm:p-8">
+<!-- Main Content Area -->
+<div class="flex flex-col items-center">
+<!-- Hero Image -->
+<div class="relative flex w-full grow justify-center @container">
+<div class="absolute inset-0 radial-gradient-light dark:radial-gradient-dark"></div>
+<div class="relative w-full max-w-xs @[480px]:max-w-sm aspect-square flex items-center justify-center">
+<div class="w-full h-full bg-center bg-no-repeat bg-contain" data-alt="Abstract illustration of interconnected shapes and nodes representing knowledge and growth" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDf6-K6GwVg_DWbFksoIKY2fLlPP70WmQj_NB80rCsoTxTX-IKTPEm4UWRzVta_yAe0NOmLt8hgOrwtbxTi8mxDPlvNOqDIy1dn7GIEvnDpMWdz5wsTQzCUk2cO-cJpXsnba423axp2wIfNe_vAp_izGbck5tJMvdpm2m494V3c4WFt45gomV_W5DjJp9841qtnKIJxAEhQqgw7lzl_Lc6gC3sHhvaVMiZxKzQwup5oAbXgOoaFocWS1OAjcUaWfVvDOdHkDN7sjEQ"); background-size: contain;'></div>
+</div>
+</div>
+<!-- Headline & Body Text -->
+<div class="mt-8 flex flex-col items-center">
+<h1 class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight text-center">Unlock Your Knowledge</h1>
+<p class="text-text-light/80 dark:text-text-dark/80 text-base font-normal leading-normal pt-2 text-center max-w-sm">The fun way to learn and track your progress.</p>
+</div>
+<!-- Benefit List -->
+<div class="mt-10 w-full max-w-md space-y-3">
+<!-- Item 1: Personalized Quizzes -->
+<div class="flex items-center gap-4 min-h-[72px] py-2 justify-between">
+<div class="flex items-center gap-4">
+<div class="text-text-light dark:text-text-dark flex items-center justify-center rounded-lg bg-icon-bg-light dark:bg-icon-bg-dark shrink-0 size-12">
+<span class="material-symbols-outlined text-2xl">target</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-1">Personalized Quizzes</p>
+<p class="text-text-light/60 dark:text-text-dark/60 text-sm font-normal leading-normal line-clamp-2">Tailored to your learning style.</p>
+</div>
+</div>
+</div>
+<!-- Item 2: Track Your Progress -->
+<div class="flex items-center gap-4 min-h-[72px] py-2 justify-between">
+<div class="flex items-center gap-4">
+<div class="text-text-light dark:text-text-dark flex items-center justify-center rounded-lg bg-icon-bg-light dark:bg-icon-bg-dark shrink-0 size-12">
+<span class="material-symbols-outlined text-2xl">trending_up</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-1">Track Your Progress</p>
+<p class="text-text-light/60 dark:text-text-dark/60 text-sm font-normal leading-normal line-clamp-2">See how much you've grown.</p>
+</div>
+</div>
+</div>
+<!-- Item 3: Diverse Topics -->
+<div class="flex items-center gap-4 min-h-[72px] py-2 justify-between">
+<div class="flex items-center gap-4">
+<div class="text-text-light dark:text-text-dark flex items-center justify-center rounded-lg bg-icon-bg-light dark:bg-icon-bg-dark shrink-0 size-12">
+<span class="material-symbols-outlined text-2xl">category</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-1">Diverse Topics</p>
+<p class="text-text-light/60 dark:text-text-dark/60 text-sm font-normal leading-normal line-clamp-2">Explore quizzes on any subject.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="mt-12 flex w-full flex-col items-center gap-4">
+<button class="flex h-12 w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-medium text-white shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark">Get Started</button>
+<a class="text-sm font-medium text-primary hover:underline" href="#">Already have an account? Log In</a>
+</div>
+</div>
+</div>
+</body></html>

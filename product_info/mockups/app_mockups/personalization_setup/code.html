@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personalize Your Experience</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#4b91e2",
+              "background-light": "#f6f7f8",
+              "background-dark": "#121820",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full flex-col">
+<div class="flex-grow p-4 pb-28"> <!-- Padding bottom to avoid overlap with fixed button -->
+<!-- ProgressBar -->
+<div class="flex flex-col gap-3 mb-6">
+<div class="flex justify-between items-center">
+<p class="text-slate-300 text-sm font-medium">Step 1 of 4</p>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 25%;"></div>
+</div>
+</div>
+<!-- HeadlineText -->
+<h1 class="text-white tracking-tight text-3xl font-bold leading-tight text-left pb-1">Personalize Your Experience</h1>
+<!-- BodyText -->
+<p class="text-slate-400 text-base font-normal leading-normal pb-6">Select your favorite topics to get started.</p>
+<!-- ImageGrid - Modified for Topic Selection -->
+<div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
+<!-- Selected Topic -->
+<div class="flex flex-col gap-3 cursor-pointer ring-2 ring-primary bg-primary/20 p-3 rounded-xl">
+<div class="w-full bg-slate-800 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex items-center justify-center" data-alt="An abstract icon representing science, possibly an atom or a beaker.">
+<span class="material-symbols-outlined text-primary text-5xl" data-icon="science">science</span>
+</div>
+<p class="text-white text-center text-base font-medium leading-normal">Science</p>
+</div>
+<!-- Unselected Topic -->
+<div class="flex flex-col gap-3 cursor-pointer bg-slate-800 p-3 rounded-xl transition-all hover:bg-slate-700">
+<div class="w-full bg-slate-900 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex items-center justify-center" data-alt="An abstract icon representing history, possibly a scroll or an ancient column.">
+<span class="material-symbols-outlined text-slate-400 text-5xl" data-icon="history_edu">history_edu</span>
+</div>
+<p class="text-slate-300 text-center text-base font-medium leading-normal">History</p>
+</div>
+<!-- Unselected Topic -->
+<div class="flex flex-col gap-3 cursor-pointer bg-slate-800 p-3 rounded-xl transition-all hover:bg-slate-700">
+<div class="w-full bg-slate-900 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex items-center justify-center" data-alt="An abstract icon representing math, possibly a calculator or mathematical symbols.">
+<span class="material-symbols-outlined text-slate-400 text-5xl" data-icon="calculate">calculate</span>
+</div>
+<p class="text-slate-300 text-center text-base font-medium leading-normal">Math</p>
+</div>
+<!-- Unselected Topic -->
+<div class="flex flex-col gap-3 cursor-pointer bg-slate-800 p-3 rounded-xl transition-all hover:bg-slate-700">
+<div class="w-full bg-slate-900 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex items-center justify-center" data-alt="An abstract icon representing art, possibly a paintbrush or a palette.">
+<span class="material-symbols-outlined text-slate-400 text-5xl" data-icon="palette">palette</span>
+</div>
+<p class="text-slate-300 text-center text-base font-medium leading-normal">Art</p>
+</div>
+<!-- Unselected Topic -->
+<div class="flex flex-col gap-3 cursor-pointer bg-slate-800 p-3 rounded-xl transition-all hover:bg-slate-700">
+<div class="w-full bg-slate-900 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex items-center justify-center" data-alt="An abstract icon representing geography, possibly a globe or a map.">
+<span class="material-symbols-outlined text-slate-400 text-5xl" data-icon="public">public</span>
+</div>
+<p class="text-slate-300 text-center text-base font-medium leading-normal">Geography</p>
+</div>
+<!-- Unselected Topic -->
+<div class="flex flex-col gap-3 cursor-pointer bg-slate-800 p-3 rounded-xl transition-all hover:bg-slate-700">
+<div class="w-full bg-slate-900 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex items-center justify-center" data-alt="An abstract icon representing literature, possibly an open book.">
+<span class="material-symbols-outlined text-slate-400 text-5xl" data-icon="menu_book">menu_book</span>
+</div>
+<p class="text-slate-300 text-center text-base font-medium leading-normal">Literature</p>
+</div>
+</div>
+<!-- TextField - Modified for Grade Level Selection -->
+<div class="flex w-full flex-wrap items-end gap-4 py-6 mt-4">
+<label class="flex flex-col w-full flex-1">
+<p class="text-white text-base font-medium leading-normal pb-2">Grade Level (Optional)</p>
+<div class="relative w-full">
+<select class="form-select appearance-none flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary/50 border border-slate-700 bg-slate-800 focus:border-primary h-14 placeholder:text-slate-400 px-4 py-3 text-base font-normal leading-normal">
+<option class="bg-slate-800 text-slate-400" value="default">Select a level</option>
+<option class="bg-slate-800" value="middle">Middle School</option>
+<option class="bg-slate-800" value="high">High School</option>
+<option class="bg-slate-800" value="college">College</option>
+<option class="bg-slate-800" value="general">General Knowledge</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3">
+<span class="material-symbols-outlined text-slate-400" data-icon="unfold_more">unfold_more</span>
+</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Sticky Footer Button -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-dark/80 backdrop-blur-sm border-t border-slate-800">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 px-4 rounded-xl text-lg transition-colors">
+                Continue
+            </button>
+</div>
+</div>
+</body></html>

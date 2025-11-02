@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Quiz App</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#4A90E2",
+                "background-light": "#F7F8FC",
+                "background-dark": "#1C1C2E",
+                "text-light-primary": "#333333",
+                "text-dark-primary": "#EAEAEA",
+                "text-light-secondary": "#6b7280",
+                "text-dark-secondary": "#9ca3af",
+                "border-light": "#e5e7eb",
+                "border-dark": "#4a5568",
+                "input-bg-light": "#ffffff",
+                "input-bg-dark": "#2d3748"
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
+<div class="w-full max-w-sm space-y-6">
+<!-- App Logo -->
+<div class="flex justify-center">
+<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-4xl">
+                    quiz
+                </span>
+</div>
+</div>
+<!-- Headline & Body Text -->
+<div class="text-center">
+<h1 class="text-text-light-primary dark:text-text-dark-primary tracking-tight text-[28px] font-bold leading-tight">Welcome Back!</h1>
+<p class="text-text-light-secondary dark:text-text-dark-secondary text-base font-normal leading-normal pt-1">Log in to continue your quiz journey.</p>
+</div>
+<!-- Login Form -->
+<div class="space-y-4">
+<!-- Email Field -->
+<label class="flex flex-col w-full">
+<p class="text-text-light-primary dark:text-text-dark-primary text-sm font-medium leading-normal pb-2">Email Address</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-DEFAULT text-text-light-primary dark:text-text-dark-primary focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-input-bg-light dark:bg-input-bg-dark h-12 placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary px-4 text-base font-normal leading-normal transition-all duration-200" placeholder="Enter your email" type="email" value=""/>
+</label>
+<!-- Password Field -->
+<label class="flex flex-col w-full">
+<div class="flex justify-between items-center pb-2">
+<p class="text-text-light-primary dark:text-text-dark-primary text-sm font-medium leading-normal">Password</p>
+<a class="text-primary text-sm font-medium hover:underline" href="#">Forgot Password?</a>
+</div>
+<div class="flex w-full flex-1 items-stretch">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-DEFAULT text-text-light-primary dark:text-text-dark-primary focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-input-bg-light dark:bg-input-bg-dark h-12 placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary px-4 pr-2 text-base font-normal leading-normal transition-all duration-200 border-r-0" placeholder="Enter your password" type="password" value=""/>
+<div class="text-text-light-secondary dark:text-text-dark-secondary flex border border-border-light dark:border-border-dark bg-input-bg-light dark:bg-input-bg-dark items-center justify-center px-3 rounded-r-DEFAULT border-l-0">
+<span class="material-symbols-outlined text-xl">
+                            visibility_off
+                        </span>
+</div>
+</div>
+</label>
+</div>
+<!-- Primary CTA Button -->
+<button class="flex w-full items-center justify-center rounded-DEFAULT bg-primary h-12 px-6 text-base font-medium text-white shadow-sm transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark">
+            Log In
+        </button>
+<!-- Divider -->
+<div class="flex items-center">
+<hr class="w-full border-t border-border-light dark:border-border-dark"/>
+<p class="px-4 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary flex-shrink-0">or</p>
+<hr class="w-full border-t border-border-light dark:border-border-dark"/>
+</div>
+<!-- Social Logins -->
+<div class="space-y-4">
+<button class="flex w-full items-center justify-center gap-3 rounded-DEFAULT border border-border-light dark:border-border-dark bg-input-bg-light dark:bg-input-bg-dark h-12 px-6 text-base font-medium text-text-light-primary dark:text-text-dark-primary shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark">
+<img alt="Google logo" class="h-5 w-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJyENpw1uv23uaWvyhAzUSjN9SIx3HtknTV78yoW504QKtXNk9CFtCcO0HhaCWVVrFc5fxqpF8Zxyw0QgmtPJt989ybwGxe6JuCZX00KAp5KMOoUEg4nsjCWkjZigJCxLfqfIMfWLpHm2Vj8aRUTsOryKqNpznQiy3wyFRpY2p3O8LZHjWNBXsVepAvmxwvRNuG8vilOh6KpipLOvEfUd1tm-P1JwGyxnlaCbknxL6d_YzZYf5kn5UFeSZk2ZxSIc4c_GjeNJSuAU"/>
+                Continue with Google
+            </button>
+<button class="flex w-full items-center justify-center gap-3 rounded-DEFAULT border border-border-light dark:border-border-dark bg-input-bg-light dark:bg-input-bg-dark h-12 px-6 text-base font-medium text-text-light-primary dark:text-text-dark-primary shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark">
+<img alt="Apple logo" class="h-5 w-5 dark:hidden" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOfjlTv-ttG18hq9bs7R2dRZrSyOlkS1a-VOOpzVZigtnv1xgcqfu_LxPzfboW4ReMlLKKMlsVfzNZ5s5aSVk3rheZgZSCQ-esiBh0DHTbBxOK2CouCx7xQgwlGhErfBbPq85N6xw_h0eC7wPvhqnADdJn2ZQOMPA0tevmALybxRQxfMP63h2NIghbf16kbAGiWiIHFVPEtS3kDYc0e-EEgimv3wGrENIg1LEgnZMRn8rz-_TRe8vL3MYu0RNNy2TOVzyYrkXVOXU"/>
+<img alt="Apple logo" class="h-5 w-5 hidden dark:block" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARXbTL2g5igv2Pjwju-IkfLaQDgjWGayY6nC-_KrTWLsHBerFrAFfLnA0fOKBNXGHnt7fjcB4SxGI0hXQ35C0H-AYY4G2ZyGeBOI6I3TWDmKJKmUB8vhbYsMU5pFoR97fSMUsl1rkMkNovbHIQhs4uEXJPvIG_Tpk0Kli83yErG9ToEca7zP0WxRMCswuzwvHB9FdgXngm9LH6nxdKkzSfnMpK6FmB24SkVhb27SDAK2b0wPjpwXtqjVRbEO899KVicjDCUo-gltA"/>
+                Continue with Apple
+            </button>
+</div>
+<!-- Sign Up Link -->
+<p class="text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">
+            Don't have an account? <a class="font-medium text-primary hover:underline" href="#">Sign Up</a>
+</p>
+</div>
+</div>
+</body></html>

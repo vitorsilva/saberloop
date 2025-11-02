@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Set New Password</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4A90E2",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#121212",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col items-center justify-center bg-background-dark dark group/design-root overflow-x-hidden p-4" style="background-image: radial-gradient(circle, #1A1D24, #121212);">
+<div class="w-full max-w-md space-y-8">
+<div class="text-center">
+<h1 class="text-3xl font-bold tracking-tight text-[#EAEAEA]">Set New Password</h1>
+<p class="mt-2 text-base text-[#888888]">Your new password must be at least 8 characters long.</p>
+</div>
+<form class="space-y-6">
+<!-- New Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-[#EAEAEA]" for="new-password">New Password</label>
+<div class="relative flex w-full items-center">
+<span class="material-symbols-outlined absolute left-4 text-[#888888]">lock</span>
+<input class="form-input h-14 w-full flex-1 rounded-lg border border-[#333] bg-[#1A1D24] p-4 pl-12 text-[#EAEAEA] placeholder:text-[#888888] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" id="new-password" placeholder="Enter your new password" type="password" value=""/>
+<button class="absolute right-4 text-[#888888] focus:outline-none" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Password Strength Indicator -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between">
+<p class="text-sm font-medium text-[#EAEAEA]">Password Strength</p>
+<p class="text-sm font-medium text-[#E57373]" id="strength-text">Weak</p>
+</div>
+<div class="h-2 w-full rounded-full bg-[#333]">
+<div class="h-2 rounded-full bg-[#E57373]" style="width: 25%;"></div>
+</div>
+</div>
+<!-- Confirm New Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-[#EAEAEA]" for="confirm-password">Confirm New Password</label>
+<div class="relative flex w-full items-center">
+<span class="material-symbols-outlined absolute left-4 text-[#888888]">lock</span>
+<input class="form-input h-14 w-full flex-1 rounded-lg border border-[#333] bg-[#1A1D24] p-4 pl-12 text-[#EAEAEA] placeholder:text-[#888888] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" id="confirm-password" placeholder="Confirm your new password" type="password" value=""/>
+<button class="absolute right-4 text-[#888888] focus:outline-none" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+<!-- Validation Message -->
+<p class="mt-1 text-sm text-[#E57373] flex items-center gap-1.5"><span class="material-symbols-outlined text-base">error_outline</span>Passwords do not match</p>
+</div>
+<!-- Reset Password Button -->
+<button class="w-full rounded-lg bg-primary py-4 text-base font-bold text-white transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark disabled:cursor-not-allowed disabled:opacity-50" type="submit">Reset Password</button>
+</form>
+</div>
+</div>
+</body></html>
