@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a learning-focused Progressive Web App (PWA) project - a simple text echo application that demonstrates core PWA concepts. The project follows a guided, incremental learning methodology documented in `docs/LEARNING_PLAN.md` with detailed phase notes in `docs/PHASE*_LEARNING_NOTES.md` files.
+This is a learning-focused Progressive Web App (PWA) project - a simple text echo application that demonstrates core PWA concepts. The project follows a guided, incremental learning methodology documented in `docs/epic01_infrastructure/LEARNING_PLAN.md` with detailed phase notes in `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md` files.
+
+The project has evolved into **Epic 02: QuizMaster V1** - an AI-powered quiz application documented in `docs/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md`.
 
 **Repository**: https://github.com/vitorsilva/demo-pwa-app
 
@@ -104,13 +106,15 @@ Even then, ask for confirmation first.
 ### Integration with Learning Plan
 
 When user says "what's next" or similar:
-1. Read docs/LEARNING_PLAN.md and docs/PHASE*_LEARNING_NOTES.md
+1. Determine which epic/learning plan is active:
+   - Epic 01 (Infrastructure): `docs/epic01_infrastructure/LEARNING_PLAN.md` and `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
+   - Epic 02 (QuizMaster V1): `docs/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and phase files
 2. Identify current phase and next step
 3. **Present the next topic and ask if they want to proceed**
 4. Once confirmed, **teach it step-by-step** (don't execute autonomously)
 
 When user says "that's a wrap" or similar:
-1. Document progress in appropriate docs/PHASE*_LEARNING_NOTES.md
+1. Document progress in appropriate learning notes file for the active epic
 2. Note what was completed
 3. Note what's next for resumption
 
@@ -122,16 +126,19 @@ When user says "that's a wrap" or similar:
 
 When the user asks **"what's next"** or similar phrases (e.g., "what should I do next", "next step", "continue"), always:
 
-1. Read **docs/LEARNING_PLAN.md** to understand the overall phase structure
-2. Check **docs/PHASE*_LEARNING_NOTES.md** files to see what's been completed
-3. Identify the current phase and next steps in the learning progression
-4. Guide the user through the next appropriate task or learning objective
+1. Determine the active epic/learning plan:
+   - **Epic 01 (Infrastructure)**: Read `docs/epic01_infrastructure/LEARNING_PLAN.md` and check `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
+   - **Epic 02 (QuizMaster V1)**: Read `docs/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and related phase files
+2. Identify the current phase and next steps in the learning progression
+3. Guide the user through the next appropriate task or learning objective
 
 ### Pausing and Recording Progress
 
 When the user says **"that's a wrap"**, **"let's call it a day"**, **"let's pause"**, or similar phrases indicating they want to stop, always:
 
-1. Document the current state in the appropriate **docs/PHASE*_LEARNING_NOTES.md** file:
+1. Document the current state in the appropriate learning notes file for the active epic:
+   - **Epic 01**: `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
+   - **Epic 02**: Create/update learning notes in `docs/epic02_quizmaster_v1/`
    - What was just completed in this session
    - Current phase and specific step/task
    - What's next when they resume
@@ -189,7 +196,7 @@ npx http-server -p 8080
 # Right-click index.html → "Open with Live Server"
 ```
 
-**Note**: PWA features like `beforeinstallprompt` require HTTPS. For local HTTPS testing, see docs/LEARNING_PLAN.md Phase 4.1.
+**Note**: PWA features like `beforeinstallprompt` require HTTPS. For local HTTPS testing, see `docs/epic01_infrastructure/PHASE4.1_LOCAL_HTTPS.md`.
 
 ### Testing Service Worker Changes
 
@@ -229,18 +236,29 @@ Text echo functionality (app.js:1-17):
 
 ## Learning Documentation
 
-This repository contains extensive learning documentation:
+This repository contains extensive learning documentation organized by epic:
 
-- **docs/LEARNING_PLAN.md**: Complete 4-phase learning guide from PWA basics to advanced features
-- **docs/PHASE1_LEARNING_NOTES.md**: Phase 1 (understanding the pieces)
-- **docs/PHASE2_LEARNING_NOTES.md**: Phase 2 (offline functionality)
-- **docs/PHASE3_LEARNING_NOTES.md**: Phase 3 (advanced features)
-- **docs/PHASE4.1_LOCAL_HTTPS.md**: Phase 4.1 (local HTTPS with mkcert and Docker)
-- **docs/PHASE4.2_BUILD_TOOLS.md**: Phase 4.2 (Vite build process)
-- **docs/PHASE4.3_UNIT_TESTING.md**: Phase 4.3 (Vitest unit testing)
-- **docs/PHASE4.4_E2E_TESTING.md**: Phase 4.4 (Playwright E2E testing)
-- **docs/PHASE4.5_CI_CD.md**: Phase 4.5 (GitHub Actions CI/CD)
-- **docs/PHASE4_ARCHITECTURE.md**: Phase 4 architecture overview
+### Epic 01: Infrastructure (PWA Fundamentals)
+Located in `docs/epic01_infrastructure/`:
+- **LEARNING_PLAN.md**: Complete 4-phase learning guide from PWA basics to advanced features
+- **PHASE1_LEARNING_NOTES.md**: Phase 1 (understanding the pieces)
+- **PHASE2_LEARNING_NOTES.md**: Phase 2 (offline functionality)
+- **PHASE3_LEARNING_NOTES.md**: Phase 3 (advanced features)
+- **PHASE4.1_LOCAL_HTTPS.md**: Phase 4.1 (local HTTPS with mkcert and Docker)
+- **PHASE4.2_BUILD_TOOLS.md**: Phase 4.2 (Vite build process)
+- **PHASE4.3_UNIT_TESTING.md**: Phase 4.3 (Vitest unit testing)
+- **PHASE4.4_E2E_TESTING.md**: Phase 4.4 (Playwright E2E testing)
+- **PHASE4.5_CI_CD.md**: Phase 4.5 (GitHub Actions CI/CD)
+- **PHASE4_ARCHITECTURE.md**: Phase 4 architecture overview
+
+### Epic 02: QuizMaster V1 (AI-Powered Quiz Application)
+Located in `docs/epic02_quizmaster_v1/`:
+- **QUIZMASTER_V1_LEARNING_PLAN.md**: Complete 10-phase learning plan
+- **QUIZMASTER_QUICK_START.md**: Navigation guide and getting started
+- **PHASE1_ARCHITECTURE.md**: System architecture and data flow
+- **PHASE2_INDEXEDDB.md**: IndexedDB fundamentals and implementation
+- **PHASE3_API_INTEGRATION.md**: Anthropic Claude API integration
+- **PHASES_4-10_SUMMARY.md**: Overview of remaining implementation phases
 
 When making changes, respect the learning-focused nature of the project. Keep code simple and well-commented rather than introducing complex patterns or dependencies.
 
@@ -277,7 +295,7 @@ git push origin main
 3. Tap Share button → "Add to Home Screen"
 4. Test offline functionality after installation
 
-**Note**: iOS has more limited PWA support than Android (see docs/PHASE3_LEARNING_NOTES.md for details)
+**Note**: iOS has more limited PWA support than Android (see `docs/epic01_infrastructure/PHASE3_LEARNING_NOTES.md` for details)
 
 ## Common Issues
 
