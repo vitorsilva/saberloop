@@ -26,40 +26,43 @@ This learning plan builds on your PWA fundamentals to create **QuizMaster V1** -
 8. **Dynamic UI Rendering** - Building interfaces from data
 9. **Error Handling** - Gracefully handling API failures and edge cases
 10. **Prompt Engineering** - Crafting effective AI prompts for quality output
+11. **Serverless Functions** - Building a simple backend for API proxying
 
 ---
 
 ## Phase Structure
 
-### **Phase 1: Understanding the Architecture** (2-3 sessions)
+### **Phase 1: Understanding the Architecture** ✅ (2-3 sessions)
 Review the V1 specification, understand data flow, and plan the file structure using ES6 modules.
 
 📄 [PHASE1_ARCHITECTURE.md](./PHASE1_ARCHITECTURE.md)
 
 ---
 
-### **Phase 2: IndexedDB Fundamentals** (2-3 sessions)
+### **Phase 2: IndexedDB Fundamentals** ✅ (2-3 sessions)
 Learn browser-based structured data storage. Understand databases, object stores, transactions, and CRUD operations.
 
 📄 [PHASE2_INDEXEDDB.md](./PHASE2_INDEXEDDB.md)
 
 ---
 
-### **Phase 3: API Integration with Anthropic Claude** (2-3 sessions)
-Master external API integration. Learn the Fetch API, async/await patterns, and how to work with the Claude API.
+### **Phase 3: API Integration with Anthropic Claude** ✅ (2-3 sessions)
+Master external API integration. Learn the Fetch API, async/await patterns, and build mock API for development.
 
 📄 [PHASE3_API_INTEGRATION.md](./PHASE3_API_INTEGRATION.md)
 
+**Note**: Phase 3 uses mock API due to CORS restrictions. Real API integration happens in Phase 11.
+
 ---
 
-### **Phase 4: ES6 Modules and Code Organization** (2-3 sessions)
-Structure your codebase using modern JavaScript. Learn imports, exports, and modular architecture.
+### **Phase 4: ES6 Modules and Code Organization** (1-2 sessions)
+Learn module patterns, imports/exports, and organize code into a clean architecture.
 
 📄 [PHASE4_MODULES.md](./PHASE4_MODULES.md)
 
 ---
 
-### **Phase 5: Building the Single Page Application** (2-3 sessions)
+### **Phase 5: Building the Single Page Application** (3-4 sessions)
 Create a multi-screen app without page reloads. Implement routing, state management, and dynamic rendering.
 
 📄 [PHASE5_SPA.md](./PHASE5_SPA.md)
@@ -73,41 +76,63 @@ Build the actual functionality: home screen, topic input, question generation, a
 
 ---
 
-### **Phase 7: PWA Integration** (1-2 sessions)
-Make QuizMaster installable and offline-capable. Adapt the manifest and service worker for the new app.
+### **Phase 7: PWA Integration** (1 session) ⚡ *Streamlined*
+Adapt the PWA knowledge from Epic 01 to QuizMaster's SPA architecture. Focus on SPA-specific challenges only.
 
 📄 [PHASE7_PWA.md](./PHASE7_PWA.md)
 
+**Prerequisites from Epic 01**: Service workers, manifests, caching strategies already mastered
+
 ---
 
-### **Phase 8: Polish and Testing** (1-2 sessions)
-Ensure quality through error handling, loading states, edge case handling, and thorough manual testing.
+### **Phase 8: Testing QuizMaster Features** (1-2 sessions) ⚡ *Streamlined*
+Write tests for QuizMaster features using existing test infrastructure. Focus on QuizMaster-specific testing, not setup.
 
 📄 [PHASE8_TESTING.md](./PHASE8_TESTING.md)
 
+**Prerequisites from Epic 01**: Vitest and Playwright setup already complete
+
 ---
 
-### **Phase 9: Deployment** (1 session)
-Deploy to Netlify and make QuizMaster accessible to your family for testing.
+### **Phase 9: Deployment** (30 minutes) ⚡ *Streamlined*
+Quick deployment verification using existing GitHub Actions workflow.
 
 📄 [PHASE9_DEPLOYMENT.md](./PHASE9_DEPLOYMENT.md)
+
+**Prerequisites from Epic 01**: GitHub Actions CI/CD pipeline already configured
 
 ---
 
 ### **Phase 10: Validation and Learning Review** (Ongoing)
-Run the family beta test, gather feedback, iterate, and reflect on what you've learned.
+Run the beta test, gather feedback, iterate, and reflect on what you've learned.
 
 📄 [PHASE10_VALIDATION.md](./PHASE10_VALIDATION.md)
+
+---
+
+### **Phase 11: Backend Integration** (2-3 sessions)
+Build a serverless backend to enable real Claude API integration, bypassing CORS restrictions.
+
+📄 [PHASE11_BACKEND.md](./PHASE11_BACKEND.md)
+
+**Bonus Section 11.X**: Full-stack CI/CD pipeline combining Epic 01 and Epic 02 deployment knowledge
+
+**Note**: This phase can be done after Phase 10 or integrated earlier if desired.
 
 ---
 
 ## Prerequisites
 
 Before starting, you should have completed:
-- ✅ Original PWA Learning Plan (Phases 1-4)
-- ✅ Understanding of HTML, CSS, JavaScript basics
-- ✅ Service Worker concepts
-- ✅ Async/await fundamentals
+- ✅ **Epic 01: PWA Infrastructure** (All phases complete)
+  - PWA fundamentals, service workers, build tools
+  - Vitest unit testing, Playwright E2E testing
+  - GitHub Actions CI/CD, deployment
+- ✅ Understanding of HTML, CSS, JavaScript ES6+
+- ✅ Comfortable with async/await patterns
+- ✅ Git and command line basics
+
+**Epic 02 builds on Epic 01** - many concepts are referenced rather than re-taught!
 
 ---
 
@@ -117,31 +142,39 @@ By the end of this learning journey, you will have:
 
 ✅ **Built QuizMaster V1** - A fully functional AI-powered quiz app
 ✅ **Mastered IndexedDB** - Store and query structured data in the browser
-✅ **Integrated External APIs** - Work with Anthropic's Claude API
+✅ **Integrated External APIs** - Work with Anthropic's Claude API via backend
 ✅ **Created a SPA** - Multi-screen app with routing and state management
 ✅ **Organized Code with Modules** - Clean, maintainable codebase structure
-✅ **Implemented PWA Features** - Offline support and installation
-✅ **Deployed to Production** - Live app on Netlify
+✅ **Adapted PWA Features** - Offline support for SPA architecture
+✅ **Built a Serverless Backend** - Proxy API calls securely
+✅ **Deployed Full-Stack App** - Frontend + backend with CI/CD
 ✅ **Validated with Users** - Real feedback from your family
 
 ---
 
 ## Estimated Timeline
 
-**Total: ~15-20 learning sessions** (at your own pace)
+**Time Savings from Epic 01**: ~5-7 sessions saved!
 
-| Phase | Sessions | Focus |
-|-------|----------|-------|
-| Phase 1 | 2-3 | Architecture & Planning |
-| Phase 2 | 2-3 | IndexedDB Learning |
-| Phase 3 | 2-3 | API Integration |
-| Phase 4 | 2-3 | ES6 Modules |
-| Phase 5 | 2-3 | SPA Foundation |
-| Phase 6 | 4-5 | Feature Implementation |
-| Phase 7 | 1-2 | PWA Setup |
-| Phase 8 | 1-2 | Testing & Polish |
-| Phase 9 | 1 | Deployment |
-| Phase 10 | Ongoing | Validation |
+Phases 7, 8, and 9 are streamlined because you already learned the fundamentals in Epic 01.
+
+**Total: ~13-17 learning sessions** (at your own pace)
+
+| Phase | Sessions | Focus | Notes |
+|-------|----------|-------|-------|
+| Phase 1 | 2-3 | Architecture & Planning | New content |
+| Phase 2 | 2-3 | IndexedDB Learning | New content |
+| Phase 3 | 2-3 | API Integration (Mock) | New content |
+| Phase 4 | 1-2 | ES6 Modules | New content |
+| Phase 5 | 3-4 | SPA Foundation | New content |
+| Phase 6 | 4-5 | Feature Implementation | New content |
+| Phase 7 | **1** | PWA Adaptation | ⚡ Streamlined (was 1-2) |
+| Phase 8 | **1-2** | Testing Features | ⚡ Streamlined (setup done) |
+| Phase 9 | **0.5** | Quick Deploy | ⚡ Streamlined (was 1) |
+| Phase 10 | Ongoing | User Validation | Beta testing |
+| Phase 11 | 2-3 | Backend + CI/CD | Backend + bonus CI/CD |
+
+**Phases 7-9 streamlined**: Leveraging Epic 01 knowledge saves ~4-5 sessions!
 
 ---
 
@@ -187,6 +220,7 @@ This learning plan follows the same **instructor-guided approach** as the origin
 8. **Settings** - API key configuration
 9. **PWA Features** - Installable, offline history viewing
 10. **Mobile-First Design** - Pre-built Tailwind CSS mockups
+11. **Serverless Backend** - Secure API integration
 
 ### ❌ Deferred to V2
 
@@ -197,6 +231,26 @@ This learning plan follows the same **instructor-guided approach** as the origin
 - Social features/sharing
 - Advanced analytics
 - Push notifications
+
+---
+
+## Development Approach
+
+### Phases 1-10: Build with Mock API
+- Develop full UI/UX using mock data
+- Test all features without backend dependency
+- Deploy frontend-only version
+
+### Phase 11: Add Real API
+- Build serverless backend
+- Swap mock API for real integration
+- Deploy full-stack version
+
+**Why this approach?**
+- ✅ Learn frontend concepts without backend complexity
+- ✅ Develop faster without API costs
+- ✅ Create stable test infrastructure
+- ✅ Understand full-stack architecture incrementally
 
 ---
 
