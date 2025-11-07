@@ -22,7 +22,7 @@
           "C) A common misconception",
           "D) An unrelated distractor"
         ],
-        correct: "B",
+        correctAnswer: 1, // Index of correct option (B)
         difficulty: "easy"
       },
       {
@@ -33,7 +33,7 @@
           "C) By understanding and applying the underlying concepts",
           "D) By guessing randomly"
         ],
-        correct: "C",
+        correctAnswer: 2, // Index of correct option (C)
         difficulty: "medium"
       },
       {
@@ -44,7 +44,7 @@
           "C) An outdated idea no longer relevant",
           "D) A simple fact that requires no understanding"
         ],
-        correct: "B",
+        correctAnswer: 1, // Index of correct option (B)
         difficulty: "easy"
       },
       {
@@ -55,7 +55,7 @@
           "C) They never make mistakes with this topic",
           "D) They always get it right on the first try"
         ],
-        correct: "B",
+        correctAnswer: 1, // Index of correct option (B)
         difficulty: "medium"
       },
       {
@@ -66,7 +66,7 @@
           "C) It contradicts all other known concepts",
           "D) It has no relationship to anything else"
         ],
-        correct: "B",
+        correctAnswer: 1, // Index of correct option (B)
         difficulty: "challenging"
       }
     ];
