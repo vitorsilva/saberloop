@@ -86,10 +86,10 @@ export default class ResultsView extends BaseView {
     }).join('');
 
     this.setHTML(`
-      <div class="relative flex min-h-screen w-full flex-col">
+      <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <!-- Top App Bar -->
-        <header class="flex items-center bg-card-light dark:bg-card-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-white/10 dark:border-white/10">
-          <button id="backBtn" class="text-text-light dark:text-text-dark flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5">
+        <header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
+          <button id="backBtn" class="text-text-light dark:text-text-dark flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10">
             <span class="material-symbols-outlined">arrow_back</span>
           </button>
           <h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Results</h1>
@@ -100,7 +100,7 @@ export default class ResultsView extends BaseView {
           <div class="flex flex-col items-center justify-center rounded-xl bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
             <div class="relative size-40">
               <svg class="size-full" height="36" viewbox="0 0 36 36" width="36" xmlns="http://www.w3.org/2000/svg">
-                <circle class="stroke-slate-200 dark:stroke-slate-700" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+                <circle class="stroke-border-light dark:stroke-border-dark" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
                 <circle class="stroke-success" cx="18" cy="18" fill="none" r="16" stroke-dasharray="100" stroke-dashoffset="${strokeDashoffset}" stroke-linecap="round" stroke-width="3"></circle>
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
@@ -121,29 +121,31 @@ export default class ResultsView extends BaseView {
         </main>
 
         <!-- Bottom Actions & Navigation -->
-        <div class="fixed bottom-0 left-0 w-full bg-card-light dark:bg-card-dark border-t border-slate-200 dark:border-slate-800">
+        <div class="fixed bottom-0 left-0 w-full bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark">
           <!-- CTA Button -->
-          <div class="p-4">
-            <button id="tryAnotherBtn" class="w-full rounded-xl bg-primary py-4 text-center font-bold text-white hover:bg-primary/90">
+          <div class="p-4 pb-0">
+            <button id="tryAnotherBtn" class="w-full rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30">
               Try Another Topic
             </button>
           </div>
 
           <!-- Bottom Navigation Bar -->
-          <nav class="flex h-16 items-center justify-around border-t border-slate-200 dark:border-slate-800">
-            <a class="flex flex-col items-center gap-1 text-subtext-light dark:text-subtext-dark" href="#/">
-              <span class="material-symbols-outlined !font-light">home</span>
-              <span class="text-xs">Home</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-primary" href="#/history">
-              <span class="material-symbols-outlined">category</span>
-              <span class="text-xs font-semibold">Topics</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-subtext-light dark:text-subtext-dark" href="#/settings">
-              <span class="material-symbols-outlined !font-light">person</span>
-              <span class="text-xs">Profile</span>
-            </a>
-          </nav>
+          <div class="h-20 border-t border-border-light dark:border-border-dark">
+            <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
+              <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
+                <span class="material-symbols-outlined text-2xl">home</span>
+                <span class="text-xs font-medium">Home</span>
+              </a>
+              <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/history">
+                <span class="material-symbols-outlined text-2xl fill">category</span>
+                <span class="text-xs font-bold">Topics</span>
+              </a>
+              <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
+                <span class="material-symbols-outlined text-2xl">person</span>
+                <span class="text-xs font-medium">Profile</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     `);

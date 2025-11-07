@@ -41,10 +41,10 @@ export default class QuizView extends BaseView {
     const progress = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
 
     this.setHTML(`
-      <div class="relative flex min-h-screen w-full flex-col">
+      <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <div class="flex-grow flex flex-col">
           <!-- Top App Bar -->
-          <header class="flex items-center p-4">
+          <header class="flex items-center p-4 bg-background-light dark:bg-background-dark">
             <div id="backBtn" class="flex size-12 shrink-0 items-center justify-start text-text-light dark:text-text-dark cursor-pointer">
               <span class="material-symbols-outlined">arrow_back</span>
             </div>
@@ -88,29 +88,29 @@ export default class QuizView extends BaseView {
           <div class="px-4 py-6">
             <button
               id="submitBtn"
-              class="flex h-14 min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 ${this.selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : ''}">
+              class="flex h-14 min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90 ${this.selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : ''}">
               <span class="truncate">${this.currentQuestionIndex < this.questions.length - 1 ? 'Next Question' : 'Submit Answer'}</span>
             </button>
           </div>
         </div>
 
         <!-- Bottom Navigation Bar -->
-        <nav class="sticky bottom-0 border-t border-border-light bg-background-light/80 backdrop-blur-sm dark:border-border-dark dark:bg-background-dark/80">
-          <div class="mx-auto flex h-20 max-w-lg items-center justify-around px-4">
-            <a class="flex flex-col items-center gap-1 text-text-light/70 dark:text-text-dark/70" href="#/">
+        <div class="sticky bottom-0 left-0 right-0 h-20 bg-background-light dark:bg-background-dark backdrop-blur-md border-t border-border-light dark:border-border-dark">
+          <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
+            <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
               <span class="material-symbols-outlined text-2xl">home</span>
               <span class="text-xs font-medium">Home</span>
             </a>
-            <a class="flex flex-col items-center gap-1 text-primary" href="#/history">
-              <span class="material-symbols-outlined fill text-2xl">science</span>
+            <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/history">
+              <span class="material-symbols-outlined text-2xl fill">category</span>
               <span class="text-xs font-bold">Topics</span>
             </a>
-            <a class="flex flex-col items-center gap-1 text-text-light/70 dark:text-text-dark/70" href="#/settings">
+            <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
               <span class="material-symbols-outlined text-2xl">person</span>
               <span class="text-xs font-medium">Profile</span>
             </a>
           </div>
-        </nav>
+        </div>
       </div>
     `);
 

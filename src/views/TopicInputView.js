@@ -4,10 +4,10 @@ import state from '../state/state.js';
 export default class TopicInputView extends BaseView {
   render() {
     this.setHTML(`
-      <div class="relative flex h-screen w-full flex-col">
+      <div class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <!-- Top App Bar -->
-        <header class="flex items-center p-4 border-b border-gray-200 dark:border-[#333333] bg-background-light dark:bg-background-dark">
-          <h1 class="text-lg font-bold flex-1 text-center text-gray-800 dark:text-gray-100">New Quiz</h1>
+        <header class="flex items-center p-4 border-b border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
+          <h1 class="text-lg font-bold flex-1 text-center text-text-light dark:text-text-dark">New Quiz</h1>
         </header>
 
         <!-- Main Content -->
@@ -15,14 +15,14 @@ export default class TopicInputView extends BaseView {
           <div class="flex flex-col gap-6">
             <!-- Text Field for Topic -->
             <label class="flex flex-col">
-              <p class="text-base font-medium pb-2 text-gray-800 dark:text-[#EAEAEA]">What do you want to practice?</p>
-              <textarea id="topicInput" class="form-input flex w-full resize-none overflow-hidden rounded-lg min-h-36 p-4 text-base font-normal leading-normal placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-[#1E1E1E] border border-gray-300 dark:border-[#333333] text-gray-800 dark:text-[#EAEAEA] focus:ring-2 focus:ring-primary focus:border-primary" placeholder="World War II, Photosynthesis, Algebra..."></textarea>
+              <p class="text-base font-medium pb-2 text-text-light dark:text-text-dark">What do you want to practice?</p>
+              <textarea id="topicInput" class="form-input flex w-full resize-none overflow-hidden rounded-lg min-h-36 p-4 text-base font-normal leading-normal placeholder:text-subtext-light dark:placeholder:text-subtext-dark bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary" placeholder="World War II, Photosynthesis, Algebra..."></textarea>
             </label>
 
             <!-- Select Field for Grade Level -->
             <label class="flex flex-col">
-              <p class="text-base font-medium pb-2 text-gray-800 dark:text-[#EAEAEA]">Grade Level (Optional)</p>
-              <select id="gradeLevelSelect" class="form-select flex w-full rounded-lg h-14 p-4 text-base font-normal leading-normal bg-white dark:bg-[#1E1E1E] border border-gray-300 dark:border-[#333333] text-gray-800 dark:text-[#EAEAEA] focus:ring-2 focus:ring-primary focus:border-primary">
+              <p class="text-base font-medium pb-2 text-text-light dark:text-text-dark">Grade Level (Optional)</p>
+              <select id="gradeLevelSelect" class="form-select flex w-full rounded-lg h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary">
                 <option value="">Select grade level</option>
                 <option value="middle school">Middle School</option>
                 <option value="high school">High School</option>
@@ -33,27 +33,29 @@ export default class TopicInputView extends BaseView {
 
           <!-- Generate Button -->
           <div class="mt-8">
-            <button id="generateBtn" class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em]">
+            <button id="generateBtn" class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90">
               <span class="truncate">Generate Questions</span>
             </button>
           </div>
         </main>
 
-        <!-- Bottom Nav Bar -->
-        <nav class="flex gap-2 border-t border-gray-200 dark:border-[#333333] bg-background-light dark:bg-background-dark px-4 pb-3 pt-2">
-          <a class="flex flex-1 flex-col items-center justify-end gap-1 text-gray-500 dark:text-gray-400" href="#/">
-            <span class="material-symbols-outlined text-2xl">home</span>
-            <p class="text-xs font-medium leading-normal">Home</p>
-          </a>
-          <a class="flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-primary" href="#/history">
-            <span class="material-symbols-outlined text-2xl">science</span>
-            <p class="text-xs font-medium leading-normal">Topics</p>
-          </a>
-          <a class="flex flex-1 flex-col items-center justify-end gap-1 text-gray-500 dark:text-gray-400" href="#/settings">
-            <span class="material-symbols-outlined text-2xl">person</span>
-            <p class="text-xs font-medium leading-normal">Profile</p>
-          </a>
-        </nav>
+        <!-- Bottom Navigation Bar -->
+        <div class="sticky bottom-0 left-0 right-0 h-20 bg-background-light dark:bg-background-dark backdrop-blur-md border-t border-border-light dark:border-border-dark">
+          <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
+            <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
+              <span class="material-symbols-outlined text-2xl">home</span>
+              <span class="text-xs font-medium">Home</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/history">
+              <span class="material-symbols-outlined text-2xl fill">category</span>
+              <span class="text-xs font-bold">Topics</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
+              <span class="material-symbols-outlined text-2xl">person</span>
+              <span class="text-xs font-medium">Profile</span>
+            </a>
+          </div>
+        </div>
       </div>
     `);
 
