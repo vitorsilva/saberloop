@@ -1,6 +1,6 @@
 // api.js - Anthropic Claude API integration
 
-  import { getSetting } from './db.js';
+  import { getSetting } from '../db/db.js';
   import { createQuestionPrompt, createExplanationPrompt } from './prompts.js';
 
   const API_BASE_URL = 'https://api.anthropic.com/v1';
