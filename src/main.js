@@ -1,29 +1,26 @@
-  // QuizMaster - Main Entry Point
-  // This file initializes the app
-
   import { initDatabase } from './db/db.js';
-  import { generateQuestions } from './api/index.js';
+  import router from './router/router.js';
+  import TestView from './views/TestView.js';
 
   console.log('🎓 QuizMaster initializing...');
 
-  // Test that modules are working
-  async function testModules() {
+  // Initialize database
+  async function init() {
     try {
-      // Test database module
-      console.log('Testing database module...');
       await initDatabase();
       console.log('✅ Database initialized');
 
-      // Test API module
-      console.log('Testing API module...');
-      const questions = await generateQuestions('JavaScript', 'high school');
-      console.log('✅ API working, generated', questions.length, 'questions');
+      // Register routes
+      router.addRoute('/', TestView);
+      router.addRoute('/test', TestView);
 
-      console.log('🎉 All modules working correctly!');
+      // Start the router
+      router.init();
+      console.log('✅ Router initialized');
+
     } catch (error) {
-      console.error('❌ Module test failed:', error);
+      console.error('❌ Initialization failed:', error);
     }
   }
 
-  // Run test
-  testModules();
+  init();
