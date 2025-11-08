@@ -1,24 +1,26 @@
   {
-    "name": "PWA Text Echo",
-    "short_name": "Text Echo",
-    "description": "A simple PWA that echoes your text input",
+    "name": "QuizMaster - AI-Powered Quiz App",
+    "short_name": "QuizMaster",
+    "description": "Test your knowledge on any topic with AI-generated questions",
     "start_url": "./",
     "display": "standalone",
     "scope": "./",
-    "background_color": "#F9FAFB",
-    "theme_color": "#4F46E5",
-  "icons": [
-    {
-      "src": "icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+    "background_color": "#F8F9FA",
+    "theme_color": "#4A90E2",
+    "orientation": "portrait-primary",
+    "categories": ["education", "learning", "quiz"],
+    "icons": [
+      {
+        "src": "icons/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "icons/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
   }

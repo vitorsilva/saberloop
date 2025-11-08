@@ -90,6 +90,7 @@ export default class HomeView extends BaseView {
           <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
             <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/">
               <span class="material-symbols-outlined text-2xl fill">home</span>
+              <span id="networkStatusDot" class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background-light dark:border-background-dark"></span>
               <span class="text-xs font-bold">Home</span>
             </a>
             <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/history">
