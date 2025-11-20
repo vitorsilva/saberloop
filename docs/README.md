@@ -2,6 +2,8 @@
 
 This directory contains all learning notes and documentation for the QuizMaster project, organized by epic.
 
+Live version available at [https://vitorsilva.github.io/demo-pwa-app/](https://vitorsilva.github.io/demo-pwa-app/)
+
 ---
 
 ## Documentation Structure
@@ -136,6 +138,17 @@ docs/
   - Iteration cycles
   - *Replaces Epic 02 Phase 10*
 
+**Status:** 📝 Documented and ready to execute (Phases 1-6 required, Phases 7-8 optional)
+
+### Parking Lot (Ideas to Explore)
+
+**📦 [Parking Lot - Optional Ideas](./parking_lot/README.md)**
+- Contains experimental and optional phases
+- Not required for core functionality
+- Can be revisited when relevant
+- Currently contains: Phase 7 (Azure) and Phase 8 (OAuth)
+
+
 - [Phase 7: Azure Functions Migration](./parking_lot/PHASE7_AZURE_MIGRATION.md) ⭐ **Optional**
   - Azure Functions deployment
   - Dual backend support (Netlify + Azure)
@@ -149,16 +162,6 @@ docs/
   - Secure token storage (IndexedDB)
   - Token refresh logic
   - *Experimental: OAuth availability unconfirmed*
-
-**Status:** 📝 Documented and ready to execute (Phases 1-6 required, Phases 7-8 optional)
-
-### Parking Lot (Ideas to Explore)
-
-**📦 [Parking Lot - Optional Ideas](./parking_lot/README.md)**
-- Contains experimental and optional phases
-- Not required for core functionality
-- Can be revisited when relevant
-- Currently contains: Phase 7 (Azure) and Phase 8 (OAuth)
 
 ---
 
