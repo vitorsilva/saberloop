@@ -869,6 +869,313 @@ renderBottomNav() {
 
 ---
 
+## Testing and Deployment
+
+**IMPORTANT:** Always test UI changes and verify deployment!
+
+### Update Unit Tests
+
+**File:** `tests/unit/settings.test.js` (NEW)
+
+**Test Settings Management:**
+```javascript
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { saveSettings, loadSettings, validateAPIKey } from '../../src/utils/settings.js';
+
+describe('Settings Management', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('should save and load settings', () => {
+    const settings = {
+      apiKey: 'sk-ant-test123',
+      gradeLevel: '5th Grade',
+      questionsPerQuiz: 10
+    };
+
+    saveSettings(settings);
+    const loaded = loadSettings();
+
+    expect(loaded).toEqual(settings);
+  });
+
+  it('should validate API key format', () => {
+    expect(validateAPIKey('sk-ant-validkey')).toBe(true);
+    expect(validateAPIKey('invalid-key')).toBe(false);
+    expect(validateAPIKey('')).toBe(false);
+    expect(validateAPIKey(null)).toBe(false);
+  });
+
+  it('should return default settings when none saved', () => {
+    const settings = loadSettings();
+    expect(settings).toHaveProperty('gradeLevel');
+    expect(settings).toHaveProperty('questionsPerQuiz');
+  });
+});
+```
+
+**File:** `tests/unit/HomeView.test.js` (UPDATE)
+
+**Test Dynamic Home Page:**
+```javascript
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render } from '../../tests/helpers/render.js';
+import HomeView from '../../src/views/HomeView.js';
+import * as db from '../../src/db/db.js';
+
+describe('HomeView', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should display quiz history from IndexedDB', async () => {
+    const mockSessions = [
+      { id: 1, topic: 'Math', score: 80, totalQuestions: 5, date: new Date() },
+      { id: 2, topic: 'Science', score: 100, totalQuestions: 5, date: new Date() }
+    ];
+
+    vi.spyOn(db, 'getRecentSessions').mockResolvedValue(mockSessions);
+
+    const view = new HomeView();
+    await view.render();
+
+    expect(db.getRecentSessions).toHaveBeenCalled();
+    expect(view.el.innerHTML).toContain('Math');
+    expect(view.el.innerHTML).toContain('Science');
+    expect(view.el.innerHTML).toContain('80%');
+    expect(view.el.innerHTML).toContain('100%');
+  });
+
+  it('should show empty state when no quizzes exist', async () => {
+    vi.spyOn(db, 'getRecentSessions').mockResolvedValue([]);
+
+    const view = new HomeView();
+    await view.render();
+
+    expect(view.el.innerHTML).toContain('No quizzes yet');
+  });
+
+  it('should calculate average score correctly', async () => {
+    const mockSessions = [
+      { score: 80, totalQuestions: 5 },
+      { score: 60, totalQuestions: 5 },
+      { score: 100, totalQuestions: 5 }
+    ];
+
+    vi.spyOn(db, 'getRecentSessions').mockResolvedValue(mockSessions);
+
+    const view = new HomeView();
+    await view.render();
+
+    // Average: (80 + 60 + 100) / 3 = 80%
+    expect(view.el.innerHTML).toMatch(/80%|Average.*80/i);
+  });
+});
+```
+
+**Run tests:**
+```bash
+npm test -- settings.test.js
+npm test -- HomeView.test.js
+```
+
+### Update E2E Tests
+
+**File:** `tests/e2e/settings.spec.js` (NEW)
+
+**Test Settings Page:**
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Settings Page', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+  test('should navigate to settings page', async ({ page }) => {
+    await page.click('a[href="#/settings"]');
+    await expect(page).toHaveURL(/#\/settings/);
+    await expect(page.locator('h2')).toContainText('Settings');
+  });
+
+  test('should save and persist API key', async ({ page }) => {
+    await page.goto('/#/settings');
+
+    // Enter API key
+    await page.fill('input[type="password"]', 'sk-ant-test123');
+
+    // Save
+    await page.click('button:has-text("Save")');
+
+    // Reload page
+    await page.reload();
+    await page.goto('/#/settings');
+
+    // Should still have saved value
+    const value = await page.inputValue('input[type="password"]');
+    expect(value).toBe('sk-ant-test123');
+  });
+
+  test('should validate API key format', async ({ page }) => {
+    await page.goto('/#/settings');
+
+    // Enter invalid key
+    await page.fill('input[type="password"]', 'invalid-key');
+    await page.click('button:has-text("Save")');
+
+    // Should show error
+    await expect(page.locator('.error-message')).toBeVisible();
+    await expect(page.locator('.error-message')).toContainText('must start with sk-ant-');
+  });
+
+  test('should toggle API key visibility', async ({ page }) => {
+    await page.goto('/#/settings');
+
+    const input = page.locator('input[placeholder*="API"]');
+
+    // Should start as password
+    await expect(input).toHaveAttribute('type', 'password');
+
+    // Click show/hide toggle
+    await page.click('button:has-text("Show")');
+
+    // Should now be text
+    await expect(input).toHaveAttribute('type', 'text');
+  });
+
+  test('should save preferences', async ({ page }) => {
+    await page.goto('/#/settings');
+
+    // Change grade level
+    await page.selectOption('select[name="gradeLevel"]', 'High School');
+
+    // Change questions per quiz
+    await page.selectOption('select[name="questionsPerQuiz"]', '10');
+
+    // Save
+    await page.click('button:has-text("Save")');
+
+    // Reload
+    await page.reload();
+    await page.goto('/#/settings');
+
+    // Should persist
+    await expect(page.locator('select[name="gradeLevel"]')).toHaveValue('High School');
+    await expect(page.locator('select[name="questionsPerQuiz"]')).toHaveValue('10');
+  });
+});
+
+test.describe('Home Page Dynamic Content', () => {
+  test('should show empty state with no quizzes', async ({ page }) => {
+    // Clear IndexedDB
+    await page.goto('/');
+    await page.evaluate(() => {
+      indexedDB.deleteDatabase('QuizMasterDB');
+    });
+
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('text=No quizzes yet')).toBeVisible();
+    await expect(page.locator('button:has-text("Start New Quiz")')).toBeVisible();
+  });
+
+  test('should display quiz history', async ({ page }) => {
+    // Create a quiz first
+    await page.goto('/');
+    await page.click('button:has-text("Start New Quiz")');
+
+    // Mock API and complete quiz
+    // ... (create and complete a quiz)
+
+    // Go back to home
+    await page.click('a[href="#/"]');
+
+    // Should show quiz in history
+    await expect(page.locator('.quiz-history')).toBeVisible();
+    await expect(page.locator('.quiz-card')).toHaveCount(1);
+  });
+
+  test('should navigate between home and settings', async ({ page }) => {
+    await page.goto('/');
+
+    // Go to settings
+    await page.click('a[href="#/settings"]');
+    await expect(page.locator('h2')).toContainText('Settings');
+
+    // Go back to home
+    await page.click('a[href="#/"]');
+    await expect(page.locator('h1')).toBeVisible();
+  });
+});
+```
+
+**Run tests:**
+```bash
+npm run test:e2e -- settings
+```
+
+### Deployment Verification
+
+**1. Local Development:**
+```bash
+npm run dev
+
+# Test:
+# - Home page shows "No quizzes yet" (empty state)
+# - Settings page loads
+# - Can save settings
+# - Navigation works
+# - All tests pass
+```
+
+**2. Production Build:**
+```bash
+npm run build
+npm run preview
+
+# Test:
+# - Home page displays correctly
+# - Settings persist across reloads
+# - API key validation works
+# - Responsive on mobile (resize browser)
+```
+
+**3. GitHub Deployment:**
+```bash
+git add .
+git commit -m "feat: add dynamic home page and settings management"
+git push origin main
+
+# Verify:
+# - CI/CD passes
+# - Deployment succeeds
+# - Production site works
+```
+
+**4. Production Verification:**
+
+Visit: `https://your-app.netlify.app`
+
+**Checklist:**
+1. ✅ Home page loads (empty state initially)
+2. ✅ Navigation to settings works
+3. ✅ Can save API key
+4. ✅ Can save preferences
+5. ✅ Settings persist after reload
+6. ✅ Create a quiz
+7. ✅ Return to home → quiz appears in history
+8. ✅ Statistics calculated correctly
+9. ✅ Mobile responsive
+10. ✅ No console errors
+
+---
+
 ## Success Criteria
 
 **Phase 3 is complete when:**

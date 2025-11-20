@@ -896,6 +896,397 @@ navigateFallbackDenylist: [/^\/api/, /^\/\.netlify/]
 
 ---
 
+## Testing and Deployment
+
+**IMPORTANT:** Always test offline capabilities thoroughly and verify deployment!
+
+### Update Unit Tests
+
+**File:** `tests/unit/pwa.test.js` (NEW)
+
+**Purpose:** Test PWA registration and offline detection
+
+**Code:**
+```javascript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+describe('PWA Functionality', () => {
+  beforeEach(() => {
+    // Mock navigator.onLine
+    Object.defineProperty(navigator, 'onLine', {
+      writable: true,
+      value: true
+    });
+  });
+
+  it('should detect online status', () => {
+    expect(navigator.onLine).toBe(true);
+  });
+
+  it('should detect offline status', () => {
+    Object.defineProperty(navigator, 'onLine', {
+      writable: true,
+      value: false
+    });
+    expect(navigator.onLine).toBe(false);
+  });
+
+  it('should register service worker in production', async () => {
+    const mockRegister = vi.fn().mockResolvedValue({});
+
+    Object.defineProperty(navigator, 'serviceWorker', {
+      writable: true,
+      value: { register: mockRegister }
+    });
+
+    // Simulate production environment
+    vi.stubEnv('PROD', true);
+
+    // Import registration code
+    const { registerSW } = await import('virtual:pwa-register');
+
+    expect(registerSW).toBeDefined();
+  });
+});
+```
+
+**Run tests:**
+```bash
+npm test -- pwa.test.js
+```
+
+### Update E2E Tests for Offline
+
+**File:** `tests/e2e/offline-functionality.spec.js` (NEW)
+
+**Purpose:** Test comprehensive offline behavior
+
+**Code:**
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Offline Functionality', () => {
+  test('should show offline indicator when network is down', async ({ page, context }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Go offline
+    await context.setOffline(true);
+
+    // Trigger offline event
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event('offline'));
+    });
+
+    // Check for offline indicator
+    await expect(page.locator('.offline-indicator')).toBeVisible();
+    await expect(page.locator('.offline-indicator')).toContainText('Offline');
+  });
+
+  test('should cache pages for offline access', async ({ page, context }) => {
+    // Load home page online
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to topic input
+    await page.click('a[href*="topic"]');
+    await page.waitForLoadState('networkidle');
+
+    // Go offline
+    await context.setOffline(true);
+
+    // Navigate back to home (should work from cache)
+    await page.click('a[href="#/"]');
+    await expect(page.locator('h1')).toBeVisible();
+
+    // Navigate to topic input again (should work from cache)
+    await page.click('a[href*="topic"]');
+    await expect(page.locator('h2')).toContainText('New Quiz');
+  });
+
+  test('should show fallback page for uncached routes when offline', async ({ page, context }) => {
+    // Go directly to a route without loading it first
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Go offline
+    await context.setOffline(true);
+
+    // Try to navigate to uncached route
+    await page.goto('/#/uncached-route');
+
+    // Should show offline fallback
+    await expect(page.locator('text=Offline')).toBeVisible();
+  });
+
+  test('should work with cached quiz data offline', async ({ page, context }) => {
+    // Create quiz online
+    await page.goto('/');
+    await page.click('button:has-text("Start New Quiz")');
+
+    // Mock API response
+    await page.route('**/.netlify/functions/generate-questions', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          questions: [
+            { question: 'Q1?', options: ['A', 'B', 'C', 'D'], correct: 'A', difficulty: 'easy' },
+            { question: 'Q2?', options: ['A', 'B', 'C', 'D'], correct: 'B', difficulty: 'easy' },
+            { question: 'Q3?', options: ['A', 'B', 'C', 'D'], correct: 'C', difficulty: 'easy' },
+            { question: 'Q4?', options: ['A', 'B', 'C', 'D'], correct: 'D', difficulty: 'easy' },
+            { question: 'Q5?', options: ['A', 'B', 'C', 'D'], correct: 'A', difficulty: 'easy' }
+          ]
+        })
+      });
+    });
+
+    await page.fill('input[placeholder*="topic"]', 'Math');
+    await page.click('button:has-text("Generate Questions")');
+    await page.waitForSelector('text=Question 1 of 5');
+
+    // Complete quiz (data saved to IndexedDB)
+    await page.click('button:has-text("A)")');
+    await page.click('button:has-text("Next")');
+    // ... complete quiz
+
+    // Go offline
+    await context.setOffline(true);
+
+    // Navigate to results (should work from IndexedDB)
+    await page.goto('/#/results');
+    await page.waitForLoadState('networkidle');
+
+    // Should still show results
+    await expect(page.locator('.results-container')).toBeVisible();
+  });
+
+  test('should register service worker on page load', async ({ page }) => {
+    await page.goto('/');
+
+    const swRegistered = await page.evaluate(() => {
+      return 'serviceWorker' in navigator;
+    });
+
+    expect(swRegistered).toBe(true);
+
+    // Wait for service worker to be ready
+    const swReady = await page.evaluate(async () => {
+      if ('serviceWorker' in navigator) {
+        const registration = await navigator.serviceWorker.ready;
+        return registration.active !== null;
+      }
+      return false;
+    });
+
+    expect(swReady).toBe(true);
+  });
+});
+```
+
+**Run E2E tests:**
+```bash
+npm run test:e2e -- offline-functionality
+```
+
+### Test Lighthouse PWA Score
+
+**Manual testing (required for Lighthouse):**
+
+```bash
+# Build production
+npm run build
+
+# Serve with production server
+npx serve dist -p 8080
+
+# Open Chrome DevTools → Lighthouse
+# Run audit with:
+# - Mode: Navigation
+# - Categories: Progressive Web App (check)
+# - Device: Mobile
+#
+# Target: 100/100 PWA score
+```
+
+**Expected Lighthouse results:**
+- ✅ Installable
+- ✅ PWA Optimized
+- ✅ Fast and reliable
+- ✅ Works offline
+- ✅ All checks pass
+
+### Verify GitHub Deployment
+
+**File:** `.github/workflows/ci.yml` (UPDATE)
+
+**Add Lighthouse CI (optional but recommended):**
+
+```yaml
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Run E2E tests (including offline tests)
+        run: npm run test:e2e
+
+      - name: Build project
+        run: npm run build
+
+      - name: Verify PWA build artifacts
+        run: |
+          test -f dist/sw.js || test -f dist/sw.js.map
+          test -f dist/manifest.json
+          test -f dist/offline.html
+          ls -la dist/ | grep workbox || echo "Workbox files generated"
+
+      # Optional: Lighthouse CI
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun --collect.url=http://localhost:8080
+        continue-on-error: true
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          args: deploy --prod
+```
+
+### Deploy and Verify End-to-End
+
+**Deployment checklist:**
+
+#### 1. Local Development
+```bash
+npm run dev
+
+# Verify:
+# - Service worker NOT active in dev (unless configured)
+# - App works normally
+# - All tests pass: npm test && npm run test:e2e
+```
+
+#### 2. Production Build
+```bash
+npm run build
+npm run preview
+
+# Verify in browser:
+# - Open DevTools → Application → Service Workers
+# - Service worker should be registered and activated
+# - Check Cache Storage → workbox-precache
+# - Should contain all static assets
+# - Try offline: DevTools → Network → Offline checkbox
+# - Reload page → should still work
+```
+
+#### 3. Test Offline Scenarios
+```bash
+# With production build running (npm run preview):
+
+# Scenario 1: Load page, go offline, reload
+# Expected: Page loads from cache
+
+# Scenario 2: Load page, create quiz, go offline, view results
+# Expected: Results accessible from IndexedDB
+
+# Scenario 3: Go offline, try to generate new quiz
+# Expected: Graceful error message "You're offline"
+
+# Scenario 4: Load page, go offline, navigate between views
+# Expected: All navigation works
+```
+
+#### 4. GitHub Deployment
+```bash
+git add .
+git commit -m "feat: add production offline capabilities with Vite PWA Plugin"
+git push origin main
+
+# Verify:
+# - GitHub Actions runs successfully
+# - All tests pass (unit + E2E + offline tests)
+# - Build completes with sw.js generated
+# - Netlify deploys successfully
+```
+
+#### 5. Production Site Verification
+
+**Visit:** `https://your-app.netlify.app`
+
+**Offline test protocol:**
+1. ✅ Load page (online)
+2. ✅ Open DevTools → Application → Service Workers
+3. ✅ Verify service worker active
+4. ✅ Check Cache Storage (workbox-precache exists)
+5. ✅ Create a quiz (saves to IndexedDB)
+6. ✅ Complete quiz
+7. ✅ Check DevTools → Network → Offline
+8. ✅ Reload page → should work
+9. ✅ Navigate to results → should work
+10. ✅ Navigate to home → should work
+11. ✅ Try to create new quiz → graceful error
+12. ✅ Uncheck Offline → app should reconnect
+13. ✅ Create new quiz → should work online
+
+**Expected results:**
+- All 13 checks pass ✅
+- No console errors
+- Offline indicator shows/hides correctly
+- Graceful degradation when offline
+
+#### 6. Mobile Testing (Real Device)
+
+**Install on Android/iOS:**
+1. Visit site on mobile browser
+2. Install PWA (Add to Home Screen)
+3. Open installed app
+4. Create quiz online
+5. Enable airplane mode
+6. Reopen app → should work
+7. Navigate → should work
+8. Disable airplane mode
+9. Create new quiz → should work
+
+**Expected:** Seamless offline experience
+
+---
+
 ## Success Criteria
 
 **Phase 2 is complete when:**

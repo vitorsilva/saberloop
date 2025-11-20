@@ -760,6 +760,56 @@ Continue in next message...
 
 ---
 
+## Testing and Deployment
+
+**IMPORTANT:** See [TESTING_AND_DEPLOYMENT_GUIDE.md](./TESTING_AND_DEPLOYMENT_GUIDE.md) for comprehensive testing and deployment procedures.
+
+### Phase 5 Specific Requirements
+
+**This phase focuses on documentation and organization, not new features.**
+
+**Testing checklist:**
+- ✅ All existing tests still pass (no regressions)
+- ✅ Build process unchanged
+- ✅ Deployment still works
+- ✅ Documentation links are valid
+- ✅ README instructions work for new users
+
+**Verification:**
+```bash
+# Run all tests
+npm test
+npm run test:e2e
+
+# Build project
+npm run build
+
+# Verify all imports still work
+npm run preview
+
+# Check documentation links
+# (Manually verify all links in README, CONTRIBUTING, etc.)
+```
+
+**Deployment:**
+```bash
+git add .
+git commit -m "docs: update project structure and documentation"
+git push origin main
+
+# Verify GitHub Pages or deployment still works
+```
+
+**Success criteria:**
+- ✅ All tests pass
+- ✅ Build succeeds
+- ✅ Deployment works
+- ✅ No broken links
+- ✅ README is clear and accurate
+- ✅ New contributors can follow setup instructions
+
+---
+
 **Related Documentation:**
 - Epic 3 Plan: `docs/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md`
 - Phase 4 (Observability): `docs/epic03_quizmaster_v2/PHASE4_OBSERVABILITY.md`

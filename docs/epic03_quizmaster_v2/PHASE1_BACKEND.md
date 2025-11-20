@@ -875,6 +875,508 @@ curl -X POST https://your-app.netlify.app/.netlify/functions/generate-questions 
 
 ---
 
+## Step 14: Update Unit Tests
+
+**IMPORTANT:** Always update tests when adding new features!
+
+### 14.1 Test API Client (Real)
+
+**File:** `tests/unit/api.real.test.js` (NEW)
+
+**Purpose:** Test real API client functions (without calling actual API)
+
+**Code:**
+```javascript
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { generateQuestions, generateExplanation } from '../../src/api/api.real.js';
+
+describe('Real API Client', () => {
+  beforeEach(() => {
+    // Mock global fetch
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe('generateQuestions', () => {
+    it('should call the generate-questions function endpoint', async () => {
+      const mockQuestions = [
+        { question: 'Test?', options: ['A', 'B', 'C', 'D'], correct: 'A', difficulty: 'easy' }
+      ];
+
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ questions: mockQuestions })
+      });
+
+      const result = await generateQuestions('Math', '5th Grade');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/.netlify/functions/generate-questions',
+        expect.objectContaining({
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic: 'Math', gradeLevel: '5th Grade' })
+        })
+      );
+
+      expect(result).toEqual(mockQuestions);
+    });
+
+    it('should handle API errors gracefully', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ error: 'API Error' })
+      });
+
+      await expect(generateQuestions('Math', '5th Grade')).rejects.toThrow(
+        'Failed to generate questions'
+      );
+    });
+
+    it('should handle network errors', async () => {
+      global.fetch.mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(generateQuestions('Math', '5th Grade')).rejects.toThrow(
+        'Failed to generate questions'
+      );
+    });
+  });
+
+  describe('generateExplanation', () => {
+    it('should call the generate-explanation function endpoint', async () => {
+      const mockExplanation = 'This is why...';
+
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ explanation: mockExplanation })
+      });
+
+      const result = await generateExplanation(
+        'What is 2+2?',
+        'B) 5',
+        'A) 4',
+        '5th Grade'
+      );
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/.netlify/functions/generate-explanation',
+        expect.objectContaining({
+          method: 'POST'
+        })
+      );
+
+      expect(result).toBe(mockExplanation);
+    });
+
+    it('should return fallback message on error', async () => {
+      global.fetch.mockRejectedValueOnce(new Error('Network error'));
+
+      const result = await generateExplanation('Test', 'A', 'B');
+
+      expect(result).toContain('couldn\'t generate an explanation');
+    });
+  });
+});
+```
+
+**Run tests:**
+```bash
+npm test -- api.real.test.js
+```
+
+### 14.2 Test Netlify Functions (Local)
+
+**File:** `tests/unit/functions/generate-questions.test.js` (NEW)
+
+**Purpose:** Test function logic without calling real Claude API
+
+**Code:**
+```javascript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// Mock handler
+const createMockEvent = (method, body) => ({
+  httpMethod: method,
+  body: body ? JSON.stringify(body) : null
+});
+
+describe('generate-questions function', () => {
+  let handler;
+
+  beforeEach(async () => {
+    // Mock environment
+    process.env.ANTHROPIC_API_KEY = 'sk-ant-test-key';
+
+    // Import function
+    const module = await import('../../../netlify/functions/generate-questions.js');
+    handler = module.handler;
+
+    // Mock fetch
+    global.fetch = vi.fn();
+  });
+
+  it('should handle OPTIONS request (CORS preflight)', async () => {
+    const event = createMockEvent('OPTIONS');
+    const response = await handler(event);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['Access-Control-Allow-Origin']).toBe('*');
+  });
+
+  it('should reject non-POST requests', async () => {
+    const event = createMockEvent('GET');
+    const response = await handler(event);
+
+    expect(response.statusCode).toBe(405);
+    const body = JSON.parse(response.body);
+    expect(body.error).toBe('Method not allowed');
+  });
+
+  it('should validate required fields', async () => {
+    const event = createMockEvent('POST', {});
+    const response = await handler(event);
+
+    expect(response.statusCode).toBe(400);
+    const body = JSON.parse(response.body);
+    expect(body.error).toBe('Validation failed');
+  });
+
+  it('should validate topic length', async () => {
+    const event = createMockEvent('POST', { topic: 'A' });
+    const response = await handler(event);
+
+    expect(response.statusCode).toBe(400);
+    const body = JSON.parse(response.body);
+    expect(body.details).toContain('Topic must be at least 2 characters');
+  });
+
+  it('should call Anthropic API with correct parameters', async () => {
+    const mockQuestions = [
+      { question: 'Test?', options: ['A', 'B', 'C', 'D'], correct: 'A', difficulty: 'easy' }
+    ];
+
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        content: [{ text: JSON.stringify(mockQuestions) }]
+      })
+    });
+
+    const event = createMockEvent('POST', { topic: 'Math', gradeLevel: '5th Grade' });
+    const response = await handler(event);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://api.anthropic.com/v1/messages',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          'x-api-key': 'sk-ant-test-key'
+        })
+      })
+    );
+
+    expect(response.statusCode).toBe(200);
+  });
+});
+```
+
+**Run tests:**
+```bash
+npm test -- generate-questions.test.js
+```
+
+---
+
+## Step 15: Update E2E Tests
+
+**IMPORTANT:** E2E tests should verify the full user flow with backend!
+
+### 15.1 Update Quiz Creation E2E Test
+
+**File:** `tests/e2e/quiz-flow.spec.js`
+
+**Add backend testing:**
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Quiz Flow with Backend', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+  test('should generate real questions via backend (mock in test)', async ({ page }) => {
+    // Mock the Netlify function response for E2E testing
+    await page.route('**/.netlify/functions/generate-questions', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          questions: [
+            {
+              question: 'What is 2+2?',
+              options: ['A) 3', 'B) 4', 'C) 5', 'D) 6'],
+              correct: 'B',
+              difficulty: 'easy'
+            },
+            // ... 4 more questions
+          ]
+        })
+      });
+    });
+
+    // Click "Start New Quiz"
+    await page.click('button:has-text("Start New Quiz")');
+
+    // Fill in topic
+    await page.fill('input[placeholder*="topic"]', 'Mathematics');
+
+    // Select grade level
+    await page.selectOption('select', '5th Grade');
+
+    // Generate questions
+    await page.click('button:has-text("Generate Questions")');
+
+    // Wait for quiz to load
+    await page.waitForSelector('text=Question 1 of 5');
+
+    // Verify question appears
+    await expect(page.locator('.question-text')).toContainText('What is 2+2?');
+  });
+
+  test('should handle API errors gracefully', async ({ page }) => {
+    // Mock API error
+    await page.route('**/.netlify/functions/generate-questions', async (route) => {
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Server error' })
+      });
+    });
+
+    await page.click('button:has-text("Start New Quiz")');
+    await page.fill('input[placeholder*="topic"]', 'Math');
+    await page.click('button:has-text("Generate Questions")');
+
+    // Should show error message
+    await expect(page.locator('.error-message')).toBeVisible();
+    await expect(page.locator('.error-message')).toContainText('Failed to generate questions');
+  });
+
+  test('should work offline after initial load', async ({ page, context }) => {
+    // Load page online first
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Go offline
+    await context.setOffline(true);
+
+    // Should still navigate
+    await page.click('a[href="#/"]');
+    await expect(page.locator('h1')).toBeVisible();
+
+    // Note: Generating new questions will fail offline (expected)
+    // But previously cached content should work
+  });
+});
+```
+
+**Run E2E tests:**
+```bash
+npm run test:e2e
+```
+
+### 15.2 Add Backend Health Check Test
+
+**File:** `tests/e2e/backend-health.spec.js` (NEW)
+
+**Code:**
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Backend Health Check', () => {
+  test('should verify backend is running', async ({ request }) => {
+    const response = await request.get('/.netlify/functions/health-check');
+
+    expect(response.ok()).toBeTruthy();
+
+    const data = await response.json();
+    expect(data.status).toBe('healthy');
+    expect(data.hasApiKey).toBeDefined();
+  });
+
+  test('should have CORS headers', async ({ request }) => {
+    const response = await request.get('/.netlify/functions/health-check');
+
+    const headers = response.headers();
+    expect(headers['access-control-allow-origin']).toBe('*');
+    expect(headers['content-type']).toContain('application/json');
+  });
+});
+```
+
+**Run test:**
+```bash
+npm run test:e2e -- backend-health
+```
+
+---
+
+## Step 16: Verify GitHub Actions CI/CD Still Works
+
+**IMPORTANT:** Ensure deployment pipeline works with new backend!
+
+### 16.1 Update CI/CD Workflow
+
+**File:** `.github/workflows/ci.yml`
+
+**Add Netlify CLI for testing:**
+```yaml
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          # Mock API key for testing
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_TEST || 'sk-ant-test-key' }}
+
+      - name: Build project
+        run: npm run build
+
+      - name: Verify build artifacts
+        run: |
+          test -d dist
+          test -f dist/index.html
+          test -d netlify/functions
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          args: deploy --prod
+```
+
+### 16.2 Add Required Secrets
+
+**In GitHub repository settings:**
+
+1. Go to Settings → Secrets and variables → Actions
+2. Add new repository secrets:
+   - `NETLIFY_AUTH_TOKEN` - Get from Netlify dashboard
+   - `NETLIFY_SITE_ID` - Get from Netlify site settings
+   - `ANTHROPIC_API_KEY_TEST` - Optional test key (or use mock)
+
+### 16.3 Verify CI/CD
+
+**After pushing to GitHub:**
+
+1. Go to Actions tab
+2. Watch workflow run
+3. Verify all tests pass
+4. Verify deployment succeeds
+5. Visit deployed site and test
+
+---
+
+## Step 17: Deploy and Verify End-to-End
+
+**Final verification checklist:**
+
+### 17.1 Local Development Works
+```bash
+# Start dev server
+npm run dev
+
+# Verify in browser:
+# - Console shows "Using mock API (development mode)"
+# - Can create quiz with mock data
+# - All tests pass: npm test && npm run test:e2e
+```
+
+### 17.2 Production Build Works
+```bash
+# Build and preview
+npm run build
+npm run preview
+
+# Verify in browser:
+# - Console shows "Using real API via Netlify Functions"
+# - Health check works: fetch('/.netlify/functions/health-check')
+# - Can generate real questions (uses API key from .env)
+```
+
+### 17.3 GitHub Deployment Works
+```bash
+# Push to GitHub
+git add .
+git commit -m "feat: add backend integration with Netlify Functions"
+git push origin main
+
+# Verify:
+# - GitHub Actions runs successfully
+# - All tests pass in CI
+# - Netlify deploys automatically
+# - Production site works with real API
+```
+
+### 17.4 Production Site Verification
+
+**Visit:** `https://your-app.netlify.app`
+
+**Test:**
+1. ✅ Health check: `/.netlify/functions/health-check`
+2. ✅ Create quiz with topic "Fractions"
+3. ✅ Verify questions are real (not mock)
+4. ✅ Verify explanations work
+5. ✅ Check DevTools console for errors
+6. ✅ Test offline mode (refresh while offline)
+7. ✅ Verify PWA install prompt
+
+**Expected results:**
+- All 7 checks pass ✅
+- No console errors
+- Questions are unique and relevant
+- Offline mode works (cached content)
+
+---
+
 ## Cost Estimation
 
 ### Netlify (Free Tier)

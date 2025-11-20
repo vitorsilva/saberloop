@@ -565,6 +565,73 @@ Learning value: Priceless
 
 ---
 
+## Testing and Deployment
+
+**IMPORTANT:** See [TESTING_AND_DEPLOYMENT_GUIDE.md](./TESTING_AND_DEPLOYMENT_GUIDE.md) for comprehensive testing and deployment procedures.
+
+### Phase 6 Specific Requirements
+
+**This phase is iterative - multiple deployments expected!**
+
+**Each iteration should:**
+
+1. **Fix bugs or add features based on feedback**
+2. **Update tests:**
+   ```bash
+   # Add tests for bug fixes
+   # Update tests for changed behavior
+   npm test
+   npm run test:e2e
+   ```
+
+3. **Deploy:**
+   ```bash
+   git add .
+   git commit -m "fix: [describe bug fix or feature]"
+   git push origin main
+   ```
+
+4. **Verify with beta testers:**
+   - Notify testers of update
+   - Collect feedback
+   - Track in GitHub Issues
+
+**Iteration cycle:**
+```
+Feedback → Bug fixes/Features → Tests → Deploy → Verify → Repeat
+```
+
+**Testing priorities:**
+- ✅ All reported bugs fixed
+- ✅ Tests added for each bug
+- ✅ Regressions prevented
+- ✅ Performance acceptable
+- ✅ User experience smooth
+
+**Deployment strategy:**
+```bash
+# Version 2.0.0 - Initial release
+npm version minor
+git push --tags
+
+# Version 2.1.0 - First iteration
+npm version patch
+git push --tags
+
+# Version 2.2.0 - Second iteration
+npm version patch
+git push --tags
+```
+
+**Production monitoring:**
+- Check Netlify logs for errors
+- Review user feedback
+- Monitor API costs
+- Track usage patterns
+- Watch for performance issues
+
+---
+
 ## Success Criteria
 
 **Phase 6 (and Epic 3) is complete when:**

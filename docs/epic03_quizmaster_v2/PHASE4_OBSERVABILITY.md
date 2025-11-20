@@ -677,6 +677,103 @@ performanceEnd('custom-operation');
 
 ---
 
+## Testing and Deployment
+
+**IMPORTANT:** See [TESTING_AND_DEPLOYMENT_GUIDE.md](./TESTING_AND_DEPLOYMENT_GUIDE.md) for comprehensive testing and deployment procedures that apply to ALL Epic 3 phases.
+
+### Phase 4 Specific Tests
+
+**Unit Tests - Logger:**
+```javascript
+// tests/unit/logger.test.js
+import { describe, it, expect } from 'vitest';
+import { logger } from '../../src/utils/logger.js';
+
+describe('Logger', () => {
+  it('should redact API keys', () => {
+    const message = logger.formatMessage('info', 'Test', {
+      apiKey: 'sk-ant-secret123'
+    });
+    expect(message).toContain('[REDACTED]');
+    expect(message).not.toContain('sk-ant-secret123');
+  });
+
+  it('should include context in logs', () => {
+    const message = logger.info('Test', { userId: '123' });
+    expect(message).toContain('userId');
+  });
+});
+```
+
+**Unit Tests - Error Handler:**
+```javascript
+// tests/unit/errorHandler.test.js
+import { describe, it, expect, vi } from 'vitest';
+import { handleError } from '../../src/utils/errorHandler.js';
+
+describe('Error Handler', () => {
+  it('should catch and log errors', () => {
+    const spy = vi.spyOn(console, 'error');
+    handleError(new Error('Test error'));
+    expect(spy).toHaveBeenCalled();
+  });
+});
+```
+
+**E2E Tests - Error Tracking:**
+```javascript
+// tests/e2e/error-handling.spec.js
+import { test, expect } from '@playwright/test';
+
+test('should show user-friendly error on API failure', async ({ page }) => {
+  // Mock API error
+  await page.route('**/.netlify/functions/*', route => {
+    route.fulfill({ status: 500, body: 'Server error' });
+  });
+
+  await page.goto('/');
+  await page.click('button:has-text("Start New Quiz")');
+
+  // Should show error notification
+  await expect(page.locator('.error-notification')).toBeVisible();
+  await expect(page.locator('.error-notification')).not.toContainText('500');
+  await expect(page.locator('.error-notification')).toContainText('something went wrong');
+});
+```
+
+**Run tests:**
+```bash
+npm test
+npm run test:e2e
+```
+
+### Deployment Verification
+
+**1. Local Development:**
+- Logs appear in console
+- Errors are caught and logged
+- No sensitive data in logs
+
+**2. Production Build:**
+```bash
+npm run build
+npm run preview
+
+# Check console:
+# - Logs are filtered (less verbose)
+# - Performance metrics logged
+# - Errors still caught
+```
+
+**3. Production Verification:**
+- Open browser console
+- Check logs are structured
+- Trigger an error intentionally
+- Verify error is caught and logged
+- Verify user sees friendly message
+
+---
+
 ## Success Criteria
 
 **Phase 4 is complete when:**
