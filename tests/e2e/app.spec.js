@@ -219,4 +219,21 @@ test.describe('QuizMaster E2E Tests', () => {
     // Submit button should now be enabled (not have opacity-50)
     await expect(submitBtn).not.toHaveClass(/opacity-50/);
   });
+
+  test('should display network status indicator on home page', async ({ page }) => {
+    await page.goto('/');
+
+    // Check that network indicator dot exists
+    const networkDot = page.locator('#networkStatusDot');
+    await expect(networkDot).toBeVisible();
+
+    // Should have green background when online (default state)
+    const dotClasses = await networkDot.getAttribute('class');
+    expect(dotClasses).toContain('bg-green-500');
+
+    // Verify it's positioned on the home icon
+    const homeIcon = page.locator('a[href="#/"] .material-symbols-outlined');
+    await expect(homeIcon).toBeVisible();
+  });
+
 });
