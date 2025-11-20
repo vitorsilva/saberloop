@@ -136,7 +136,29 @@ docs/
   - Iteration cycles
   - *Replaces Epic 02 Phase 10*
 
-**Status:** 📝 Documented and ready to execute
+- [Phase 7: Azure Functions Migration](./parking_lot/PHASE7_AZURE_MIGRATION.md) ⭐ **Optional**
+  - Azure Functions deployment
+  - Dual backend support (Netlify + Azure)
+  - Application Insights monitoring
+  - Platform comparison and migration
+  - *Nice to have: Azure experience*
+
+- [Phase 8: OAuth Integration](./parking_lot/PHASE8_OAUTH.md) ⭐ **Optional/Experimental**
+  - OAuth 2.0 authentication flow
+  - PKCE implementation
+  - Secure token storage (IndexedDB)
+  - Token refresh logic
+  - *Experimental: OAuth availability unconfirmed*
+
+**Status:** 📝 Documented and ready to execute (Phases 1-6 required, Phases 7-8 optional)
+
+### Parking Lot (Ideas to Explore)
+
+**📦 [Parking Lot - Optional Ideas](./parking_lot/README.md)**
+- Contains experimental and optional phases
+- Not required for core functionality
+- Can be revisited when relevant
+- Currently contains: Phase 7 (Azure) and Phase 8 (OAuth)
 
 ---
 
@@ -169,7 +191,7 @@ See [EPIC_TRANSITION_SUMMARY.md](./EPIC_TRANSITION_SUMMARY.md) for detailed expl
 |------|--------|--------|------------|
 | Epic 01 | 5 phases | ✅ Complete | 100% |
 | Epic 02 | 9 executed, 2 deferred | ✅ Complete | 100% (of executed) |
-| Epic 03 | 6 phases | 📝 Planned | 0% |
+| Epic 03 | 6 required + 2 optional | 📝 Planned | 0% |
 
 ### Phase Mapping
 

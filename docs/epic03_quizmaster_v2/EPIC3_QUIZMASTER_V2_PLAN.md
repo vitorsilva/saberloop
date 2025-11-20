@@ -69,13 +69,22 @@ Before starting Epic 3, you should have completed:
 │  │ - Settings (NEW) │          │ - health-check   │    │   │
 │  └──────────────────┘          └──────────────────┘    │   │
 │         │                              │               │   │
-│         │                              │               │   │
-│  ┌──────▼──────────┐          ┌────────▼─────────┐   │   │
-│  │ IndexedDB       │          │ Environment Vars │   │   │
-│  │ - Sessions      │          │ - ANTHROPIC_KEY  │   │   │
-│  │ - Questions     │          │ - Config         │   │   │
-│  │ - Settings      │          └──────────────────┘   │   │
-│  └─────────────────┘                                 │   │
+│         │                       (Optional Phase 7)     │   │
+│         │                      ┌──────────────────┐   │   │
+│         │                      │ Azure Functions  │   │   │
+│         └──────────────────────│ - generate-      │───┤   │
+│  (Configurable)      HTTPS     │   questions      │   │   │
+│                                │ - generate-      │   │   │
+│                                │   explanation    │   │   │
+│                                │ - healthCheck    │   │   │
+│                                └──────────────────┘   │   │
+│                                        │               │   │
+│  ┌──────────────────┐          ┌────────▼─────────┐   │   │
+│  │ IndexedDB        │          │ Environment Vars │   │   │
+│  │ - Sessions       │          │ - ANTHROPIC_KEY  │   │   │
+│  │ - Questions      │          │ - Config         │   │   │
+│  │ - Settings       │          └──────────────────┘   │   │
+│  └──────────────────┘                                 │   │
 │         │                                             │   │
 │  ┌──────▼──────────┐                                 │   │
 │  │ Service Worker  │                          ┌──────▼───▼─┐
@@ -90,6 +99,8 @@ Before starting Epic 3, you should have completed:
 │  │ Structured   │  │ Error        │  │ Performance  │     │
 │  │ Logging      │  │ Tracking     │  │ Monitoring   │     │
 │  └──────────────┘  └──────────────┘  └──────────────┘     │
+│                                                             │
+│  (Phase 7: Application Insights for Azure backend)         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -685,6 +696,122 @@ Beta test with real users, gather feedback, and iterate.
 
 ---
 
+### **Phase 7: Azure Functions Migration (Optional)** ⭐ *Nice to Have*
+Explore Azure serverless ecosystem by migrating backend from Netlify to Azure Functions.
+
+📄 [PHASE7_AZURE_MIGRATION.md](../parking_lot/PHASE7_AZURE_MIGRATION.md)
+
+**Status:** Optional enhancement - only if you want Azure experience
+
+**Learning Objectives:**
+- Understand Azure Functions architecture
+- Compare serverless platforms (Netlify vs Azure)
+- Migrate functions between platforms
+- Configure Azure-specific features
+- Use Application Insights for monitoring
+
+**Why This is Optional:**
+- ✅ Netlify Functions work perfectly for QuizMaster
+- ✅ Free tier (125K requests/month) is sufficient
+- ✅ Current setup is simple and reliable
+- ⚠️ Azure adds complexity without critical benefits
+
+**Why You Might Want It:**
+- 🎓 Learn Azure cloud platform
+- 📈 Higher free tier (1M requests/month vs 125K)
+- 🏢 Enterprise features (VNet, private endpoints, Azure AD)
+- 🔧 Advanced triggers (queues, timers, events)
+- 💼 Resume value (Azure experience)
+- 🔄 Platform portability (dual backend support)
+
+**What You'll Build:**
+- ✅ Azure Functions App (HTTP triggers)
+- ✅ All three functions migrated (same functionality)
+- ✅ Dual backend support (switch via config)
+- ✅ Application Insights monitoring
+- ✅ (Optional) Azure Key Vault for secrets
+
+**Key Features:**
+- Frontend can switch between Netlify/Azure
+- Code 95% identical (easy migration)
+- Azure offers more free requests (8x more!)
+- Advanced monitoring with Application Insights
+- Can run both backends simultaneously
+
+**Estimated Time:** 2-3 sessions
+
+**Success Criteria:**
+- ✅ Azure Functions deployed and working
+- ✅ Frontend can call either backend via config
+- ✅ Application Insights collecting telemetry
+- ✅ All API endpoints functional
+- ✅ Understanding of Azure vs Netlify tradeoffs
+
+**Decision Matrix:**
+- **Do Phase 7 if:** You want Azure experience, need higher limits, exploring cloud options
+- **Skip Phase 7 if:** Current setup works great, want to finish Epic 3 faster, prefer simplicity
+
+---
+
+### **Phase 8: OAuth Integration (Optional)** ⭐ *Experimental*
+Explore OAuth 2.0 authentication with Claude API as an alternative to static API keys.
+
+📄 [PHASE8_OAUTH.md](../parking_lot/PHASE8_OAUTH.md)
+
+**Status:** Optional/Experimental - OAuth availability unconfirmed
+
+**Learning Objectives:**
+- Understand OAuth 2.0 authorization code flow
+- Implement PKCE (Proof Key for Code Exchange)
+- Handle OAuth redirects in PWA context
+- Secure token storage in IndexedDB
+- Automatic token refresh logic
+
+**Why This is Optional:**
+- ✅ API keys work perfectly (simpler)
+- ⚠️ OAuth may not be publicly available yet
+- ⚠️ Significantly more complex
+- ⚠️ Requires backend token handling
+
+**Why You Might Want It:**
+- 🎓 Learn industry-standard OAuth patterns
+- 🔒 More secure than storing API keys
+- 👥 Foundation for multi-user support
+- 🔄 Automatic token rotation
+- 💼 Enterprise authentication experience
+
+**What You'll Build:**
+- ✅ OAuth 2.0 flow with PKCE
+- ✅ Secure token storage (IndexedDB)
+- ✅ OAuth callback handler
+- ✅ Token refresh logic
+- ✅ Dual auth support (OAuth + API keys)
+
+**Key Features:**
+- "Sign in with Claude" button
+- Automatic token refresh when expired
+- Fallback to API keys if OAuth unavailable
+- Security best practices (PKCE, state parameter)
+
+**Estimated Time:** 2-3 sessions
+
+**Success Criteria:**
+- ✅ OAuth availability confirmed (or documented as unavailable)
+- ✅ If available: Full OAuth flow working
+- ✅ Tokens stored securely in IndexedDB
+- ✅ Token refresh implemented
+- ✅ Settings page supports both auth methods
+- ✅ Graceful fallback to API keys
+
+**⚠️ Important Note:**
+As of November 2025, Anthropic's OAuth for Claude API may not be publicly available. This phase is experimental and documents the implementation approach for when OAuth becomes available.
+
+**Decision Matrix:**
+- **Do Phase 8 if:** OAuth is available, you want to learn OAuth 2.0, building multi-user features
+- **Skip Phase 8 if:** OAuth not available yet, API keys sufficient, want simpler implementation
+
+---
+
 ## Success Criteria (Epic 3 Complete)
 
 ### Technical Milestones
@@ -720,7 +847,8 @@ Beta test with real users, gather feedback, and iterate.
 
 **Time Savings from Previous Epics**: ~5-7 sessions saved on testing, deployment, and infrastructure!
 
-**Total: ~10-14 sessions** (at your own pace)
+**Core Epic: ~10-14 sessions** (at your own pace)
+**With Optional Phases: ~14-20 sessions**
 
 | Phase | Sessions | Focus | Notes |
 |-------|----------|-------|-------|
@@ -730,9 +858,13 @@ Beta test with real users, gather feedback, and iterate.
 | Phase 4 | 2-3 | Observability | New: Logging, monitoring |
 | Phase 5 | 1-2 | Project Structure | Cleanup and documentation |
 | Phase 6 | Ongoing | Validation & Iteration | Real user testing |
+| **Phase 7** | **2-3** | **Azure Migration** | **⭐ Optional: Azure experience** |
+| **Phase 8** | **2-3** | **OAuth Integration** | **⭐ Optional/Experimental** |
 
-**Phases 1-5**: ~10-15 sessions (core development)
+**Core Phases (1-6)**: ~10-15 sessions (required)
 **Phase 6**: Ongoing (can overlap with future epics)
+**Phase 7**: +2-3 sessions (optional Azure)
+**Phase 8**: +2-3 sessions (optional OAuth, if available)
 
 ---
 
@@ -828,6 +960,18 @@ Beta test with real users, gather feedback, and iterate.
 
 ## Future Epics (Post-V2)
 
+**Optional: Epic 3 Phase 7 - Azure Functions Migration**
+- If you want Azure experience before moving to Epic 4
+- Learn cloud platform portability
+- Dual backend architecture
+- See [PHASE7_AZURE_MIGRATION.md](../parking_lot/PHASE7_AZURE_MIGRATION.md)
+
+**Optional: Epic 3 Phase 8 - OAuth Integration**
+- If Anthropic OAuth becomes available
+- Learn OAuth 2.0 authentication flows
+- Foundation for multi-user features
+- See [PHASE8_OAUTH.md](../parking_lot/PHASE8_OAUTH.md)
+
 **Potential Epic 04: QuizMaster V3 - Advanced Features**
 - Spaced repetition algorithm
 - Photo upload from textbooks (OCR)
@@ -844,6 +988,7 @@ Beta test with real users, gather feedback, and iterate.
 - Subscription management
 - Admin dashboard
 - Advanced analytics
+- Production deployment at scale (Azure or AWS)
 
 ---
 
@@ -869,10 +1014,12 @@ We'll start with Phase 1: Backend Integration, building your first serverless fu
 
 **External Resources:**
 - [Netlify Functions Docs](https://docs.netlify.com/functions/overview/)
+- [Azure Functions Docs](https://learn.microsoft.com/en-us/azure/azure-functions/) (Phase 7)
 - [Vite PWA Plugin](https://vite-pwa-org.netlify.app/)
 - [Workbox](https://developers.google.com/web/tools/workbox)
 - [Anthropic Claude API](https://docs.anthropic.com/claude/reference/getting-started-with-the-api)
 - [Lighthouse PWA Audit](https://web.dev/lighthouse-pwa/)
+- [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) (Phase 7)
 
 ---
 
