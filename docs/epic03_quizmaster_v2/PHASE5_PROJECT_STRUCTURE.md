@@ -3,7 +3,7 @@
 **Epic:** 3 - QuizMaster V2
 **Status:** Not Started
 **Estimated Time:** 1-2 sessions
-**Prerequisites:** Phases 1-4 complete
+**Prerequisites:** Phases 1-3.5 and Phase 4 complete
 
 ---
 

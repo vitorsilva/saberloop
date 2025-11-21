@@ -1203,7 +1203,14 @@ Visit: `https://your-app.netlify.app`
 - ✅ Easy settings management
 - ✅ Clean navigation
 
-**Move to Phase 4:**
+**Move to Phase 3.5:**
+- Branding & Identity
+- Choose final app name
+- Design custom icon
+- Remove "demo-pwa-app" references
+- Define visual identity
+
+**Then Phase 4:**
 - Observability & Telemetry
 - Structured logging
 - Error tracking

@@ -3,7 +3,7 @@
 **Epic:** 3 - QuizMaster V2
 **Status:** Not Started
 **Estimated Time:** 2-3 sessions
-**Prerequisites:** Phases 1-3 complete
+**Prerequisites:** Phases 1-3 and Phase 3.5 (Branding) complete
 
 ---
 

@@ -3,7 +3,7 @@
 **Epic:** 3 - QuizMaster V2
 **Status:** Not Started
 **Estimated Time:** Ongoing (3-4 weeks recommended)
-**Prerequisites:** Phases 1-5 complete
+**Prerequisites:** Phases 1-3.5, 4-5 complete
 
 ---
 

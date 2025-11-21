@@ -400,6 +400,24 @@ git push origin main
 
 ---
 
+### Phase 3.5: Branding & Identity
+
+**Critical tests:**
+- ✅ App name updated in manifest.json
+- ✅ Custom icons load correctly (192x192, 512x512)
+- ✅ No "demo-pwa-app" references in code
+- ✅ PWA installs with new branding
+- ✅ Browser tab shows correct title
+- ✅ Installed app shows correct name/icon
+
+**Deployment critical:**
+- ✅ Manifest.json deployed with new branding
+- ✅ Icon files present at correct paths
+- ✅ Cache cleared to show new branding
+- ✅ Theme colors applied
+
+---
+
 ### Phase 4: Observability
 
 **Critical tests:**

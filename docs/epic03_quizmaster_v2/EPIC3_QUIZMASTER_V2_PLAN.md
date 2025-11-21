@@ -114,6 +114,7 @@ Before starting Epic 3, you should have completed:
 | **Settings** | Hardcoded | User-configurable |
 | **Home Page** | Mock recent topics | Dynamic from DB |
 | **Navigation** | 3 items (Home, Topics, Profile) | 2 items (Home, Settings) |
+| **Branding** | "demo-pwa-app" placeholder | Professional name & icon |
 | **Logging** | Console.log | Structured observability |
 | **Documentation** | Learning-focused | Product-focused |
 | **Status** | Learning project | Production product |
@@ -272,6 +273,106 @@ Refine user interface with dynamic data, settings management, and navigation imp
 - API key validation works
 - Navigation clean and purposeful
 - Responsive on mobile and desktop
+
+---
+
+### **Phase 3.5: Branding & Identity** (2-3 sessions)
+Transform QuizMaster from demo project to branded product with professional identity.
+
+📄 [PHASE3.5_BRANDING.md](./PHASE3.5_BRANDING.md)
+
+**Learning Objectives:**
+- Brainstorm and evaluate product names
+- Design or generate app icons
+- Define visual identity (colors, theme)
+- Remove "demo-pwa-app" references from codebase
+- Consider landing page design
+- Think like a product marketer
+
+**Current State:**
+- ⚠️ "demo-pwa-app" repository name
+- ⚠️ Generic placeholder icons
+- ⚠️ "QuizMaster" working title
+- ⚠️ No cohesive visual identity
+- ⚠️ Mixed learning/product branding
+
+**Target State:**
+- ✅ Final product name chosen
+- ✅ Custom app icon (192x192, 512x512)
+- ✅ Defined color scheme and theme
+- ✅ All "demo-pwa-app" references replaced
+- ✅ Updated manifest.json with branding
+- ✅ Optional: Landing page concept
+
+**Activities:**
+
+#### 3.5.1 Name Brainstorming Session
+**Process:**
+- Define naming criteria (memorable, descriptive, available)
+- Brainstorm across categories (descriptive, playful, abstract)
+- Evaluate with scoring matrix
+- Check domain availability
+- Get feedback from potential users
+- Make final decision and document rationale
+
+**Deliverables:**
+- Name evaluation matrix
+- Domain availability check
+- Final name decision document
+
+#### 3.5.2 Visual Identity
+**Design:**
+- Create or generate app icon (AI tools, Figma, etc.)
+- Choose color palette (primary, secondary, error)
+- Test accessibility (WCAG contrast ratios)
+- Generate required icon sizes (192x192, 512x512)
+
+**Deliverables:**
+- App icons saved in `public/icons/`
+- Color scheme defined in CSS variables
+- Visual style guide (simple)
+
+#### 3.5.3 Codebase Branding Update
+**Files to update:**
+- `package.json` (name, description)
+- `manifest.json` (name, short_name, theme_color)
+- `index.html` (title tag)
+- `CLAUDE.md` (project overview)
+- Any remaining "demo-pwa-app" references
+
+**Process:**
+```bash
+# Search for old branding
+grep -r "demo-pwa-app" .
+grep -r "Demo PWA" .
+
+# Replace systematically
+```
+
+#### 3.5.4 Landing Page (Optional)
+**Decision point:** Build now or defer to post-MVP?
+
+**If building:**
+- Simple single-page site
+- Hero, features, how it works, CTA
+- Can be separate from main app
+- Minimal investment (1-2 hours)
+
+**Deliverables:**
+- ✅ Final app name and icon
+- ✅ Updated manifest.json
+- ✅ Updated package.json
+- ✅ Codebase cleaned of old references
+- ✅ Color scheme applied
+- ✅ (Optional) Landing page HTML
+
+**Success Criteria:**
+- Professional name that resonates with users
+- Icon recognizable at all sizes
+- PWA installs with new branding
+- No "demo" references remain
+- Visual identity feels cohesive
+- Ready for public launch
 
 ---
 
@@ -820,6 +921,8 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 - ✅ Production offline works (Lighthouse 100/100)
 - ✅ Settings page functional
 - ✅ Dynamic home page rendering real data
+- ✅ Professional branding (name, icon, colors)
+- ✅ No "demo-pwa-app" references remain
 - ✅ Structured logging throughout app
 - ✅ Error tracking and performance monitoring
 - ✅ Clean, well-documented codebase
@@ -831,11 +934,14 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 - ✅ Positive feedback on question quality
 - ✅ Offline mode works seamlessly
 - ✅ Settings easy to configure
+- ✅ App has memorable, professional name
+- ✅ Custom icon appears when installed
 - ✅ No critical bugs in production
 - ✅ App feels polished and professional
 
 ### Product Milestones
 - ✅ Transitioned from learning project to product
+- ✅ Professional brand identity established
 - ✅ Clear documentation for users and contributors
 - ✅ Observability enables debugging
 - ✅ Codebase ready for open-source
@@ -847,21 +953,22 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 
 **Time Savings from Previous Epics**: ~5-7 sessions saved on testing, deployment, and infrastructure!
 
-**Core Epic: ~10-14 sessions** (at your own pace)
-**With Optional Phases: ~14-20 sessions**
+**Core Epic: ~12-17 sessions** (at your own pace)
+**With Optional Phases: ~16-23 sessions**
 
 | Phase | Sessions | Focus | Notes |
 |-------|----------|-------|-------|
 | Phase 1 | 2-3 | Backend Integration | New: Serverless functions |
 | Phase 2 | 2-3 | Offline Capabilities | New: Vite PWA Plugin |
 | Phase 3 | 3-4 | UI Polish | New: Settings, dynamic data |
+| **Phase 3.5** | **2-3** | **Branding & Identity** | **New: Name, icon, visual identity** |
 | Phase 4 | 2-3 | Observability | New: Logging, monitoring |
 | Phase 5 | 1-2 | Project Structure | Cleanup and documentation |
 | Phase 6 | Ongoing | Validation & Iteration | Real user testing |
 | **Phase 7** | **2-3** | **Azure Migration** | **⭐ Optional: Azure experience** |
 | **Phase 8** | **2-3** | **OAuth Integration** | **⭐ Optional/Experimental** |
 
-**Core Phases (1-6)**: ~10-15 sessions (required)
+**Core Phases (1-3.5, 4-6)**: ~12-18 sessions (required)
 **Phase 6**: Ongoing (can overlap with future epics)
 **Phase 7**: +2-3 sessions (optional Azure)
 **Phase 8**: +2-3 sessions (optional OAuth, if available)
