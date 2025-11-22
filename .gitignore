@@ -10,3 +10,5 @@ playwright-report/
 playwright/.cache/
 coverage/
 .playwright-mcp/
+# Local Netlify folder
+.netlify
