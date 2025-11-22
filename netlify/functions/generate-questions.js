@@ -31,7 +31,7 @@
     };
   }
 
-  exports.handler = async (event, context) => {
+  export const handler = async (event, context) => {
     // Handle CORS preflight (browsers send this before POST)
     if (event.httpMethod === 'OPTIONS') {
       return {

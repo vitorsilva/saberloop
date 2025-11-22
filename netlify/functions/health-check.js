@@ -5,7 +5,7 @@
     'Access-Control-Allow-Headers': 'Content-Type'
   };
 
-  exports.handler = async (event, context) => {
+  export const handler = async (event, context) => {
     if (event.httpMethod === 'OPTIONS') {
       return {
         statusCode: 200,
