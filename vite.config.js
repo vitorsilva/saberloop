@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    base: '/demo-pwa-app/',  // Add this line!
+    base: '/',  // Add this line!
 
     // Root directory (where index.html is)
     root: '.',
