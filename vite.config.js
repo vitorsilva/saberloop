@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite';
 
-export default defineConfig({
-    base: process.env.NETLIFY ? '/' : '/demo-pwa-app/',  
+export default defineConfig(({ command }) => ({
+    // Base path logic:
+    // - Dev server (npm run dev): always use root
+    // - Production build: use root on Netlify, subpath otherwise
+    base: command === 'serve' ? '/' : (process.env.NETLIFY ? '/' : '/demo-pwa-app/'),        
 
     // Root directory (where index.html is)
     root: '.',
@@ -30,4 +33,4 @@ export default defineConfig({
         port: 3000,
         open: true
     }
-});
+}));

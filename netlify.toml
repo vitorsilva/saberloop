@@ -3,12 +3,6 @@ command = "npm run build"
 publish = "dist"
 functions = "netlify/functions"
 
-# Redirect all routes to index.html for SPA routing
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
 # Local development configuration
 [dev]
 command = "vite"

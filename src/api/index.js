@@ -1,4 +1,4 @@
-  const USE_REAL_API = import.meta.env.PROD;  // Use real API in production
+const USE_REAL_API = import.meta.env.PROD || import.meta.env.VITE_USE_REAL_API === 'true';
 
   let api;
 
