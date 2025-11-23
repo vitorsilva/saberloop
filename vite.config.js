@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    base: '/',  // Add this line!
+    base: process.env.NETLIFY ? '/' : '/demo-pwa-app/',  
 
     // Root directory (where index.html is)
     root: '.',
