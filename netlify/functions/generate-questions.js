@@ -108,12 +108,15 @@
     {
       "question": "The question text here?",
       "options": ["A) option1", "B) option2", "C) option3", "D) option4"],
-      "correct": "A",
+      "correct": "0",  // Index of correct option (0-3)
       "difficulty": "easy"
     }
   ]
 
-  IMPORTANT: Return ONLY the JSON array, no other text before or after.`;
+  IMPORTANT:
+  - The "correct" field must be a NUMBER (0 for first option, 1 for second option, 2 for       
+  third option, 3 for fourth option)
+  - Return ONLY the JSON array, no other text before or after.`;
 
       // Call Anthropic API
       const response = await fetch('https://api.anthropic.com/v1/messages', {
