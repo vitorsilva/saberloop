@@ -142,6 +142,8 @@ export default class QuizView extends BaseView {
 
       // Save answer
       this.answers[this.currentQuestionIndex] = this.selectedAnswer;
+console.log(this.answers);
+
 
       // Move to next question or finish
       if (this.currentQuestionIndex < this.questions.length - 1) {

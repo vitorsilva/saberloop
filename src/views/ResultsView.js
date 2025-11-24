@@ -14,7 +14,7 @@ export default class ResultsView extends BaseView {
     // Calculate score
     let correctCount = 0;
     questions.forEach((question, index) => {
-      if (answers[index] === question.correctAnswer) {
+      if (Number(answers[index]) === Number(question.correct) ) {
         correctCount++;
       }
     });
@@ -39,9 +39,9 @@ export default class ResultsView extends BaseView {
 
     // Generate question review HTML
     const questionReviewHTML = questions.map((question, index) => {
-      const isCorrect = answers[index] === question.correctAnswer;
-      const userAnswer = question.options[answers[index]];
-      const correctAnswer = question.options[question.correctAnswer];
+      const isCorrect = Number(answers[index]) === Number(question.correct);
+      const userAnswer = question.options[Number(answers[index])];
+      const correctAnswer = question.options[Number(question.correct)];
 
       if (isCorrect) {
         return `
