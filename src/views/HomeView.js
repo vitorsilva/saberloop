@@ -1,4 +1,5 @@
 import BaseView from './BaseView.js';
+import { updateNetworkIndicator } from '../utils/network.js';
 
 export default class HomeView extends BaseView {
   render() {
@@ -107,6 +108,9 @@ export default class HomeView extends BaseView {
     `);
 
     this.attachListeners();
+
+    // Sync network indicator with current state
+    updateNetworkIndicator();    
   }
 
   attachListeners() {
