@@ -31,6 +31,8 @@
     "jsdom": "^27.0.1",
     "netlify-cli": "^23.11.1",
     "vite": "^7.1.12",
-    "vitest": "^4.0.1"
+    "vite-plugin-pwa": "^1.1.0",
+    "vitest": "^4.0.1",
+    "workbox-window": "^7.4.0"
   }
 }
