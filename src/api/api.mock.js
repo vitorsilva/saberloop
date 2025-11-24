@@ -1,4 +1,9 @@
 // api.mock.js - Mock API for testing without real Claude API calls
+    const devLog = (...args) => {
+      if (import.meta.env.DEV) {
+        console.log(...args);
+      }
+    };
 
   /**
    * Mock question generation - returns fake but realistic questions
@@ -10,10 +15,11 @@
     // Simulate network delay (real APIs take time)
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    console.log(`[MOCK API] Generating questions for "${topic}" (${gradeLevel})`);
+
+    devLog(`[MOCK API] Generating questions for "${topic}" (${gradeLevel})`);
 
     // Return realistic mock data
-    return [
+    const mockQuestions = [
       {
         question: `What is the main concept behind ${topic}?`,
         options: [
@@ -70,6 +76,10 @@
         difficulty: "challenging"
       }
     ];
+
+    devLog('[MOCK API] Generated questions:', mockQuestions);
+
+    return mockQuestions;
   }
 
   /**
@@ -85,9 +95,9 @@
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    console.log(`[MOCK API] Generating explanation for incorrect answer`);
+    devLog(`[MOCK API] Generating explanation for incorrect answer`);
 
-    return `Your answer (${userAnswer}) wasn't quite right, but that's okay - this is how we learn!    
+    const mockExplanation =  `Your answer (${userAnswer}) wasn't quite right, but that's okay - this is how we learn!    
 
 
   The correct answer is ${correctAnswer}. This is because the concept works differently than you       
@@ -96,4 +106,8 @@
 
   The key thing to remember is that understanding the foundations helps everything else make sense.    
    Keep practicing, and you'll get it! 🌟`;
+   
+   devLog('[MOCK API] Generated explanation:', mockExplanation);
+   
+   return mockExplanation;
   }

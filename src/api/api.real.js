@@ -1,10 +1,19 @@
  const FUNCTIONS_URL = '/.netlify/functions';
 
-  /**
+    const devLog = (...args) => {
+      if (import.meta.env.DEV) {
+        console.log(...args);
+      }
+    };
+
+    /**
    * Generate quiz questions (via backend)
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school') {
     try {
+
+      devLog(`[REAL API] Generating questions for "${topic}" (${gradeLevel})`);
+      
       const response = await fetch(`${FUNCTIONS_URL}/generate-questions`, {
         method: 'POST',
         headers: {
@@ -19,6 +28,9 @@
       }
 
       const data = await response.json();
+
+      devLog('[REAL API] Generated questions:', data.questions);
+
       return data.questions;
 
     } catch (error) {
@@ -32,6 +44,9 @@
    */
   export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel    
    = 'middle school') {
+
+    devLog(`[REAL API] Generating explanation for incorrect answer`);
+
     try {
       const response = await fetch(`${FUNCTIONS_URL}/generate-explanation`, {
         method: 'POST',
@@ -47,6 +62,9 @@
       }
 
       const data = await response.json();
+
+      devLog('[REAL API] Generated explanation:', data.explanation);
+
       return data.explanation;
 
     } catch (error) {
