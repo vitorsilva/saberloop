@@ -534,6 +534,372 @@ src/api/index.js                  (smart loader with environment detection)
 
 ---
 
+## Session 2: Understanding the Complete Deployment Stack
+
+**Date:** November 24, 2025
+**Focus:** Clarifying deployment workflow, testing strategies, and production readiness
+
+---
+
+### Understanding the Deployment Evolution
+
+**The journey from static to serverless:**
+
+```
+Phase 4.1 (Epic 01): Static Files
+├─ http-server or nginx
+└─ Just serves HTML/CSS/JS
+
+Phase 4.2 (Epic 01): Build Tools Added
+├─ Vite transforms source → dist/
+├─ Minification, bundling, cache busting
+└─ GitHub Pages serves dist/
+
+Phase 4.5 (Epic 01): CI/CD Added
+├─ GitHub Actions automates build
+├─ Runs tests before deploy
+└─ Auto-deploys to GitHub Pages
+
+Phase 1 (Epic 03): Serverless Backend
+├─ Frontend: Vite (HMR, optimization)
+├─ Backend: Netlify Functions (Node.js runtime)
+└─ Full-stack deployment to Netlify
+```
+
+---
+
+### The Complete Development Workflow
+
+**Local Development Flow:**
+
+```
+npm run dev
+  ↓
+package.json: "dev": "netlify dev"
+  ↓
+Netlify CLI starts on port 8888
+  ↓
+Reads netlify.toml: [dev] command = "vite"
+  ↓
+Starts Vite on port 3000
+  ↓
+Vite reads vite.config.js
+  ├─ server: { port: 3000, open: false }
+  └─ base: '/' (dev mode uses root)
+  ↓
+Netlify CLI proxies requests:
+  ├─ Frontend requests → Vite (:3000)
+  └─ Function requests → Node.js runtime
+  ↓
+Access: http://localhost:8888
+```
+
+**Key insight:** You only need ONE command (`npm run dev`), not multiple servers!
+
+---
+
+### Understanding vite.config.js
+
+**The `command` parameter:**
+
+Vite provides this automatically:
+- `command === 'serve'` - When running dev server (`vite` or `npm run dev`)
+- `command === 'build'` - When building for production (`vite build`)
+
+**Original base path logic (confusing):**
+```javascript
+base: command === 'serve' ? '/' : (process.env.NETLIFY ? '/' : '/demo-pwa-app/')
+```
+
+**Three scenarios:**
+1. Dev mode → `/`
+2. Build on Netlify → `/`
+3. Build for GitHub Pages → `/demo-pwa-app/`
+
+**Simplified (if only using Netlify):**
+```javascript
+base: '/'  // Always root - no conditionals!
+```
+
+**Learning:** Configuration can be simplified once you commit to one deployment platform.
+
+---
+
+### Testing Strategies: Mock vs Real API
+
+**API Selection Logic (`src/api/index.js`):**
+```javascript
+const USE_REAL_API = import.meta.env.PROD || import.meta.env.VITE_USE_REAL_API === 'true';
+```
+
+**Three testing scenarios:**
+
+| Scenario | .env Setting | API Used | Port | Cost |
+|----------|--------------|----------|------|------|
+| Local Mock | `VITE_USE_REAL_API=false` | Mock | 8888 | $0 |
+| Local Real | `VITE_USE_REAL_API=true` | Claude | 8888 | $0.01/quiz |
+| Production | (env var in Netlify) | Claude | - | $0.01/quiz |
+
+**How to switch:**
+1. Edit `.env` file: `VITE_USE_REAL_API=false` (mock) or `=true` (real)
+2. Restart dev server: Stop (Ctrl+C) and run `npm run dev` again
+3. Check console: `🔧 Using mock API` or `🚀 Using real API`
+
+**Important:** Must restart! Vite only reads `.env` on startup.
+
+---
+
+### Dev-Only Logging Strategy
+
+**The Problem:**
+```javascript
+console.log('Debug info');  // Runs in BOTH dev and production!
+```
+
+While production users might not see console, the code still executes and could expose data.
+
+**The Solution:**
+```javascript
+// Helper function at top of file
+const devLog = (...args) => {
+  if (import.meta.env.DEV) {
+    console.log(...args);
+  }
+};
+
+// Usage
+devLog('[REAL API] Generated questions:', data.questions);
+```
+
+**How it works:**
+- `import.meta.env.DEV` is `true` in development, `false` in production
+- During production build, Vite sees `if (false) { ... }` and removes entire block
+- Result: Zero bytes in production bundle, no security risk
+
+**Best practice:**
+- Use `devLog()` for debug information
+- Keep `console.error()` for real errors (useful in production)
+
+**Applied to:**
+- `src/api/api.mock.js` - Log mock responses
+- `src/api/api.real.js` - Log API responses
+
+---
+
+### UI Fixes: Text Truncation
+
+**The Problem:**
+
+Tailwind CSS classes were cutting off long text:
+- `truncate` - Shows ellipsis (`...`) for overflow
+- `line-clamp-1` - Limits to 1 line with ellipsis
+- `line-clamp-2` - Limits to 2 lines with ellipsis
+
+**Example:**
+```html
+<span class="truncate">A) He believes music should never...</span>
+```
+
+**The Fix:**
+
+**QuizView.js (line 79):**
+```javascript
+// Before
+<span class="truncate">${option}</span>
+
+// After
+<span class="text-left">${option}</span>
+```
+
+**ResultsView.js (lines 54, 55, 73, 74, 75):**
+```javascript
+// Before
+<p class="... line-clamp-2">${question.question}</p>
+<p class="... line-clamp-1">Your answer: ${userAnswer}</p>
+
+// After (remove line-clamp)
+<p class="... ">${question.question}</p>
+<p class="... ">Your answer: ${userAnswer}</p>
+```
+
+**Also fixed:** Content hidden behind fixed button (ResultsView.js line 98)
+```javascript
+// Before
+<main class="flex-grow px-4 pt-6 pb-28">
+
+// After (more bottom padding)
+<main class="flex-grow px-4 pt-6 pb-40">
+```
+
+**Result:** Full text wraps properly, buttons grow to fit content.
+
+---
+
+### Request Routing in Netlify CLI
+
+**How Netlify CLI decides where to send requests:**
+
+```
+Request arrives at localhost:8888
+    ↓
+Is path "/.netlify/functions/*"?
+    ↓
+  YES                    NO
+    ↓                     ↓
+Execute function    Proxy to Vite (port 3000)
+(Node.js runtime)   (Frontend files)
+    ↓                     ↓
+Return JSON         Return HTML/CSS/JS
+```
+
+**Examples:**
+
+**Frontend request:**
+```
+GET http://localhost:8888/index.html
+  → Netlify proxies to http://localhost:3000/index.html
+  → Vite serves file
+  → Returns HTML
+```
+
+**Function request:**
+```
+POST http://localhost:8888/.netlify/functions/generate-questions
+  → Netlify loads netlify/functions/generate-questions.js
+  → Executes function
+  → Returns JSON
+```
+
+---
+
+### Environment Variables: Two Types
+
+**Frontend Environment Variables (Vite):**
+```javascript
+import.meta.env.DEV        // true in dev, false in prod
+import.meta.env.PROD       // true in prod, false in dev
+import.meta.env.VITE_USE_REAL_API  // Custom env var (must start with VITE_)
+```
+
+**Characteristics:**
+- Compiled into JavaScript bundle
+- Visible in DevTools (NOT secure!)
+- Use for: Non-sensitive config (feature flags, API endpoints)
+
+**Backend Environment Variables (Node.js):**
+```javascript
+process.env.ANTHROPIC_API_KEY
+process.env.NETLIFY
+```
+
+**Characteristics:**
+- Only exist on server/function runtime
+- Never exposed to browser (secure!)
+- Use for: API keys, secrets, credentials
+
+**Configuration:**
+- Local: `.env` file (gitignored)
+- Production: Netlify dashboard → Environment variables
+
+---
+
+### Why Not Use http-server Anymore?
+
+**Question:** Can't we use http-server (from Phase 4.1) for local testing?
+
+**Answer:** No, because:
+
+**http-server:**
+```
+✅ Serves static files (HTML, CSS, JS)
+❌ Cannot execute Node.js functions
+❌ No serverless runtime
+```
+
+**Netlify CLI:**
+```
+✅ Serves static files (via Vite proxy)
+✅ Executes serverless functions
+✅ Mimics production environment
+```
+
+**If you tried http-server:**
+```
+http://localhost:8080
+  ↓
+Frontend loads ✅
+  ↓
+Tries to call /.netlify/functions/generate-questions
+  ↓
+404 Not Found ❌ (http-server doesn't have functions!)
+```
+
+**Lesson:** Once you add a backend, you need a tool that can run both frontend AND backend. That's why we switched to Netlify CLI.
+
+---
+
+### The Streamlined Reality
+
+**Old mental model (confusing):**
+```
+"I have http-server, nginx, Docker, Vite, Netlify CLI... which do I use?"
+```
+
+**New mental model (clear):**
+```
+Development:  npm run dev     (one command - Netlify CLI + Vite)
+Production:   git push        (Netlify auto-deploys)
+```
+
+**That's it!** Two commands total.
+
+---
+
+### Tools Summary: What Each Does
+
+| Tool | Purpose | When Used | Status |
+|------|---------|-----------|--------|
+| **http-server** | Simple static file server | Phase 4.1 learning | ⚪ Retired |
+| **nginx (Docker)** | Production web server | Phase 4.1 learning | ⚪ Retired |
+| **Vite** | Build tool + dev server | Development + builds | ✅ Active |
+| **Netlify CLI** | Local serverless runtime | Development | ✅ Active |
+| **Netlify** | Production hosting | Production | ✅ Active |
+
+**Progression:** Simple → Complex → Simplified
+- Started simple (http-server)
+- Learned complexity (Docker, nginx)
+- Ended with right tool for the job (Netlify CLI)
+
+---
+
+## Key Learnings from Session 2
+
+**Conceptual:**
+
+1. **Development stacks evolve** - From static to serverless, each tool serves a purpose at the right time
+2. **Simplification comes after understanding** - Tried many tools, kept what's needed
+3. **One command is powerful** - Good tooling hides complexity (`npm run dev` does everything)
+4. **Environment variables have scope** - Frontend (visible) vs Backend (secure)
+5. **Testing strategies matter** - Mock for speed, real for confidence
+
+**Technical:**
+
+1. **Vite config can be simplified** - Once you commit to one deployment platform
+2. **Dev-only code is stripped** - `import.meta.env.DEV` lets Vite remove debug code
+3. **CSS utility classes need care** - `truncate` and `line-clamp` can hide content
+4. **Request routing is intelligent** - Netlify CLI knows where to send each request
+5. **Restarts matter** - Vite only reads `.env` on startup
+
+**Debugging:**
+
+1. **Console messages reveal mode** - "Using mock API" vs "Using real API"
+2. **Long text needs wrapping** - Remove truncation classes for full display
+3. **Fixed elements need padding** - Bottom content needs space for fixed UI
+4. **Network tab shows truth** - Check if functions are being called
+5. **Environment vars need restart** - Change `.env` → restart server
+
+---
+
 ## Next Steps
 
 **Remaining Phase 1 Tasks:**
@@ -584,6 +950,12 @@ src/api/index.js                  (smart loader with environment detection)
 
 ---
 
-**Session completed:** November 23, 2025
+**Session 1 completed:** November 23, 2025
 **Total time:** ~3 hours
-**Next session:** Finalize deployment, then Phase 2 (Offline Capabilities)
+**Focus:** Backend integration, serverless functions, local testing
+
+**Session 2 completed:** November 24, 2025
+**Total time:** ~2 hours
+**Focus:** Understanding deployment stack, testing strategies, UI fixes
+
+**Next session:** Finalize Netlify production deployment, then Phase 2 (Offline Capabilities)
