@@ -4,10 +4,12 @@ export default defineConfig(({ command }) => ({
     // Base path logic:
     // - Dev server (npm run dev): always use root
     // - Production build: use root on Netlify, subpath otherwise
+    // command === 'serve' means npm run dev
     base: command === 'serve' ? '/' : (process.env.NETLIFY ? '/' : '/demo-pwa-app/'),        
 
     // Root directory (where index.html is)
     root: '.',
+
 
     // Build configuration
     build: {
@@ -31,6 +33,6 @@ export default defineConfig(({ command }) => ({
     // Development server configuration
     server: {
         port: 3000,
-        open: true
+        open: false
     }
 }));
