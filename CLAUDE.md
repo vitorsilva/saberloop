@@ -4,9 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a learning-focused Progressive Web App (PWA) project - a simple text echo application that demonstrates core PWA concepts. The project follows a guided, incremental learning methodology documented in `docs/epic01_infrastructure/LEARNING_PLAN.md` with detailed phase notes in `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md` files.
+This is a learning-focused Progressive Web App (PWA) project that has evolved through multiple epics:
 
-The project has evolved into **Epic 02: QuizMaster V1** - an AI-powered quiz application documented in `docs/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md`.
+- **Epic 01: Infrastructure** - PWA fundamentals (service workers, offline, installation)
+- **Epic 02: QuizMaster V1** - Initial AI-powered quiz application with mock API
+- **Epic 03: QuizMaster V2** - Production-ready version with real backend integration ✅ **Current**
+
+The project follows a guided, incremental learning methodology with detailed documentation in `docs/epic0X_*/` directories.
+
+**Current Status:** Epic 03 Phase 1 (Backend Integration) - Complete ✅
 
 **Repository**: https://github.com/vitorsilva/demo-pwa-app
 
@@ -109,6 +115,7 @@ When user says "what's next" or similar:
 1. Determine which epic/learning plan is active:
    - Epic 01 (Infrastructure): `docs/epic01_infrastructure/LEARNING_PLAN.md` and `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - Epic 02 (QuizMaster V1): `docs/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and phase files
+   - Epic 03 (QuizMaster V2): `docs/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and `docs/epic03_quizmaster_v2/PHASE*_*.md` files
 2. Identify current phase and next step
 3. **Present the next topic and ask if they want to proceed**
 4. Once confirmed, **teach it step-by-step** (don't execute autonomously)
@@ -129,6 +136,7 @@ When the user asks **"what's next"** or similar phrases (e.g., "what should I do
 1. Determine the active epic/learning plan:
    - **Epic 01 (Infrastructure)**: Read `docs/epic01_infrastructure/LEARNING_PLAN.md` and check `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - **Epic 02 (QuizMaster V1)**: Read `docs/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and related phase files
+   - **Epic 03 (QuizMaster V2)**: Read `docs/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and related phase files
 2. Identify the current phase and next steps in the learning progression
 3. Guide the user through the next appropriate task or learning objective
 
@@ -139,6 +147,7 @@ When the user says **"that's a wrap"**, **"let's call it a day"**, **"let's paus
 1. Document the current state in the appropriate learning notes file for the active epic:
    - **Epic 01**: `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - **Epic 02**: Create/update learning notes in `docs/epic02_quizmaster_v1/`
+   - **Epic 03**: Update learning notes in `docs/epic03_quizmaster_v2/PHASE*_LEARNING_NOTES.md`
    - What was just completed in this session
    - Current phase and specific step/task
    - What's next when they resume
@@ -151,14 +160,25 @@ This is a learning-focused project with a structured progression - respect this 
 
 ### Core PWA Structure
 
-This is a vanilla JavaScript PWA with no build tools or frameworks - intentionally kept simple for learning purposes:
-
+**Frontend** - Vanilla JavaScript SPA with build tools (Epic 03+):
 - **index.html**: Main entry point with semantic HTML structure
-- **app.js**: Application logic, DOM manipulation, service worker registration, and install prompt handling
-- **sw.js**: Service worker with cache-first strategy for offline functionality
+- **src/main.js**: Application entry point, router initialization
+- **src/router/**: SPA routing system
+- **src/views/**: View components (QuizView, ResultsView, etc.)
+- **src/state/**: Global state management
+- **src/api/**: API clients (mock and real)
+- **src/db/**: IndexedDB wrapper for offline storage
+- **src/utils/**: Utility functions (network monitoring, etc.)
+- **public/sw.js**: Service worker with cache-first strategy
 - **manifest.json**: PWA manifest defining app metadata and icons
-- **styles.css**: Responsive styling with CSS Grid/Flexbox
-- **icons/**: App icons in required PWA sizes (192x192, 512x512)
+- **Build tools**: Vite for bundling and development
+
+**Backend** - Serverless architecture (Epic 03+):
+- **netlify/functions/generate-questions.js**: AI question generation via Claude API
+- **netlify/functions/generate-explanation.js**: AI explanations for wrong answers
+- **netlify/functions/health-check.js**: Backend health monitoring
+- **Deployment**: Netlify Functions (serverless)
+- **API Key**: Securely stored server-side only
 
 ### Service Worker Pattern
 
@@ -183,7 +203,20 @@ The app implements custom PWA installation using the `beforeinstallprompt` event
 
 ### Local Development Server
 
-Since this is a vanilla PWA with no build process, simply serve the files:
+**Current setup (Epic 03+)**: Use Netlify CLI for full-stack development:
+
+```bash
+# Start development server (runs Vite + Netlify Functions)
+npm run dev
+
+# Netlify CLI will:
+# - Start Vite dev server on port 3000
+# - Start Netlify Functions runtime
+# - Proxy everything through port 8888
+# - Access at: http://localhost:8888
+```
+
+**Legacy setup (Epic 01-02)**: Simple static file serving:
 
 ```bash
 # Using Python 3
@@ -195,6 +228,12 @@ npx http-server -p 8080
 # Using VS Code Live Server extension
 # Right-click index.html → "Open with Live Server"
 ```
+
+**Environment configuration**:
+- Edit `.env` file to switch between mock and real API
+- `VITE_USE_REAL_API=false` - Use mock API (no API costs)
+- `VITE_USE_REAL_API=true` - Use real Netlify Functions (requires API key)
+- Restart dev server after changing `.env`
 
 **Note**: PWA features like `beforeinstallprompt` require HTTPS. For local HTTPS testing, see `docs/epic01_infrastructure/PHASE4.1_LOCAL_HTTPS.md`.
 
@@ -210,6 +249,32 @@ When modifying sw.js:
 1. Open DevTools → Application → Service Workers
 2. Check "Offline" checkbox
 3. Refresh page - app should still work completely
+
+### Running Tests
+
+**Unit Tests** (Vitest):
+```bash
+npm test              # Run in watch mode
+npm test -- --run     # Run once and exit
+npm run test:coverage # With coverage report
+```
+
+**E2E Tests** (Playwright):
+```bash
+npm run test:e2e      # Run E2E tests headless
+npm run test:e2e:ui   # Run with Playwright UI
+```
+
+**Build Verification**:
+```bash
+npm run build         # Build for production
+npm run preview       # Preview production build locally
+```
+
+**CI Pipeline**:
+- GitHub Actions automatically runs all tests on every push
+- See `.github/workflows/test.yml` for CI configuration
+- Tests must pass before Netlify deploys
 
 ## Key Implementation Details
 
@@ -260,26 +325,52 @@ Located in `docs/epic02_quizmaster_v1/`:
 - **PHASE3_API_INTEGRATION.md**: Anthropic Claude API integration
 - **PHASES_4-10_SUMMARY.md**: Overview of remaining implementation phases
 
+### Epic 03: QuizMaster V2 (Production-Ready Backend) ✅ Current
+Located in `docs/epic03_quizmaster_v2/`:
+- **EPIC3_QUIZMASTER_V2_PLAN.md**: Complete Epic 3 multi-phase plan
+- **PHASE1_BACKEND.md**: Serverless backend integration (✅ Complete)
+- **PHASE1_LEARNING_NOTES.md**: Detailed learning notes with 4 sessions
+- **PHASE2_OFFLINE.md**: Offline capabilities (Next)
+- **PHASE3_PROJECT_STRUCTURE.md**: Code organization
+- **PHASE4_OBSERVABILITY.md**: Logging and monitoring
+- **PHASE5_PROJECT_STRUCTURE.md**: Advanced architecture
+- **PHASE6_VALIDATION.md**: Comprehensive testing
+
 When making changes, respect the learning-focused nature of the project. Keep code simple and well-commented rather than introducing complex patterns or dependencies.
 
 ## Deployment
 
-**Current deployment**: GitHub Pages (configured via repository Settings → Pages)
+**Current deployment**: Netlify (auto-deploy from GitHub)
 
-**Deployment URL pattern**: `https://yourusername.github.io/demo-pwa-app/`
+**Deployment URL**: Check Netlify dashboard for your site URL
 
-**Deploying updates**:
+**Deployment process**:
 ```bash
 git add .
 git commit -m "Description of changes"
 git push origin main
-# GitHub Pages automatically deploys within a few minutes
+
+# Automatically triggers:
+# 1. GitHub Actions (runs tests)
+# 2. Netlify (builds and deploys if tests pass)
 ```
 
+**Deployment architecture**:
+- **CI (Continuous Integration)**: GitHub Actions runs unit tests, E2E tests, and build verification
+- **CD (Continuous Deployment)**: Netlify watches GitHub repo and auto-deploys on push to main
+- **Functions**: Netlify Functions deployed to `/.netlify/functions/` endpoint
+- **Frontend**: Vite builds to `dist/` and Netlify serves from CDN
+
+**Configuration files**:
+- `.github/workflows/test.yml` - CI pipeline (testing)
+- `netlify.toml` - Build settings and function configuration
+- `.env` - Local environment variables (not committed)
+- Netlify Dashboard → Environment Variables - Production secrets
+
 **Important**: When deploying, ensure:
-1. Cache version in sw.js is incremented if any cached files changed
-2. All file paths in sw.js:3-11 `FILES_TO_CACHE` array are correct
-3. Manifest.json icon paths are valid
+1. Tests pass in GitHub Actions before merge
+2. Environment variables set in Netlify dashboard (e.g., `ANTHROPIC_API_KEY`)
+3. Service worker cache version incremented if cached files changed
 
 ## Testing on Mobile Devices
 
