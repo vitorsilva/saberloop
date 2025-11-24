@@ -305,6 +305,43 @@ export function initNetworkMonitoring() {
 - Helps with error debugging (source maps in production)
 - Optimized bundle delivery
 
+**⚠️ Known Issue from Phase 1 (Deferred to Phase 4):**
+
+**Tailwind CSS via CDN (Not Production-Ready)**
+
+Currently using: `<script src="https://cdn.tailwindcss.com"></script>` in `index.html`
+
+**Problem:**
+- Downloads entire Tailwind library (~3MB) at runtime
+- Browser processes CSS on-the-fly (slower performance)
+- Console warning: `"cdn.tailwindcss.com should not be used in production"`
+
+**Impact:**
+- Functional: ✅ Works perfectly (not blocking)
+- Performance: ⚠️ Slower initial load, extra 3MB download
+- User experience: ✅ Minimal impact
+
+**Why it was deferred:**
+- Phase 1 goal was "Backend Integration" - completed successfully ✅
+- Tailwind CDN was used for rapid prototyping in Epic 01 & 02
+- Better to fix with other build optimizations in Phase 4
+
+**Resolution (To Do in Phase 4):**
+1. Install Tailwind CSS as a PostCSS plugin: `npm install -D tailwindcss postcss autoprefixer`
+2. Create `tailwind.config.js` and `postcss.config.js`
+3. Add Tailwind directives to main CSS file
+4. Remove CDN script from `index.html`
+5. Configure Vite to process Tailwind
+6. Verify production build with proper CSS purging
+
+**Expected benefit:**
+- Reduce CSS from ~3MB to ~10-20KB (99% smaller!)
+- Faster page load
+- No runtime CSS processing
+- Eliminate console warning
+
+**Reference:** Phase 1 Learning Notes, Session 4 - Production Deployment Verification
+
 ---
 
 ### What's Missing ❌
