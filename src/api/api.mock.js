@@ -28,7 +28,7 @@
           "C) A common misconception",
           "D) An unrelated distractor"
         ],
-        correctAnswer: 1, // Index of correct option (B)
+        correct: 1, // Index of correct option (B)
         difficulty: "easy"
       },
       {
@@ -39,7 +39,7 @@
           "C) By understanding and applying the underlying concepts",
           "D) By guessing randomly"
         ],
-        correctAnswer: 2, // Index of correct option (C)
+        correct: 2, // Index of correct option (C)
         difficulty: "medium"
       },
       {
@@ -50,7 +50,7 @@
           "C) An outdated idea no longer relevant",
           "D) A simple fact that requires no understanding"
         ],
-        correctAnswer: 1, // Index of correct option (B)
+        correct: 1, // Index of correct option (B)
         difficulty: "easy"
       },
       {
@@ -61,7 +61,7 @@
           "C) They never make mistakes with this topic",
           "D) They always get it right on the first try"
         ],
-        correctAnswer: 1, // Index of correct option (B)
+        correct: 1, // Index of correct option (B)
         difficulty: "medium"
       },
       {
@@ -72,7 +72,7 @@
           "C) It contradicts all other known concepts",
           "D) It has no relationship to anything else"
         ],
-        correctAnswer: 1, // Index of correct option (B)
+        correct: 1, // Index of correct option (B)
         difficulty: "challenging"
       }
     ];
@@ -108,6 +108,6 @@
    Keep practicing, and you'll get it! 🌟`;
    
    devLog('[MOCK API] Generated explanation:', mockExplanation);
-   
+
    return mockExplanation;
   }
