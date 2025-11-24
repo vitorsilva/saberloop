@@ -958,4 +958,318 @@ Production:   git push        (Netlify auto-deploys)
 **Total time:** ~2 hours
 **Focus:** Understanding deployment stack, testing strategies, UI fixes
 
-**Next session:** Finalize Netlify production deployment, then Phase 2 (Offline Capabilities)
+---
+
+## Session 3: Debugging GitHub Actions CI/CD Pipeline
+
+**Date:** November 24, 2025
+**Duration:** ~1 hour
+**Status:** ✅ Resolved
+
+### The Problem: npm ci Failing in GitHub Actions
+
+After pushing code to GitHub, the test workflow (`.github/workflows/test.yml`) started failing with this error:
+
+```
+npm error code EBADPLATFORM
+npm error notsup Unsupported platform for @rollup/rollup-android-arm-eabi@4.52.2:
+wanted {"os":"android","cpu":"arm"} (current: {"os":"linux","cpu":"x64"})
+```
+
+**What was happening:**
+- GitHub Actions runs on Ubuntu Linux (x64 architecture)
+- `npm ci` was trying to install `@rollup/rollup-android-arm-eabi` - an Android ARM package
+- The package is marked as "optional" but `npm ci` was treating it as required
+- Build failed before tests could even run
+
+### Debugging Journey
+
+#### Attempt 1: Add `--omit=optional` flag
+```yaml
+run: npm ci --omit=optional
+```
+**Result:** ❌ Still failed - npm ci still tried to install the package
+
+#### Attempt 2: Add `.npmrc` configuration
+Created `.npmrc` with:
+```
+optional=true
+```
+**Result:** ❌ Still failed - npm ci is very strict about lockfile integrity
+
+#### Attempt 3: Regenerate package-lock.json
+```bash
+rm package-lock.json
+npm install
+```
+**Result:** ❌ Lockfile didn't change - local npm already handled it correctly
+
+#### Attempt 4: Use `npm install --frozen-lockfile`
+```yaml
+run: npm install --frozen-lockfile --prefer-offline --no-audit
+```
+**Result:** ❌ Still failed - same optional dependency issue
+
+#### Attempt 5: Add `--legacy-peer-deps` flag
+```yaml
+run: npm ci --legacy-peer-deps
+```
+**Result:** ❌ Still failed - doesn't help with platform-specific optional dependencies
+
+### Root Cause Analysis
+
+**Key question:** Where is `@rollup/rollup-android-arm-eabi` coming from?
+
+Used git diff to compare with last working build:
+
+```bash
+git log --oneline 84b9e7990c7aef8a0ba7ba757a4b9d7ace5dc009..HEAD
+git diff 84b9e7990c7aef8a0ba7ba757a4b9d7ace5dc009..HEAD -- package.json
+```
+
+**Findings:**
+1. Only change in `package.json`: Added `netlify-cli` as devDependency
+2. Checked package-lock.json structure:
+   ```
+   node_modules/netlify-cli/node_modules/@rollup/rollup-android-arm-eabi
+   ```
+3. **The problem package comes from netlify-cli's dependencies!**
+4. Netlify CLI uses Rollup internally, which has platform-specific optional binaries
+
+### The Solution: Install Only What CI Needs
+
+**Key insight:** GitHub Actions doesn't need `netlify-cli` at all!
+
+**Why netlify-cli exists:**
+- For **local development**: `npm run dev` runs Netlify Dev server
+- Proxies requests to Vite (frontend) and Netlify Functions (backend)
+- Simulates Netlify's production environment locally
+
+**Why GitHub Actions doesn't need it:**
+- GitHub Actions only runs: unit tests, E2E tests, production build
+- Netlify's cloud deployment has its own build system
+- CI doesn't run the dev server
+
+**Final solution:**
+
+Modified `.github/workflows/test.yml`:
+
+```yaml
+- name: Install dependencies
+  run: |
+    npm install --no-save \
+      vite@^7.1.12 \
+      vitest@^4.0.1 \
+      @vitest/coverage-v8@^4.0.1 \
+      @playwright/test@^1.56.1 \
+      fake-indexeddb@^6.2.4 \
+      idb@^8.0.3 \
+      jsdom@^27.0.1
+```
+
+**What this does:**
+- Installs only the packages needed for CI
+- `--no-save` prevents modifying package.json or package-lock.json
+- **Skips netlify-cli entirely** - avoids the Rollup optional dependency problem
+- All tests run successfully
+
+**Result:** ✅ **Build passed!**
+
+### Key Concepts Learned
+
+#### 1. npm ci vs npm install
+
+**`npm ci` (Continuous Integration):**
+- Designed for automated environments (CI/CD)
+- Deletes `node_modules/` and installs from lockfile
+- Very strict - fails if lockfile doesn't match package.json
+- Faster than `npm install` (no dependency resolution)
+- **Cannot skip incompatible optional dependencies** - this was our problem!
+
+**`npm install`:**
+- For local development
+- Updates lockfile if needed
+- More lenient with optional dependencies
+- Can use flags like `--frozen-lockfile` to simulate ci behavior
+
+**`npm install --no-save <packages>`:**
+- Installs specific packages without modifying package.json/lockfile
+- Perfect for CI when you need a subset of dependencies
+- Fast and predictable
+
+#### 2. Optional Dependencies in npm
+
+**What are optional dependencies?**
+- Packages that enhance functionality but aren't required
+- Often platform-specific binaries (e.g., native Node.js addons)
+- If installation fails, npm should skip and continue
+
+**Why do they exist?**
+- Rollup has native binaries for different platforms (Linux, Windows, macOS, Android)
+- Each platform gets its own package: `@rollup/rollup-linux-x64`, `@rollup/rollup-android-arm-eabi`, etc.
+- All marked as optional - only the matching platform binary installs
+
+**The npm ci problem:**
+- When optional dependencies are in `package-lock.json`, `npm ci` tries to install them
+- If the platform check fails, `npm ci` exits with error
+- This is a known issue with npm ci's strict lockfile validation
+
+#### 3. Dependency Trees and Transitive Dependencies
+
+**What happened in our case:**
+
+```
+package.json
+└── netlify-cli (devDependency)
+    └── @netlify/build
+        └── @netlify/config
+            └── rollup
+                └── @rollup/rollup-android-arm-eabi (optional)
+```
+
+**Lesson:** When you install a package, you get **all its dependencies** (and their dependencies, and so on).
+
+**In our case:**
+- We added `netlify-cli` for local development
+- It brought along Rollup and all Rollup's optional platform binaries
+- CI tried to install Android ARM binary on Linux x64 → failed
+
+#### 4. Local Development vs CI Environment Needs
+
+**Different environments have different needs:**
+
+| Need | Local Dev | GitHub Actions CI | Netlify Cloud |
+|------|-----------|------------------|---------------|
+| Frontend build (Vite) | ✅ | ✅ | ✅ |
+| Unit tests (Vitest) | ✅ | ✅ | ❌ |
+| E2E tests (Playwright) | ✅ | ✅ | ❌ |
+| Dev server (netlify dev) | ✅ | ❌ | ❌ |
+| Functions runtime | ✅ (via netlify-cli) | ❌ | ✅ (native) |
+| Database tools | ✅ | ❌ | ✅ |
+
+**Key insight:** CI only needs **build + test tools**, not development tools!
+
+#### 5. Git Forensics for Debugging
+
+**How we found the root cause:**
+
+1. **Identify last working commit:**
+   - Looked at GitHub Actions history
+   - Found commit hash: `84b9e7990c7aef8a0ba7ba757a4b9d7ace5dc009`
+
+2. **Show all commits since then:**
+   ```bash
+   git log --oneline <last-working-commit>..HEAD
+   ```
+
+3. **Compare package.json:**
+   ```bash
+   git diff <last-working-commit>..HEAD -- package.json
+   ```
+   Found: `netlify-cli` was added
+
+4. **Investigate the package:**
+   ```bash
+   grep -A 5 "@rollup/rollup-android-arm-eabi" package-lock.json
+   ```
+   Found: It's under `node_modules/netlify-cli/`
+
+**This debugging process took 5 attempts, but git forensics gave us the answer!**
+
+### Deployment Strategy Clarification
+
+While debugging, we also clarified the complete deployment flow:
+
+#### Option 1: Netlify Auto-Deploy (Our Choice)
+
+```
+Developer pushes to GitHub
+         ↓
+GitHub Actions (.github/workflows/test.yml)
+├─ npm install (build + test tools only)
+├─ Run unit tests (Vitest)
+├─ Run E2E tests (Playwright)
+└─ Run production build (Vite)
+         ↓
+    Tests pass ✅
+         ↓
+Netlify detects push to main branch
+├─ npm ci (installs all dependencies including netlify-cli)
+├─ npm run build (builds frontend)
+└─ Deploys to production with Functions
+         ↓
+    Live at production URL ✅
+```
+
+**Key points:**
+- GitHub Actions runs tests independently (quality gate)
+- Netlify handles deployment automatically when tests pass
+- Separation of concerns: CI tests, CD deploys
+- Removed `.github/workflows/deploy.yml` (GitHub Pages workflow - no longer needed)
+
+### Files Modified
+
+**`.github/workflows/test.yml`**
+```yaml
+- name: Install dependencies
+  run: |
+    npm install --no-save \
+      vite@^7.1.12 \
+      vitest@^4.0.1 \
+      @vitest/coverage-v8@^4.0.1 \
+      @playwright/test@^1.56.1 \
+      fake-indexeddb@^6.2.4 \
+      idb@^8.0.3 \
+      jsdom@^27.0.1
+```
+
+**Git commits:**
+```bash
+git rm .github/workflows/deploy.yml
+git commit -m "chore: remove GitHub Pages deployment (using Netlify auto-deploy)"
+
+# Multiple attempts to fix npm ci issue...
+
+git commit -m "fix: install only required dependencies in CI, skip netlify-cli"
+```
+
+### Lessons Learned
+
+**Technical:**
+1. `npm ci` is strict - great for reproducibility, bad for platform-specific optional deps
+2. Not all devDependencies are needed in all environments
+3. Transitive dependencies can introduce unexpected problems
+4. Git forensics (diff, log) are essential debugging tools
+
+**Architectural:**
+1. **Separate concerns:** CI for testing, CD for deployment
+2. **Minimize CI dependencies:** Only install what you actually need
+3. **Local dev ≠ CI ≠ Production:** Each environment has different requirements
+4. **Optional dependencies aren't always optional:** npm ci treats them as required
+
+**Process:**
+1. When builds break, compare with last working state
+2. Isolate the change that introduced the problem
+3. Understand why that change breaks the build
+4. Fix the root cause, not the symptoms
+
+### Why This Matters
+
+This debugging session taught us:
+- How npm's package resolution works
+- The difference between development and CI needs
+- How to use git for forensic debugging
+- That sometimes the simplest solution is to **not install something**
+
+**Before:** Trying to make npm ci install everything without errors
+**After:** Installing only what CI actually needs
+
+**This is a common pattern in software engineering:** Sometimes the best solution is to do less, not more!
+
+---
+
+**Session 3 completed:** November 24, 2025
+**Total time:** ~1 hour
+**Focus:** CI/CD debugging, npm dependency management, git forensics
+
+**Next step:** Complete production deployment verification, then Phase 2 (Offline Capabilities)
