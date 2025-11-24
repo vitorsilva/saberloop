@@ -51,8 +51,8 @@ export default class ResultsView extends BaseView {
                 <span class="material-symbols-outlined">check</span>
               </div>
               <div class="flex flex-col justify-center">
-                <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-2">${question.question}</p>
-                <p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal line-clamp-1">Your answer: ${userAnswer}</p>
+                <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal">${question.question}</p>
+                <p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal">Your answer: ${userAnswer}</p>
               </div>
             </div>
             <div class="shrink-0">
@@ -70,9 +70,9 @@ export default class ResultsView extends BaseView {
                 <span class="material-symbols-outlined">close</span>
               </div>
               <div class="flex flex-col justify-center">
-                <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-2">${question.question}</p>
-                <p class="text-error text-sm font-normal leading-normal line-clamp-1">Your answer: ${userAnswer}</p>
-                <p class="text-success text-sm font-normal leading-normal line-clamp-1">Correct answer: ${correctAnswer}</p>
+                <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal">${question.question}</p>
+                <p class="text-error text-sm font-normal leading-normal">Your answer: ${userAnswer}</p>
+                <p class="text-success text-sm font-normal leading-normal">Correct answer: ${correctAnswer}</p>
               </div>
             </div>
             <div class="shrink-0">
@@ -95,7 +95,7 @@ export default class ResultsView extends BaseView {
           <h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Results</h1>
         </header>
 
-        <main class="flex-grow px-4 pt-6 pb-28">
+        <main class="flex-grow px-4 pt-6 pb-40">
           <!-- Score Display Card -->
           <div class="flex flex-col items-center justify-center rounded-xl bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
             <div class="relative size-40">
