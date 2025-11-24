@@ -76,7 +76,7 @@ export default class QuizView extends BaseView {
                       : 'bg-background-light dark:bg-border-dark text-text-light dark:text-text-dark text-base font-medium leading-normal border border-border-light dark:border-border-dark hover:border-primary'
                   }"
                   data-index="${index}">
-                  <span class="truncate">${option}</span>
+                  <span class="text-left">${option}</span>
                 </button>
               `).join('')}
             </div>
@@ -89,7 +89,7 @@ export default class QuizView extends BaseView {
             <button
               id="submitBtn"
               class="flex h-14 min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90 ${this.selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : ''}">
-              <span class="truncate">${this.currentQuestionIndex < this.questions.length - 1 ? 'Next Question' : 'Submit Answer'}</span>
+              <span class="text-left">${this.currentQuestionIndex < this.questions.length - 1 ? 'Next Question' : 'Submit Answer'}</span>
             </button>
           </div>
         </div>
@@ -142,8 +142,6 @@ export default class QuizView extends BaseView {
 
       // Save answer
       this.answers[this.currentQuestionIndex] = this.selectedAnswer;
-console.log(this.answers);
-
 
       // Move to next question or finish
       if (this.currentQuestionIndex < this.questions.length - 1) {
