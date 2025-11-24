@@ -1225,153 +1225,361 @@ npm run test:e2e -- backend-health
 
 ---
 
-## Step 16: Verify GitHub Actions CI/CD Still Works
+## Step 16: Configure Deployment Strategy
 
-**IMPORTANT:** Ensure deployment pipeline works with new backend!
+**IMPORTANT:** Separate testing from deployment!
 
-### 16.1 Update CI/CD Workflow
+We'll use **two separate systems** working together:
+- **GitHub Actions** → Runs tests (CI - Continuous Integration)
+- **Netlify** → Handles deployment (CD - Continuous Deployment)
 
-**File:** `.github/workflows/ci.yml`
+---
 
-**Add Netlify CLI for testing:**
-```yaml
-name: CI/CD
+### 16.1 Update GitHub Actions (Testing Only)
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+**Goal:** Keep `test.yml` for running tests, remove `deploy.yml`
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+**Why:**
+- GitHub Pages can't run serverless functions
+- Netlify handles deployment better (auto-deploy, previews, rollbacks)
+- Separation of concerns: testing vs deployment
 
-    steps:
-      - uses: actions/checkout@v3
+**File: `.github/workflows/test.yml`** (KEEP THIS!)
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+This workflow runs on every push and tests your code:
+- ✅ Unit tests (Vitest)
+- ✅ E2E tests (Playwright)
+- ✅ Build verification
 
-      - name: Install dependencies
-        run: npm ci
+**File: `.github/workflows/deploy.yml`** (REMOVE THIS!)
 
-      - name: Run unit tests
-        run: npm test
+This workflow deploys to GitHub Pages (no longer needed).
 
-      - name: Run E2E tests
-        run: npm run test:e2e
-        env:
-          # Mock API key for testing
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_TEST || 'sk-ant-test-key' }}
-
-      - name: Build project
-        run: npm run build
-
-      - name: Verify build artifacts
-        run: |
-          test -d dist
-          test -f dist/index.html
-          test -d netlify/functions
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Deploy to Netlify
-        uses: netlify/actions/cli@master
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        with:
-          args: deploy --prod
+**Action:**
+```bash
+# Remove GitHub Pages deployment
+git rm .github/workflows/deploy.yml
+git commit -m "chore: remove GitHub Pages deployment (using Netlify auto-deploy)"
 ```
 
-### 16.2 Add Required Secrets
+---
 
-**In GitHub repository settings:**
+### 16.2 Configure Netlify Auto-Deploy
 
-1. Go to Settings → Secrets and variables → Actions
-2. Add new repository secrets:
-   - `NETLIFY_AUTH_TOKEN` - Get from Netlify dashboard
-   - `NETLIFY_SITE_ID` - Get from Netlify site settings
-   - `ANTHROPIC_API_KEY_TEST` - Optional test key (or use mock)
+**Option A: Already Connected (Most Common)**
 
-### 16.3 Verify CI/CD
+If you already set up Netlify in Step 12, it's watching your GitHub repo!
 
-**After pushing to GitHub:**
+**Verify configuration:**
+1. Go to https://app.netlify.com/ → Your site
+2. **Site settings** → **Build & deploy** → **Continuous deployment**
+3. Check:
+   - Branch deploys: `main` (or your default branch)
+   - Build settings: Should show `npm run build` and `dist`
+   - Deploy contexts: Production branch is `main`
 
-1. Go to Actions tab
-2. Watch workflow run
-3. Verify all tests pass
-4. Verify deployment succeeds
-5. Visit deployed site and test
+**Option B: First-Time Setup**
+
+If Netlify isn't connected yet:
+1. Go to https://app.netlify.com/
+2. Click "Add new site" → "Import an existing project"
+3. Choose "GitHub"
+4. Select `demo-pwa-app` repository
+5. Configure:
+   - Branch: `main`
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+   - Functions directory: `netlify/functions`
+6. Click "Deploy site"
+
+---
+
+### 16.3 Verify Environment Variables
+
+**Critical:** Functions need your API key!
+
+**In Netlify Dashboard:**
+1. Go to **Site settings** → **Environment variables**
+2. Verify `ANTHROPIC_API_KEY` exists
+3. If not, add it:
+   - Key: `ANTHROPIC_API_KEY`
+   - Value: `sk-ant-your-key-here`
+   - Scopes: All (or at least Functions)
+4. Click "Save"
+
+**After adding/changing env vars:** Trigger a redeploy
+- Site overview → "Trigger deploy" → "Deploy site"
+
+---
+
+### 16.4 The Complete Deployment Flow
+
+**When you push code:**
+
+```
+git push origin main
+    ↓
+┌────────────────────────────────────────┐
+│ GitHub: Receives push                  │
+├────────────────────────────────────────┤
+│                                        │
+│ GitHub Actions (test.yml)             │
+│   ├─ Runs unit tests                  │
+│   ├─ Runs E2E tests                   │
+│   ├─ Verifies build                   │
+│   └─ Reports: ✅ or ❌                 │
+│                                        │
+└────────────────────────────────────────┘
+    ↓
+┌────────────────────────────────────────┐
+│ Netlify: Detects push (webhook)       │
+├────────────────────────────────────────┤
+│                                        │
+│ Netlify Build Process                 │
+│   ├─ Clones repo                      │
+│   ├─ npm ci (install deps)            │
+│   ├─ npm run build (Vite)             │
+│   ├─ Deploys dist/ (frontend)         │
+│   ├─ Deploys functions/ (backend)     │
+│   └─ Live at yoursite.netlify.app     │
+│                                        │
+└────────────────────────────────────────┘
+```
+
+**Key points:**
+- Tests run **independently** (GitHub Actions)
+- Deployment happens **automatically** (Netlify)
+- Both can succeed or fail independently
+- You can see logs for both in their respective dashboards
+
+---
+
+### 16.5 Verify Complete Pipeline
+
+**Step 1: Push code**
+```bash
+git add .
+git commit -m "test: verify deployment pipeline"
+git push origin main
+```
+
+**Step 2: Check GitHub Actions**
+1. Go to https://github.com/[user]/demo-pwa-app/actions
+2. Should see "Test" workflow running
+3. Wait for ✅ green checkmark (or ❌ red X if tests fail)
+
+**Step 3: Check Netlify Deployment**
+1. Go to https://app.netlify.com/
+2. Should see "Building" or "Published"
+3. Wait for deployment to complete (~2-3 minutes)
+4. Get production URL: `https://[your-site].netlify.app`
+
+**Step 4: Test production site**
+1. Open production URL
+2. Open DevTools → Console
+3. Should see: "🚀 Using real API via Netlify Functions"
+4. Create a quiz → verify real questions (not mock)
+5. Check Network tab → `/.netlify/functions/generate-questions` returns data
 
 ---
 
 ## Step 17: Deploy and Verify End-to-End
 
-**Final verification checklist:**
+**Final comprehensive verification before Phase 1 completion!**
 
-### 17.1 Local Development Works
+---
+
+### 17.1 Pre-Deployment Checklist
+
+**Before pushing to production:**
+
 ```bash
-# Start dev server
-npm run dev
+# 1. Verify local development with mock API
+VITE_USE_REAL_API=false npm run dev
+# → Open localhost:8888
+# → Console should show: "🔧 Using mock API"
+# → Create quiz → verify mock questions work
 
-# Verify in browser:
-# - Console shows "Using mock API (development mode)"
-# - Can create quiz with mock data
-# - All tests pass: npm test && npm run test:e2e
-```
+# 2. Verify local development with real API
+VITE_USE_REAL_API=true npm run dev
+# → Console should show: "🚀 Using real API via Netlify Functions"
+# → Create quiz → verify real Claude questions work
 
-### 17.2 Production Build Works
-```bash
-# Build and preview
+# 3. Run all tests
+npm test -- --run
+npm run test:e2e
+
+# 4. Verify production build
 npm run build
-npm run preview
-
-# Verify in browser:
-# - Console shows "Using real API via Netlify Functions"
-# - Health check works: fetch('/.netlify/functions/health-check')
-# - Can generate real questions (uses API key from .env)
+# → Check dist/ folder was created
+# → Check no build errors
 ```
 
-### 17.3 GitHub Deployment Works
+---
+
+### 17.2 Deploy to Production
+
+**Remove GitHub Pages deployment:**
 ```bash
-# Push to GitHub
-git add .
-git commit -m "feat: add backend integration with Netlify Functions"
-git push origin main
-
-# Verify:
-# - GitHub Actions runs successfully
-# - All tests pass in CI
-# - Netlify deploys automatically
-# - Production site works with real API
+git rm .github/workflows/deploy.yml
+git commit -m "chore: remove GitHub Pages deployment (using Netlify auto-deploy)"
 ```
+
+**Push all changes:**
+```bash
+git push origin main
+```
+
+---
+
+### 17.3 Monitor Deployment
+
+**GitHub Actions (Testing):**
+1. Go to: https://github.com/vitorsilva/demo-pwa-app/actions
+2. Find latest "Test" workflow
+3. Watch it run:
+   - ✅ Unit tests pass
+   - ✅ E2E tests pass
+   - ✅ Build succeeds
+4. Total time: ~3-5 minutes
+
+**Netlify (Deployment):**
+1. Go to: https://app.netlify.com/
+2. Find your site → "Deploys"
+3. Watch latest deploy:
+   - ⏳ Building (runs `npm run build`)
+   - ⏳ Deploying
+   - ✅ Published
+4. Total time: ~2-3 minutes
+5. Get your URL: `https://[your-site].netlify.app`
+
+---
 
 ### 17.4 Production Site Verification
 
-**Visit:** `https://your-app.netlify.app`
+**Open your Netlify URL in browser.**
 
-**Test:**
-1. ✅ Health check: `/.netlify/functions/health-check`
-2. ✅ Create quiz with topic "Fractions"
-3. ✅ Verify questions are real (not mock)
-4. ✅ Verify explanations work
-5. ✅ Check DevTools console for errors
-6. ✅ Test offline mode (refresh while offline)
-7. ✅ Verify PWA install prompt
+**Test 1: Console Check**
+```javascript
+// Open DevTools → Console
+// Should see:
+"🚀 Using real API via Netlify Functions"
+```
+✅ Pass: Real API is being used
 
-**Expected results:**
-- All 7 checks pass ✅
+**Test 2: Health Check**
+```javascript
+// In DevTools Console
+fetch('/.netlify/functions/health-check')
+  .then(r => r.json())
+  .then(console.log)
+
+// Should return:
+// { status: "healthy", hasApiKey: true, ... }
+```
+✅ Pass: Backend functions are working
+
+**Test 3: Generate Questions**
+1. Click "Start New Quiz"
+2. Enter topic: "Fractions"
+3. Grade level: "5th Grade"
+4. Click "Generate Questions"
+5. Wait ~3-5 seconds
+6. Questions should be unique and realistic (not mock)
+
+✅ Pass: Claude API integration works
+
+**Test 4: Complete Quiz Flow**
+1. Answer all 5 questions
+2. Submit answers
+3. View results page
+4. Verify scores calculated correctly
+5. Try "Try Another Topic"
+
+✅ Pass: Full app flow works
+
+**Test 5: Network Inspection**
+1. Open DevTools → Network tab
+2. Generate questions again
+3. Find request: `generate-questions`
+4. Check:
+   - Status: 200 OK
+   - Response: JSON with questions array
+   - Time: 2-5 seconds
+
+✅ Pass: API calls are successful
+
+**Test 6: Text Display**
+1. Look at quiz question answers
+2. Verify long text wraps (not truncated with "...")
+3. Look at results page
+4. Verify all text is fully visible
+
+✅ Pass: UI fixes are applied
+
+**Test 7: No Dev Logs**
+1. DevTools → Console
+2. Generate questions
+3. Check console output
+4. Should NOT see debug logs like "[REAL API] Generated questions:"
+
+✅ Pass: Dev-only logging works correctly
+
+---
+
+### 17.5 Troubleshooting Common Issues
+
+**Issue: "Failed to generate questions"**
+- **Cause:** Environment variable not set in Netlify
+- **Fix:**
+  1. Netlify dashboard → Site settings → Environment variables
+  2. Add `ANTHROPIC_API_KEY` with your key
+  3. Trigger redeploy
+
+**Issue: 404 on functions**
+- **Cause:** Functions not deployed
+- **Fix:**
+  1. Check `netlify.toml` has `functions = "netlify/functions"`
+  2. Verify `netlify/functions/` folder exists in repo
+  3. Trigger redeploy
+
+**Issue: Still seeing mock data in production**
+- **Cause:** API selection logic issue
+- **Fix:**
+  1. Check browser console for "Using mock API" or "Using real API"
+  2. Verify `import.meta.env.PROD` is true (check console)
+  3. Clear browser cache and hard refresh
+
+**Issue: Tests fail in GitHub Actions**
+- **Cause:** Dependency or test issues
+- **Fix:**
+  1. Check Actions tab for error details
+  2. Run tests locally: `npm test -- --run && npm run test:e2e`
+  3. Fix failing tests before pushing again
+
+---
+
+### 17.6 Success Criteria
+
+**Phase 1 is complete when ALL of these are true:**
+
+- ✅ Local development works with both mock and real API
+- ✅ GitHub Actions test workflow runs on every push
+- ✅ GitHub Pages deployment removed (no longer used)
+- ✅ Netlify auto-deploys from main branch
+- ✅ Production site loads successfully
+- ✅ Production uses real Claude API (not mock)
+- ✅ Functions respond successfully (200 OK)
+- ✅ Health check endpoint works
+- ✅ Quiz generation produces real questions
+- ✅ Complete quiz flow works end-to-end
+- ✅ UI text displays fully (no truncation)
+- ✅ Dev-only logs don't appear in production
+- ✅ No console errors in production
+
+**If all checks pass → Phase 1 complete! 🎉**
+
+**Next:** Phase 2 - Production Offline Capabilities
 - No console errors
 - Questions are unique and relevant
 - Offline mode works (cached content)
