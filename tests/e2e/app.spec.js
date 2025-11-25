@@ -17,8 +17,8 @@ test.describe('QuizMaster E2E Tests', () => {
     await expect(page.locator('h3')).toContainText('Recent Topics');
 
     // Check mock data is displayed (inside recentTopicsList)
-    await expect(page.locator('#recentTopicsList >> text=Geography')).toBeVisible();
-    await expect(page.locator('#recentTopicsList p:has-text("Science")')).toBeVisible();
+    await expect(page.locator('#recentTopicsList >> text=No quizzes yet')).toBeVisible();
+
   });
 
   test('should navigate to topic input screen', async ({ page }) => {
@@ -242,5 +242,44 @@ test.describe('QuizMaster E2E Tests', () => {
     const homeIcon = page.locator('a[href="#/"] .material-symbols-outlined');
     await expect(homeIcon).toBeVisible();
   });
+
+   test('should display completed quiz on home page', async ({ page }) => {        
+      // First verify home page shows empty state
+      await page.goto('/');
+      await expect(page.locator('#recentTopicsList >> text=No quizzes yet')).toBeVisible();
+
+      // Complete a quiz
+      await page.goto('/#/topic-input');
+      await page.fill('#topicInput', 'Dinosaurs');
+      await page.selectOption('#gradeLevelSelect', 'middle school');
+      await page.click('#generateBtn');
+
+      // Wait for loading then quiz
+      await expect(page).toHaveURL(/#\/loading/);
+      await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+      // Answer all 5 questions
+      for (let i = 0; i < 5; i++) {
+        await page.locator('.option-btn').nth(1).click();
+        await page.waitForTimeout(200);
+        await page.click('#submitBtn');
+        await page.waitForTimeout(300);
+      }
+
+      // Should be on results page
+      await expect(page).toHaveURL(/#\/results/);
+
+      // Navigate back to home
+      await page.goto('/');
+
+      // Now the quiz should appear in recent topics
+      await expect(page.locator('#recentTopicsList >> text=Dinosaurs')).toBeVisible();
+
+      // Should show score (5/5 since mock always has correct answer at index 1)    
+      await expect(page.locator('#recentTopicsList >> text=5/5')).toBeVisible();    
+
+      // Should show "Today" as the date
+      await expect(page.locator('#recentTopicsList >> text=Today')).toBeVisible();
+    });
 
 });
