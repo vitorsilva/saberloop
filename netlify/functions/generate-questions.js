@@ -92,7 +92,6 @@
 
       // Create prompt
       const prompt = `You are an expert educational content creator. Generate exactly 5 multiple-choice questions about "${topic}" appropriate for ${gradeLevel || 'middle school'} students.
-  school'} students.
 
 LANGUAGE REQUIREMENT (CRITICAL):
 - Detect the language of the topic "${topic}"
