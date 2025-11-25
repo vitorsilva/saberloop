@@ -13,3 +13,5 @@ coverage/
 .playwright-mcp/
 # Local Netlify folder
 .netlify
+.vs
+coverage/
