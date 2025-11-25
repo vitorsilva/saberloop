@@ -78,8 +78,12 @@
     ];
 
     devLog('[MOCK API] Generated questions:', mockQuestions);
+    devLog('[MOCK API] Detected language:', 'EN-US');
 
-    return mockQuestions;
+    return {
+      language: 'EN-US',
+      questions: mockQuestions
+    };
   }
 
   /**

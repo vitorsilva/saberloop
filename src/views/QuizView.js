@@ -23,7 +23,9 @@ export default class QuizView extends BaseView {
     // Generate questions if not already generated
     if (this.questions.length === 0) {
       try {
-        this.questions = await generateQuestions(topic, gradeLevel);
+        const result = await generateQuestions(topic, gradeLevel);
+        this.questions = result.questions;
+        this.language = result.language;
         this.answers = new Array(this.questions.length).fill(null);
       } catch (error) {
         console.error('Failed to generate questions:', error);

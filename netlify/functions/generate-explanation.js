@@ -60,6 +60,12 @@
       const prompt = `You are a patient, encouraging tutor helping a ${gradeLevel ||
   'middle school'} student who answered a question incorrectly.
 
+    LANGUAGE REQUIREMENT (CRITICAL):
+  - Detect the language of the question below
+  - Provide your ENTIRE explanation in the SAME language as the question
+  - Do NOT mix languages - if the question is in Portuguese, explain in Portuguese
+  - If language is unclear, default to English
+
   Question: ${question}
   Student's Answer: ${userAnswer}
   Correct Answer: ${correctAnswer}
@@ -71,7 +77,8 @@
   4. Ends with an encouraging note
 
   Tone: Friendly, supportive, not condescending
-  Format: Plain text, no markdown headers`;
+  Format: Plain text, no markdown headers
+  IMPORTANT: Your entire response must be in the same language as the question.`;
 
       // Call Anthropic API
       const response = await fetch('https://api.anthropic.com/v1/messages', {

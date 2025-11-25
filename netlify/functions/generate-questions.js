@@ -94,6 +94,16 @@
       const prompt = `You are an expert educational content creator. Generate exactly 5 multiple-choice questions about "${topic}" appropriate for ${gradeLevel || 'middle school'} students.
   school'} students.
 
+LANGUAGE REQUIREMENT (CRITICAL):
+- Detect the language of the topic "${topic}"
+- Generate ALL questions and ALL answer options in the SAME language as the topic
+- For example:
+- If topic is "Digestive System" → questions in English (EN-US)
+- If topic is "Sistema Digestivo" → questions in Portuguese (PT-PT)
+- If topic is "Système Digestif" → questions in French (FR-FR)
+- Do NOT mix languages - everything must be consistent
+- If the topic language is ambiguous, default to English (EN-US)
+
   Requirements:
   - Each question should have 4 answer options (A, B, C, D)
   - Only one correct answer per question
@@ -103,20 +113,24 @@
   - Avoid ambiguous phrasing
   - No trick questions
 
-  Return your response as a JSON array with this exact structure:
-  [
-    {
-      "question": "The question text here?",
-      "options": ["A) option1", "B) option2", "C) option3", "D) option4"],
-      "correct": "0",  // Index of correct option (0-3)
-      "difficulty": "easy"
-    }
-  ]
+Return your response as a JSON object with this exact structure:
+{
+	"language": "XX-XX",
+	"questions": [
+	  {
+		"question": "The question text here?",        
+		"options": ["A) option1", "B) option2", "C) option3", "D) option4"],
+		"correct": 0,
+		"difficulty": "easy"
+	  }
+	]
+}
 
   IMPORTANT:
-  - The "correct" field must be a NUMBER (0 for first option, 1 for second option, 2 for       
-  third option, 3 for fourth option)
-  - Return ONLY the JSON array, no other text before or after.`;
+  - The "correct" field must be a NUMBER (0 for first option, 1 for second option, 2 for third option, 3 for fourth option)
+  - ALL text must be in the same language as the topic
+  - The "language" field must be a locale code (e.g., "EN-US", "PT-PT", "ES-ES", "FR-FR")
+  - Return ONLY the JSON object, no other text before or after.`;
 
       // Call Anthropic API
       const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -156,13 +170,13 @@
       }
 
       // Parse response
-      const data = await response.json();
-      const text = data.content[0].text;
+      const originalResponse = await response.json();
+      const text = originalResponse.content[0].text;
 
       // Parse JSON from response
-      let questions;
+      let data;
       try {
-        questions = JSON.parse(text);
+        data = JSON.parse(text);
       } catch (parseError) {
         console.error('Failed to parse questions JSON:', text);
         return {
@@ -173,7 +187,9 @@
       }
 
       // Validate structure
-      if (!Array.isArray(questions) || questions.length !== 5) {
+      if (!data.questions || !Array.isArray(data.questions) ||
+      data.questions.length !== 5) {
+        console.error('Invalid questions structure:', data);
         return {
           statusCode: 500,
           headers: CORS_HEADERS,
@@ -181,11 +197,14 @@
         };
       }
 
-      // Return success
+      // Return success with language
       return {
         statusCode: 200,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ questions })
+        body: JSON.stringify({
+          language: data.language || 'EN-US',
+          questions: data.questions
+        })
       };
 
     } catch (error) {

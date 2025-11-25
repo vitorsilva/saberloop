@@ -30,8 +30,12 @@
       const data = await response.json();
 
       devLog('[REAL API] Generated questions:', data.questions);
+      devLog('[REAL API] Detected language:', data.language);
 
-      return data.questions;
+      return {
+        language: data.language,
+        questions: data.questions
+      };
 
     } catch (error) {
       console.error('Question generation failed:', error);
