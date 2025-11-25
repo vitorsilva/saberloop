@@ -2,16 +2,18 @@
 
 **Epic:** 3 - QuizMaster V2
 **Status:** Not Started
-**Estimated Time:** 3-4 sessions
+**Estimated Time:** 5-6 sessions
 **Prerequisites:** Phase 1 (Backend) and Phase 2 (Offline) complete
 
 ---
 
 ## Overview
 
-Phase 3 refines QuizMaster's user interface with dynamic data rendering, settings management, and navigation improvements. You'll transform the home page from mock data to real quiz history, create a settings page for API key configuration, and simplify navigation.
+Phase 3 refines QuizMaster's user interface with dynamic data rendering, settings management, navigation improvements, and critical UX fixes. You'll transform the home page from mock data to real quiz history, create a settings page for API key configuration, add a loading screen for quiz generation, and implement multi-language support.
 
 **What you'll build:**
+- Loading screen for quiz generation (fixes blank screen issue)
+- Multi-language question generation (questions match topic language)
 - Dynamic home page (real quiz history from IndexedDB)
 - Settings page with API key management
 - Simplified navigation (Home, Settings only)
@@ -19,6 +21,8 @@ Phase 3 refines QuizMaster's user interface with dynamic data rendering, setting
 - Empty states and loading states
 
 **Why this matters:**
+- Users get immediate feedback during quiz generation (no more blank screens)
+- International users can study in their native language
 - Users see their actual progress
 - Easy API key configuration
 - Cleaner, more focused navigation
@@ -27,9 +31,25 @@ Phase 3 refines QuizMaster's user interface with dynamic data rendering, setting
 
 ---
 
+## Phase 3 Structure
+
+| Part | Focus | Estimated Time |
+|------|-------|----------------|
+| **Part 1** | Loading Screen for Quiz Generation | 1 session |
+| **Part 2** | Multi-Language Question Generation | 1 session |
+| **Part 3** | Dynamic Home Page | 1 session |
+| **Part 4** | Settings Page | 1-2 sessions |
+| **Part 5** | Navigation Updates | 0.5 session |
+
+**Total: 5-6 sessions**
+
+---
+
 ## Learning Objectives
 
 By the end of this phase, you will:
+- ✅ Implement loading states with visual feedback
+- ✅ Understand prompt engineering for language detection
 - ✅ Query IndexedDB for dynamic data
 - ✅ Render dynamic lists efficiently
 - ✅ Implement form validation
@@ -89,7 +109,484 @@ const sessions = await getRecentSessions(10);
 
 ## Implementation Steps
 
-### Part 1: Dynamic Home Page
+### Part 1: Loading Screen for Quiz Generation (NEW)
+
+**Problem:** When users click "Generate Questions", they navigate to QuizView which calls the backend API. This takes 5+ seconds, during which users see a blank screen with no feedback about what's happening.
+
+**Solution:** Create a dedicated loading view that shows progress and feedback during quiz generation.
+
+---
+
+#### Step 1.1: Create LoadingView Component
+
+**File:** `src/views/LoadingView.js` (NEW)
+
+**Purpose:** Display a professional loading screen with:
+- Visual spinner/animation
+- Informative text about what's happening
+- Topic name to confirm correct subject
+- Optional: Tips or fun facts while waiting
+
+```javascript
+// src/views/LoadingView.js
+
+import BaseView from './BaseView.js';
+import state from '../state/state.js';
+import { generateQuestions } from '../api/index.js';
+
+export default class LoadingView extends BaseView {
+  constructor() {
+    super();
+    this.loadingMessages = [
+      'Preparing your questions...',
+      'Consulting our AI teacher...',
+      'Crafting the perfect quiz...',
+      'Almost ready...'
+    ];
+    this.currentMessageIndex = 0;
+    this.messageInterval = null;
+  }
+
+  async render() {
+    const topic = state.get('currentTopic');
+    const gradeLevel = state.get('currentGradeLevel');
+
+    if (!topic) {
+      this.navigateTo('/topic-input');
+      return;
+    }
+
+    this.setHTML(`
+      <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark items-center justify-center">
+        <!-- Loading Content -->
+        <div class="flex flex-col items-center gap-6 p-8 text-center">
+
+          <!-- Animated Spinner -->
+          <div class="relative">
+            <div class="w-20 h-20 border-4 border-primary/20 rounded-full"></div>
+            <div class="absolute top-0 left-0 w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+
+          <!-- Topic Display -->
+          <div class="mt-4">
+            <p class="text-sm text-subtext-light dark:text-subtext-dark uppercase tracking-wider">
+              Generating quiz for
+            </p>
+            <h1 class="text-2xl font-bold text-text-light dark:text-text-dark mt-2">
+              ${this.escapeHtml(topic)}
+            </h1>
+            <p class="text-sm text-subtext-light dark:text-subtext-dark mt-1">
+              ${gradeLevel || 'Middle School'} Level
+            </p>
+          </div>
+
+          <!-- Dynamic Message -->
+          <p id="loadingMessage" class="text-base text-primary font-medium animate-pulse">
+            ${this.loadingMessages[0]}
+          </p>
+
+          <!-- Progress Dots -->
+          <div class="flex gap-2 mt-4">
+            <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+            <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+            <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+          </div>
+
+          <!-- Tip Section (Optional) -->
+          <div class="mt-8 max-w-sm">
+            <p class="text-xs text-subtext-light dark:text-subtext-dark">
+              💡 Tip: Questions are generated specifically for your grade level to ensure the best learning experience.
+            </p>
+          </div>
+        </div>
+
+        <!-- Cancel Button -->
+        <div class="absolute bottom-8 left-0 right-0 flex justify-center">
+          <button id="cancelBtn" class="px-6 py-2 text-sm text-subtext-light dark:text-subtext-dark hover:text-error transition-colors">
+            Cancel
+          </button>
+        </div>
+      </div>
+    `);
+
+    this.attachListeners();
+    this.startMessageRotation();
+    this.startQuizGeneration(topic, gradeLevel);
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  startMessageRotation() {
+    this.messageInterval = setInterval(() => {
+      this.currentMessageIndex = (this.currentMessageIndex + 1) % this.loadingMessages.length;
+      const messageEl = this.querySelector('#loadingMessage');
+      if (messageEl) {
+        messageEl.textContent = this.loadingMessages[this.currentMessageIndex];
+      }
+    }, 2000);
+  }
+
+  async startQuizGeneration(topic, gradeLevel) {
+    try {
+      const questions = await generateQuestions(topic, gradeLevel);
+
+      // Store questions in state for QuizView
+      state.set('generatedQuestions', questions);
+
+      // Clear interval before navigating
+      this.cleanup();
+
+      // Navigate to quiz
+      this.navigateTo('/quiz');
+
+    } catch (error) {
+      console.error('Failed to generate questions:', error);
+      this.cleanup();
+
+      // Show error and go back
+      alert('Failed to generate questions. Please check your connection and try again.');
+      this.navigateTo('/topic-input');
+    }
+  }
+
+  attachListeners() {
+    const cancelBtn = this.querySelector('#cancelBtn');
+    this.addEventListener(cancelBtn, 'click', () => {
+      if (confirm('Are you sure you want to cancel?')) {
+        this.cleanup();
+        this.navigateTo('/topic-input');
+      }
+    });
+  }
+
+  cleanup() {
+    if (this.messageInterval) {
+      clearInterval(this.messageInterval);
+      this.messageInterval = null;
+    }
+  }
+
+  destroy() {
+    this.cleanup();
+    super.destroy();
+  }
+}
+```
+
+---
+
+#### Step 1.2: Update TopicInputView to Navigate to Loading
+
+**File:** `src/views/TopicInputView.js`
+
+**Change:** Navigate to `/loading` instead of `/quiz`
+
+```javascript
+// In attachListeners(), change:
+this.navigateTo('/quiz');
+
+// To:
+this.navigateTo('/loading');
+```
+
+---
+
+#### Step 1.3: Update QuizView to Use Pre-Generated Questions
+
+**File:** `src/views/QuizView.js`
+
+**Change:** Get questions from state instead of generating them
+
+```javascript
+async render() {
+  const topic = state.get('currentTopic');
+  const gradeLevel = state.get('currentGradeLevel');
+
+  if (!topic) {
+    this.navigateTo('/topic-input');
+    return;
+  }
+
+  // Get pre-generated questions from LoadingView
+  if (this.questions.length === 0) {
+    const generatedQuestions = state.get('generatedQuestions');
+
+    if (!generatedQuestions || generatedQuestions.length === 0) {
+      // No questions generated, go back to loading
+      this.navigateTo('/loading');
+      return;
+    }
+
+    this.questions = generatedQuestions;
+    this.answers = new Array(this.questions.length).fill(null);
+
+    // Clear from state to prevent reuse
+    state.set('generatedQuestions', null);
+  }
+
+  this.renderQuestion();
+}
+```
+
+---
+
+#### Step 1.4: Register LoadingView in Router
+
+**File:** `src/main.js`
+
+```javascript
+import LoadingView from './views/LoadingView.js';
+
+// In init() function, add:
+router.addRoute('/loading', LoadingView);
+```
+
+---
+
+#### Step 1.5: Add CSS Animation (if not using Tailwind's animate-*)
+
+**File:** `src/styles.css` or inline in `index.html`
+
+```css
+/* Custom loading animations (if needed) */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+```
+
+---
+
+#### Testing Part 1
+
+1. **Navigation Flow:**
+   - Click "Start New Quiz" → Should go to loading screen
+   - Loading screen shows topic name and grade level
+   - After generation completes → Should go to quiz
+
+2. **Visual Feedback:**
+   - Spinner animates
+   - Messages rotate every 2 seconds
+   - Bouncing dots animate
+
+3. **Cancel Functionality:**
+   - Click Cancel → Shows confirmation
+   - Confirm → Returns to topic input
+
+4. **Error Handling:**
+   - Disconnect network → Should show error alert
+   - Returns to topic input on error
+
+---
+
+### Part 2: Multi-Language Question Generation (NEW)
+
+**Problem:** When users enter topics in languages other than English (e.g., "sistema digestivo" in Portuguese), the questions are still generated in English. Users studying in their native language get a jarring mixed-language experience.
+
+**Solution:** Update the backend prompt to detect the language of the topic and generate questions and answers in that same language.
+
+---
+
+#### Step 2.1: Understand the Language Detection Approach
+
+**Two options:**
+1. **Client-side detection** - Detect language in frontend, send as parameter
+2. **Prompt-based detection** - Let Claude detect the language from the topic itself
+
+**We'll use Option 2** because:
+- Simpler implementation (no external libraries)
+- Claude is excellent at language detection
+- Works automatically for any language
+- No additional API calls needed
+
+---
+
+#### Step 2.2: Update Backend Prompt for Language Detection
+
+**File:** `netlify/functions/generate-questions.js`
+
+**Current prompt (lines 94-119):**
+```javascript
+const prompt = `You are an expert educational content creator. Generate exactly 5 multiple-choice questions about "${topic}" appropriate for ${gradeLevel || 'middle school'} students.
+...
+```
+
+**Updated prompt:**
+```javascript
+const prompt = `You are an expert educational content creator. Generate exactly 5 multiple-choice questions about "${topic}" appropriate for ${gradeLevel || 'middle school'} students.
+
+LANGUAGE REQUIREMENT (CRITICAL):
+- Detect the language of the topic "${topic}"
+- Generate ALL questions and ALL answer options in the SAME language as the topic
+- For example:
+  - If topic is "Digestive System" → questions in English
+  - If topic is "Sistema Digestivo" → questions in Portuguese
+  - If topic is "Système Digestif" → questions in French
+  - If topic is "Sistema Digestivo" (Spanish context) → questions in Spanish
+- Do NOT mix languages - everything must be consistent
+- If the topic language is ambiguous, default to English
+
+Requirements:
+- Each question should have 4 answer options (A, B, C, D)
+- Only one correct answer per question
+- Include a mix of difficulty: 2 easy, 2 medium, 1 challenging
+- Questions should test understanding, not just memorization
+- Use clear, concise language appropriate for ${gradeLevel || 'middle school'}
+- Avoid ambiguous phrasing
+- No trick questions
+
+Return your response as a JSON array with this exact structure:
+[
+  {
+    "question": "The question text here?",
+    "options": ["A) option1", "B) option2", "C) option3", "D) option4"],
+    "correct": "0",  // Index of correct option (0-3)
+    "difficulty": "easy"
+  }
+]
+
+IMPORTANT:
+- The "correct" field must be a NUMBER (0 for first option, 1 for second option, 2 for third option, 3 for fourth option)
+- Return ONLY the JSON array, no other text before or after.
+- ALL text must be in the same language as the topic.`;
+```
+
+---
+
+#### Step 2.3: Update Explanation Endpoint for Language Consistency
+
+**File:** `netlify/functions/generate-explanation.js`
+
+**Add language detection to explanation prompt:**
+
+```javascript
+const prompt = `You are a patient and encouraging teacher helping a student understand why their answer was incorrect.
+
+LANGUAGE REQUIREMENT (CRITICAL):
+- Detect the language of the question below
+- Provide your ENTIRE explanation in the SAME language as the question
+- Do NOT mix languages
+
+Question: ${question}
+Student's Answer: ${userAnswer}
+Correct Answer: ${correctAnswer}
+Student Level: ${gradeLevel || 'middle school'}
+
+Provide a brief, encouraging explanation (2-3 sentences) that:
+1. Gently explains why the student's answer was incorrect
+2. Clearly explains why the correct answer is right
+3. Uses language appropriate for a ${gradeLevel || 'middle school'} student
+4. Is encouraging and supportive
+
+IMPORTANT: Your entire response must be in the same language as the question above.`;
+```
+
+---
+
+#### Step 2.4: Understanding Prompt Engineering for Language Detection
+
+**Why this works:**
+- Claude's language models are trained on multilingual data
+- They can detect language from context clues (words, grammar, characters)
+- By explicitly asking for same-language output, Claude follows the instruction
+- The examples help Claude understand the expected behavior
+
+**Key prompt engineering principles used:**
+1. **Explicit instruction** - "Generate ALL questions in the SAME language"
+2. **Examples** - Show concrete input/output language pairs
+3. **Emphasis** - Use caps and "CRITICAL" to highlight importance
+4. **Repetition** - Mention language requirement multiple times
+5. **Negative instruction** - "Do NOT mix languages"
+
+---
+
+#### Step 2.5: Testing Multi-Language Support
+
+**Test cases:**
+
+1. **English topic:**
+   - Input: "Photosynthesis"
+   - Expected: Questions and answers in English
+
+2. **Portuguese topic:**
+   - Input: "Sistema Digestivo"
+   - Expected: Questions and answers in Portuguese
+
+3. **Spanish topic:**
+   - Input: "La Guerra Civil Española"
+   - Expected: Questions and answers in Spanish
+
+4. **French topic:**
+   - Input: "La Révolution Française"
+   - Expected: Questions and answers in French
+
+5. **Mixed language (edge case):**
+   - Input: "DNA replication processo"
+   - Expected: Should default to dominant language or English
+
+**Testing process:**
+```bash
+# Start dev server
+npm run dev
+
+# Test each language:
+# 1. Enter topic in target language
+# 2. Generate questions
+# 3. Verify ALL text (questions + ALL 4 options) is in target language
+# 4. Complete quiz and verify explanation is in same language
+```
+
+---
+
+#### Step 2.6: Optional - Add Language Indicator to UI
+
+**Enhancement:** Show detected language in loading screen or quiz header.
+
+```javascript
+// In LoadingView.js, optionally detect and display language
+const detectLanguage = (text) => {
+  // Simple heuristic detection (optional)
+  const ptWords = /[àáâãéêíóôõúç]/i;
+  const frWords = /[àâçéèêëîïôùûü]/i;
+  const esWords = /[ñ¿¡]/i;
+
+  if (ptWords.test(text)) return 'Portuguese';
+  if (frWords.test(text)) return 'French';
+  if (esWords.test(text)) return 'Spanish';
+  return 'English';
+};
+```
+
+**Note:** This is optional - Claude handles detection automatically. This would just be for UI display purposes.
+
+---
+
+### Part 3: Dynamic Home Page
 
 #### Step 1: Update Database Queries
 
@@ -331,7 +828,7 @@ export default class HomeView {
 
 ---
 
-### Part 2: Settings Page
+### Part 4: Settings Page
 
 #### Step 3: Create Settings Utilities
 
@@ -798,7 +1295,7 @@ async function init() {
 
 ---
 
-### Part 3: Navigation Updates
+### Part 5: Navigation Updates
 
 #### Step 6: Update All Views' Bottom Navigation
 
@@ -1149,7 +1646,7 @@ npm run preview
 **3. GitHub Deployment:**
 ```bash
 git add .
-git commit -m "feat: add dynamic home page and settings management"
+git commit -m "feat: add loading screen, multi-language support, dynamic home page and settings"
 git push origin main
 
 # Verify:
@@ -1163,16 +1660,19 @@ git push origin main
 Visit: `https://your-app.netlify.app`
 
 **Checklist:**
-1. ✅ Home page loads (empty state initially)
-2. ✅ Navigation to settings works
-3. ✅ Can save API key
-4. ✅ Can save preferences
-5. ✅ Settings persist after reload
-6. ✅ Create a quiz
-7. ✅ Return to home → quiz appears in history
-8. ✅ Statistics calculated correctly
-9. ✅ Mobile responsive
-10. ✅ No console errors
+1. ✅ Loading screen appears when generating quiz
+2. ✅ Loading screen shows topic name and animations
+3. ✅ Questions generated in same language as topic (test with Portuguese: "Sistema Digestivo")
+4. ✅ Home page loads (empty state initially)
+5. ✅ Navigation to settings works
+6. ✅ Can save API key
+7. ✅ Can save preferences
+8. ✅ Settings persist after reload
+9. ✅ Create a quiz
+10. ✅ Return to home → quiz appears in history
+11. ✅ Statistics calculated correctly
+12. ✅ Mobile responsive
+13. ✅ No console errors
 
 ---
 
@@ -1180,15 +1680,33 @@ Visit: `https://your-app.netlify.app`
 
 **Phase 3 is complete when:**
 
+**Loading Screen (Part 1):**
+- ✅ Loading screen displays during quiz generation
+- ✅ Loading screen shows topic name, grade level, and animations
+- ✅ Cancel button works and returns to topic input
+- ✅ Error handling shows alert and redirects on failure
+- ✅ No more blank screen during generation
+
+**Multi-Language Support (Part 2):**
+- ✅ Questions generated in same language as topic
+- ✅ All 4 answer options in same language as question
+- ✅ Explanations generated in same language as question
+- ✅ Works for English, Portuguese, Spanish, French (tested)
+
+**Dynamic Home Page (Part 3):**
 - ✅ Home page displays real quiz history from IndexedDB
 - ✅ Empty state shown when no quizzes exist
 - ✅ Statistics calculated and displayed correctly
+
+**Settings Page (Part 4):**
 - ✅ Settings page created and accessible
 - ✅ API key input with show/hide works
 - ✅ API key validation implemented
 - ✅ Settings persist in localStorage
 - ✅ Preferences section functional
 - ✅ About section displays version info
+
+**Navigation (Part 5):**
 - ✅ Navigation simplified (Home, Settings only)
 - ✅ All views updated with new navigation
 - ✅ Responsive on mobile and desktop
@@ -1199,6 +1717,8 @@ Visit: `https://your-app.netlify.app`
 ## Next Steps
 
 **After completing Phase 3:**
+- ✅ Loading screen for quiz generation (no more blank screens)
+- ✅ Multi-language question generation
 - ✅ Professional UI with dynamic data
 - ✅ Easy settings management
 - ✅ Clean navigation
