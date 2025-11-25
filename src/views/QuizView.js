@@ -112,8 +112,8 @@ export default class QuizView extends BaseView {
               <span class="text-xs font-bold">Topics</span>
             </a>
             <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
-              <span class="material-symbols-outlined text-2xl">person</span>
-              <span class="text-xs font-medium">Profile</span>
+              <span class="material-symbols-outlined text-2xl">settings</span>
+              <span class="text-xs font-medium">Settings</span>
             </a>
           </div>
         </div>
