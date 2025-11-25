@@ -39,7 +39,7 @@
           "C) By understanding and applying the underlying concepts",
           "D) By guessing randomly"
         ],
-        correct: 2, // Index of correct option (C)
+        correct: 1, // Index of correct option (C)
         difficulty: "medium"
       },
       {

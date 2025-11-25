@@ -1,8 +1,14 @@
 import BaseView from './BaseView.js';
 import { updateNetworkIndicator } from '../utils/network.js';
-
+import { getRecentSessions } from '../db/db.js';
 export default class HomeView extends BaseView {
-  render() {
+  async render() {
+    // Fetch recent sessions from IndexedDB
+    const sessions = await getRecentSessions(10);
+
+    // Generate the recent topics HTML
+    const recentTopicsHTML = this.generateRecentTopicsHTML(sessions);
+
     this.setHTML(`
       <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
         <!-- Top App Bar -->
@@ -33,53 +39,7 @@ export default class HomeView extends BaseView {
 
           <!-- List Items Container -->
           <div id="recentTopicsList" class="flex flex-col gap-3">
-            <!-- Geography Topic -->
-            <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark rounded-xl p-4">
-              <div class="flex size-16 shrink-0 items-center justify-center rounded-xl bg-green-500">
-                <span class="material-symbols-outlined text-white text-3xl">public</span>
-              </div>
-              <div class="flex flex-1 flex-col">
-                <p class="text-text-light dark:text-text-dark text-base font-bold leading-normal">Geography</p>
-                <p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal">Completed</p>
-              </div>
-              <p class="text-green-500 text-lg font-bold">10/10</p>
-            </div>
-
-            <!-- Science Topic -->
-            <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark rounded-xl p-4">
-              <div class="flex size-16 shrink-0 items-center justify-center rounded-xl bg-orange-500">
-                <span class="material-symbols-outlined text-white text-3xl">science</span>
-              </div>
-              <div class="flex flex-1 flex-col">
-                <p class="text-text-light dark:text-text-dark text-base font-bold leading-normal">Science</p>
-                <p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal">In Progress</p>
-              </div>
-              <p class="text-orange-500 text-lg font-bold">80%</p>
-            </div>
-
-            <!-- History Topic -->
-            <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark rounded-xl p-4">
-              <div class="flex size-16 shrink-0 items-center justify-center rounded-xl bg-red-500">
-                <span class="material-symbols-outlined text-white text-3xl">auto_stories</span>
-              </div>
-              <div class="flex flex-1 flex-col">
-                <p class="text-text-light dark:text-text-dark text-base font-bold leading-normal">History</p>
-                <p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal">Completed</p>
-              </div>
-              <p class="text-red-500 text-lg font-bold">3/10</p>
-            </div>
-
-            <!-- Movie Trivia Topic -->
-            <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark rounded-xl p-4">
-              <div class="flex size-16 shrink-0 items-center justify-center rounded-xl bg-blue-500">
-                <span class="material-symbols-outlined text-white text-3xl">movie</span>
-              </div>
-              <div class="flex flex-1 flex-col">
-                <p class="text-text-light dark:text-text-dark text-base font-bold leading-normal">Movie Trivia</p>
-                <p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal">Completed</p>
-              </div>
-              <p class="text-blue-500 text-lg font-bold">7/10</p>
-            </div>
+            ${recentTopicsHTML}
           </div>
         </div>
 
@@ -112,6 +72,72 @@ export default class HomeView extends BaseView {
     // Sync network indicator with current state
     updateNetworkIndicator();    
   }
+
+  generateRecentTopicsHTML(sessions) {
+    // Handle empty state
+    if (!sessions || sessions.length === 0) {
+      return `
+        <div class="flex flex-col items-center justify-center py-8 text-center">    
+          <span class="material-symbols-outlined text-5xl text-subtext-light        
+  dark:text-subtext-dark mb-3">quiz</span>
+          <p class="text-subtext-light dark:text-subtext-dark text-base">No
+  quizzes yet</p>
+          <p class="text-subtext-light dark:text-subtext-dark text-sm">Start        
+  your first quiz to see it here!</p>
+        </div>
+      `;
+    }
+
+    // Generate HTML for each session
+    return sessions.map(session => {
+      const percentage = Math.round((session.score / session.totalQuestions) *      
+  100);
+      const scoreDisplay = `${session.score}/${session.totalQuestions}`;
+
+      // Choose color based on score
+      let colorClass = 'text-green-500 bg-green-500';
+      if (percentage < 50) {
+        colorClass = 'text-red-500 bg-red-500';
+      } else if (percentage < 80) {
+        colorClass = 'text-orange-500 bg-orange-500';
+      }
+
+      // Format the date
+      const date = new Date(session.timestamp);
+      const dateStr = this.formatDate(date);
+
+      return `
+        <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark
+  rounded-xl p-4">
+          <div class="flex size-16 shrink-0 items-center justify-center
+  rounded-xl ${colorClass.split(' ')[1]}">
+            <span class="material-symbols-outlined text-white
+  text-3xl">school</span>
+          </div>
+          <div class="flex flex-1 flex-col">
+            <p class="text-text-light dark:text-text-dark text-base font-bold       
+  leading-normal">${session.topic}</p>
+            <p class="text-subtext-light dark:text-subtext-dark text-sm
+  font-normal leading-normal">${dateStr}</p>
+          </div>
+          <p class="${colorClass.split(' ')[0]} text-lg
+  font-bold">${scoreDisplay}</p>
+        </div>
+      `;
+    }).join('');
+  }
+
+  formatDate(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+
+    return date.toLocaleDateString();
+  }  
 
   attachListeners() {
     const startQuizBtn = this.querySelector('#startQuizBtn');

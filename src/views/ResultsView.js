@@ -1,5 +1,6 @@
 import BaseView from './BaseView.js';
 import state from '../state/state.js';
+import { saveSession } from '../db/db.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -21,6 +22,8 @@ export default class ResultsView extends BaseView {
 
     const totalQuestions = questions.length;
     const percentage = Math.round((correctCount / totalQuestions) * 100);
+
+    this.saveQuizSession(questions, answers, correctCount, totalQuestions);
 
     // Calculate stroke-dashoffset for circular progress (100 = full circle, 0 = empty)
     const strokeDashoffset = 100 - percentage;
@@ -151,6 +154,28 @@ export default class ResultsView extends BaseView {
     `);
 
     this.attachListeners();
+  }
+
+  async saveQuizSession(questions, answers, correctCount, totalQuestions) {
+    const topic = state.get('currentTopic') || 'Unknown Topic';
+    const gradeLevel = state.get('currentGradeLevel') || 'Unknown';
+
+    const session = {
+      topic,
+      gradeLevel,
+      timestamp: Date.now(),
+      score: correctCount,
+      totalQuestions,
+      questions,
+      answers
+    };
+
+    try {
+      await saveSession(session);
+      console.log('Quiz session saved:', session.topic);
+    } catch (error) {
+      console.error('Failed to save session:', error);
+    }
   }
 
   attachListeners() {
