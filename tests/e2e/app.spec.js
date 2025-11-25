@@ -282,4 +282,54 @@ test.describe('QuizMaster E2E Tests', () => {
       await expect(page.locator('#recentTopicsList >> text=Today')).toBeVisible();
     });
 
+    test('should navigate to settings page', async ({ page }) => {
+      await page.goto('/');
+
+      // Click Settings in bottom nav
+      await page.click('a[href="#/settings"]');
+
+      // Should navigate to settings page
+      await expect(page).toHaveURL(/#\/settings/);
+
+      // Check for Settings header
+      await expect(page.locator('h1')).toContainText('Settings');
+
+      // Check for Preferences section
+      await expect(page.locator('h2').first()).toContainText('Preferences');
+
+      // Check for About section
+      await expect(page.locator('h2').nth(1)).toContainText('About');
+    });
+
+    test('should display all settings form elements', async ({ page }) => {
+      await page.goto('/#/settings');
+
+      // Check all dropdowns are visible
+      await expect(page.locator('#defaultGradeLevel')).toBeVisible();
+      await expect(page.locator('#questionsPerQuiz')).toBeVisible();
+      await expect(page.locator('#difficulty')).toBeVisible();
+
+      // Check About section content
+      await expect(page.locator('text=Version')).toBeVisible();
+      await expect(page.locator('text=2.0.0')).toBeVisible();
+      await expect(page.locator('text=View on GitHub')).toBeVisible();
+    });
+
+    test('should persist settings after page refresh', async ({ page }) => {
+      await page.goto('/#/settings');
+
+      // Change settings
+      await page.selectOption('#defaultGradeLevel', 'college');
+      await page.selectOption('#questionsPerQuiz', '15');
+      await page.selectOption('#difficulty', 'hard');
+
+      // Refresh the page
+      await page.reload();
+
+      // Verify settings persisted
+      await expect(page.locator('#defaultGradeLevel')).toHaveValue('college');
+      await expect(page.locator('#questionsPerQuiz')).toHaveValue('15');
+      await expect(page.locator('#difficulty')).toHaveValue('hard');
+    });
+
 });
