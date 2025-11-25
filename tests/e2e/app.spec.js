@@ -51,8 +51,11 @@ test.describe('QuizMaster E2E Tests', () => {
     // Generate questions
     await page.click('#generateBtn');
 
-    // Should navigate to quiz page
-    await expect(page).toHaveURL(/#\/quiz/);
+    // Should navigate to loading page first
+    await expect(page).toHaveURL(/#\/loading/);
+
+    // Wait for quiz to load (API call takes time)
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Check quiz header
     await expect(page.locator('h1')).toContainText('Science Quiz');
@@ -127,8 +130,9 @@ test.describe('QuizMaster E2E Tests', () => {
     await page.fill('#topicInput', 'Math');
     await page.click('#generateBtn');
 
-    // Wait for quiz to load
-    await expect(page).toHaveURL(/#\/quiz/);
+    // Wait for loading then quiz
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Set up dialog handler
     page.once('dialog', dialog => {
@@ -146,7 +150,8 @@ test.describe('QuizMaster E2E Tests', () => {
     await page.fill('#topicInput', 'History');
     await page.click('#generateBtn');
 
-    await expect(page).toHaveURL(/#\/quiz/);
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Answer all questions
     for (let i = 0; i < 5; i++) {
@@ -170,7 +175,8 @@ test.describe('QuizMaster E2E Tests', () => {
     await page.fill('#topicInput', 'Geography');
     await page.click('#generateBtn');
 
-    await expect(page).toHaveURL(/#\/quiz/);
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Answer questions with mix of correct/incorrect
     // Question 1: correct (option 1)
@@ -207,7 +213,8 @@ test.describe('QuizMaster E2E Tests', () => {
     await page.fill('#topicInput', 'Science');
     await page.click('#generateBtn');
 
-    await expect(page).toHaveURL(/#\/quiz/);
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Submit button should be disabled (have opacity-50 class)
     const submitBtn = page.locator('#submitBtn');

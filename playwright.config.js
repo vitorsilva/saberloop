@@ -13,7 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
     },
     // Add this section:
     webServer: {
-      command: 'npm run dev',
+      command: 'npx vite --port 3000',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 120000,
