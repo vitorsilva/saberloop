@@ -13,26 +13,30 @@ export default class QuizView extends BaseView {
 
   async render() {
     const topic = state.get('currentTopic');
-    const gradeLevel = state.get('currentGradeLevel');
 
     if (!topic) {
       this.navigateTo('/topic-input');
       return;
     }
 
-    // Generate questions if not already generated
+    // Get pre-generated questions from LoadingView
     if (this.questions.length === 0) {
-      try {
-        const result = await generateQuestions(topic, gradeLevel);
-        this.questions = result.questions;
-        this.language = result.language;
-        this.answers = new Array(this.questions.length).fill(null);
-      } catch (error) {
-        console.error('Failed to generate questions:', error);
-        alert('Failed to generate questions. Please try again.');
-        this.navigateTo('/topic-input');
+      const generatedQuestions = state.get('generatedQuestions');
+      const quizLanguage = state.get('quizLanguage');
+
+      if (!generatedQuestions || generatedQuestions.length === 0) {
+        // No questions generated, go to loading
+        this.navigateTo('/loading');
         return;
       }
+
+      this.questions = generatedQuestions;
+      this.language = quizLanguage;
+      this.answers = new Array(this.questions.length).fill(null);
+
+      // Clear from state to prevent reuse
+      state.set('generatedQuestions', null);
+      state.set('quizLanguage', null);
     }
 
     this.renderQuestion();

@@ -78,7 +78,7 @@ export default class TopicInputView extends BaseView {
 
       state.set('currentTopic', topic);
       state.set('currentGradeLevel', gradeLevel);
-      this.navigateTo('/quiz');
+      this.navigateTo('/loading');
     });
   }
 }
