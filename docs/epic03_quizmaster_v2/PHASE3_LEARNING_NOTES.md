@@ -13,7 +13,7 @@
 |------|-------|--------|
 | **Part 1** | **Loading Screen for Quiz Generation** | **Complete** |
 | **Part 2** | **Multi-Language Question Generation** | **Complete** |
-| Part 3 | Dynamic Home Page | Pending |
+| **Part 3** | **Dynamic Home Page** | **Complete** |
 | Part 4 | Settings Page | Pending |
 | Part 5 | Navigation Updates | Pending |
 
@@ -217,15 +217,97 @@ Chose locale codes (e.g., "PT-PT", "EN-US") over simple codes ("pt", "en") or fu
 
 ---
 
-## Next Up: Part 1 - Loading Screen
+## Part 3: Dynamic Home Page
 
-**Problem:** When users click "Generate Questions", they see a blank screen for 5+ seconds while waiting for the API response.
+**Completed:** November 25, 2025
+**Duration:** ~60 minutes
 
-**Solution:** Create a dedicated `LoadingView.js` with:
-- Animated spinner
-- Topic name display
-- Rotating status messages
-- Cancel button
+### Problem Solved
+
+The home page displayed hardcoded mock data (Geography, Science, History, Movie Trivia) instead of real quiz history from the user's completed quizzes.
+
+### Solution Implemented
+
+1. **Save quiz sessions** to IndexedDB when user completes a quiz
+2. **Read sessions** from IndexedDB on home page load
+3. **Display dynamically** with color-coded scores and relative dates
+4. **Handle empty state** when no quizzes exist yet
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/views/ResultsView.js` | Added `saveQuizSession()` method to save completed quizzes to IndexedDB |
+| `src/views/HomeView.js` | Made `render()` async, added `generateRecentTopicsHTML()` and `formatDate()` methods |
+| `tests/e2e/app.spec.js` | Updated home page test for empty state, added new test for quiz persistence |
+| `playwright.config.js` | Use `cross-env` to force mock API in tests |
+| `package.json` | Added `cross-env` as devDependency |
+
+### Session Object Structure
+
+```javascript
+{
+  topic: "Photosynthesis",       // Topic name for display
+  gradeLevel: "5th Grade",       // Grade level used
+  timestamp: Date.now(),         // When quiz was taken
+  score: 8,                      // Number correct
+  totalQuestions: 10,            // Total questions
+  questions: [...],              // For replay/review
+  answers: [0, 2, 1, ...]        // User's answers
+}
+```
+
+### Key Concepts Learned
+
+#### 1. Data Denormalization in NoSQL
+
+Stored `topic` name directly in session instead of using a foreign key reference:
+- IndexedDB has no JOINs - can't easily combine data from multiple stores
+- Faster reads - no second lookup needed
+- Offline resilient - sessions work even if topics store is corrupted
+- Historical accuracy - old sessions keep original topic name even if renamed later
+
+#### 2. Async View Rendering
+
+Made `render()` async to await IndexedDB operations:
+```javascript
+async render() {
+  const sessions = await getRecentSessions(10);
+  const recentTopicsHTML = this.generateRecentTopicsHTML(sessions);
+  // ... rest of rendering
+}
+```
+
+#### 3. Empty State UX
+
+Always handle the case when there's no data:
+```javascript
+if (!sessions || sessions.length === 0) {
+  return `<div>No quizzes yet. Start your first quiz!</div>`;
+}
+```
+
+#### 4. Cross-Platform Environment Variables
+
+Used `cross-env` package to set environment variables in npm scripts:
+- Works on Windows, Mac, and Linux
+- Essential for CI/CD pipelines (GitHub Actions runs on Linux)
+- Command: `npx cross-env VITE_USE_REAL_API=false vite --port 3000`
+
+#### 5. E2E Test Isolation
+
+Tests that modify database state need careful consideration:
+- IndexedDB may persist between tests
+- Tests should either clean up after themselves or not depend on clean state
+- Using mock API ensures deterministic test results
+
+### Testing Performed
+
+1. **Session saving:** Quiz completed → session appears in IndexedDB ✅
+2. **Dynamic display:** Home page shows real quiz with score and date ✅
+3. **Empty state:** "No quizzes yet" message when DB empty ✅
+4. **Color coding:** Green (≥80%), Orange (50-79%), Red (<50%) ✅
+5. **E2E tests:** All 10 tests passing ✅
 
 ---
 
@@ -246,4 +328,19 @@ Chose locale codes (e.g., "PT-PT", "EN-US") over simple codes ("pt", "en") or fu
 - All 9 E2E tests passing
 
 **Progress:** 2 of 5 parts complete (Part 1 & Part 2)
-**Next session:** Part 3 - Dynamic Home Page
+
+### Session 2 - November 25, 2025
+- Completed Part 3: Dynamic Home Page
+  - Added session saving in ResultsView.js
+  - Made HomeView.js read from IndexedDB
+  - Implemented color-coded scores and relative dates
+  - Added empty state handling
+- Updated E2E tests
+  - Changed home page test to check empty state (was checking hardcoded data)
+  - Added new test: "should display completed quiz on home page"
+  - Fixed Playwright config with `cross-env` for cross-platform env vars
+  - Installed `cross-env` as devDependency
+- All 10 E2E tests passing
+
+**Progress:** 3 of 5 parts complete (Part 1, Part 2 & Part 3)
+**Next session:** Part 4 - Settings Page
