@@ -12,7 +12,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/epic0X_*/` directories.
 
-**Current Status:** Epic 03 Phase 2 (Production Offline) - Complete ✅
+**Current Status:** Epic 03 Phase 3 (UI Polish) - In Progress (Part 2 Complete ✅)
 
 **Repository**: https://github.com/vitorsilva/demo-pwa-app
 
