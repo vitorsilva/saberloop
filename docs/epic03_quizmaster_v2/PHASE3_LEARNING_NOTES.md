@@ -2,8 +2,9 @@
 
 **Epic:** 3 - QuizMaster V2
 **Phase:** 3 - UI Polish
-**Status:** In Progress
+**Status:** Complete ✅
 **Started:** November 25, 2025
+**Completed:** November 25, 2025
 
 ---
 
@@ -11,11 +12,11 @@
 
 | Part | Focus | Status |
 |------|-------|--------|
-| **Part 1** | **Loading Screen for Quiz Generation** | **Complete** |
-| **Part 2** | **Multi-Language Question Generation** | **Complete** |
-| **Part 3** | **Dynamic Home Page** | **Complete** |
-| Part 4 | Settings Page | Pending |
-| Part 5 | Navigation Updates | Pending |
+| **Part 1** | **Loading Screen for Quiz Generation** | **Complete** ✅ |
+| **Part 2** | **Multi-Language Question Generation** | **Complete** ✅ |
+| **Part 3** | **Dynamic Home Page** | **Complete** ✅ |
+| **Part 4** | **Settings Page** | **Complete** ✅ |
+| **Part 5** | **Navigation Updates** | **Complete** ✅ |
 
 ---
 
@@ -343,4 +344,185 @@ Tests that modify database state need careful consideration:
 - All 10 E2E tests passing
 
 **Progress:** 3 of 5 parts complete (Part 1, Part 2 & Part 3)
-**Next session:** Part 4 - Settings Page
+
+---
+
+## Part 4: Settings Page
+
+**Completed:** November 25, 2025
+**Duration:** ~90 minutes
+
+### Problem Solved
+
+The app had no way for users to configure preferences. Settings like grade level, number of questions, and difficulty were either hardcoded or required re-selection every time.
+
+### Solution Implemented
+
+1. **Created SettingsView** with preferences form and about section
+2. **Created settings utility** for localStorage management
+3. **Wired up form** to save/load preferences automatically
+4. **Added comprehensive tests** (unit + E2E)
+
+### Files Created/Modified
+
+| File | Changes |
+|------|---------|
+| `src/views/SettingsView.js` | **NEW** - Settings page with preferences form and about section |
+| `src/utils/settings.js` | **NEW** - localStorage utility (getSettings, saveSetting, etc.) |
+| `src/utils/settings.test.js` | **NEW** - 7 unit tests for settings utility |
+| `src/main.js` | Added `/settings` route |
+| `tests/e2e/app.spec.js` | Added 3 E2E tests for settings page |
+
+### Key Concepts Learned
+
+#### 1. localStorage vs IndexedDB
+
+| localStorage | IndexedDB |
+|-------------|-----------|
+| Simple key-value | Complex objects with queries |
+| Synchronous API | Asynchronous API |
+| ~5-10 MB limit | ~50+ MB limit |
+| Strings only | Any JS type |
+
+**Decision:** Use localStorage for settings (small, simple, frequently accessed) and IndexedDB for quiz sessions (complex, large, needs querying).
+
+#### 2. Settings Utility Pattern
+
+Created a utility module that:
+- Defines default values in one place
+- Merges stored values with defaults (new settings get defaults automatically)
+- Handles errors gracefully (corrupted localStorage)
+- Provides simple API: `getSetting()`, `saveSetting()`
+
+```javascript
+const DEFAULT_SETTINGS = {
+  defaultGradeLevel: 'middle school',
+  questionsPerQuiz: '10',
+  difficulty: 'mixed'
+};
+
+export function getSettings() {
+  const stored = localStorage.getItem(SETTINGS_KEY);
+  return { ...DEFAULT_SETTINGS, ...JSON.parse(stored || '{}') };
+}
+```
+
+#### 3. Form Binding Pattern
+
+Two-way binding between form inputs and storage:
+
+**Load (storage → form):**
+```javascript
+loadSettings() {
+  const settings = getSettings();
+  this.querySelector('#defaultGradeLevel').value = settings.defaultGradeLevel;
+}
+```
+
+**Save (form → storage):**
+```javascript
+this.addEventListener(gradeSelect, 'change', (e) => {
+  saveSetting('defaultGradeLevel', e.target.value);
+});
+```
+
+#### 4. Unit Tests vs E2E Tests
+
+Both are valuable and test different things:
+
+| Unit Tests | E2E Tests |
+|------------|-----------|
+| Test isolated logic | Test full user flows |
+| Fast (ms) | Slower (seconds) |
+| Easy to test edge cases | Test real browser behavior |
+| Don't catch integration bugs | Catch wiring issues |
+
+**Example:** Unit test verified `saveSetting()` writes to localStorage. E2E test verified the dropdown actually triggers `saveSetting()` on change.
+
+### Testing Performed
+
+1. **Settings page loads:** All form elements visible ✅
+2. **Settings persist:** Change values, refresh, values retained ✅
+3. **Navigation works:** Bottom nav links to settings ✅
+4. **Unit tests:** 7 tests passing ✅
+5. **E2E tests:** 13 tests passing (3 new) ✅
+
+---
+
+## Part 5: Navigation Updates
+
+**Completed:** November 25, 2025
+**Duration:** ~10 minutes
+
+### Problem Solved
+
+The bottom navigation bar showed "Profile" with a person icon, but the app had a Settings page, not a Profile page. This was inconsistent and confusing.
+
+### Solution Implemented
+
+Updated navigation in all views to show "Settings" with a gear icon instead of "Profile" with a person icon.
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/views/HomeView.js` | Changed "Profile" → "Settings", icon "person" → "settings" |
+| `src/views/TopicInputView.js` | Same changes |
+| `src/views/QuizView.js` | Same changes |
+| `src/views/ResultsView.js` | Same changes |
+
+### Key Concepts Learned
+
+#### Consistent UI Across Views
+
+When you have repeated UI elements (like navigation bars), changes need to be applied everywhere. This is a good candidate for future refactoring into a shared component.
+
+---
+
+## Session Log
+
+### Session 1 - November 25, 2025
+- Started Phase 3
+- Completed Part 2: Multi-Language Question Generation
+  - Updated prompts for language detection
+  - Added `language` field to API response
+  - Updated all API consumers (real, mock, QuizView)
+- Completed Part 1: Loading Screen for Quiz Generation
+  - Created LoadingView.js with spinner, messages, offline detection
+  - Updated navigation flow: TopicInput → Loading → Quiz
+  - Fixed E2E tests to expect loading screen
+  - Fixed Playwright config to use mock API
+- Fixed backend bug (duplicate line in prompt)
+- All 9 E2E tests passing
+
+**Progress:** 2 of 5 parts complete (Part 1 & Part 2)
+
+### Session 2 - November 25, 2025
+- Completed Part 3: Dynamic Home Page
+  - Added session saving in ResultsView.js
+  - Made HomeView.js read from IndexedDB
+  - Implemented color-coded scores and relative dates
+  - Added empty state handling
+- Updated E2E tests
+  - Changed home page test to check empty state (was checking hardcoded data)
+  - Added new test: "should display completed quiz on home page"
+  - Fixed Playwright config with `cross-env` for cross-platform env vars
+  - Installed `cross-env` as devDependency
+- All 10 E2E tests passing
+
+**Progress:** 3 of 5 parts complete (Part 1, Part 2 & Part 3)
+
+### Session 3 - November 25, 2025
+- Completed Part 4: Settings Page
+  - Created `SettingsView.js` with preferences form and about section
+  - Created `settings.js` utility for localStorage management
+  - Wired up form inputs to save/load settings automatically
+  - Added 7 unit tests for settings utility
+  - Added 3 E2E tests for settings page
+- Completed Part 5: Navigation Updates
+  - Changed "Profile" → "Settings" in all 4 views
+  - Updated icon from "person" → "settings"
+- All tests passing (unit + E2E)
+
+**Progress:** 5 of 5 parts complete - Phase 3 Complete! ✅
+**Next phase:** Phase 3.5 - Branding & Identity
