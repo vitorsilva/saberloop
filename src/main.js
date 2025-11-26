@@ -8,6 +8,7 @@ import { initNetworkMonitoring } from './utils/network.js';
 import { registerSW } from 'virtual:pwa-register';
 import LoadingView from './views/LoadingView.js';
 import SettingsView from './views/SettingsView.js';
+import TopicsView from './views/TopicsView.js';
 
 console.log('🎓 QuizMaster initializing...');
 
@@ -24,6 +25,7 @@ async function init() {
     router.addRoute('/results', ResultsView);
     router.addRoute('/loading', LoadingView)
     router.addRoute('/settings', SettingsView);
+    router.addRoute('/history', TopicsView);
     
     // Start the router
     router.init();
