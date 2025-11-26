@@ -77,6 +77,64 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
+### [Phase 9: OpenRouter Migration](./PHASE9_OPENROUTE_MIGRATION.md) ⭐ **Optional**
+
+**Status:** Ready to implement (if desired)
+
+**What it is:**
+- Migrate from direct Claude API to OpenRouter
+- Multi-model support (Claude, GPT-4, etc.)
+- Unified API interface
+
+**Why it's optional:**
+- ✅ Direct Claude API works perfectly
+- ⚠️ Adds abstraction layer
+- ⚠️ Additional service dependency
+
+**Why you might want it:**
+- 🔄 Model flexibility
+- 💰 Potential cost savings
+- 🎓 Learn API aggregation patterns
+
+**When to revisit:**
+- Want to support multiple AI models
+- Need model fallback capability
+- Exploring different AI providers
+
+---
+
+### [Phase 10: PHP VPS Migration](./PHASE10_PHP_MIGRATION.md) ⭐ **Optional**
+
+**Status:** Ready to implement (if you have a VPS)
+
+**What it is:**
+- Migrate serverless backend from Netlify Functions to PHP on VPS
+- Traditional server architecture (Apache/Nginx + PHP)
+- REST API with three endpoints (questions, explanations, health)
+- Environment-based configuration with .env files
+
+**Why it's optional:**
+- ✅ Netlify Functions work perfectly (simpler)
+- ✅ Serverless is easier (no server maintenance)
+- ⚠️ Requires VPS and server management skills
+- ⚠️ More complex deployment
+
+**Why you might want it:**
+- 💰 **Zero additional cost** (if you already have a VPS)
+- 🚀 **No cold starts** (always-warm server, faster response)
+- 🎓 **Learn PHP backend development** and VPS management
+- 🔧 **Full server control** (custom caching, rate limiting)
+- 📊 **Server-side analytics** and detailed logging
+- 💼 **Resume value** (PHP + VPS experience)
+
+**When to revisit:**
+- You already have a VPS (cost savings)
+- Want to learn traditional backend architecture
+- Need full infrastructure control
+- Want to eliminate cold start latency
+
+---
+
 ## How to Use This Folder
 
 ### If You're Planning Epic 3
@@ -154,12 +212,12 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 2 ideas (Azure Functions, OAuth)
+**Current count:** 4 ideas (Azure Functions, OAuth, OpenRouter, PHP VPS)
 
-**Status:** Both documented and ready to implement when desired
+**Status:** All documented and ready to implement when desired
 
 ---
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-26
 **Location:** `docs/parking_lot/`
 **Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
