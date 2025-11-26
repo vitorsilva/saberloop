@@ -15,3 +15,4 @@ coverage/
 .netlify
 .vs
 coverage/
+.version-history.json

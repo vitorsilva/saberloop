@@ -15,7 +15,10 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
+    "version": "node scripts/generate-version.js",
+    "predev": "npm run version",    
     "dev": "netlify dev",
+    "prebuild": "npm run version",    
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",

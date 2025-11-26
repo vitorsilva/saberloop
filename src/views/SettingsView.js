@@ -1,5 +1,6 @@
   import BaseView from './BaseView.js';
   import { getSettings, saveSetting } from '../utils/settings.js';
+  import { APP_VERSION, BUILD_DATE } from '../version.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -79,7 +80,7 @@
                   <p class="text-text-light dark:text-text-dark text-base
   font-medium">Version</p>
                   <p class="text-subtext-light dark:text-subtext-dark
-  text-base">2.0.0</p>
+  text-base">${APP_VERSION}</p>
                 </div>
               </div>
 
