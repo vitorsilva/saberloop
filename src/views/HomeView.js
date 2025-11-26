@@ -29,7 +29,7 @@ export default class HomeView extends BaseView {
           <div class="py-3">
             <button
               id="startQuizBtn"
-              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 flex-1 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] w-full shadow-lg shadow-primary/30 hover:bg-primary/90">
+              class="flex cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14   px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] w-full shadow-lg shadow-primary/30 hover:bg-primary/90">
               <span class="truncate">Start New Quiz</span>
             </button>
           </div>
