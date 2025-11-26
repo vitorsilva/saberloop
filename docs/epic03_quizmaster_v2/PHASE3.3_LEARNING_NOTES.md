@@ -2,8 +2,9 @@
 
 **Epic:** 3 - QuizMaster V2
 **Phase:** 3.3 - UI Polish 2
-**Status:** In Progress
+**Status:** ✅ Complete
 **Started:** 2025-11-26
+**Completed:** 2025-11-26
 
 ---
 
@@ -139,36 +140,171 @@ export async function updateSession(id, updates) {
 
 ---
 
-### Tasks Remaining
+---
+
+## Session 2 - 2025-11-26 (continued)
+
+### Tasks Completed
+
+#### Task 4: Topics Page (Quiz History) ✅
+
+**Problem:** Topics nav item existed but led nowhere. Users needed a way to see all quiz history.
+
+**Solution:** Created new TopicsView with full quiz history and replay functionality.
+
+**Files Created/Changed:**
+
+1. **`src/views/TopicsView.js`** (NEW)
+   - Displays all saved quiz sessions (up to 100)
+   - Reuses replay logic from HomeView
+   - Shows score color coding (green/orange/red)
+   - Empty state with CTA to start a quiz
+   - Indicates which quizzes can/cannot be replayed
+
+2. **`src/main.js`**
+   - Added import for TopicsView
+   - Registered `/history` route
+
+**Key Features:**
+- Full quiz history (not just 10 like home page)
+- Click to replay functionality
+- Visual indicator for non-replayable quizzes (old format)
+- Consistent navigation with other views
+
+**Key Learning:** Code duplication (formatDate, replayQuiz, renderQuizItem) between HomeView and TopicsView. In production, should extract to:
+- `src/utils/dateUtils.js` — Date formatting
+- `src/utils/quizUtils.js` — Replay logic
+- `src/components/QuizListItem.js` — Reusable component
+
+---
+
+#### Task 3: Offline-Aware UI ✅
+
+**Problem:** "Start New Quiz" button was clickable when offline, leading to failed API calls.
+
+**Solution:** Added offline banner and disabled button state with real-time updates.
+
+**Files Changed:**
+
+1. **`src/views/HomeView.js`**
+   - Added offline banner (always rendered, hidden by default)
+   - Added disabled styles to button
+   - Banner has `id="offlineBanner"` for DOM selection
+
+2. **`src/utils/network.js`**
+   - Added `updateOfflineUI()` function
+   - Updated `initNetworkMonitoring()` to call both `updateNetworkIndicator()` and `updateOfflineUI()` on network changes
+
+**Code Added to network.js:**
+
+```javascript
+export function updateOfflineUI() {
+  const banner = document.getElementById('offlineBanner');
+  const button = document.getElementById('startQuizBtn');
+
+  if (isOnline()) {
+    if (banner) banner.classList.add('hidden');
+    if (button) button.disabled = false;
+  } else {
+    if (banner) banner.classList.remove('hidden');
+    if (button) button.disabled = true;
+  }
+}
+```
+
+**Key Learning — Two Approaches to Dynamic UI:**
+
+| Approach | Description | When to Use |
+|----------|-------------|-------------|
+| **DOM Manipulation** | Update specific elements directly | Single elements, consistent with existing patterns |
+| **Full Re-render** | Re-render entire view on state change | Complex state changes, React/Vue style |
+
+We chose DOM manipulation to be consistent with existing `updateNetworkIndicator()` pattern.
+
+**Design Decision:** Always render banner (hidden by default) vs conditional rendering. DOM manipulation requires elements to exist, so we render hidden and toggle visibility.
+
+---
+
+#### Task 5: Automated Version Numbering ✅
+
+**Problem:** Version hardcoded as `2.0.0` in SettingsView. No way to track builds.
+
+**Solution:** Created build-time version generation with format `YYYYMMDD.NN`.
+
+**Files Created/Changed:**
+
+1. **`scripts/generate-version.js`** (NEW)
+   - Generates version in format `20251126.01`
+   - Tracks sequence in `.version-history.json`
+   - Increments within same day, resets on new day
+   - Outputs to `src/version.js`
+
+2. **`src/version.js`** (NEW, auto-generated)
+   - Exports `APP_VERSION` and `BUILD_DATE`
+   - Regenerated on each build
+
+3. **`package.json`**
+   - Added `version` script
+   - Added `predev` and `prebuild` hooks
+
+4. **`src/views/SettingsView.js`**
+   - Imports from `version.js`
+   - Displays dynamic version
+
+5. **`.gitignore`**
+   - Added `.version-history.json`
+
+**Package.json Scripts Added:**
+
+```json
+"version": "node scripts/generate-version.js",
+"predev": "npm run version",
+"prebuild": "npm run version",
+```
+
+**Key Learnings:**
+
+1. **npm lifecycle scripts** — `pre*` scripts run automatically before their counterpart (`predev` before `dev`, `prebuild` before `build`)
+
+2. **Separating history from output** — `.version-history.json` tracks state (not committed), `version.js` is the output (committed)
+
+3. **Why track history separately** — Simpler than parsing existing version, survives file deletion, clear separation of concerns
+
+---
+
+### All Tasks Summary
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 3 | Offline-aware UI (disable button, show banner) | Pending |
-| 4 | Topics page (full quiz history list) | Pending |
-| 5 | Automated version numbering (YYYYMMDD.NN) | Pending |
+| 1 | Full-width button | ✅ Done |
+| 2 | Quiz replay from saved sessions | ✅ Done |
+| 3 | Offline-aware UI | ✅ Done |
+| 4 | Topics page (quiz history) | ✅ Done |
+| 5 | Automated version numbering | ✅ Done |
 
 ---
 
-### Next Steps
-
-**Recommended next:** Task 4 (Topics page) — builds on replay logic just implemented.
-
-To continue, say: **"Let's continue with Task 4"** or specify another task.
-
----
-
-### Files Modified This Session
+### Files Modified/Created (All Sessions)
 
 | File | Changes |
 |------|---------|
-| `src/views/HomeView.js` | Full-width button, quiz item click handlers, replayQuiz method |
-| `src/views/ResultsView.js` | Replay detection, updateSession import, conditional save/update |
-| `src/db/db.js` | Added updateSession() function |
+| `src/views/HomeView.js` | Full-width button, quiz replay, offline banner |
+| `src/views/TopicsView.js` | NEW - Quiz history page |
+| `src/views/ResultsView.js` | Replay detection, conditional save/update |
+| `src/views/SettingsView.js` | Dynamic version display |
+| `src/db/db.js` | Added `updateSession()` function |
+| `src/utils/network.js` | Added `updateOfflineUI()` function |
+| `src/version.js` | NEW - Auto-generated version module |
+| `src/main.js` | Added TopicsView route |
+| `scripts/generate-version.js` | NEW - Version generation script |
+| `package.json` | Added version scripts |
+| `.gitignore` | Added `.version-history.json` |
 
 ---
 
 ### Testing Checklist
 
+**Task 1 & 2:**
 - [x] Button spans full width on home page
 - [x] Button aligns with Recent Topics cards
 - [x] Clicking quiz item starts replay
@@ -176,6 +312,58 @@ To continue, say: **"Let's continue with Task 4"** or specify another task.
 - [x] Replay updates existing session (no duplicate)
 - [x] New quiz still creates new entry
 - [x] Timestamp updates on replay
+
+**Task 3:**
+- [x] Button disabled when offline
+- [x] Offline banner appears when offline
+- [x] UI updates in real-time on network change
+- [x] Saved quiz replay works offline
+
+**Task 4:**
+- [x] Topics page displays all quizzes
+- [x] Navigation works from bottom nav
+- [x] Click to replay works
+- [x] Empty state displays correctly
+
+**Task 5:**
+- [x] Version generates correctly (YYYYMMDD.NN)
+- [x] Sequence increments on same day
+- [x] Version displays in Settings page
+- [x] `npm run dev` generates version automatically
+
+---
+
+## Key Concepts Learned
+
+1. **CSS `max-width` constrains `width`** — Even with `width: 100%`, `max-width` acts as a ceiling
+
+2. **Data attributes for interactivity** — Use `data-*` attributes instead of inline handlers for cleaner code
+
+3. **State key consistency** — Match existing patterns when setting state values
+
+4. **DOM manipulation vs re-render** — Choose based on existing patterns and complexity
+
+5. **npm lifecycle scripts** — `pre*` and `post*` scripts run automatically
+
+6. **Separation of concerns** — Build state (history) separate from build output (version.js)
+
+---
+
+## Technical Debt Identified
+
+1. **Code duplication** — `formatDate()`, `replayQuiz()`, quiz item rendering duplicated between HomeView and TopicsView
+   - **Solution:** Extract to utils/components
+
+2. **Magic numbers** — `100` sessions limit in TopicsView, `10` in HomeView
+   - **Solution:** Create constants file
+
+---
+
+## Next Steps
+
+Phase 3.3 is complete! Options:
+- **Phase 3.5 (Branding)** — App name, icons, visual identity
+- **Phase 4 (Observability)** — Logging, error tracking, monitoring
 
 ---
 
