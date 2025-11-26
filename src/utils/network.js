@@ -46,16 +46,43 @@
   }
 
   /**
+   * Update the offline UI elements (banner and button)
+   * Call this whenever network status changes
+   */
+  export function updateOfflineUI() {
+    const banner = document.getElementById('offlineBanner');
+    const button = document.getElementById('startQuizBtn');
+
+    if (isOnline()) {
+      // Online: hide banner, enable button
+      if (banner) banner.classList.add('hidden');
+      if (button) button.disabled = false;
+    } else {
+      // Offline: show banner, disable button
+      if (banner) banner.classList.remove('hidden');
+      if (button) button.disabled = true;
+    }
+  }  
+
+  /**
    * Initialize network status monitoring
    * Call this once when app starts
    */
   export function initNetworkMonitoring() {
-    // Update indicator on initial load
+    
+    // Update UI on initial load
     updateNetworkIndicator();
+    updateOfflineUI();
 
     // Listen for network changes
-    onOnline(updateNetworkIndicator);
-    onOffline(updateNetworkIndicator);
+    onOnline(() => {
+      updateNetworkIndicator();
+      updateOfflineUI();
+    });
+    onOffline(() => {
+      updateNetworkIndicator();
+      updateOfflineUI();
+    });
 
     console.log('✅ Network monitoring initialized');
   }

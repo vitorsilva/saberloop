@@ -1,5 +1,5 @@
 import BaseView from './BaseView.js';
-import { updateNetworkIndicator } from '../utils/network.js';
+import { updateNetworkIndicator, isOnline } from '../utils/network.js';
 import { getRecentSessions, getSession } from '../db/db.js';
 import state from '../state/state.js';
 
@@ -27,14 +27,28 @@ export default class HomeView extends BaseView {
           <!-- Headline Text -->
           <h2 class="text-text-light dark:text-text-dark tracking-light text-[32px] font-bold leading-tight text-left pb-3 pt-6">Welcome back!</h2>
 
-          <!-- Start New Quiz Button -->
-          <div class="py-3">
-            <button
-              id="startQuizBtn"
-              class="flex cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14   px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] w-full shadow-lg shadow-primary/30 hover:bg-primary/90">
-              <span class="truncate">Start New Quiz</span>
-            </button>
+        <!-- Offline Banner -->
+        <div id="offlineBanner" class="bg-orange-500/20 border
+        border-orange-500 rounded-xl p-4 mb-3 ${isOnline() ? 'hidden' : ''}">      
+          <div class="flex items-center gap-2 text-orange-500">
+            <span class="material-symbols-outlined">wifi_off</span>
+            <span class="text-sm font-medium">You're offline. You can replay       
+        saved quizzes below.</span>
           </div>
+        </div>
+
+        <!-- Start New Quiz Button -->
+        <div class="py-3">
+          <button
+            id="startQuizBtn"
+            class="flex cursor-pointer items-center justify-center
+        overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base       
+        font-bold leading-normal tracking-[0.015em] w-full shadow-lg
+        shadow-primary/30 hover:bg-primary/90 disabled:bg-gray-400
+        disabled:cursor-not-allowed disabled:shadow-none">
+            <span class="truncate">Start New Quiz</span>
+          </button>
+        </div>
 
           <!-- Section Header -->
           <h3 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3 pt-8">Recent Topics</h3>
