@@ -361,7 +361,15 @@ We chose DOM manipulation to be consistent with existing `updateNetworkIndicator
 
 ## Next Steps
 
-Phase 3.3 is complete! Options:
+Phase 3.3 implementation is complete! Before moving on:
+
+### Immediate Next (When Resuming)
+1. **Write tests for Phase 3.3** — Test plan documented in `PHASE3.3_UI_POLISH2.md`
+   - High priority: `updateSession()` unit test, quiz replay E2E, offline UI E2E
+   - Medium priority: `updateOfflineUI()` unit test, topics page E2E
+   - Low priority: version display E2E
+
+### After Tests
 - **Phase 3.5 (Branding)** — App name, icons, visual identity
 - **Phase 4 (Observability)** — Logging, error tracking, monitoring
 

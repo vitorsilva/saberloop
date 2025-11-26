@@ -779,6 +779,448 @@ Phase 3.3 is complete when:
 
 ---
 
+## Automated Testing
+
+> **Note:** Test infrastructure (Vitest for unit tests, Playwright for E2E) was set up in Epic 01 Phase 4. See `docs/epic01_infrastructure/PHASE4.3_UNIT_TESTING.md` and `PHASE4.4_E2E_TESTING.md` for setup details.
+
+### Unit Tests (Vitest)
+
+Tests for isolated functions and modules.
+
+#### `src/db/db.test.js` — Database Functions
+
+```javascript
+import { describe, it, expect, beforeEach } from 'vitest';
+import { updateSession, getSession, saveSession } from './db.js';
+
+describe('updateSession', () => {
+  beforeEach(async () => {
+    // Clear test database or use fake-indexeddb
+  });
+
+  it('should update existing session with new data', async () => {
+    // Arrange: Create a session
+    const sessionId = await saveSession({
+      topic: 'Math',
+      score: 3,
+      totalQuestions: 5,
+      timestamp: Date.now(),
+      questions: [],
+      answers: []
+    });
+
+    // Act: Update the session
+    const updated = await updateSession(sessionId, { score: 5 });
+
+    // Assert: Score should be updated
+    expect(updated.score).toBe(5);
+    expect(updated.topic).toBe('Math'); // Other fields unchanged
+  });
+
+  it('should return null for non-existent session', async () => {
+    const result = await updateSession(99999, { score: 5 });
+    expect(result).toBeNull();
+  });
+
+  it('should update timestamp on replay', async () => {
+    const originalTimestamp = Date.now() - 10000;
+    const sessionId = await saveSession({
+      topic: 'Science',
+      score: 4,
+      totalQuestions: 5,
+      timestamp: originalTimestamp,
+      questions: [],
+      answers: []
+    });
+
+    const newTimestamp = Date.now();
+    await updateSession(sessionId, { timestamp: newTimestamp });
+
+    const session = await getSession(sessionId);
+    expect(session.timestamp).toBe(newTimestamp);
+    expect(session.timestamp).toBeGreaterThan(originalTimestamp);
+  });
+});
+```
+
+#### `src/utils/network.test.js` — Network Utilities
+
+```javascript
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { isOnline, updateOfflineUI } from './network.js';
+
+describe('isOnline', () => {
+  it('should return navigator.onLine value', () => {
+    // Note: May need to mock navigator.onLine
+    expect(typeof isOnline()).toBe('boolean');
+  });
+});
+
+describe('updateOfflineUI', () => {
+  let banner, button;
+
+  beforeEach(() => {
+    // Create mock DOM elements
+    banner = document.createElement('div');
+    banner.id = 'offlineBanner';
+    banner.classList.add('hidden');
+    document.body.appendChild(banner);
+
+    button = document.createElement('button');
+    button.id = 'startQuizBtn';
+    document.body.appendChild(button);
+  });
+
+  afterEach(() => {
+    banner.remove();
+    button.remove();
+  });
+
+  it('should hide banner and enable button when online', () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+
+    updateOfflineUI();
+
+    expect(banner.classList.contains('hidden')).toBe(true);
+    expect(button.disabled).toBe(false);
+  });
+
+  it('should show banner and disable button when offline', () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+
+    updateOfflineUI();
+
+    expect(banner.classList.contains('hidden')).toBe(false);
+    expect(button.disabled).toBe(true);
+  });
+
+  it('should handle missing elements gracefully', () => {
+    banner.remove();
+    button.remove();
+
+    // Should not throw
+    expect(() => updateOfflineUI()).not.toThrow();
+  });
+});
+```
+
+#### `scripts/generate-version.test.js` — Version Generation
+
+```javascript
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import fs from 'fs';
+import path from 'path';
+
+// Test the version format and sequence logic
+describe('Version Generation', () => {
+  const VERSION_FILE = 'src/version.test.js';
+  const HISTORY_FILE = '.version-history.test.json';
+
+  afterEach(() => {
+    // Cleanup test files
+    if (fs.existsSync(VERSION_FILE)) fs.unlinkSync(VERSION_FILE);
+    if (fs.existsSync(HISTORY_FILE)) fs.unlinkSync(HISTORY_FILE);
+  });
+
+  it('should generate version in YYYYMMDD.NN format', () => {
+    const version = '20251126.01';
+    expect(version).toMatch(/^\d{8}\.\d{2}$/);
+  });
+
+  it('should increment sequence on same day', () => {
+    const history = { lastDate: '20251126', lastSeq: 1 };
+    const currentDate = '20251126';
+
+    const seq = history.lastDate === currentDate ? history.lastSeq + 1 : 1;
+
+    expect(seq).toBe(2);
+  });
+
+  it('should reset sequence on new day', () => {
+    const history = { lastDate: '20251125', lastSeq: 5 };
+    const currentDate = '20251126';
+
+    const seq = history.lastDate === currentDate ? history.lastSeq + 1 : 1;
+
+    expect(seq).toBe(1);
+  });
+});
+```
+
+---
+
+### E2E Tests (Playwright)
+
+Tests for complete user workflows in real browser.
+
+#### `e2e/quiz-replay.spec.js` — Quiz Replay Flow
+
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Quiz Replay', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+  test('should replay a saved quiz when clicked', async ({ page }) => {
+    // Prerequisite: Complete a quiz first (or seed test data)
+    // This test assumes there's at least one saved quiz
+
+    // Find a quiz item and click it
+    const quizItem = page.locator('.quiz-item').first();
+    await quizItem.click();
+
+    // Should navigate to quiz page
+    await expect(page).toHaveURL(/#\/quiz/);
+
+    // Should show quiz questions (not loading page)
+    await expect(page.locator('text=Question 1 of')).toBeVisible();
+  });
+
+  test('should update existing session on replay completion', async ({ page }) => {
+    // Get initial quiz count
+    await page.goto('/#/history');
+    const initialCount = await page.locator('.quiz-item').count();
+
+    // Replay a quiz
+    await page.locator('.quiz-item').first().click();
+
+    // Complete the quiz (select answers and submit)
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').first().click();
+      await page.locator('#submitBtn').click();
+    }
+
+    // Navigate back to history
+    await page.goto('/#/history');
+
+    // Quiz count should be the same (updated, not added)
+    const finalCount = await page.locator('.quiz-item').count();
+    expect(finalCount).toBe(initialCount);
+  });
+
+  test('should show message for non-replayable quiz', async ({ page }) => {
+    // Find a quiz marked as non-replayable
+    const nonReplayable = page.locator('[data-no-replay="true"]').first();
+
+    if (await nonReplayable.count() > 0) {
+      await nonReplayable.click();
+
+      // Should show alert or stay on same page
+      await expect(page).toHaveURL(/#\//); // Still on home
+    }
+  });
+});
+```
+
+#### `e2e/offline-mode.spec.js` — Offline UI Behavior
+
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Offline Mode', () => {
+  test('should disable Start Quiz button when offline', async ({ page, context }) => {
+    await page.goto('/');
+
+    // Verify button is enabled when online
+    const button = page.locator('#startQuizBtn');
+    await expect(button).toBeEnabled();
+
+    // Go offline
+    await context.setOffline(true);
+
+    // Wait for UI update
+    await page.waitForTimeout(500);
+
+    // Button should be disabled
+    await expect(button).toBeDisabled();
+  });
+
+  test('should show offline banner when offline', async ({ page, context }) => {
+    await page.goto('/');
+
+    // Banner should be hidden when online
+    const banner = page.locator('#offlineBanner');
+    await expect(banner).toHaveClass(/hidden/);
+
+    // Go offline
+    await context.setOffline(true);
+    await page.waitForTimeout(500);
+
+    // Banner should be visible
+    await expect(banner).not.toHaveClass(/hidden/);
+    await expect(banner).toContainText("You're offline");
+  });
+
+  test('should allow quiz replay when offline', async ({ page, context }) => {
+    await page.goto('/');
+
+    // Go offline
+    await context.setOffline(true);
+    await page.waitForTimeout(500);
+
+    // Click on a saved quiz (if exists)
+    const quizItem = page.locator('.quiz-item').first();
+    if (await quizItem.count() > 0) {
+      await quizItem.click();
+
+      // Should navigate to quiz page
+      await expect(page).toHaveURL(/#\/quiz/);
+    }
+  });
+
+  test('should re-enable button when back online', async ({ page, context }) => {
+    await page.goto('/');
+
+    // Go offline
+    await context.setOffline(true);
+    await page.waitForTimeout(500);
+
+    const button = page.locator('#startQuizBtn');
+    await expect(button).toBeDisabled();
+
+    // Go back online
+    await context.setOffline(false);
+    await page.waitForTimeout(500);
+
+    // Button should be enabled again
+    await expect(button).toBeEnabled();
+  });
+});
+```
+
+#### `e2e/topics-page.spec.js` — Topics/History Page
+
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Topics Page', () => {
+  test('should navigate to topics page', async ({ page }) => {
+    await page.goto('/');
+
+    // Click Topics nav item
+    await page.click('a[href="#/history"]');
+
+    // Should be on topics page
+    await expect(page).toHaveURL(/#\/history/);
+    await expect(page.locator('text=Quiz History')).toBeVisible();
+  });
+
+  test('should display quiz count', async ({ page }) => {
+    await page.goto('/#/history');
+
+    // Should show count in header
+    await expect(page.locator('text=/\\d+ quizzes?/')).toBeVisible();
+  });
+
+  test('should show empty state when no quizzes', async ({ page }) => {
+    // Clear IndexedDB first (or use fresh browser context)
+    await page.evaluate(() => indexedDB.deleteDatabase('quizmaster'));
+    await page.goto('/#/history');
+
+    // Should show empty state
+    await expect(page.locator('text=No quizzes yet')).toBeVisible();
+    await expect(page.locator('text=Start a Quiz')).toBeVisible();
+  });
+
+  test('should navigate to quiz from empty state CTA', async ({ page }) => {
+    await page.evaluate(() => indexedDB.deleteDatabase('quizmaster'));
+    await page.goto('/#/history');
+
+    // Click the CTA button
+    await page.click('text=Start a Quiz');
+
+    // Should navigate to topic input
+    await expect(page).toHaveURL(/#\/topic-input/);
+  });
+});
+```
+
+#### `e2e/settings.spec.js` — Settings Page & Version
+
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Settings Page', () => {
+  test('should display version in correct format', async ({ page }) => {
+    await page.goto('/#/settings');
+
+    // Version should match YYYYMMDD.NN format
+    const versionText = await page.locator('text=/\\d{8}\\.\\d{2}/').textContent();
+    expect(versionText).toMatch(/^\d{8}\.\d{2}$/);
+  });
+
+  test('should navigate to settings page', async ({ page }) => {
+    await page.goto('/');
+
+    // Click Settings nav item
+    await page.click('a[href="#/settings"]');
+
+    // Should be on settings page
+    await expect(page).toHaveURL(/#\/settings/);
+    await expect(page.locator('text=Settings')).toBeVisible();
+  });
+});
+```
+
+---
+
+### Test File Structure
+
+```
+demo-pwa-app/
+├── src/
+│   ├── db/
+│   │   ├── db.js
+│   │   └── db.test.js           # Unit tests for database
+│   ├── utils/
+│   │   ├── network.js
+│   │   └── network.test.js      # Unit tests for network utils
+│   └── ...
+├── scripts/
+│   ├── generate-version.js
+│   └── generate-version.test.js # Unit tests for versioning
+├── e2e/
+│   ├── quiz-replay.spec.js      # E2E: replay functionality
+│   ├── offline-mode.spec.js     # E2E: offline UI behavior
+│   ├── topics-page.spec.js      # E2E: topics/history page
+│   └── settings.spec.js         # E2E: settings & version
+└── ...
+```
+
+---
+
+### Test Priority Matrix
+
+| Priority | Test | Type | Reason |
+|----------|------|------|--------|
+| **High** | `updateSession()` | Unit | Core replay logic |
+| **High** | Quiz replay flow | E2E | Primary user feature |
+| **High** | Offline banner/button | E2E | Important UX |
+| **Medium** | `updateOfflineUI()` | Unit | Isolated function |
+| **Medium** | Topics page navigation | E2E | New page |
+| **Medium** | Version format | Unit | Build process |
+| **Low** | Settings version display | E2E | Simple display |
+| **Low** | `isOnline()` | Unit | Simple wrapper |
+
+---
+
+### Running Tests
+
+```bash
+# Unit tests
+npm test                    # Watch mode
+npm test -- --run           # Single run
+npm run test:coverage       # With coverage report
+
+# E2E tests
+npm run test:e2e            # Headless
+npm run test:e2e:ui         # With Playwright UI
+```
+
+---
+
 ## Questions to Reinforce Learning
 
 **Q1: Why store questions with the session instead of re-fetching?**
