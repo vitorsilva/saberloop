@@ -1,6 +1,8 @@
 import BaseView from './BaseView.js';
 import { updateNetworkIndicator } from '../utils/network.js';
-import { getRecentSessions } from '../db/db.js';
+import { getRecentSessions, getSession } from '../db/db.js';
+import state from '../state/state.js';
+
 export default class HomeView extends BaseView {
   async render() {
     // Fetch recent sessions from IndexedDB
@@ -107,8 +109,9 @@ export default class HomeView extends BaseView {
       const dateStr = this.formatDate(date);
 
       return `
-        <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark
-  rounded-xl p-4">
+        <div class="quiz-item flex items-center gap-4 bg-card-light dark:bg-card-dark
+  rounded-xl p-4 cursor-pointer hover:opacity-80 transition-opacity"
+  data-session-id="${session.id}">
           <div class="flex size-16 shrink-0 items-center justify-center
   rounded-xl ${colorClass.split(' ')[1]}">
             <span class="material-symbols-outlined text-white
@@ -139,11 +142,39 @@ export default class HomeView extends BaseView {
     return date.toLocaleDateString();
   }  
 
+  async replayQuiz(sessionId) {
+    const session = await getSession(sessionId);
+
+    if (!session || !session.questions) {
+      alert('This quiz cannot be replayed. The questions were not saved.');
+      return;
+    }
+
+    // Set state for replay
+    state.set('currentTopic', session.topic);
+    state.set('currentGradeLevel', session.gradeLevel || 'middle school');
+    state.set('generatedQuestions', session.questions);
+    state.set('currentAnswers', []);
+    state.set('replaySessionId', sessionId); 
+
+    this.navigateTo('/quiz');
+  }  
+
   attachListeners() {
     const startQuizBtn = this.querySelector('#startQuizBtn');
 
     this.addEventListener(startQuizBtn, 'click', () => {
       this.navigateTo('/topic-input');
     });
+
+    // Quiz item click handlers for replay
+    const quizItems = document.querySelectorAll('.quiz-item');
+    quizItems.forEach(item => {
+      this.addEventListener(item, 'click', async () => {
+        const sessionId = parseInt(item.dataset.sessionId);
+        await this.replayQuiz(sessionId);
+      });
+    });
+
   }
 }

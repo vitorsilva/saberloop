@@ -81,6 +81,16 @@ export async function getAllTopics() {
     const all = await db.getAllFromIndex('sessions', 'byTimestamp');
     return all.reverse().slice(0, limit);
   }
+
+  export async function updateSession(id, updates) {
+    const db = await getDB();
+    const session = await db.get('sessions', id);
+    if (!session) return null;
+
+    const updatedSession = { ...session, ...updates };
+    await db.put('sessions', updatedSession);
+    return updatedSession;
+  }
   
     // ========== SETTINGS ==========
 

@@ -1,6 +1,6 @@
 import BaseView from './BaseView.js';
 import state from '../state/state.js';
-import { saveSession } from '../db/db.js';
+import { saveSession, updateSession } from '../db/db.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -157,6 +157,26 @@ export default class ResultsView extends BaseView {
   }
 
   async saveQuizSession(questions, answers, correctCount, totalQuestions) {
+
+    // Skip saving if this is a replay
+    const replaySessionId = state.get('replaySessionId');
+
+    // If replay, update existing session
+    if (replaySessionId) {
+      try {
+        await updateSession(replaySessionId, {
+          score: correctCount,
+          answers,
+          timestamp: Date.now()  // Update timestamp to show when last played
+        });
+        console.log('Replay session updated:', replaySessionId);
+      } catch (error) {
+        console.error('Failed to update session:', error);
+      }
+      state.set('replaySessionId', null);
+      return;
+    }
+
     const topic = state.get('currentTopic') || 'Unknown Topic';
     const gradeLevel = state.get('currentGradeLevel') || 'Unknown';
 
