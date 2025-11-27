@@ -18,7 +18,8 @@
       "Bash(npm run test:e2e:*)",
       "Bash(for phase in PHASE4_OBSERVABILITY.md PHASE5_PROJECT_STRUCTURE.md PHASE6_VALIDATION.md)",
       "Bash(do grep -n \"## Success Criteria\\|## Next Steps\" \"docs/epic03_quizmaster_v2/$phase\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(git mv:*)"
     ],
     "deny": [],
     "ask": []

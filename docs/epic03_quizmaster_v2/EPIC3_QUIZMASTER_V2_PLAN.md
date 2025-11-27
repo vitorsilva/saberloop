@@ -276,6 +276,54 @@ Refine user interface with dynamic data, settings management, and navigation imp
 
 ---
 
+### **Phase 3.4: PHP VPS Migration** (3-4 sessions) 🆕 **REQUIRED**
+Migrate backend from Netlify Functions to PHP API on your VPS to eliminate hosting costs.
+
+📄 [PHASE3.4_PHP_MIGRATION.md](./PHASE3.4_PHP_MIGRATION.md)
+
+**Why This Phase:**
+- 💰 **Netlify credit constraints** - Free tier limits being reached
+- ✅ **Zero additional cost** - Using existing VPS eliminates hosting fees
+- 🚀 **No cold starts** - Always-warm server (faster response times)
+- 🔧 **Full infrastructure control** - Custom caching, rate limiting, monitoring
+- 🎓 **Learn traditional server architecture** - PHP backend development experience
+
+**Learning Objectives:**
+- Understand PHP REST API architecture
+- Configure Apache/Nginx for API hosting
+- Implement CORS in PHP
+- Manage environment variables securely (.env files)
+- Handle HTTP methods (GET, POST, OPTIONS)
+- Implement input validation and error handling in PHP
+- Deploy PHP applications to a VPS
+- Configure SSL/HTTPS for API endpoints
+- Update frontend to call PHP backend
+- Compare serverless vs traditional server architectures
+
+**Deliverables:**
+- ✅ PHP REST API with three endpoints (generate-questions, generate-explanation, health-check)
+- ✅ Apache/Nginx configuration with CORS support
+- ✅ Environment-based configuration (.env file)
+- ✅ PHP error handling and logging
+- ✅ Dual backend support (switch between Netlify/PHP via config)
+- ✅ SSL certificate configured (Let's Encrypt)
+- ✅ Production deployment to VPS
+- ✅ Updated frontend API configuration
+- ✅ Testing and verification
+
+**Success Criteria:**
+- PHP API deployed and accessible via HTTPS
+- All three endpoints functional and tested
+- Frontend can successfully call PHP backend
+- API key secure (server-side only, not exposed)
+- CORS configured correctly for frontend origin
+- Error handling robust and informative
+- Logging functional (Apache + application logs)
+- Zero additional hosting costs achieved
+- Dual backend support allows switching between Netlify/PHP
+
+---
+
 ### **Phase 3.5: Branding & Identity** (2-3 sessions)
 Transform QuizMaster from demo project to branded product with professional identity.
 
@@ -961,6 +1009,7 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 | Phase 1 | 2-3 | Backend Integration | New: Serverless functions |
 | Phase 2 | 2-3 | Offline Capabilities | New: Vite PWA Plugin |
 | Phase 3 | 3-4 | UI Polish | New: Settings, dynamic data |
+| **Phase 3.4** | **3-4** | **PHP VPS Migration** | **🆕 REQUIRED: Cost solution (Netlify credits)** |
 | **Phase 3.5** | **2-3** | **Branding & Identity** | **New: Name, icon, visual identity** |
 | Phase 4 | 2-3 | Observability | New: Logging, monitoring |
 | Phase 5 | 1-2 | Project Structure | Cleanup and documentation |
@@ -968,7 +1017,7 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 | **Phase 7** | **2-3** | **Azure Migration** | **⭐ Optional: Azure experience** |
 | **Phase 8** | **2-3** | **OAuth Integration** | **⭐ Optional/Experimental** |
 
-**Core Phases (1-3.5, 4-6)**: ~12-18 sessions (required)
+**Core Phases (1-3.4, 3.5, 4-6)**: ~15-22 sessions (required)
 **Phase 6**: Ongoing (can overlap with future epics)
 **Phase 7**: +2-3 sessions (optional Azure)
 **Phase 8**: +2-3 sessions (optional OAuth, if available)

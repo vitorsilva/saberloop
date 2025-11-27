@@ -1,7 +1,8 @@
-# Phase 10: PHP VPS Migration (Optional)
+# Phase 3.4: PHP VPS Migration
 
 **Epic:** 3 - QuizMaster V2
-**Status:** Optional / Alternative Backend
+**Phase:** 3.4 - PHP VPS Migration
+**Status:** 🔄 In Progress (Active - Cost Requirement)
 **Estimated Time:** 3-4 sessions
 **Prerequisites:** Phase 1 (Netlify Functions) complete
 
@@ -9,7 +10,7 @@
 
 ## Overview
 
-Phase 10 is an **optional alternative** that migrates QuizMaster's serverless backend from Netlify Functions to a PHP-based API running on your own VPS. This phase explores traditional server architecture and demonstrates backend portability.
+Phase 3.4 migrates QuizMaster's serverless backend from Netlify Functions to a PHP-based API running on your own VPS. **This phase became necessary due to Netlify credit constraints**, making it a cost-effective solution for continued development. This also provides valuable experience with traditional server architecture and backend portability.
 
 **What you'll build:**
 - PHP REST API with three endpoints (generate questions, explanations, health check)
@@ -18,12 +19,12 @@ Phase 10 is an **optional alternative** that migrates QuizMaster's serverless ba
 - PHP error handling and logging
 - Optional: Composer for dependencies, PHPUnit for testing
 
-**Why this is optional:**
-- ✅ Netlify Functions work perfectly for QuizMaster
-- ✅ Serverless is simpler (no server maintenance)
-- ✅ Free tier is sufficient for current needs
+**Why this phase is now required:**
+- 💰 **Netlify credit constraints** - Free tier limits being reached
+- ✅ **Zero additional cost** - Using existing VPS eliminates hosting fees
+- 🚀 **No cold starts** - Always-on server provides faster response times
 
-**Why you might want it:**
+**Additional benefits:**
 - 💰 **Cost savings** - You already have a VPS (zero additional cost)
 - 🎓 **Learn PHP backend development** - REST API design, error handling
 - 🔧 **Full server control** - Custom caching, rate limiting, monitoring
@@ -69,7 +70,7 @@ Frontend:
 ├── Calls: https://quizmaster.netlify.app/.netlify/functions/*
 ```
 
-### Target State (Phase 10 - PHP VPS)
+### Target State (Phase 3.4 - PHP VPS)
 ```
 Backend: PHP API on VPS (Traditional Server)
 ├── ✅ generate-questions.php (HTTP endpoint)
@@ -1512,7 +1513,7 @@ awk '$NF > 2000000 {print}' /var/www/quizmaster-api/logs/apache-access.log
 
 ## Success Criteria
 
-**Phase 10 is complete when:**
+**Phase 3.4 is complete when:**
 
 - ✅ VPS configured with PHP 8.1+
 - ✅ Apache/Nginx configured with SSL (HTTPS)
@@ -1581,7 +1582,7 @@ curl -I https://api.yourdomain.com/v1/health-check | grep -i "HTTP/2 200"
 
 ## Next Steps
 
-### After Completing Phase 10
+### After Completing Phase 3.4
 
 **You'll have:**
 - ✅ Multi-backend architecture (Netlify + PHP VPS)
