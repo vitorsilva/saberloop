@@ -496,4 +496,83 @@ test.describe('QuizMaster E2E Tests', () => {
       await expect(page.locator('#offlineBanner')).toHaveClass(/hidden/);
     });
 
+    test('should display quiz history on topics page', async ({ page }) => {
+      // Step 1: Clear sessions and create some quizzes
+      await page.goto('/');
+      await page.evaluate(async () => {
+        const dbName = 'quizmaster';
+        const request = indexedDB.open(dbName);
+        return new Promise((resolve) => {
+          request.onsuccess = () => {
+            const db = request.result;
+            const transaction = db.transaction(['sessions'], 'readwrite');
+            const store = transaction.objectStore('sessions');
+            store.clear();
+            transaction.oncomplete = () => resolve();
+          };
+        });
+      });
+
+      // Create first quiz
+      await page.goto('/#/topic-input');
+      await page.fill('#topicInput', 'World History');
+      await page.click('#generateBtn');
+      await expect(page).toHaveURL(/#\/loading/);
+      await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+      for (let i = 0; i < 5; i++) {
+        await page.locator('.option-btn').nth(1).click();
+        await page.waitForTimeout(200);
+        await page.click('#submitBtn');
+        await page.waitForTimeout(300);
+      }
+
+      await expect(page).toHaveURL(/#\/results/);
+
+      // Create second quiz
+      await page.goto('/#/topic-input');
+      await page.fill('#topicInput', 'Chemistry');
+      await page.click('#generateBtn');
+      await expect(page).toHaveURL(/#\/loading/);
+      await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+      for (let i = 0; i < 5; i++) {
+        await page.locator('.option-btn').nth(1).click();
+        await page.waitForTimeout(200);
+        await page.click('#submitBtn');
+        await page.waitForTimeout(300);
+      }
+
+      await expect(page).toHaveURL(/#\/results/);
+
+      // Step 2: Navigate to topics/history page
+      await page.goto('/');
+      await page.click('a[href="#/history"]');
+
+      // Should be on history page
+      await expect(page).toHaveURL(/#\/history/);
+      await expect(page.locator('h1')).toContainText('Quiz History');
+
+      // Step 3: Verify quiz items are displayed
+      const quizItems = page.locator('.quiz-item');
+      await expect(quizItems).toHaveCount(2);
+
+      // Verify both topics appear
+      await expect(page.locator('text=World History')).toBeVisible();
+      await expect(page.locator('text=Chemistry')).toBeVisible();
+
+      // Verify scores are shown (both should be 5/5)
+      await expect(page.locator('text=5/5').first()).toBeVisible();
+
+      // Step 4: Click on first quiz to replay
+      await quizItems.first().click();
+
+      // Should navigate to quiz page
+      await expect(page).toHaveURL(/#\/quiz/);
+
+      // Should show the quiz (Chemistry is most recent, so it's first)
+      await expect(page.locator('h1')).toContainText('Quiz');
+      await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+    });
+
 });
