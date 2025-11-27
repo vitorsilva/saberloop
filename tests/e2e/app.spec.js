@@ -282,6 +282,85 @@ test.describe('QuizMaster E2E Tests', () => {
       await expect(page.locator('#recentTopicsList >> text=Today')).toBeVisible();
     });
 
+   test('should replay a saved quiz when clicked', async ({ page }) => {
+      // Clear database to ensure clean state
+      await page.goto('/');
+      await page.evaluate(async () => {
+        const dbName = 'quizmaster';
+        const request = indexedDB.open(dbName);
+        return new Promise((resolve) => {
+          request.onsuccess = () => {
+            const db = request.result;
+            const transaction = db.transaction(['sessions'], 'readwrite');
+            const store = transaction.objectStore('sessions');
+            store.clear();
+            transaction.oncomplete = () => resolve();
+          };
+        });
+      });
+
+      // Step 1: Complete a quiz first to have something to replay
+      await page.goto('/#/topic-input');
+      await page.fill('#topicInput', 'Ancient Egypt');
+      await page.selectOption('#gradeLevelSelect', 'high school');
+      await page.click('#generateBtn');
+
+      // Wait for quiz to load
+      await expect(page).toHaveURL(/#\/loading/);
+      await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+      // Answer all 5 questions (selecting option 1 - correct in mock)
+      for (let i = 0; i < 5; i++) {
+        await page.locator('.option-btn').nth(1).click();
+        await page.waitForTimeout(200);
+        await page.click('#submitBtn');
+        await page.waitForTimeout(300);
+      }
+
+      // Should be on results page
+      await expect(page).toHaveURL(/#\/results/);
+
+      // Step 2: Go back to home page
+      await page.goto('/');
+
+      // Verify quiz appears in recent topics
+      await expect(page.locator('#recentTopicsList >> text=Ancient Egypt')).toBeVisible();
+
+      // Step 3: Click on the quiz item to replay it
+      const quizItem = page.locator('.quiz-item').first();
+      await quizItem.click();
+
+      // Step 4: Should navigate to quiz page (not loading page - using saved questions)
+      await expect(page).toHaveURL(/#\/quiz/);
+
+      // Should show the same topic
+      await expect(page.locator('h1')).toContainText('Ancient Egypt Quiz');
+
+      // Should show question 1
+      await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+
+      // Step 5: Complete the replay with different answers
+      for (let i = 0; i < 5; i++) {
+        await page.locator('.option-btn').nth(0).click(); // Different answer        
+        await page.waitForTimeout(200);
+        await page.click('#submitBtn');
+        await page.waitForTimeout(300);
+      }
+
+      // Should be on results page
+      await expect(page).toHaveURL(/#\/results/);
+
+      // Step 6: Verify no duplicate - go back to home and count quizzes
+      await page.goto('/');
+
+      // Should still have only one "Ancient Egypt" quiz (updated, not duplicated)
+      const egyptQuizzes = page.locator('.quiz-item >> text=Ancient Egypt');
+      await expect(egyptQuizzes).toHaveCount(1);
+
+      // Score should be updated (0/5 now since we selected wrong answers)
+      await expect(page.locator('#recentTopicsList >> text=0/5')).toBeVisible();     
+    });
+
     test('should navigate to settings page', async ({ page }) => {
       await page.goto('/');
 
@@ -311,7 +390,10 @@ test.describe('QuizMaster E2E Tests', () => {
 
       // Check About section content
       await expect(page.locator('text=Version')).toBeVisible();
-      await expect(page.locator('text=2.0.0')).toBeVisible();
+
+      // Version now uses YYYYMMDD.NN format (e.g., 20251126.01)
+      await expect(page.locator('text=/\\d{8}\\.\\d{2}/')).toBeVisible();
+
       await expect(page.locator('text=View on GitHub')).toBeVisible();
     });
 

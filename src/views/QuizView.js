@@ -13,6 +13,7 @@ export default class QuizView extends BaseView {
 
   async render() {
     const topic = state.get('currentTopic');
+    this.topic = topic;
 
     if (!topic) {
       this.navigateTo('/topic-input');
@@ -54,7 +55,7 @@ export default class QuizView extends BaseView {
             <div id="backBtn" class="flex size-12 shrink-0 items-center justify-start text-text-light dark:text-text-dark cursor-pointer">
               <span class="material-symbols-outlined">arrow_back</span>
             </div>
-            <h1 class="flex-1 text-center text-lg font-bold text-text-light dark:text-text-dark">Science Quiz</h1>
+            <h1 class="flex-1 text-center text-lg font-bold text-text-light dark:text-text-dark">${this.topic} Quiz</h1>
             <div class="size-12 shrink-0"></div> <!-- Spacer -->
           </header>
 
