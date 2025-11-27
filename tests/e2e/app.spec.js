@@ -414,4 +414,86 @@ test.describe('QuizMaster E2E Tests', () => {
       await expect(page.locator('#difficulty')).toHaveValue('hard');
     });
 
+   test('should handle offline mode correctly', async ({ page, context }) => {      
+      // Step 1: Complete a quiz first so we have something to replay offline        
+      await page.goto('/');
+      await page.evaluate(async () => {
+        const dbName = 'quizmaster';
+        const request = indexedDB.open(dbName);
+        return new Promise((resolve) => {
+          request.onsuccess = () => {
+            const db = request.result;
+            const transaction = db.transaction(['sessions'], 'readwrite');
+            const store = transaction.objectStore('sessions');
+            store.clear();
+            transaction.oncomplete = () => resolve();
+          };
+        });
+      });
+
+      await page.goto('/#/topic-input');
+      await page.fill('#topicInput', 'Marine Biology');
+      await page.click('#generateBtn');
+
+      await expect(page).toHaveURL(/#\/loading/);
+      await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+      // Answer all questions
+      for (let i = 0; i < 5; i++) {
+        await page.locator('.option-btn').nth(1).click();
+        await page.waitForTimeout(200);
+        await page.click('#submitBtn');
+        await page.waitForTimeout(300);
+      }
+
+      await expect(page).toHaveURL(/#\/results/);
+
+      // Step 2: Go to home page while online
+      await page.goto('/');
+
+      // Verify button is enabled when online
+      const startBtn = page.locator('#startQuizBtn');
+      await expect(startBtn).toBeEnabled();
+
+      // Verify offline banner is hidden
+      const offlineBanner = page.locator('#offlineBanner');
+      await expect(offlineBanner).toHaveClass(/hidden/);
+
+      // Step 3: Go offline
+      await context.setOffline(true);
+      await page.waitForTimeout(500); // Wait for UI to update
+
+      // Verify button is now disabled
+      await expect(startBtn).toBeDisabled();
+
+      // Verify offline banner is visible
+      await expect(offlineBanner).not.toHaveClass(/hidden/);
+      await expect(offlineBanner).toContainText("You're offline");
+
+      // Step 4: Verify saved quiz replay still works offline
+      const quizItem = page.locator('.quiz-item').first();
+      await expect(quizItem).toContainText('Marine Biology');
+      await quizItem.click();
+
+      // Should navigate to quiz (using saved questions)
+      await expect(page).toHaveURL(/#\/quiz/);
+      await expect(page.locator('h1')).toContainText('Marine Biology Quiz');
+
+      // Step 5: Go back online BEFORE navigating
+      await context.setOffline(false);
+
+      // Now navigate back to home (while online)
+      await page.goto('/');
+      await page.waitForTimeout(500); // Wait for UI to update
+
+      // Wait for home page to load
+      await expect(page.locator('h2')).toContainText('Welcome back!');
+
+      // Verify button is re-enabled
+      await expect(page.locator('#startQuizBtn')).toBeEnabled();
+
+      // Verify offline banner is hidden again
+      await expect(page.locator('#offlineBanner')).toHaveClass(/hidden/);
+    });
+
 });

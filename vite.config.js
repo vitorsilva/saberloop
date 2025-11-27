@@ -92,7 +92,8 @@ export default defineConfig(({ command }) => ({
 
             devOptions: {
                 enabled: true,
-                type: 'module'
+                type: 'module',
+                suppressWarnings: true
             }
         })
     ],
