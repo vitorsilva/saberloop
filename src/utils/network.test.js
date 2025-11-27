@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { isOnline, onOnline, onOffline, updateNetworkIndicator } from './network.js';
+import { isOnline, onOnline, onOffline, updateNetworkIndicator, updateOfflineUI } from './network.js';
 
 describe('Network Utilities', () => {
   describe('isOnline function', () => {
@@ -75,6 +75,84 @@ describe('Network Utilities', () => {
 
   });
 
+    describe('updateOfflineUI function', () => {
+      let banner, button;
+
+      beforeEach(() => {
+        // Setup: Create mock DOM elements before each test
+        document.body.innerHTML = `
+          <div id="offlineBanner" class="hidden"></div>
+          <button id="startQuizBtn"></button>
+        `;
+        banner = document.getElementById('offlineBanner');
+        button = document.getElementById('startQuizBtn');
+      });
+
+      it('should hide banner and enable button when online', () => {
+        // Arrange: Mock as online
+        vi.stubGlobal('navigator', { onLine: true });
+
+        // Start with banner visible and button disabled
+        banner.classList.remove('hidden');
+        button.disabled = true;
+
+        // Act: Update UI
+        updateOfflineUI();
+
+        // Assert: Banner should be hidden, button enabled
+        expect(banner.classList.contains('hidden')).toBe(true);
+        expect(button.disabled).toBe(false);
+      });
+
+      it('should show banner and disable button when offline', () => {
+        // Arrange: Mock as offline
+        vi.stubGlobal('navigator', { onLine: false });
+
+        // Start with banner hidden and button enabled
+        banner.classList.add('hidden');
+        button.disabled = false;
+
+        // Act: Update UI
+        updateOfflineUI();
+
+        // Assert: Banner should be visible, button disabled
+        expect(banner.classList.contains('hidden')).toBe(false);
+        expect(button.disabled).toBe(true);
+      });
+
+      it('should handle missing banner element gracefully', () => {
+        // Arrange: Remove banner but keep button
+        banner.remove();
+        vi.stubGlobal('navigator', { onLine: false });
+
+        // Act & Assert: Should not throw
+        expect(() => updateOfflineUI()).not.toThrow();
+
+        // Button should still be updated
+        expect(button.disabled).toBe(true);
+      });
+
+      it('should handle missing button element gracefully', () => {
+        // Arrange: Remove button but keep banner
+        button.remove();
+        vi.stubGlobal('navigator', { onLine: false });
+
+        // Act & Assert: Should not throw
+        expect(() => updateOfflineUI()).not.toThrow();
+
+        // Banner should still be updated
+        expect(banner.classList.contains('hidden')).toBe(false);
+      });
+
+      it('should handle both elements missing gracefully', () => {
+        // Arrange: Remove all elements
+        document.body.innerHTML = '';
+        vi.stubGlobal('navigator', { onLine: true });
+
+        // Act & Assert: Should not throw error
+        expect(() => updateOfflineUI()).not.toThrow();
+      });
+    });  
 
   describe('Event listener functions', () => {
 
@@ -107,5 +185,5 @@ describe('Network Utilities', () => {
     });
 
   });
-  
+    
 });
