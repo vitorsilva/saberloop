@@ -15,6 +15,7 @@ import {
     getSession,
     getSessionsByTopic,
     getRecentSessions,
+    updateSession,
     getSetting,
     saveSetting,
     DB_NAME,
@@ -203,6 +204,75 @@ describe('Sessions CRUD Operations', () => {
     });
   });  
   
+    describe('updateSession - Quiz Replay', () => {
+      beforeEach(async () => {
+        // Clean slate before each test
+        indexedDB.deleteDatabase(DB_NAME);
+      });
+
+      it('should update existing session with new data', async () => {
+        // Arrange: Create a session
+        const session = {
+          topicId: 'math',
+          topic: 'Mathematics',
+          timestamp: Date.now(),
+          score: 3,
+          totalQuestions: 5,
+          questions: [],
+          userAnswers: [0, 1, 2, 0, 1]
+        };
+
+        const sessionId = await saveSession(session);
+
+        // Act: Update the session with better score
+        const updated = await updateSession(sessionId, {
+          score: 5,
+          userAnswers: [0, 1, 2, 3, 4]
+        });
+
+        // Assert: Score should be updated
+        expect(updated).not.toBeNull();
+        expect(updated.score).toBe(5);
+        expect(updated.topic).toBe('Mathematics'); // Other fields unchanged
+        expect(updated.userAnswers).toEqual([0, 1, 2, 3, 4]);
+      });
+
+      it('should return null for non-existent session', async () => {
+        // Act: Try to update a session that doesn't exist
+        const result = await updateSession(99999, { score: 5 });
+
+        // Assert: Should return null gracefully
+        expect(result).toBeNull();
+      });
+
+      it('should update timestamp on replay', async () => {
+        const originalTimestamp = Date.now() - 10000; // 10 seconds ago
+
+        const sessionId = await saveSession({
+          topicId: 'science',
+          topic: 'Science',
+          score: 4,
+          totalQuestions: 5,
+          timestamp: originalTimestamp,
+          questions: [],
+          userAnswers: []
+        });
+
+        // Wait a tiny bit to ensure different timestamp
+        await new Promise(resolve => setTimeout(resolve, 10));
+
+        const newTimestamp = Date.now();
+
+        // Act: Update timestamp
+        await updateSession(sessionId, { timestamp: newTimestamp });
+
+        // Assert: Timestamp should be updated
+        const session = await getSession(sessionId);
+        expect(session.timestamp).toBe(newTimestamp);
+        expect(session.timestamp).toBeGreaterThan(originalTimestamp);
+      });
+    });
+
   describe('Settings CRUD Operations', () => {
     beforeEach(async () => {
      // Clean slate before each test
