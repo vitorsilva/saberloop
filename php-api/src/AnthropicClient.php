@@ -44,6 +44,8 @@ class AnthropicClient
      */
     private function makeRequest($url, $payload, $headers)
     {
+        error_log('Making API request to: ' . $url);
+
         $ch = curl_init();
         curl_setopt_array($ch, array(
             CURLOPT_URL => $url,
@@ -54,11 +56,17 @@ class AnthropicClient
             CURLOPT_TIMEOUT => 120,
             CURLOPT_SSL_VERIFYPEER => true
         ));
+
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
+        $errno = curl_errno($ch);
+
+        error_log('cURL completed - HTTP Code: ' . $httpCode);
+
         curl_close($ch);
         if ($error) {
+            error_log('cURL error (' . $errno . '): ' . $error);
             throw new Exception('cURL error: ' . $error);
         }
         $decoded = json_decode($response, true);
@@ -66,8 +74,10 @@ class AnthropicClient
             $errorMessage = isset($decoded['error']['message'])
                 ? $decoded['error']['message']
                 : 'API request failed';
+            error_log('API error: ' . $errorMessage);
             throw new Exception('Anthropic API error: ' . $errorMessage);
         }
+        error_log('API request successful');
         return $decoded;
     }
     /**

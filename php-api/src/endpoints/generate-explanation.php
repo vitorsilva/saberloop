@@ -46,6 +46,16 @@ IMPORTANT: Your entire response must be in the same language as the question.';
         $client = new AnthropicClient();
         $response = $client->sendMessage('', $prompt, 512);
         $explanation = $client->extractText($response);
+
+        // Remove markdown code blocks if present
+        if (strpos($explanation, '```') === 0) {
+            $explanation = preg_replace('/^```\w*\n?/', '', $explanation);
+        }
+        if (substr($explanation, -3) === '```') {
+            $explanation = substr($explanation, 0, -3);
+        }
+        $explanation = trim($explanation);
+
         // Return success
         return array(
             'statusCode' => 200,

@@ -66,16 +66,39 @@ fourth option)
         // Call Anthropic API
         $client = new AnthropicClient();
         $response = $client->sendMessage('', $prompt, 2048);
+
         $text = $client->extractText($response);
+
+        // Log raw response
+        error_log('Raw API response length: ' . strlen($text));
+        error_log('First 50 chars: ' . substr($text, 0, 50));
+
+        // Remove markdown code blocks if present
+        $text = trim($text);
+        if (strpos($text, '```json') !== false) {
+            error_log('Found ```json, removing...');
+            $text = preg_replace('/^```json\s*/', '', $text);
+            $text = preg_replace('/\s*```$/', '', $text);
+        } elseif (strpos($text, '```') !== false) {
+            error_log('Found ```, removing...');
+            $text = preg_replace('/^```\s*/', '', $text);
+            $text = preg_replace('/\s*```$/', '', $text);
+        }
+        $text = trim($text);
+
+        error_log('After cleanup, first 50 chars: ' . substr($text, 0, 50));
+
         // Parse JSON from Claude's response
         $data = json_decode($text, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON parse error: ' . json_last_error_msg());
             error_log('Failed to parse questions JSON: ' . $text);
             return array(
                 'statusCode' => 500,
                 'body' => array('error' => 'Invalid response format from API')
             );
         }
+
         // Validate structure
         if (!isset($data['questions']) || !is_array($data['questions']) || count($data['questions']) !== 5) {     
             error_log('Invalid questions structure: ' . $text);

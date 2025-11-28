@@ -1,6 +1,11 @@
  <?php
+  ini_set('display_errors', 0);
+  ini_set('log_errors', 1);
+  error_log('=== API Request Started ===');
+  error_log('Endpoint: ' . (isset($_GET['endpoint']) ? $_GET['endpoint'] : 'none'));
+
   set_time_limit(120);
-  
+
   // Set JSON content type for all responses
   header('Content-Type: application/json');
 

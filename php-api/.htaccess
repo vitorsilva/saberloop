@@ -1,17 +1,17 @@
-# Protect .env file - NEVER expose API keys
-<Files ".env">
-  Require all denied
-</Files>
-
-# Protect src directory from direct access
-<DirectoryMatch "^/.*/src/">
-  Require all denied
-</DirectoryMatch>
-
-# Block access to any hidden files (starting with .)
-<FilesMatch "^\.">
- Require all denied
-</FilesMatch>
-
-# Prevent directory listing
-Options -Indexes
+  # Protect .env file - NEVER expose API keys
+  <Files ".env">
+      Require all denied
+  </Files>
+
+  # Block access to any hidden files (starting with .)
+  <FilesMatch "^\.">
+      Require all denied
+  </FilesMatch>
+
+  # Block access to PHP files in src directory
+  <FilesMatch "^src/">
+      Require all denied
+  </FilesMatch>
+
+  # Prevent directory listing
+  Options -Indexes
