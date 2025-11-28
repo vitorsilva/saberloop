@@ -21,6 +21,7 @@
     "prebuild": "npm run version",
     "build": "vite build",
     "deploy": "node scripts/deploy-ftp.cjs",
+    "build:deploy": "npm run build && npm run deploy",
     "preview": "vite preview",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
