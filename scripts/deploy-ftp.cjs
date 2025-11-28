@@ -1,22 +1,49 @@
 require('dotenv').config();
-
 const FtpDeploy = require('ftp-deploy');
 const ftpDeploy = new FtpDeploy();
 
-const config = {
+const baseConfig = {
     user: process.env.FTP_USER,
     password: process.env.FTP_PASSWORD,
     host: process.env.FTP_HOST,
     port: 21,
+    forcePasv: true,
+    deleteRemote: false
+};
+
+// Deploy frontend (dist/)
+const frontendConfig = {
+    ...baseConfig,
     localRoot: './dist',
     remoteRoot: '/',
     include: ['*', '**/*'],
-    exclude: [],
-    deleteRemote: false,  // Don't delete existing files (keeps api/, src/, .env)
-    forcePasv: true
+    exclude: []
 };
 
-ftpDeploy
-    .deploy(config)
-    .then(res => console.log('✅ Deployment finished:', res))
-    .catch(err => console.error('❌ Deployment failed:', err));
+// Deploy PHP backend (php-api/)
+const phpConfig = {
+    ...baseConfig,
+    localRoot: './php-api',
+    remoteRoot: '/',
+    include: ['**/*.php', '.htaccess'],
+    exclude: ['.env', '.env.example']
+};
+
+async function deploy() {
+    try {
+        console.log('📦 Deploying frontend...');
+        await ftpDeploy.deploy(frontendConfig);
+        console.log('✅ Frontend deployed!');
+
+        console.log('🐘 Deploying PHP backend...');
+        await ftpDeploy.deploy(phpConfig);
+        console.log('✅ PHP backend deployed!');
+
+        console.log('🎉 All deployments complete!');
+    } catch (err) {
+        console.error('❌ Deployment failed:', err);
+        process.exit(1);
+    }
+}
+
+deploy();
