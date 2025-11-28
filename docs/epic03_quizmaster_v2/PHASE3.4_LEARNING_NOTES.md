@@ -2,7 +2,7 @@
 
 **Epic:** 3 - QuizMaster V2
 **Phase:** 3.4 - PHP VPS Migration
-**Status:** ✅ Complete
+**Status:** 🔄 In Progress (Unit tests pending)
 **Started:** 2025-11-27
 **Reason:** Netlify credit constraints requiring cost-effective hosting solution
 
@@ -314,6 +314,49 @@ fetch('https://osmeusapontamentos.com/quiz-generator/api/v1/index.php?endpoint=g
 
 ---
 
+## Issue 6: Claude Returning Markdown-Wrapped JSON
+
+**Problem:** Claude API sometimes returns JSON wrapped in markdown code blocks (` ```json ... ``` `), causing `json_decode()` to fail.
+
+**Solution:** Added regex cleanup in `php-api/src/endpoints/generate-questions.php`:
+```php
+if (strpos($text, '```json') !== false) {
+    $text = preg_replace('/^```json\s*/', '', $text);
+    $text = preg_replace('/\s*```$/', '', $text);
+}
+```
+
+---
+
+## Issue 7: .htaccess DirectoryMatch Not Allowed
+
+**Problem:** `<DirectoryMatch>` directive is only allowed in Apache server config, not in `.htaccess` files. Caused 500 error locally.
+
+**Solution:** Changed `php-api/.htaccess` from:
+```apache
+<DirectoryMatch "^/.*/src/">
+    Require all denied
+</DirectoryMatch>
+```
+To:
+```apache
+<FilesMatch "^src/">
+    Require all denied
+</FilesMatch>
+```
+
+---
+
+## Issue 8: Deploy Script Overwriting Frontend
+
+**Problem:** `php-api/index.html` placeholder was overwriting the real frontend `index.html` during deploy.
+
+**Solution:**
+1. Deleted `php-api/index.html`
+2. Updated deploy script to only include PHP files: `include: ['**/*.php', '.htaccess']`
+
+---
+
 ## Final Architecture
 
 ### Production URLs
@@ -325,6 +368,12 @@ fetch('https://osmeusapontamentos.com/quiz-generator/api/v1/index.php?endpoint=g
 npm run build          # Build only
 npm run deploy         # Deploy only
 npm run build:deploy   # Build and deploy
+```
+
+### Local PHP Testing
+```bash
+docker-compose up php-api    # Start PHP container
+# Then visit: http://localhost:8080/api/v1/index.php?endpoint=health-check
 ```
 
 ---
@@ -368,5 +417,4 @@ npm run build:deploy   # Build and deploy
 ---
 
 **Last Updated:** 2025-11-28
-**Completed:** 2025-11-28
-**Next Phase:** Phase 3.5 (Branding & Identity) or Phase 4 (Observability)
+**Next Session:** Create unit tests for PHP API code
