@@ -110,7 +110,13 @@ export default defineConfig(({ command }) => ({
     },
 
     server: {
-        port: 3000,
-        open: false
+        port: 8888,
+        open: false,
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8080',
+                changeOrigin: true
+            }
+        }
     }
 }));

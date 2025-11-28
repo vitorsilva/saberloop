@@ -1,5 +1,7 @@
 // const FUNCTIONS_URL = '/.netlify/functions/';
-const FUNCTIONS_URL = '/quiz-generator/api/v1/index.php?endpoint=';
+  const FUNCTIONS_URL = import.meta.env.DEV
+    ? '/api/v1/index.php?endpoint='
+    : '/quiz-generator/api/v1/index.php?endpoint=';
 
     const devLog = (...args) => {
       if (import.meta.env.DEV) {

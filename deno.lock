@@ -13,7 +13,10 @@
       "dependencies": [
         "npm:@playwright/test@^1.56.1",
         "npm:@vitest/coverage-v8@^4.0.1",
+        "npm:cross-env@^10.1.0",
+        "npm:dotenv@^17.2.3",
         "npm:fake-indexeddb@^6.2.4",
+        "npm:ftp-deploy@^2.4.7",
         "npm:idb@^8.0.3",
         "npm:jsdom@^27.0.1",
         "npm:netlify-cli@^23.11.1",
