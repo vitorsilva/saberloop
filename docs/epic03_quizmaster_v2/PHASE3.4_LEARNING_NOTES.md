@@ -2,8 +2,9 @@
 
 **Epic:** 3 - QuizMaster V2
 **Phase:** 3.4 - PHP VPS Migration
-**Status:** 🔄 In Progress (Unit tests pending)
+**Status:** ✅ Complete
 **Started:** 2025-11-27
+**Completed:** 2025-11-28
 **Reason:** Netlify credit constraints requiring cost-effective hosting solution
 
 ---
@@ -416,5 +417,208 @@ docker-compose up php-api    # Start PHP container
 
 ---
 
+## Session 3 - 2025-11-28
+
+### PHP Unit Testing with PHPUnit
+
+**Tasks Completed:**
+
+#### VS Code Setup
+- [x] Installed PHP Intelephense extension for better PHP support
+
+#### PHPUnit Setup (Docker-based)
+- [x] Created `php-api/composer.json` with PHPUnit 9.6 dependency
+- [x] Created `php-api/Dockerfile` with Composer installed
+- [x] Updated `docker-compose.yml` to build from Dockerfile
+- [x] Ran `composer install` inside Docker container
+- [x] Created `php-api/phpunit.xml` configuration
+- [x] Added `npm run test:php` script to package.json
+- [x] Added `php-api/vendor/` to `.gitignore`
+
+#### Refactored for Testability (Dependency Injection)
+- [x] Created `src/handlers/GenerateQuestionsHandler.php` - extracted logic from endpoint
+- [x] Created `src/handlers/GenerateExplanationHandler.php` - extracted logic from endpoint
+- [x] Updated `src/endpoints/generate-questions.php` - thin wrapper using handler
+- [x] Updated `src/endpoints/generate-explanation.php` - thin wrapper using handler
+
+#### Unit Tests Created
+- [x] `tests/ConfigTest.php` - 2 tests for Config class
+- [x] `tests/AnthropicClientTest.php` - 2 tests for extractText method
+- [x] `tests/GenerateQuestionsHandlerTest.php` - 5 tests with mocked API client
+- [x] `tests/GenerateExplanationHandlerTest.php` - 5 tests with mocked API client
+
+#### Local Development Setup
+- [x] Added `npm run dev:php` script for PHP backend testing
+- [x] Configured Vite proxy to forward `/api` requests to Docker container
+- [x] Updated `api.real.js` with environment-aware URL
+
+---
+
+## Key Learnings - Session 3
+
+### 1. Dependency Injection Pattern
+
+**Before (hard to test):**
+```php
+function handleGenerateQuestions($requestBody) {
+    $client = new AnthropicClient();  // Hard-coded dependency
+    // ... logic
+}
+```
+
+**After (testable):**
+```php
+class GenerateQuestionsHandler {
+    private $client;
+
+    public function __construct($client) {  // Injected dependency
+        $this->client = $client;
+    }
+
+    public function handle($input) {
+        // ... logic using $this->client
+    }
+}
+```
+
+### 2. PHPUnit Mocking
+
+```php
+// Create a mock that doesn't call real API
+$mockClient = $this->createMock(AnthropicClient::class);
+
+// Tell it what to return
+$mockClient->method('sendMessage')
+    ->willReturn(['content' => [['text' => 'fake response']]]);
+
+// Use mock in test
+$handler = new GenerateQuestionsHandler($mockClient);
+$result = $handler->handle(['topic' => 'Math']);
+```
+
+### 3. PHPUnit vs Vitest Comparison
+
+| Concept | Vitest (JS) | PHPUnit (PHP) |
+|---------|-------------|---------------|
+| Test grouping | `describe()` | Class name |
+| Individual test | `it()` / `test()` | `testMethodName()` |
+| Assertion | `expect(x).toBe(y)` | `$this->assertEquals(y, x)` |
+| String contains | `expect(x).toContain(y)` | `$this->assertStringContainsString(y, x)` |
+| Mock | `vi.mock()` | `$this->createMock()` |
+
+### 4. Vite Proxy for Local Development
+
+```javascript
+// vite.config.js
+server: {
+    port: 8888,
+    proxy: {
+        '/api': {
+            target: 'http://localhost:8080',
+            changeOrigin: true
+        }
+    }
+}
+```
+
+This forwards `/api/*` requests to Docker PHP container, avoiding CORS issues.
+
+### 5. Running PHP in Docker without Local PHP
+
+```bash
+# Run Composer
+docker-compose run --rm php-api composer install
+
+# Run PHPUnit
+docker-compose run --rm php-api vendor/bin/phpunit
+
+# Or via npm script
+npm run test:php
+```
+
+---
+
+## Updated Architecture
+
+### Local Project Structure (Final)
+
+```
+demo-pwa-app/
+├── php-api/
+│   ├── Dockerfile           # PHP 7.4 + Apache + Composer
+│   ├── composer.json        # PHPUnit dependency
+│   ├── composer.lock        # Locked versions
+│   ├── phpunit.xml          # PHPUnit config
+│   ├── .htaccess
+│   ├── .env.example
+│   ├── vendor/              # Composer packages (git ignored)
+│   ├── src/
+│   │   ├── Config.php
+│   │   ├── AnthropicClient.php
+│   │   ├── handlers/        # NEW: Testable business logic
+│   │   │   ├── GenerateQuestionsHandler.php
+│   │   │   └── GenerateExplanationHandler.php
+│   │   └── endpoints/       # Thin wrappers
+│   │       ├── health-check.php
+│   │       ├── generate-questions.php
+│   │       └── generate-explanation.php
+│   ├── api/
+│   │   └── v1/
+│   │       └── index.php    # Router with CORS
+│   └── tests/               # NEW: Unit tests
+│       ├── ConfigTest.php
+│       ├── AnthropicClientTest.php
+│       ├── GenerateQuestionsHandlerTest.php
+│       └── GenerateExplanationHandlerTest.php
+├── docker-compose.yml       # Updated with php-api build
+└── package.json             # Added test:php, dev:php scripts
+```
+
+---
+
+## Test Results
+
+```
+PHPUnit 9.6.29 by Sebastian Bergmann and contributors.
+
+OK (12 tests, 23 assertions)
+```
+
+All tests pass:
+- 2 Config tests
+- 2 AnthropicClient tests
+- 5 GenerateQuestionsHandler tests
+- 5 GenerateExplanationHandler tests
+
+---
+
+## Phase 3.4 Final Summary
+
+### What Was Accomplished
+
+1. **PHP Backend** - Migrated from Netlify Functions to PHP on VPS
+2. **Unit Testing** - Set up PHPUnit with Docker, wrote 12 tests
+3. **Refactoring** - Applied dependency injection for testability
+4. **Local Dev** - Configured Vite proxy for seamless PHP testing
+5. **Deployment** - Automated FTP deployment working
+
+### Commands Reference
+
+```bash
+# Development
+npm run dev          # Netlify dev (uses Netlify Functions)
+npm run dev:php      # Vite + Docker PHP backend
+
+# Testing
+npm run test         # JavaScript unit tests (Vitest)
+npm run test:php     # PHP unit tests (PHPUnit in Docker)
+
+# Deployment
+npm run build:deploy # Build frontend + deploy to VPS
+```
+
+---
+
 **Last Updated:** 2025-11-28
-**Next Session:** Create unit tests for PHP API code
+**Phase Status:** ✅ Complete
+**Next Phase:** Phase 3.5 - Branding & Identity
