@@ -12,7 +12,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/epic0X_*/` directories.
 
-**Current Status:** Epic 03 Phase 3.4 (PHP VPS Migration) - ✅ Complete | Next: Phase 3.5 (Branding & Identity)
+**Current Status:** Epic 03 Phase 3.5 (Branding & Identity) - ✅ Complete | Next: Deploy to saberloop.com, then Phase 4 (Observability)
 
 **Repository**: https://github.com/vitorsilva/demo-pwa-app
 

@@ -288,3 +288,17 @@ Reviewed original product vision document (`product_info/quiz-generator-explorat
 | tests/e2e/app.spec.js | test suite name |
 | php-api/composer.json | package name, namespaces |
 | public/icons/ | New Saberloop icons (192x192, 512x512) |
+| src/views/HomeView.js | "QuizUp" → "Saberloop" in header |
+
+### Additional Fix (Session 4 continued)
+- Found "QuizUp" reference in HomeView.js header → changed to "Saberloop"
+- Updated E2E test expectation to match
+- Fixed favicon: removed 📱 emoji, now uses actual icon file
+- Added apple-touch-icon for iOS devices
+
+---
+
+## Next Steps (Future Session)
+
+1. **Deploy to saberloop.com** - Configure hosting for new domain
+2. **Phase 4: Observability & Telemetry** - Logging, error tracking, performance monitoring
