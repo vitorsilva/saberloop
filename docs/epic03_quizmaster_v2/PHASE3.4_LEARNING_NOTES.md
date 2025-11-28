@@ -2,7 +2,7 @@
 
 **Epic:** 3 - QuizMaster V2
 **Phase:** 3.4 - PHP VPS Migration
-**Status:** 🔄 In Progress (Backend Complete, Frontend Integration Pending)
+**Status:** ✅ Complete
 **Started:** 2025-11-27
 **Reason:** Netlify credit constraints requiring cost-effective hosting solution
 
@@ -267,16 +267,91 @@ fetch('https://osmeusapontamentos.com/quiz-generator/api/v1/index.php?endpoint=g
 
 ---
 
-## Next Steps
+## Session 2 (Continued) - Frontend Integration
 
-**Remaining for Phase 3.4:**
-1. [ ] Update frontend to use PHP backend instead of Netlify
-2. [ ] Test full quiz flow end-to-end
-3. [ ] Decide whether to keep Netlify as fallback or remove
+### Frontend Deployment
 
-**Questions to Decide:**
-- Should we keep dual backend support (Netlify + PHP) or fully migrate?
-- Do we need to update environment variable configuration in frontend?
+**Tasks Completed:**
+
+#### Update Frontend API Configuration
+- [x] Updated `src/api/api.real.js` to use PHP backend URL
+- [x] Changed `FUNCTIONS_URL` from `/.netlify/functions` to `/quiz-generator/api/v1/index.php?endpoint=`
+
+#### Vite Configuration Updates
+- [x] Updated `base` path from `/demo-pwa-app/` to `/quiz-generator/`
+- [x] Updated PWA manifest `scope` and `start_url` to `/quiz-generator/`
+- [x] Updated `navigateFallback` to `/quiz-generator/index.html`
+
+#### Automated FTP Deployment
+- [x] Installed `ftp-deploy` and `dotenv` packages
+- [x] Created `scripts/deploy-ftp.cjs` for automated deployment
+- [x] Added FTP credentials to `.env` (not committed)
+- [x] Added `"deploy"` and `"build:deploy"` npm scripts
+
+#### Testing
+- [x] Full quiz flow works end-to-end
+- [x] Questions generated successfully
+- [x] Explanations generated for wrong answers
+- [x] All pages load correctly
+
+---
+
+## Issue 4: ES Module vs CommonJS
+
+**Problem:** Deploy script used `require()` but project uses ES modules (`"type": "module"` in package.json)
+
+**Solution:** Renamed `deploy-ftp.js` to `deploy-ftp.cjs` to force CommonJS mode
+
+---
+
+## Issue 5: Vite Base Path
+
+**Problem:** Built assets were looking for `/demo-pwa-app/assets/` instead of `/quiz-generator/assets/`
+
+**Solution:** Updated `vite.config.js`:
+- `base: '/quiz-generator/'`
+- PWA manifest paths updated to include `/quiz-generator/`
+
+---
+
+## Final Architecture
+
+### Production URLs
+- **App:** `https://osmeusapontamentos.com/quiz-generator/`
+- **API:** `https://osmeusapontamentos.com/quiz-generator/api/v1/index.php?endpoint=...`
+
+### Deployment Commands
+```bash
+npm run build          # Build only
+npm run deploy         # Deploy only
+npm run build:deploy   # Build and deploy
+```
+
+---
+
+## Phase 3.4 Success Criteria - All Met!
+
+✅ **Infrastructure:**
+- VPS configured with PHP 7.4 and Apache
+- SSL certificate working (existing domain certificate)
+- Domain pointing to VPS
+
+✅ **API Implementation:**
+- Three PHP endpoints working
+- Query parameter routing (WordPress compatible)
+- Environment variables secured
+- Error handling robust
+
+✅ **Frontend Integration:**
+- Frontend deployed to same origin
+- API calls working
+- Full quiz flow tested
+
+✅ **Production Ready:**
+- Full quiz flow works end-to-end
+- No API key exposed
+- HTTPS enforced
+- Zero additional hosting costs achieved!
 
 ---
 
@@ -293,4 +368,5 @@ fetch('https://osmeusapontamentos.com/quiz-generator/api/v1/index.php?endpoint=g
 ---
 
 **Last Updated:** 2025-11-28
-**Next Session:** Frontend integration with PHP backend
+**Completed:** 2025-11-28
+**Next Phase:** Phase 3.5 (Branding & Identity) or Phase 4 (Observability)
