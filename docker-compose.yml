@@ -9,3 +9,14 @@ services:
     ports:
       - "443:443"
     restart: unless-stopped
+
+  php-api:
+    image: php:7.4-apache
+    container_name: quiz-php-api
+    ports:
+      - "8080:80"
+    volumes:
+      - ./php-api:/var/www/html
+    working_dir: /var/www/html
+    command: >
+      bash -c "a2enmod rewrite && apache2-foreground"
