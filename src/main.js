@@ -10,7 +10,7 @@ import LoadingView from './views/LoadingView.js';
 import SettingsView from './views/SettingsView.js';
 import TopicsView from './views/TopicsView.js';
 
-console.log('🎓 QuizMaster initializing...');
+console.log('🎓 Saberloop initializing...');
 
 // Initialize database
 async function init() {

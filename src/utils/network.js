@@ -1,5 +1,5 @@
   /**
-   * Network status utilities for QuizMaster
+   * Network status utilities for Saberloop
    * Detects and monitors online/offline state
    */
 

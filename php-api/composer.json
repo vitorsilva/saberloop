@@ -1,6 +1,6 @@
 {
-    "name": "quizmaster/php-api",
-    "description": "QuizMaster PHP Backend API",
+    "name": "saberloop/php-api",
+    "description": "Saberloop PHP Backend API",
     "type": "project",
     "require": {
         "php": ">=7.4"
@@ -10,12 +10,12 @@
     },
     "autoload": {
         "psr-4": {
-            "QuizMaster\\": "src/"
+            "Saberloop\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "QuizMaster\\Tests\\": "tests/"
+            "Saberloop\\Tests\\": "tests/"
         }
     }
 }

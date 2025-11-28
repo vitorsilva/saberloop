@@ -189,30 +189,102 @@ Reviewed original product vision document (`product_info/quiz-generator-explorat
 
 ---
 
+## Session 4: Visual Identity & Codebase Update
+
+### What We Did
+
+1. **Chose Color Palette**
+   - Option A: Vibrant & Energetic
+   - Primary: Bright Orange (#FF6B35)
+   - Secondary: Teal (#00C9B7)
+   - Accent: Sunny Yellow (#FFD23F)
+
+2. **Generated Icon Options**
+   - Used ChatGPT and Google Gemini
+   - Concept: Abstract infinity loop (continuous learning)
+   - Selected: Gemini_02_white (3-color infinity on white)
+
+3. **Finalized Icon**
+   - Added dark background (#1a1a2e / RGB: 26, 26, 46)
+   - Created 192x192 and 512x512 versions
+   - Saved to public/icons/
+
+4. **Updated Codebase with Saberloop Branding**
+   - manifest.json: name, short_name, theme_color, background_color
+   - index.html: title, meta description, theme-color
+   - package.json: name, version (2.0.0), description
+   - vite.config.js: PWA manifest settings
+   - offline.html: title
+   - main.js, db.js, network.js: comments
+   - tests/e2e/app.spec.js: test suite name
+   - php-api/composer.json: package name and namespaces
+
+### Visual Identity Summary
+
+**Product Name:** Saberloop
+**Domain:** saberloop.com
+**Tagline:** "The fun way to learn and track your progress"
+
+**Colors:**
+| Role | Color | Hex |
+|------|-------|-----|
+| Primary | Bright Orange | #FF6B35 |
+| Secondary | Teal | #00C9B7 |
+| Accent | Sunny Yellow | #FFD23F |
+| Background (dark) | Dark Blue | #1a1a2e |
+
+**Icon:**
+- Infinity loop symbol
+- 3 colors (orange, teal, yellow) on dark background
+- Represents continuous learning cycle
+- "Saber" (to know) + "loop" (continuous)
+
+---
+
+## Current Status
+
+**Phase 3.5 Progress:**
+- [x] Define naming criteria
+- [x] Brainstorm initial names
+- [x] Evaluate against criteria
+- [x] Align name with product vision (learning, not just quiz)
+- [x] Learn trademark search process
+- [x] Eliminate SparkPath (trademark conflict - Class 041)
+- [x] Find available name (domain + trademark clear)
+- [x] Final name decision: **Saberloop** (saberloop.com)
+- [x] Visual identity (icon, colors)
+- [x] Update manifest and codebase
+
+**Phase 3.5 COMPLETE!** ✅
+
+---
+
 ## Key Learnings (Cumulative)
 
 1. **Product naming is hard** - Most good, short names are taken
 2. **Name should match vision** - "ezquizz" was available but too narrow
 3. **Revisit original vision** - Easy to get caught up in current features vs. full potential
-4. **Made-up words more likely available** - Need to be more creative
+4. **Made-up words more likely available** - Hybrid words (Portuguese + English) worked
 5. **Domain available ≠ legally available** - Always check trademarks
 6. **Trademark Class 041** - Education services; our app falls under this class
+7. **International appeal matters** - Check how name sounds in multiple languages
+8. **AI tools for icons** - ChatGPT and Gemini both produce good results
+9. **Consistent branding** - Update ALL files: manifest, HTML, package.json, vite config
 
 ---
 
-## Next Steps
+## Files Updated
 
-1. Brainstorm new names
-2. For each candidate: check domain THEN trademark (Class 041)
-3. Consider what appealed about SparkPath:
-   - "Spark" = inspiration, ignite curiosity?
-   - "Path" = journey, progress, learning path?
-4. Explore alternatives with similar feel
-
----
-
-## Questions for Future Sessions
-
-- What aspect of SparkPath appealed most? (Spark vs Path)
-- Should we focus on made-up words to avoid trademark conflicts?
-- Would a longer, more descriptive name be acceptable if it's available?
+| File | Changes |
+|------|---------|
+| public/manifest.json | name, short_name, theme_color, background_color |
+| index.html | title, meta description, theme-color |
+| package.json | name → saberloop, version → 2.0.0, description |
+| vite.config.js | PWA manifest name, colors |
+| public/offline.html | title |
+| src/main.js | console.log message |
+| src/db/db.js | comment |
+| src/utils/network.js | comment |
+| tests/e2e/app.spec.js | test suite name |
+| php-api/composer.json | package name, namespaces |
+| public/icons/ | New Saberloop icons (192x192, 512x512) |

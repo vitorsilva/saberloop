@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('QuizMaster E2E Tests', () => {
+test.describe('Saberloop E2E Tests', () => {
   test('should display home page with welcome message', async ({ page }) => {
     await page.goto('/');
 
     // Check for page title
-    await expect(page.locator('h1')).toContainText('QuizUp');
+    await expect(page.locator('h1')).toContainText('Saberloop');
 
     // Check for welcome message
     await expect(page.locator('h2')).toContainText('Welcome back!');

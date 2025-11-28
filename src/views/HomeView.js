@@ -15,7 +15,7 @@ export default class HomeView extends BaseView {
       <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
         <!-- Top App Bar -->
         <div class="flex items-center p-4 pb-2 justify-between bg-background-light dark:bg-background-dark">
-          <h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1">QuizUp</h1>
+          <h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1">Saberloop</h1>
           <div class="flex w-12 items-center justify-end">
             <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 bg-transparent text-text-light dark:text-text-dark gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0 hover:bg-primary/10">
               <span class="material-symbols-outlined text-2xl">notifications</span>

@@ -11,11 +11,11 @@ export default defineConfig(({ command }) => ({
             includeAssets: ['icons/*.png', 'manifest.json'],
 
             manifest: {
-                name: 'QuizMaster - AI-Powered Quiz App',
-                short_name: 'QuizMaster',
-                description: 'Test your knowledge on any topic with AI-generated questions',
-                theme_color: '#4A90E2',
-                background_color: '#F8F9FA',
+                name: 'Saberloop - Learn Through Quizzes',
+                short_name: 'Saberloop',
+                description: 'The fun way to learn and track your progress with AI-powered quizzes',
+                theme_color: '#FF6B35',
+                background_color: '#1a1a2e',
                 display: 'standalone',
                 orientation: 'portrait-primary',
                 scope: '/quiz-generator/',

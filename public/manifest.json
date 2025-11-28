@@ -1,12 +1,12 @@
   {
-    "name": "QuizMaster - AI-Powered Quiz App",
-    "short_name": "QuizMaster",
-    "description": "Test your knowledge on any topic with AI-generated questions",
+    "name": "Saberloop - Learn Through Quizzes",
+    "short_name": "Saberloop",
+    "description": "The fun way to learn and track your progress with AI-powered quizzes",
     "start_url": "./",
     "display": "standalone",
     "scope": "./",
-    "background_color": "#F8F9FA",
-    "theme_color": "#4A90E2",
+    "background_color": "#1a1a2e",
+    "theme_color": "#FF6B35",
     "orientation": "portrait-primary",
     "categories": ["education", "learning", "quiz"],
     "icons": [

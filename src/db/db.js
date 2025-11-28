@@ -1,4 +1,4 @@
-// db.js - IndexedDB wrapper for QuizMaster
+// db.js - IndexedDB wrapper for Saberloop
 
 import { openDB } from 'idb';
 

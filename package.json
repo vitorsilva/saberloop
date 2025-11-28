@@ -1,7 +1,7 @@
 {
-  "name": "demo-pwa-app",
-  "version": "1.0.0",
-  "description": "",
+  "name": "saberloop",
+  "version": "2.0.0",
+  "description": "Saberloop - The fun way to learn and track your progress with AI-powered quizzes",
   "homepage": "https://github.com/vitorsilva/demo-pwa-app#readme",
   "bugs": {
     "url": "https://github.com/vitorsilva/demo-pwa-app/issues"
