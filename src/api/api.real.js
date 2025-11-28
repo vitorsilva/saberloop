@@ -1,4 +1,5 @@
- const FUNCTIONS_URL = '/.netlify/functions';
+// const FUNCTIONS_URL = '/.netlify/functions/';
+const FUNCTIONS_URL = '/quiz-generator/api/v1/index.php?endpoint=';
 
     const devLog = (...args) => {
       if (import.meta.env.DEV) {
@@ -14,7 +15,7 @@
 
       devLog(`[REAL API] Generating questions for "${topic}" (${gradeLevel})`);
       
-      const response = await fetch(`${FUNCTIONS_URL}/generate-questions`, {
+      const response = await fetch(`${FUNCTIONS_URL}generate-questions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -52,7 +53,7 @@
     devLog(`[REAL API] Generating explanation for incorrect answer`);
 
     try {
-      const response = await fetch(`${FUNCTIONS_URL}/generate-explanation`, {
+      const response = await fetch(`${FUNCTIONS_URL}generate-explanation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

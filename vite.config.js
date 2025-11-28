@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ command }) => ({
-    base: command === 'serve' ? '/' : (process.env.NETLIFY ? '/' : '/demo-pwa-app/'),
+    base: command === 'serve' ? '/' : (process.env.NETLIFY ? '/' : '/quiz-generator/'),
     root: '.',
 
     plugins: [
@@ -18,8 +18,8 @@ export default defineConfig(({ command }) => ({
                 background_color: '#F8F9FA',
                 display: 'standalone',
                 orientation: 'portrait-primary',
-                scope: '/',
-                start_url: '/',
+                scope: '/quiz-generator/',
+                start_url: '/quiz-generator/',
                 icons: [
                     {
                         src: '/icons/icon-192x192.png',
@@ -86,7 +86,7 @@ export default defineConfig(({ command }) => ({
                 ],
 
                 cleanupOutdatedCaches: true,
-                navigateFallback: '/index.html',
+                navigateFallback: '/quiz-generator/index.html',
                 navigateFallbackDenylist: [/^\/api/, /^\/\.netlify/]
             },
 
