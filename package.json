@@ -24,6 +24,7 @@
     "build:deploy": "npm run build && npm run deploy",
     "preview": "vite preview",
     "test": "vitest",
+    "test:php": "docker-compose run --rm php-api vendor/bin/phpunit",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"

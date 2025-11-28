@@ -26,7 +26,7 @@ const phpConfig = {
     localRoot: './php-api',
     remoteRoot: '/',
     include: ['**/*.php', '.htaccess'],
-    exclude: ['.env', '.env.example']
+    exclude: ['composer.json', 'composer.lock', 'vendor/**', 'tests/**', 'phpunit.xml','.env', '.env.example', 'Dockerfile']
 };
 
 async function deploy() {

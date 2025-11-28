@@ -17,3 +17,5 @@ coverage/
 coverage/
 .version-history.json
 docs/nul
+# PHP dependencies
+php-api/vendor/
