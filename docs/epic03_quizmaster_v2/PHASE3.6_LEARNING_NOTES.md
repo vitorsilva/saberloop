@@ -176,14 +176,91 @@
 
 ---
 
+### Session 5 - December 1, 2024
+
+**What we accomplished:**
+
+1. **Updated `src/api/api.real.js` to use OpenRouter:**
+   - Replaced PHP backend calls with `callOpenRouter()`
+   - Gets API key from IndexedDB via `getOpenRouterKey()`
+   - Same prompts as Netlify functions (for consistency)
+   - Handles JSON parsing including markdown code blocks
+   - Proper error handling for missing API key
+
+2. **Tested full quiz generation flow:**
+   - Generated quiz about "Judo"
+   - Got 5 questions with correct structure
+   - Mix of difficulties (easy, medium, challenging)
+   - Language detection working (EN-US)
+   - All happening directly in browser → OpenRouter!
+
+**Files modified:**
+- `src/api/api.real.js` (complete rewrite)
+
+**Key learnings:**
+- Free models may wrap JSON in markdown code blocks (```json)
+- Need to strip markdown before parsing JSON
+- Same prompts work across different LLM providers
+- Browser console shows full API flow for debugging
+
+---
+
+## Phase 3.6 Complete! 🎉
+
+**Summary of what was built:**
+
+| File | Purpose |
+|------|---------|
+| `src/api/openrouter-auth.js` | OAuth PKCE authentication flow |
+| `src/api/openrouter-client.js` | Direct browser → OpenRouter API calls |
+| `src/views/WelcomeView.js` | First-time user onboarding screen |
+| `src/api/api.real.js` | Quiz generation using OpenRouter |
+| `src/db/db.js` (additions) | API key storage in IndexedDB |
+| `src/main.js` (updates) | OAuth callback handling, conditional routing |
+| `src/views/SettingsView.js` (updates) | Account section with disconnect |
+
+**Architecture transformation:**
+
+```
+BEFORE (Phase 3.4):
+Browser → PHP Server (your VPS) → Anthropic API
+         ↑ you pay for everything
+
+AFTER (Phase 3.6):
+Browser → OpenRouter API (directly!)
+         ↑ user's own account (free tier: 50 req/day)
+```
+
+**Benefits achieved:**
+- ✅ Zero cost for developer
+- ✅ Users use free tier (50 requests/day)
+- ✅ No backend needed for LLM calls
+- ✅ OAuth PKCE for secure authentication
+- ✅ One-click "Get Started" experience
+- ✅ Full disconnect/reconnect flow
+
+---
+
 ## Where We Left Off
 
-**Status:** Session 4 complete, continuing to Session 5
+**Status:** Phase 3.6 IN PROGRESS - Feature complete, tests pending
 
-**Next step:** Session 5 - Wire Up Quiz Generation
-1. Update `realApi.js` to use OpenRouter instead of PHP
-2. Test actual quiz generation with OpenRouter
-3. Polish and cleanup
+**Next:** Session 6 - Unit & E2E Tests
+- Unit tests for `openrouter-auth.js` (PKCE functions)
+- Unit tests for `openrouter-client.js` (API calls)
+- Unit tests for `db.js` (key storage functions)
+- E2E tests for OAuth flow
+- E2E tests for quiz generation with OpenRouter
+
+**⚠️ Phase NOT complete until tests are written and passing!**
+
+---
+
+## Reference Materials
+
+- [OpenRouter OAuth PKCE Docs](https://openrouter.ai/docs/use-cases/oauth-pkce)
+- [OpenRouter API Reference](https://openrouter.ai/docs/api-reference/overview)
+- Working free model: `tngtech/deepseek-r1t2-chimera:free`
 
 ---
 
