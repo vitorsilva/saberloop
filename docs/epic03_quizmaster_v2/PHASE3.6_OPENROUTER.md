@@ -163,6 +163,403 @@ This is why we needed PHP for Anthropic. With OpenRouter, the browser calls the 
 
 ---
 
+## Step-by-Step Teaching Plan
+
+This phase is structured as 5 learning sessions. Each session builds on the previous one.
+
+### Session 1: Setup & OAuth Foundation (~45 min)
+
+| Step | What You'll Do | Learning Objective |
+|------|---------------|-------------------|
+| 1.1 | Create OpenRouter account | Understand the platform |
+| 1.2 | Explore OpenRouter OAuth docs | Understand PKCE flow |
+| 1.3 | Create `openrouter-auth.js` | Implement PKCE utilities |
+| 1.4 | Test PKCE in browser console | Verify crypto functions work |
+
+**Deliverables:**
+- OpenRouter account created
+- `src/api/openrouter-auth.js` with `generateCodeVerifier()` and `generateCodeChallenge()`
+
+**Quiz yourself:**
+- What is PKCE and why is it needed for browser apps?
+- What's the difference between code_verifier and code_challenge?
+
+---
+
+### Session 2: Complete OAuth Flow (~60 min)
+
+| Step | What You'll Do | Learning Objective |
+|------|---------------|-------------------|
+| 2.1 | Implement `startAuth()` | Build OAuth redirect URL |
+| 2.2 | Implement `handleCallback()` | Exchange code for API key |
+| 2.3 | Test OAuth flow manually | End-to-end verification |
+| 2.4 | Handle edge cases | Error states, cancelled auth |
+
+**Deliverables:**
+- Complete `openrouter-auth.js` with all functions
+- Successfully obtain API key through OAuth
+
+**Quiz yourself:**
+- Where is the code_verifier stored during the OAuth flow?
+- What happens if someone intercepts the authorization code?
+
+---
+
+### Session 3: API Client & Storage (~45 min)
+
+| Step | What You'll Do | Learning Objective |
+|------|---------------|-------------------|
+| 3.1 | Create `openrouter-client.js` | Direct browser API calls |
+| 3.2 | Update IndexedDB schema | Add openrouter store |
+| 3.3 | Implement key storage functions | Store/retrieve/delete key |
+| 3.4 | Test API call with stored key | Verify full round-trip |
+
+**Deliverables:**
+- `src/api/openrouter-client.js` with `callOpenRouter()`
+- Updated `src/db/db.js` with key storage functions
+
+**Quiz yourself:**
+- What headers does OpenRouter require?
+- Why is it OK to store the API key in IndexedDB?
+
+---
+
+### Session 4: UI Integration (~60 min)
+
+| Step | What You'll Do | Learning Objective |
+|------|---------------|-------------------|
+| 4.1 | Create WelcomeView | First-time user experience |
+| 4.2 | Update router for OAuth callback | Handle redirect |
+| 4.3 | Update HomeView for connected state | Conditional rendering |
+| 4.4 | Update SettingsView | Disconnect option |
+
+**Deliverables:**
+- `src/views/WelcomeView.js` (new)
+- Updated router, HomeView, SettingsView
+
+**Quiz yourself:**
+- How does the app know if a user is connected?
+- What should happen when user clicks "Disconnect"?
+
+---
+
+### Session 5: Wire It Together & Polish (~60 min)
+
+| Step | What You'll Do | Learning Objective |
+|------|---------------|-------------------|
+| 5.1 | Update `realApi.js` | Use OpenRouter instead of PHP |
+| 5.2 | Add loading states | UX during OAuth |
+| 5.3 | Add error handling UI | Graceful failures |
+| 5.4 | End-to-end testing | Full user journey |
+| 5.5 | Write unit tests | Test critical functions |
+
+**Deliverables:**
+- Updated `src/api/realApi.js`
+- Loading and error UI components
+- Unit tests passing
+
+**Quiz yourself:**
+- What happens if the API returns a 429 (rate limit)?
+- How do you test the OAuth flow in E2E tests?
+
+---
+
+## Welcome Screen Design
+
+The welcome screen appears for first-time users (no stored API key). Based on your existing mockup, adapted to current CSS.
+
+### WelcomeView Layout
+
+```
+┌─────────────────────────────────────┐
+│                                     │
+│         [Hero Illustration]         │
+│                                     │
+├─────────────────────────────────────┤
+│                                     │
+│      Unlock Your Knowledge          │
+│                                     │
+│   The fun way to learn and track    │
+│          your progress.             │
+│                                     │
+├─────────────────────────────────────┤
+│  ┌─────┐                            │
+│  │ 🎯 │ Personalized Quizzes        │
+│  └─────┘ Tailored to your learning  │
+│                                     │
+│  ┌─────┐                            │
+│  │ 📈 │ Track Your Progress         │
+│  └─────┘ See how much you've grown  │
+│                                     │
+│  ┌─────┐                            │
+│  │ 📚 │ Diverse Topics              │
+│  └─────┘ Explore quizzes on any     │
+│          subject                    │
+│                                     │
+├─────────────────────────────────────┤
+│                                     │
+│   ┌─────────────────────────────┐   │
+│   │     Get Started Free        │   │
+│   └─────────────────────────────┘   │
+│                                     │
+│   Free AI-powered quizzes           │
+│   No credit card required           │
+│                                     │
+│   ℹ️ Free tier: data used for       │
+│      model training. Learn more     │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### WelcomeView.js Code
+
+**File:** `src/views/WelcomeView.js` (NEW)
+
+```javascript
+import BaseView from './BaseView.js';
+import { startAuth } from '../api/openrouter-auth.js';
+
+export default class WelcomeView extends BaseView {
+  async render() {
+    this.setHTML(`
+      <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+        <div class="flex w-full grow flex-col justify-between p-6 pt-12">
+
+          <!-- Hero Section -->
+          <div class="flex flex-col items-center">
+            <!-- Hero Image -->
+            <div class="relative w-full max-w-xs aspect-square flex items-center justify-center mb-8">
+              <div class="w-full h-full bg-primary/10 dark:bg-primary/20 rounded-3xl flex items-center justify-center">
+                <span class="material-symbols-outlined text-8xl text-primary">psychology</span>
+              </div>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="text-text-light dark:text-text-dark text-3xl font-bold leading-tight text-center">
+              Unlock Your Knowledge
+            </h1>
+            <p class="text-subtext-light dark:text-subtext-dark text-base pt-2 text-center max-w-sm">
+              The fun way to learn and track your progress.
+            </p>
+          </div>
+
+          <!-- Benefits List -->
+          <div class="mt-10 w-full max-w-md mx-auto space-y-4">
+            <!-- Personalized Quizzes -->
+            <div class="flex items-center gap-4 py-2">
+              <div class="flex items-center justify-center rounded-xl bg-card-light dark:bg-card-dark size-14 shrink-0">
+                <span class="material-symbols-outlined text-2xl text-primary">target</span>
+              </div>
+              <div class="flex flex-col">
+                <p class="text-text-light dark:text-text-dark text-base font-medium">Personalized Quizzes</p>
+                <p class="text-subtext-light dark:text-subtext-dark text-sm">Tailored to your learning style.</p>
+              </div>
+            </div>
+
+            <!-- Track Progress -->
+            <div class="flex items-center gap-4 py-2">
+              <div class="flex items-center justify-center rounded-xl bg-card-light dark:bg-card-dark size-14 shrink-0">
+                <span class="material-symbols-outlined text-2xl text-primary">trending_up</span>
+              </div>
+              <div class="flex flex-col">
+                <p class="text-text-light dark:text-text-dark text-base font-medium">Track Your Progress</p>
+                <p class="text-subtext-light dark:text-subtext-dark text-sm">See how much you've grown.</p>
+              </div>
+            </div>
+
+            <!-- Diverse Topics -->
+            <div class="flex items-center gap-4 py-2">
+              <div class="flex items-center justify-center rounded-xl bg-card-light dark:bg-card-dark size-14 shrink-0">
+                <span class="material-symbols-outlined text-2xl text-primary">category</span>
+              </div>
+              <div class="flex flex-col">
+                <p class="text-text-light dark:text-text-dark text-base font-medium">Diverse Topics</p>
+                <p class="text-subtext-light dark:text-subtext-dark text-sm">Explore quizzes on any subject.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Area -->
+          <div class="mt-12 flex w-full flex-col items-center gap-4 max-w-md mx-auto">
+            <button
+              id="getStartedBtn"
+              class="flex h-14 w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors"
+            >
+              Get Started Free
+            </button>
+
+            <p class="text-subtext-light dark:text-subtext-dark text-sm text-center">
+              Free AI-powered quizzes. No credit card required.
+            </p>
+
+            <p class="text-subtext-light dark:text-subtext-dark text-xs text-center mt-2">
+              <span class="material-symbols-outlined text-sm align-middle">info</span>
+              Free tier uses data for model training.
+              <a href="https://openrouter.ai/docs" target="_blank" rel="noopener" class="text-primary hover:underline">
+                Learn more
+              </a>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    `);
+
+    this.attachListeners();
+  }
+
+  attachListeners() {
+    const getStartedBtn = this.querySelector('#getStartedBtn');
+
+    this.addEventListener(getStartedBtn, 'click', async () => {
+      // Show loading state
+      getStartedBtn.disabled = true;
+      getStartedBtn.innerHTML = `
+        <span class="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+        Connecting...
+      `;
+
+      try {
+        await startAuth();
+      } catch (error) {
+        console.error('Failed to start auth:', error);
+        getStartedBtn.disabled = false;
+        getStartedBtn.textContent = 'Get Started Free';
+        // Show error inline
+        this.showError('Failed to connect. Please try again.');
+      }
+    });
+  }
+
+  showError(message) {
+    // Remove existing error if any
+    const existingError = document.getElementById('authError');
+    if (existingError) existingError.remove();
+
+    const errorDiv = document.createElement('div');
+    errorDiv.id = 'authError';
+    errorDiv.className = 'mt-4 p-3 bg-error/10 border border-error rounded-xl text-error text-sm text-center';
+    errorDiv.textContent = message;
+
+    const actionArea = this.querySelector('#getStartedBtn').parentElement;
+    actionArea.insertBefore(errorDiv, actionArea.lastElementChild);
+  }
+}
+```
+
+---
+
+## Additional UX Improvements
+
+### Loading States
+
+During OAuth flow, show visual feedback:
+
+```javascript
+// In WelcomeView - button loading state
+getStartedBtn.innerHTML = `
+  <span class="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+  Connecting...
+`;
+```
+
+### OAuth Callback Loading Screen
+
+Create a simple loading view for when user returns from OpenRouter:
+
+**File:** `src/views/AuthCallbackView.js` (NEW)
+
+```javascript
+import BaseView from './BaseView.js';
+import { handleCallback } from '../api/openrouter-auth.js';
+import { storeOpenRouterKey } from '../db/db.js';
+
+export default class AuthCallbackView extends BaseView {
+  async render() {
+    this.setHTML(`
+      <div class="flex min-h-screen items-center justify-center bg-background-light dark:bg-background-dark">
+        <div class="text-center">
+          <span class="material-symbols-outlined text-5xl text-primary animate-spin">progress_activity</span>
+          <p class="mt-4 text-text-light dark:text-text-dark text-lg font-medium">
+            Completing connection...
+          </p>
+        </div>
+      </div>
+    `);
+
+    await this.processCallback();
+  }
+
+  async processCallback() {
+    try {
+      const apiKey = await handleCallback();
+      await storeOpenRouterKey(apiKey);
+
+      // Success! Redirect to home
+      this.navigateTo('/');
+    } catch (error) {
+      console.error('OAuth callback failed:', error);
+
+      // Show error and redirect
+      this.setHTML(`
+        <div class="flex min-h-screen items-center justify-center bg-background-light dark:bg-background-dark p-6">
+          <div class="text-center max-w-sm">
+            <span class="material-symbols-outlined text-5xl text-error">error</span>
+            <p class="mt-4 text-text-light dark:text-text-dark text-lg font-medium">
+              Connection Failed
+            </p>
+            <p class="mt-2 text-subtext-light dark:text-subtext-dark text-sm">
+              ${error.message}
+            </p>
+            <button
+              id="retryBtn"
+              class="mt-6 px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      `);
+
+      this.querySelector('#retryBtn')?.addEventListener('click', () => {
+        this.navigateTo('/');
+      });
+    }
+  }
+}
+```
+
+### Offline Handling
+
+Check network before attempting OAuth:
+
+```javascript
+// In WelcomeView attachListeners
+this.addEventListener(getStartedBtn, 'click', async () => {
+  if (!navigator.onLine) {
+    this.showError('You\'re offline. Please connect to the internet to get started.');
+    return;
+  }
+  // ... continue with OAuth
+});
+```
+
+### Rate Limit Error Handling
+
+In `openrouter-client.js`, provide helpful error messages:
+
+```javascript
+if (response.status === 429) {
+  const resetTime = response.headers.get('X-RateLimit-Reset');
+  const message = resetTime
+    ? `Rate limit exceeded. Resets at ${new Date(resetTime * 1000).toLocaleTimeString()}`
+    : 'Rate limit exceeded. Free tier allows 50 requests/day.';
+  throw new Error(message);
+}
+```
+
+---
+
 ## Implementation Steps
 
 ### Step 1: Create OpenRouter Authentication Module
@@ -682,20 +1079,304 @@ The PHP backend on your VPS becomes **unused for LLM calls**. Options:
 |------|--------|---------|
 | `src/api/openrouter-auth.js` | **NEW** | OAuth PKCE flow |
 | `src/api/openrouter-client.js` | **NEW** | Direct API calls |
-| `src/db/index.js` | **MODIFY** | Store API key |
+| `src/views/WelcomeView.js` | **NEW** | First-time user onboarding |
+| `src/views/AuthCallbackView.js` | **NEW** | OAuth callback handler |
+| `src/db/db.js` | **MODIFY** | Add key storage functions |
 | `src/api/realApi.js` | **MODIFY** | Use OpenRouter instead of PHP |
-| `src/router/index.js` | **MODIFY** | Handle OAuth callback |
-| `src/views/HomeView.js` | **MODIFY** | Show connect prompt |
+| `src/router/index.js` | **MODIFY** | Add routes for welcome & callback |
+| `src/views/HomeView.js` | **MODIFY** | Check connection, redirect if needed |
 | `src/views/SettingsView.js` | **MODIFY** | Disconnect option |
+| `tests/unit/openrouter-auth.test.js` | **NEW** | Unit tests for auth |
+| `tests/unit/openrouter-client.test.js` | **NEW** | Unit tests for API client |
+| `tests/unit/openrouter-db.test.js` | **NEW** | Unit tests for key storage |
+| `tests/e2e/openrouter-auth.spec.js` | **NEW** | E2E tests for auth flow |
 
 ---
 
 ## Testing Plan
 
+### Unit Tests
+
+Unit tests verify individual functions work correctly in isolation.
+
+**File:** `tests/unit/openrouter-auth.test.js`
+
+```javascript
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// Mock crypto API for Node environment
+const mockCrypto = {
+  getRandomValues: (arr) => {
+    for (let i = 0; i < arr.length; i++) arr[i] = Math.floor(Math.random() * 256);
+    return arr;
+  },
+  subtle: {
+    digest: vi.fn().mockResolvedValue(new ArrayBuffer(32))
+  }
+};
+
+describe('OpenRouter Auth', () => {
+  beforeEach(() => {
+    global.crypto = mockCrypto;
+    global.sessionStorage = {
+      store: {},
+      getItem: vi.fn((key) => this.store[key]),
+      setItem: vi.fn((key, value) => { this.store[key] = value; }),
+      removeItem: vi.fn((key) => { delete this.store[key]; })
+    };
+  });
+
+  describe('generateCodeVerifier', () => {
+    it('should generate a string of correct length', async () => {
+      const { generateCodeVerifier } = await import('../../src/api/openrouter-auth.js');
+      const verifier = generateCodeVerifier();
+
+      expect(typeof verifier).toBe('string');
+      expect(verifier.length).toBeGreaterThan(40);
+    });
+
+    it('should generate URL-safe characters only', async () => {
+      const { generateCodeVerifier } = await import('../../src/api/openrouter-auth.js');
+      const verifier = generateCodeVerifier();
+
+      // Should not contain +, /, or =
+      expect(verifier).not.toMatch(/[+/=]/);
+    });
+
+    it('should generate different values each time', async () => {
+      const { generateCodeVerifier } = await import('../../src/api/openrouter-auth.js');
+      const verifier1 = generateCodeVerifier();
+      const verifier2 = generateCodeVerifier();
+
+      expect(verifier1).not.toBe(verifier2);
+    });
+  });
+
+  describe('generateCodeChallenge', () => {
+    it('should generate a SHA-256 hash of verifier', async () => {
+      const { generateCodeChallenge } = await import('../../src/api/openrouter-auth.js');
+      const challenge = await generateCodeChallenge('test-verifier');
+
+      expect(typeof challenge).toBe('string');
+      expect(mockCrypto.subtle.digest).toHaveBeenCalledWith('SHA-256', expect.any(Uint8Array));
+    });
+
+    it('should generate URL-safe characters only', async () => {
+      const { generateCodeChallenge } = await import('../../src/api/openrouter-auth.js');
+      const challenge = await generateCodeChallenge('test-verifier');
+
+      expect(challenge).not.toMatch(/[+/=]/);
+    });
+  });
+
+  describe('isAuthCallback', () => {
+    it('should return true when URL has code param', async () => {
+      delete window.location;
+      window.location = { search: '?code=abc123' };
+
+      const { isAuthCallback } = await import('../../src/api/openrouter-auth.js');
+      expect(isAuthCallback()).toBe(true);
+    });
+
+    it('should return false when URL has no code param', async () => {
+      delete window.location;
+      window.location = { search: '' };
+
+      const { isAuthCallback } = await import('../../src/api/openrouter-auth.js');
+      expect(isAuthCallback()).toBe(false);
+    });
+  });
+});
+```
+
+**File:** `tests/unit/openrouter-client.test.js`
+
+```javascript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+describe('OpenRouter Client', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  describe('callOpenRouter', () => {
+    it('should send correct headers', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({
+          choices: [{ message: { content: 'test response' } }]
+        })
+      });
+
+      const { callOpenRouter } = await import('../../src/api/openrouter-client.js');
+      await callOpenRouter('test-key', 'test prompt');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://openrouter.ai/api/v1/chat/completions',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            'Authorization': 'Bearer test-key',
+            'Content-Type': 'application/json',
+            'X-Title': 'SaberLoop'
+          })
+        })
+      );
+    });
+
+    it('should parse response correctly', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({
+          choices: [{ message: { content: 'AI response here' } }],
+          model: 'test-model',
+          usage: { prompt_tokens: 10, completion_tokens: 20 }
+        })
+      });
+
+      const { callOpenRouter } = await import('../../src/api/openrouter-client.js');
+      const result = await callOpenRouter('test-key', 'test prompt');
+
+      expect(result.text).toBe('AI response here');
+      expect(result.model).toBe('test-model');
+    });
+
+    it('should throw on 401 unauthorized', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: () => Promise.resolve({ error: { message: 'Invalid key' } })
+      });
+
+      const { callOpenRouter } = await import('../../src/api/openrouter-client.js');
+
+      await expect(callOpenRouter('bad-key', 'prompt'))
+        .rejects.toThrow('Invalid API key');
+    });
+
+    it('should throw on 429 rate limit', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: { get: () => null },
+        json: () => Promise.resolve({})
+      });
+
+      const { callOpenRouter } = await import('../../src/api/openrouter-client.js');
+
+      await expect(callOpenRouter('key', 'prompt'))
+        .rejects.toThrow('Rate limit exceeded');
+    });
+
+    it('should throw on empty response', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({
+          choices: [{ message: { content: '' } }]
+        })
+      });
+
+      const { callOpenRouter } = await import('../../src/api/openrouter-client.js');
+
+      await expect(callOpenRouter('key', 'prompt'))
+        .rejects.toThrow('Empty response');
+    });
+  });
+});
+```
+
+**File:** `tests/unit/openrouter-db.test.js`
+
+```javascript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// Mock IndexedDB
+const mockStore = {
+  data: {},
+  put: vi.fn(function(item) { this.data[item.id] = item; }),
+  get: vi.fn(function(id) { return this.data[id]; }),
+  delete: vi.fn(function(id) { delete this.data[id]; })
+};
+
+describe('OpenRouter Key Storage', () => {
+  beforeEach(() => {
+    mockStore.data = {};
+    vi.resetAllMocks();
+  });
+
+  describe('storeOpenRouterKey', () => {
+    it('should store key with timestamp', async () => {
+      // Mock the db module
+      vi.doMock('../../src/db/db.js', () => ({
+        storeOpenRouterKey: async (key) => {
+          mockStore.put({ id: 'api_key', key, storedAt: new Date().toISOString() });
+        }
+      }));
+
+      const { storeOpenRouterKey } = await import('../../src/db/db.js');
+      await storeOpenRouterKey('sk-or-test-key');
+
+      expect(mockStore.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'api_key',
+          key: 'sk-or-test-key'
+        })
+      );
+    });
+  });
+
+  describe('getOpenRouterKey', () => {
+    it('should return stored key', async () => {
+      mockStore.data['api_key'] = { id: 'api_key', key: 'stored-key' };
+
+      vi.doMock('../../src/db/db.js', () => ({
+        getOpenRouterKey: async () => mockStore.data['api_key']?.key || null
+      }));
+
+      const { getOpenRouterKey } = await import('../../src/db/db.js');
+      const key = await getOpenRouterKey();
+
+      expect(key).toBe('stored-key');
+    });
+
+    it('should return null when no key stored', async () => {
+      vi.doMock('../../src/db/db.js', () => ({
+        getOpenRouterKey: async () => null
+      }));
+
+      const { getOpenRouterKey } = await import('../../src/db/db.js');
+      const key = await getOpenRouterKey();
+
+      expect(key).toBeNull();
+    });
+  });
+
+  describe('isOpenRouterConnected', () => {
+    it('should return true when key exists', async () => {
+      vi.doMock('../../src/db/db.js', () => ({
+        isOpenRouterConnected: async () => true
+      }));
+
+      const { isOpenRouterConnected } = await import('../../src/db/db.js');
+      expect(await isOpenRouterConnected()).toBe(true);
+    });
+
+    it('should return false when no key', async () => {
+      vi.doMock('../../src/db/db.js', () => ({
+        isOpenRouterConnected: async () => false
+      }));
+
+      const { isOpenRouterConnected } = await import('../../src/db/db.js');
+      expect(await isOpenRouterConnected()).toBe(false);
+    });
+  });
+});
+```
+
 ### Manual Testing Checklist
 
 **OAuth Flow:**
-- [ ] Click "Connect with OpenRouter" → Opens OpenRouter auth page
+- [ ] Click "Get Started Free" → Opens OpenRouter auth page
 - [ ] Create new OpenRouter account → Works
 - [ ] Authorize app → Redirects back to SaberLoop
 - [ ] API key stored in IndexedDB → Can verify in DevTools
@@ -710,11 +1391,17 @@ The PHP backend on your VPS becomes **unused for LLM calls**. Options:
 - [ ] Invalid/expired key → Shows "reconnect" message
 - [ ] Rate limit exceeded → Shows appropriate error
 - [ ] Network error → Graceful failure
+- [ ] Offline state → Shows offline message on welcome screen
 
 **Settings:**
 - [ ] Shows "Connected" status when connected
-- [ ] Disconnect button → Removes key, shows connect prompt
+- [ ] Disconnect button → Removes key, shows welcome screen
 - [ ] Reconnect → Full OAuth flow works again
+
+**Loading States:**
+- [ ] Button shows spinner while connecting
+- [ ] Callback page shows loading spinner
+- [ ] Error state shows retry button
 
 ### E2E Tests
 
@@ -723,20 +1410,80 @@ The PHP backend on your VPS becomes **unused for LLM calls**. Options:
 import { test, expect } from '@playwright/test';
 
 test.describe('OpenRouter Authentication', () => {
-  test('shows connect prompt when not authenticated', async ({ page }) => {
+  test('shows welcome screen when not authenticated', async ({ page }) => {
+    // Clear any stored keys
     await page.goto('/');
-    await expect(page.locator('#connect-openrouter')).toBeVisible();
+    await page.evaluate(() => indexedDB.deleteDatabase('saberloop'));
+    await page.reload();
+
+    await expect(page.locator('text=Unlock Your Knowledge')).toBeVisible();
+    await expect(page.locator('#getStartedBtn')).toBeVisible();
   });
 
-  test('connect button redirects to OpenRouter', async ({ page }) => {
+  test('get started button initiates OAuth flow', async ({ page }) => {
     await page.goto('/');
 
-    const [popup] = await Promise.all([
-      page.waitForURL(/openrouter\.ai\/auth/),
-      page.click('#connect-openrouter')
+    // Click should redirect to OpenRouter
+    const [request] = await Promise.all([
+      page.waitForRequest(req => req.url().includes('openrouter.ai/auth')),
+      page.click('#getStartedBtn')
     ]);
 
-    expect(popup.url()).toContain('openrouter.ai/auth');
+    expect(request.url()).toContain('callback_url');
+    expect(request.url()).toContain('code_challenge');
+  });
+
+  test('shows loading state while connecting', async ({ page }) => {
+    await page.goto('/');
+
+    await page.click('#getStartedBtn');
+
+    await expect(page.locator('text=Connecting...')).toBeVisible();
+  });
+
+  test('shows error when offline', async ({ page }) => {
+    await page.goto('/');
+
+    // Simulate offline
+    await page.context().setOffline(true);
+
+    await page.click('#getStartedBtn');
+
+    await expect(page.locator('text=offline')).toBeVisible();
+  });
+});
+
+test.describe('Connected User', () => {
+  test.beforeEach(async ({ page }) => {
+    // Mock a stored API key
+    await page.goto('/');
+    await page.evaluate(() => {
+      // Simulate stored key in IndexedDB
+      const request = indexedDB.open('saberloop', 1);
+      request.onsuccess = () => {
+        const db = request.result;
+        const tx = db.transaction('openrouter', 'readwrite');
+        tx.objectStore('openrouter').put({
+          id: 'api_key',
+          key: 'test-key',
+          storedAt: new Date().toISOString()
+        });
+      };
+    });
+    await page.reload();
+  });
+
+  test('shows home screen when authenticated', async ({ page }) => {
+    await expect(page.locator('text=Welcome back!')).toBeVisible();
+    await expect(page.locator('#startQuizBtn')).toBeVisible();
+  });
+
+  test('can disconnect from settings', async ({ page }) => {
+    await page.click('a[href="#/settings"]');
+    await page.click('#disconnect-openrouter');
+
+    // Should show welcome screen again
+    await expect(page.locator('text=Unlock Your Knowledge')).toBeVisible();
   });
 });
 ```
