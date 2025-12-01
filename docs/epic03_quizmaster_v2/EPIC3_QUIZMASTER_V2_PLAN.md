@@ -424,6 +424,43 @@ grep -r "Demo PWA" .
 
 ---
 
+### **Phase 3.6: OpenRouter Integration** (1-2 sessions) 🆕 **PRIORITY**
+Integrate OpenRouter to allow users to use their own API keys with free LLM providers.
+
+📄 [PHASE3.6_OPENROUTER.md](./PHASE3.6_OPENROUTER.md)
+
+**Why This Phase is Critical:**
+- 💰 **User-provided API keys** - Users can use their own OpenRouter accounts
+- 🆓 **Free tier access** - OpenRouter provides free tier models
+- 🔄 **Multi-model flexibility** - Switch between Claude, GPT-4, Gemini, Llama
+- 📉 **Reduce your costs** - Users who bring their own keys don't consume your credits
+
+**Learning Objectives:**
+- Understand API provider abstraction patterns
+- Build environment-based provider switching
+- Implement OpenAI-compatible API format
+- Configure fallback model support
+- Compare direct API vs gateway approaches
+
+**Deliverables:**
+- ✅ `netlify/functions/lib/ai-config.js` (provider configuration)
+- ✅ `netlify/functions/lib/ai-client.js` (unified API client)
+- ✅ Updated `generate-questions.js` (uses abstraction)
+- ✅ Updated `generate-explanation.js` (uses abstraction)
+- ✅ Updated `health-check.js` (reports provider info)
+- ✅ Environment variables documented
+- ✅ Unit tests for both providers
+
+**Success Criteria:**
+- Can switch between Anthropic and OpenRouter via environment variable
+- Both providers generate valid quiz questions
+- Fallback models work when primary unavailable
+- Health check reports current provider configuration
+- No code changes needed to switch providers
+- Users can configure their own OpenRouter API key
+
+---
+
 ### **Phase 4: Observability & Telemetry** (2-3 sessions)
 Implement structured logging, error tracking, and performance monitoring.
 
@@ -1011,13 +1048,14 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 | Phase 3 | 3-4 | UI Polish | New: Settings, dynamic data |
 | **Phase 3.4** | **3-4** | **PHP VPS Migration** | **🆕 REQUIRED: Cost solution (Netlify credits)** |
 | **Phase 3.5** | **2-3** | **Branding & Identity** | **New: Name, icon, visual identity** |
+| **Phase 3.6** | **1-2** | **OpenRouter Integration** | **🆕 PRIORITY: User API keys, free LLMs** |
 | Phase 4 | 2-3 | Observability | New: Logging, monitoring |
 | Phase 5 | 1-2 | Project Structure | Cleanup and documentation |
 | Phase 6 | Ongoing | Validation & Iteration | Real user testing |
 | **Phase 7** | **2-3** | **Azure Migration** | **⭐ Optional: Azure experience** |
 | **Phase 8** | **2-3** | **OAuth Integration** | **⭐ Optional/Experimental** |
 
-**Core Phases (1-3.4, 3.5, 4-6)**: ~15-22 sessions (required)
+**Core Phases (1-3.6, 4-6)**: ~16-24 sessions (required)
 **Phase 6**: Ongoing (can overlap with future epics)
 **Phase 7**: +2-3 sessions (optional Azure)
 **Phase 8**: +2-3 sessions (optional OAuth, if available)

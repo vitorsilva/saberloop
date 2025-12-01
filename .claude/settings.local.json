@@ -19,7 +19,11 @@
       "Bash(for phase in PHASE4_OBSERVABILITY.md PHASE5_PROJECT_STRUCTURE.md PHASE6_VALIDATION.md)",
       "Bash(do grep -n \"## Success Criteria\\|## Next Steps\" \"docs/epic03_quizmaster_v2/$phase\")",
       "Bash(done)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "WebSearch",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:openrouter.ai)",
+      "WebFetch(domain:blog.kowalczyk.info)"
     ],
     "deny": [],
     "ask": []
