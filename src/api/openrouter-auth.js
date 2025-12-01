@@ -15,6 +15,13 @@
   // Callback URL - where OpenRouter sends the user after login
   const CALLBACK_URL = window.location.origin + '/auth/callback';
 
+  // Set to true to see debug logs
+  const DEBUG = false;
+
+  function log(...args) {
+    if (DEBUG) console.log('[OpenRouter Auth]', ...args);
+  }
+
   /**
    * Generate a random code_verifier for PKCE
    * Must be 43-128 characters, URL-safe
@@ -72,28 +79,29 @@
     window.location.href = authUrl.toString();
   }
 
-    /**
-   * Handle OAuth callback
-   * Called when user returns from OpenRouter with authorization code
-   * Returns the API key on success
-   */
   export async function handleCallback() {
-    // Step 1: Get the authorization code from URL
+    log('handleCallback() called');
+    log('Current URL:', window.location.href);
+
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
+
+    log('Authorization code:', code ? 'Found' : 'NOT FOUND');
 
     if (!code) {
       throw new Error('No authorization code found in URL');
     }
 
-    // Step 2: Get the code_verifier we saved earlier
     const codeVerifier = sessionStorage.getItem('openrouter_code_verifier');
+
+    log('Code verifier:', codeVerifier ? 'Found in sessionStorage' : 'NOT FOUND');
 
     if (!codeVerifier) {
       throw new Error('No code verifier found. Please try logging in again.');       
     }
 
-    // Step 3: Exchange code + verifier for API key
+    log('Exchanging code for API key...');
+
     const response = await fetch(OPENROUTER_KEY_URL, {
       method: 'POST',
       headers: {
@@ -106,20 +114,21 @@
       })
     });
 
+    log('Response status:', response.status);
+
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
+      log('Error response:', error);
       throw new Error(error.message || 'Failed to exchange code for API key');       
     }
 
     const data = await response.json();
 
-    // Step 4: Clean up
-    sessionStorage.removeItem('openrouter_code_verifier');
+    log('API key received:', data.key ? 'Yes (hidden)' : 'No');
 
-    // Clear the code from URL (cleaner UX)
+    sessionStorage.removeItem('openrouter_code_verifier');
     window.history.replaceState({}, '', window.location.pathname);
 
-    // Return the API key
     return data.key;
   }
 
