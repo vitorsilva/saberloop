@@ -12,7 +12,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/epic0X_*/` directories.
 
-**Current Status:** Epic 03 Phase 3.6 (OpenRouter Integration) - Session 1 Complete | Next: Session 2 (Complete OAuth Flow)
+**Current Status:** Epic 03 Phase 3.6 (OpenRouter Integration) - Session 3 Complete | Next: Session 4 (UI Integration)
 
 **Repository**: https://github.com/vitorsilva/demo-pwa-app
 

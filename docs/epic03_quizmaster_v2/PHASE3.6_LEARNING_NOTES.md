@@ -67,14 +67,79 @@
 
 ---
 
+### Session 2 - December 1, 2024
+
+**What we accomplished:**
+
+1. **Tested complete OAuth flow:**
+   - Called `startAuth()` → Redirected to OpenRouter
+   - Logged in and authorized → Redirected back with code
+   - Called `handleCallback()` → Exchanged code for API key
+   - Successfully received API key (`sk-or-v1-...`)
+
+2. **Tested edge cases:**
+   - No code in URL → "No authorization code found in URL"
+   - No code_verifier (PKCE protection) → "No code verifier found"
+   - Experienced PKCE security firsthand!
+
+3. **Added debug logging with toggle:**
+   - `DEBUG` constant to enable/disable logs
+   - `log()` helper function for consistent logging
+
+**Key learnings:**
+- The OAuth flow actually works end-to-end!
+- PKCE really does protect against code interception
+- API keys should never be logged in production
+
+---
+
+### Session 3 - December 1, 2024
+
+**What we accomplished:**
+
+1. **Created `src/api/openrouter-client.js`:**
+   - `callOpenRouter(apiKey, prompt, options)` - Makes LLM API calls
+   - `testApiKey(apiKey)` - Validates an API key
+   - Error handling for 401, 429, 402 status codes
+   - Headers for app attribution (`HTTP-Referer`, `X-Title`)
+
+2. **Added IndexedDB storage for API key:**
+   - `storeOpenRouterKey(apiKey)` - Saves key with timestamp
+   - `getOpenRouterKey()` - Retrieves stored key
+   - `removeOpenRouterKey()` - Disconnects user
+   - `isOpenRouterConnected()` - Checks connection status
+
+3. **Tested full round-trip:**
+   - Stored key in IndexedDB
+   - Retrieved key
+   - Made real API call to OpenRouter
+   - Got response: "4" (for 2+2 prompt)
+
+4. **Found working free model:**
+   - Original `deepseek/deepseek-chat-v3-0324:free` was 404
+   - Updated to `tngtech/deepseek-r1t2-chimera:free`
+
+**Files created/modified:**
+- `src/api/openrouter-client.js` (new)
+- `src/db/db.js` (added OpenRouter functions)
+- `src/api/openrouter-auth.js` (added debug logging)
+
+**Key learnings:**
+- Free models change over time - need to check OpenRouter dashboard
+- Reasoning models use more tokens (141 for a simple answer)
+- `HTTP-Referer` and `X-Title` headers for app attribution
+
+---
+
 ## Where We Left Off
 
-**Status:** Session 1 complete, continuing to Session 2
+**Status:** Session 3 complete, continuing to Session 4
 
-**Next step:** Session 2 - Complete OAuth Flow
-1. Test OAuth flow manually (full round-trip)
-2. Handle edge cases (errors, cancelled auth)
-3. Verify API key is returned
+**Next step:** Session 4 - UI Integration
+1. Create WelcomeView (first-time user experience)
+2. Update router for OAuth callback
+3. Update HomeView for connected state
+4. Update SettingsView with disconnect option
 
 ---
 

@@ -104,3 +104,44 @@ export async function getAllTopics() {
     const db = await getDB();
     return db.put('settings', { key, value });
   }
+
+    // ========== OPENROUTER ==========
+
+  const OPENROUTER_KEY = 'openrouter_api_key';
+
+  /**
+   * Store OpenRouter API key
+   * @param {string} apiKey - The API key to store
+   */
+  export async function storeOpenRouterKey(apiKey) {
+    return saveSetting(OPENROUTER_KEY, {
+      key: apiKey,
+      storedAt: new Date().toISOString()
+    });
+  }
+
+  /**
+   * Get stored OpenRouter API key
+   * @returns {Promise<string|null>} The API key or null if not found
+   */
+  export async function getOpenRouterKey() {
+    const data = await getSetting(OPENROUTER_KEY);
+    return data?.key || null;
+  }
+
+  /**
+   * Remove OpenRouter API key (disconnect)
+   */
+  export async function removeOpenRouterKey() {
+    const db = await getDB();
+    return db.delete('settings', OPENROUTER_KEY);
+  }
+
+  /**
+   * Check if user is connected to OpenRouter
+   * @returns {Promise<boolean>}
+   */
+  export async function isOpenRouterConnected() {
+    const key = await getOpenRouterKey();
+    return !!key;
+  }
