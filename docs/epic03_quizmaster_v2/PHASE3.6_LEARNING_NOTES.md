@@ -131,15 +131,59 @@
 
 ---
 
+### Session 4 - December 1, 2024
+
+**What we accomplished:**
+
+1. **Created `src/views/WelcomeView.js`:**
+   - Beautiful onboarding screen for new users
+   - Features list (Personalized Quizzes, Track Progress, Works Offline)
+   - "Get Started Free" button with loading state
+   - Offline detection and error handling
+
+2. **Updated `src/main.js` for OAuth callback:**
+   - Detect OAuth callback before router starts (`isAuthCallback()`)
+   - Show "Completing connection..." loading screen
+   - Exchange code for API key and store it
+   - Redirect to HomeView on success
+   - Show error screen on failure
+
+3. **Conditional routing based on connection status:**
+   - `/` route shows WelcomeView or HomeView based on `isOpenRouterConnected()`
+   - Debugged issue: leftover `?code=` in URL from earlier testing
+
+4. **Updated `src/views/SettingsView.js` with Account section:**
+   - Shows connection status (green checkmark when connected)
+   - "Disconnect" button with confirmation dialog
+   - "Connect with OpenRouter" link when disconnected
+
+5. **Tested complete user flows:**
+   - New user: WelcomeView → OAuth → HomeView ✅
+   - Returning user: HomeView directly ✅
+   - Disconnect: Settings → Disconnect → WelcomeView ✅
+   - Reconnect: WelcomeView → OAuth → HomeView ✅
+
+**Files created/modified:**
+- `src/views/WelcomeView.js` (new)
+- `src/main.js` (OAuth callback handling, conditional routing)
+- `src/views/SettingsView.js` (Account section with disconnect)
+
+**Key learnings:**
+- OAuth callback URL doesn't use hash routing - handle before router init
+- Conditional routing: `isConnected ? HomeView : WelcomeView`
+- Always clean up test URLs to avoid confusion
+- User feedback is important (loading states, error messages)
+
+---
+
 ## Where We Left Off
 
-**Status:** Session 3 complete, continuing to Session 4
+**Status:** Session 4 complete, continuing to Session 5
 
-**Next step:** Session 4 - UI Integration
-1. Create WelcomeView (first-time user experience)
-2. Update router for OAuth callback
-3. Update HomeView for connected state
-4. Update SettingsView with disconnect option
+**Next step:** Session 5 - Wire Up Quiz Generation
+1. Update `realApi.js` to use OpenRouter instead of PHP
+2. Test actual quiz generation with OpenRouter
+3. Polish and cleanup
 
 ---
 
