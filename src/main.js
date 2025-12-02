@@ -1,4 +1,4 @@
-import { initDatabase, storeOpenRouterKey, isOpenRouterConnected } from './db/db.js';
+import { initDatabase, storeOpenRouterKey } from './db/db.js';
 import router from './router/router.js';
 import HomeView from './views/HomeView.js';
 import TopicInputView from './views/TopicInputView.js';
@@ -12,6 +12,7 @@ import TopicsView from './views/TopicsView.js';
 import { isAuthCallback, handleCallback } from './api/openrouter-auth.js';
 import WelcomeView from './views/WelcomeView.js';
 import { loadSamplesIfNeeded } from './utils/sample-loader.js';
+import { shouldShowWelcome } from './utils/welcome-version.js';
 
 console.log('🎓 Saberloop initializing...');
 
@@ -31,12 +32,8 @@ async function init() {
       return; // Don't continue with normal init
     }
 
-    // Check if user is connected to OpenRouter
-    const isConnected = await isOpenRouterConnected();
-    console.log('🔗 OpenRouter connected:', isConnected);
-
     // Register routes
-    router.addRoute('/', isConnected ? HomeView : WelcomeView);
+    router.addRoute('/', HomeView);
     router.addRoute('/topic-input', TopicInputView);
     router.addRoute('/quiz', QuizView);
     router.addRoute('/results', ResultsView);
@@ -51,6 +48,13 @@ async function init() {
 
     // Initialize network status monitoring
     initNetworkMonitoring();    
+
+    // Redirect to welcome if needed (after router init)
+    const showWelcome = await shouldShowWelcome();
+    console.log('👋 Show welcome:', showWelcome);
+    if (showWelcome) {
+      window.location.hash = '#/welcome';
+    }    
 
   } catch (error) {
     console.error('❌ Initialization failed:', error);

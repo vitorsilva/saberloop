@@ -2,6 +2,7 @@
 
   import BaseView from './BaseView.js';
   import { startAuth } from '../api/openrouter-auth.js';
+  import { markWelcomeSeen } from '../utils/welcome-version.js';
 
   export default class WelcomeView extends BaseView {
     async render() {
@@ -93,6 +94,14 @@
               </p>
             </div>
 
+            <button
+              id="skipBtn"
+              class="mt-4 text-sm text-subtext-light dark:text-subtext-dark
+hover:text-primary transition-colors underline"
+            >
+              Skip for now
+            </button>
+            
           </div>
         </div>
       `);
@@ -101,6 +110,14 @@
     }
 
     attachListeners() {
+
+      const skipBtn = this.querySelector('#skipBtn');
+
+      this.addEventListener(skipBtn, 'click', async () => {
+        await markWelcomeSeen();
+        this.navigateTo('/');
+      });
+            
       const btn = this.querySelector('#getStartedBtn');
 
       this.addEventListener(btn, 'click', async () => {
