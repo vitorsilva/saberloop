@@ -1,7 +1,45 @@
 import { test, expect } from '@playwright/test';
 
+  // Helper to set up authenticated state (simulate OpenRouter connection)
+  async function setupAuthenticatedState(page) {
+    await page.evaluate(async () => {
+      const dbName = 'quizmaster';
+      const request = indexedDB.open(dbName, 1);
+
+      return new Promise((resolve, reject) => {
+        request.onerror = () => reject(request.error);
+
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains('settings')) {
+            db.createObjectStore('settings', { keyPath: 'key' });
+          }
+        };
+
+        request.onsuccess = () => {
+          const db = request.result;
+          const transaction = db.transaction(['settings'], 'readwrite');
+          const store = transaction.objectStore('settings');
+
+          // Store a fake OpenRouter API key
+          store.put({
+            key: 'openrouter_api_key',
+            value: {
+              key: 'sk-or-v1-test-key-for-e2e',
+              storedAt: new Date().toISOString()
+            }
+          });
+
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = () => reject(transaction.error);
+        };
+      });
+    });
+  }
+
 test.describe('Saberloop E2E Tests', () => {
   test('should display home page with welcome message', async ({ page }) => {
+    await setupAuthenticatedState(page);
     await page.goto('/');
 
     // Check for page title
@@ -22,6 +60,7 @@ test.describe('Saberloop E2E Tests', () => {
   });
 
   test('should navigate to topic input screen', async ({ page }) => {
+    await setupAuthenticatedState(page);
     await page.goto('/');
 
     // Click Start New Quiz button
@@ -113,6 +152,7 @@ test.describe('Saberloop E2E Tests', () => {
   });
 
   test('should navigate using bottom navigation', async ({ page }) => {
+    await setupAuthenticatedState(page);
     await page.goto('/');
 
     // Check all navigation links are visible
@@ -228,6 +268,7 @@ test.describe('Saberloop E2E Tests', () => {
   });
 
   test('should display network status indicator on home page', async ({ page }) => {
+    await setupAuthenticatedState(page);
     await page.goto('/');
 
     // Check that network indicator dot exists
@@ -245,6 +286,7 @@ test.describe('Saberloop E2E Tests', () => {
 
    test('should display completed quiz on home page', async ({ page }) => {        
       // First verify home page shows empty state
+      await setupAuthenticatedState(page);
       await page.goto('/');
       await expect(page.locator('#recentTopicsList >> text=No quizzes yet')).toBeVisible();
 
@@ -284,6 +326,7 @@ test.describe('Saberloop E2E Tests', () => {
 
    test('should replay a saved quiz when clicked', async ({ page }) => {
       // Clear database to ensure clean state
+      await setupAuthenticatedState(page);
       await page.goto('/');
       await page.evaluate(async () => {
         const dbName = 'quizmaster';
@@ -362,6 +405,7 @@ test.describe('Saberloop E2E Tests', () => {
     });
 
     test('should navigate to settings page', async ({ page }) => {
+      await setupAuthenticatedState(page);
       await page.goto('/');
 
       // Click Settings in bottom nav
@@ -416,6 +460,7 @@ test.describe('Saberloop E2E Tests', () => {
 
    test('should handle offline mode correctly', async ({ page, context }) => {      
       // Step 1: Complete a quiz first so we have something to replay offline        
+      await setupAuthenticatedState(page);
       await page.goto('/');
       await page.evaluate(async () => {
         const dbName = 'quizmaster';
@@ -498,6 +543,7 @@ test.describe('Saberloop E2E Tests', () => {
 
     test('should display quiz history on topics page', async ({ page }) => {
       // Step 1: Clear sessions and create some quizzes
+      await setupAuthenticatedState(page);
       await page.goto('/');
       await page.evaluate(async () => {
         const dbName = 'quizmaster';
