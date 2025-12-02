@@ -2,7 +2,8 @@ import BaseView from './BaseView.js';
 import { updateNetworkIndicator, isOnline } from '../utils/network.js';
 import { getRecentSessions, getSession } from '../db/db.js';
 import state from '../state/state.js';
-
+import { isOpenRouterConnected } from '../db/db.js';
+import { showConnectModal } from '../components/ConnectModal.js';
 export default class HomeView extends BaseView {
   async render() {
     // Fetch recent sessions from IndexedDB
@@ -185,7 +186,16 @@ export default class HomeView extends BaseView {
   attachListeners() {
     const startQuizBtn = this.querySelector('#startQuizBtn');
 
-    this.addEventListener(startQuizBtn, 'click', () => {
+    this.addEventListener(startQuizBtn, 'click', async () => {
+      // Check if connected to OpenRouter
+      const isConnected = await isOpenRouterConnected();
+
+      if (!isConnected) {
+        // Show modal - if user cancels, don't proceed
+        await showConnectModal();
+        return; // Auth will redirect, or user cancelled
+      }
+
       this.navigateTo('/topic-input');
     });
 
