@@ -105,18 +105,26 @@ export default class HomeView extends BaseView {
     }
 
     // Generate HTML for each session
-    return sessions.map(session => {
-      const percentage = Math.round((session.score / session.totalQuestions) *      
-  100);
-      const scoreDisplay = `${session.score}/${session.totalQuestions}`;
+      return sessions.map(session => {
+        const hasScore = session.score !== null && session.score !== undefined;
+        const percentage = hasScore
+          ? Math.round((session.score / session.totalQuestions) * 100)
+          : null;
+        const scoreDisplay = hasScore
+          ? `${session.score}/${session.totalQuestions}`
+          : `--/${session.totalQuestions}`;
 
-      // Choose color based on score
-      let colorClass = 'text-green-500 bg-green-500';
-      if (percentage < 50) {
-        colorClass = 'text-red-500 bg-red-500';
-      } else if (percentage < 80) {
-        colorClass = 'text-orange-500 bg-orange-500';
-      }
+        // Choose color based on score (gray for unplayed)
+        let colorClass = 'text-subtext-light bg-gray-500';
+        if (hasScore) {
+          if (percentage >= 80) {
+            colorClass = 'text-green-500 bg-green-500';
+          } else if (percentage >= 50) {
+            colorClass = 'text-orange-500 bg-orange-500';
+          } else {
+            colorClass = 'text-red-500 bg-red-500';
+          }
+        }
 
       // Format the date
       const date = new Date(session.timestamp);

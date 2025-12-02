@@ -91,6 +91,20 @@ export async function getAllTopics() {
     return updatedSession;
   }
   
+  /**
+   * Delete all sample sessions (used when reloading samples)
+   */
+  export async function deleteSampleSessions() {
+    const db = await getDB();
+    const allSessions = await db.getAll('sessions');
+
+    for (const session of allSessions) {
+      if (session.isSample) {
+        await db.delete('sessions', session.id);
+      }
+    }
+  }
+
     // ========== SETTINGS ==========
 
   export async function getSetting(key) {

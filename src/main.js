@@ -11,6 +11,7 @@ import SettingsView from './views/SettingsView.js';
 import TopicsView from './views/TopicsView.js';
 import { isAuthCallback, handleCallback } from './api/openrouter-auth.js';
 import WelcomeView from './views/WelcomeView.js';
+import { loadSamplesIfNeeded } from './utils/sample-loader.js';
 
 console.log('🎓 Saberloop initializing...');
 
@@ -19,6 +20,9 @@ async function init() {
   try {
     await initDatabase();
     console.log('✅ Database initialized');
+
+    // Load sample quizzes if needed
+    await loadSamplesIfNeeded();
 
     // Check if this is an OAuth callback BEFORE router starts
     if (isAuthCallback()) {
