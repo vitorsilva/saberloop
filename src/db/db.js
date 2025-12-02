@@ -41,7 +41,6 @@ async function getDB() {
     return dbPromise;
 }
 
-
 // ========== TOPICS ==========
 
 export async function saveTopic(topic) {
