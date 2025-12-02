@@ -26,7 +26,7 @@
    * Generate a random code_verifier for PKCE
    * Must be 43-128 characters, URL-safe
    */
-  function generateCodeVerifier() {
+  export function generateCodeVerifier() {
     // Create 32 random bytes
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
@@ -42,7 +42,7 @@
    * Generate code_challenge from code_verifier
    * This is a SHA-256 hash, base64url encoded
    */
-  async function generateCodeChallenge(verifier) {
+  export async function generateCodeChallenge(verifier) {
     // Convert string to bytes
     const encoder = new TextEncoder();
     const data = encoder.encode(verifier);

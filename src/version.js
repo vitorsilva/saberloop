@@ -1,4 +1,4 @@
 // Auto-generated - do not edit manually
-  export const APP_VERSION = '20251201.06';
-  export const BUILD_DATE = '2025-12-01T21:15:04.903Z';
+  export const APP_VERSION = '20251202.08';
+  export const BUILD_DATE = '2025-12-02T16:48:51.185Z';
   
