@@ -23,7 +23,11 @@
       "WebSearch",
       "WebFetch(domain:gist.github.com)",
       "WebFetch(domain:openrouter.ai)",
-      "WebFetch(domain:blog.kowalczyk.info)"
+      "WebFetch(domain:blog.kowalczyk.info)",
+      "Bash(timeout:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(node -e:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []
