@@ -86,7 +86,7 @@ Implemented the "skip auth" flow allowing users to explore the app without an Op
 
 ### What's Next
 
-- [ ] Run E2E tests and fix any failures
+- [x] Run E2E tests and fix any failures ✅ (Session 2)
 - [ ] Test full user flows:
   - First-time user → WelcomeView → Skip → HomeView with samples
   - Returning user → HomeView directly
@@ -102,3 +102,112 @@ Implemented the "skip auth" flow allowing users to explore the app without an Op
 3. **Check early, fail early** - Connection check on "Start New Quiz" is better UX than checking after user enters topic
 
 4. **Reuse existing patterns** - Sample quizzes use same JSON structure as API responses, allowing code reuse
+
+---
+
+## Session 2 - December 4, 2025
+
+### What We Fixed
+
+All E2E tests were failing after the Phase 3.6.1 changes. This session focused on fixing them.
+
+### Root Causes Identified
+
+1. **IndexedDB Access Requires Same-Origin Page**
+   - `about:blank` doesn't allow IndexedDB access (SecurityError)
+   - Tests must navigate to the app first before manipulating IndexedDB
+
+2. **URL Persistence After Reload**
+   - When page reloads while on `/#/welcome`, the app stays on that route
+   - Even if `shouldShowWelcome()` would return false, the URL is already `/welcome`
+   - Solution: Navigate explicitly to `/#/` instead of just reloading
+
+3. **Wrong IndexedDB Key Name**
+   - Initially used `welcome_version_seen` but the app uses `welcomeScreenVersion`
+   - Key names must match exactly what the app expects
+
+### Fixes Applied to `tests/e2e/app.spec.js`
+
+1. **Rewrote `setupAuthenticatedState()` helper function**:
+   ```javascript
+   async function setupAuthenticatedState(page) {
+     // Navigate to app first (will show welcome page initially)
+     await page.goto('/');
+     await page.waitForLoadState('networkidle');
+
+     // Set IndexedDB data (app has already created the database)
+     await page.evaluate(async () => {
+       // Store openrouter_api_key and welcomeScreenVersion
+       // ...
+     });
+
+     // Navigate explicitly to home (not just reload!)
+     await page.goto('/#/');
+
+     // Wait for home page
+     await page.waitForSelector('h2:has-text("Welcome back!")');
+   }
+   ```
+
+2. **Removed redundant `page.goto('/')` calls** from individual tests
+
+3. **Added proper waits after `clearSessions()`** with reload and home page verification
+
+### Debugging Process
+
+Created a debug test to inspect IndexedDB state:
+- BEFORE: Only `samplesVersion: "1.0"` existed
+- AFTER setting data: Both `openrouter_api_key` and `welcomeScreenVersion` present
+- AFTER RELOAD: Data persists correctly
+- BUT URL was still `/#/welcome` - this revealed the real issue!
+
+The key insight: **Data was being stored correctly, but the URL wasn't changing.** The app only checks `shouldShowWelcome()` on initial load, not on every route change.
+
+### Video Recording for Documentation
+
+Updated `playwright.config.js` to record videos for all tests:
+```javascript
+use: {
+  video: 'on', // Record video for all tests (for documentation)
+}
+```
+
+Videos are saved in `test-results/` directory as `.webm` files.
+
+### Test Results
+
+- **16/16 E2E tests passing**
+- **78/78 unit tests passing**
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `tests/e2e/app.spec.js` | Rewrote setupAuthenticatedState, fixed all test patterns |
+| `playwright.config.js` | Changed video from 'retain-on-failure' to 'on' |
+
+### Key Learnings
+
+1. **IndexedDB requires same-origin context** - Can't access IndexedDB from `about:blank`
+
+2. **URL state matters in SPAs** - Reloading a page doesn't change its URL; you need explicit navigation
+
+3. **Debug with visibility** - Writing a debug test to inspect actual IndexedDB state was crucial for finding the real issue
+
+4. **Don't assume - verify** - The data WAS being stored correctly; the problem was elsewhere (URL routing)
+
+5. **Test setup timing** - In E2E tests, the order of operations matters: navigate → setup data → navigate again
+
+### Current Status
+
+Phase 3.6.1 is now complete:
+- Sample quizzes loading on first launch ✅
+- Skip-auth flow working ✅
+- E2E tests all passing ✅
+- Video documentation generated ✅
+
+### What's Next
+
+- [ ] Manual testing of user flows
+- [ ] Consider Phase 3.7 or other Epic 3 phases
+- [ ] Review Epic 3 completion status

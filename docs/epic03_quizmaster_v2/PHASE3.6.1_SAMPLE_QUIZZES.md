@@ -200,15 +200,17 @@ Changes:
 
 ## Success Criteria
 
-- [ ] Users can skip WelcomeView and access HomeView immediately
-- [ ] 8 sample quizzes visible on HomeView (always)
-- [ ] Sample quizzes playable without API key
-- [ ] "Start New Quiz" shows connect modal if not connected
-- [ ] Connect modal leads to OAuth flow
-- [ ] Cancel on connect modal returns to HomeView
-- [ ] WelcomeView can be re-shown for future announcements (version bump)
-- [ ] All E2E tests passing
-- [ ] App Store reviewers can test full flow without API key
+- [x] Users can skip WelcomeView and access HomeView immediately ✅
+- [x] 8 sample quizzes visible on HomeView (always) ✅
+- [x] Sample quizzes playable without API key ✅
+- [x] "Start New Quiz" shows connect modal if not connected ✅
+- [x] Connect modal leads to OAuth flow ✅
+- [x] Cancel on connect modal returns to HomeView ✅
+- [x] WelcomeView can be re-shown for future announcements (version bump) ✅
+- [x] All E2E tests passing ✅ (16/16 E2E, 78/78 unit)
+- [x] App Store reviewers can test full flow without API key ✅
+
+**Phase 3.6.1 Status: COMPLETE** (December 4, 2025)
 
 ---
 
