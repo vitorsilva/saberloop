@@ -41,7 +41,6 @@ async function getDB() {
     return dbPromise;
 }
 
-
 // ========== TOPICS ==========
 
 export async function saveTopic(topic) {
@@ -92,6 +91,20 @@ export async function getAllTopics() {
     return updatedSession;
   }
   
+  /**
+   * Delete all sample sessions (used when reloading samples)
+   */
+  export async function deleteSampleSessions() {
+    const db = await getDB();
+    const allSessions = await db.getAll('sessions');
+
+    for (const session of allSessions) {
+      if (session.isSample) {
+        await db.delete('sessions', session.id);
+      }
+    }
+  }
+
     // ========== SETTINGS ==========
 
   export async function getSetting(key) {
@@ -103,4 +116,45 @@ export async function getAllTopics() {
   export async function saveSetting(key, value) {
     const db = await getDB();
     return db.put('settings', { key, value });
+  }
+
+    // ========== OPENROUTER ==========
+
+  const OPENROUTER_KEY = 'openrouter_api_key';
+
+  /**
+   * Store OpenRouter API key
+   * @param {string} apiKey - The API key to store
+   */
+  export async function storeOpenRouterKey(apiKey) {
+    return saveSetting(OPENROUTER_KEY, {
+      key: apiKey,
+      storedAt: new Date().toISOString()
+    });
+  }
+
+  /**
+   * Get stored OpenRouter API key
+   * @returns {Promise<string|null>} The API key or null if not found
+   */
+  export async function getOpenRouterKey() {
+    const data = await getSetting(OPENROUTER_KEY);
+    return data?.key || null;
+  }
+
+  /**
+   * Remove OpenRouter API key (disconnect)
+   */
+  export async function removeOpenRouterKey() {
+    const db = await getDB();
+    return db.delete('settings', OPENROUTER_KEY);
+  }
+
+  /**
+   * Check if user is connected to OpenRouter
+   * @returns {Promise<boolean>}
+   */
+  export async function isOpenRouterConnected() {
+    const key = await getOpenRouterKey();
+    return !!key;
   }

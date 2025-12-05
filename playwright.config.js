@@ -9,7 +9,7 @@ import { defineConfig, devices } from '@playwright/test';
     use: {
       baseURL: 'http://localhost:3000',
       screenshot: 'only-on-failure',
-      video: 'retain-on-failure',
+      video: 'on', // Record video for all tests (for documentation)
     },
     // Add this section:
     webServer: {

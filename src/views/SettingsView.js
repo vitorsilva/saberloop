@@ -1,6 +1,7 @@
   import BaseView from './BaseView.js';
   import { getSettings, saveSetting } from '../utils/settings.js';
   import { APP_VERSION, BUILD_DATE } from '../version.js';
+  import { isOpenRouterConnected, removeOpenRouterKey } from '../db/db.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -68,6 +69,14 @@
       </select>
     </label>
   </div>
+
+               <!-- Account Section -->
+              <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight    
+   tracking-[-0.015em] pb-3 pt-8">Account</h2>
+
+              <div id="accountSection" class="flex flex-col gap-3">
+                <!-- Will be populated by loadAccountStatus() -->
+              </div>
 
            <!-- About Section -->
             <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold    
@@ -144,6 +153,9 @@
       // Load saved settings into form fields
       this.loadSettings();
 
+      // Load account connection status
+      await this.loadAccountStatus();
+
       this.bindEvents();
     }
 
@@ -159,6 +171,67 @@
       if (questionsSelect) questionsSelect.value = settings.questionsPerQuiz;       
       if (difficultySelect) difficultySelect.value = settings.difficulty;
     }
+
+      async loadAccountStatus() {
+        const accountSection = this.querySelector('#accountSection');
+        const isConnected = await isOpenRouterConnected();
+
+        if (isConnected) {
+          accountSection.innerHTML = `
+            <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-green-500">check_circle</span>        
+                  <div>
+                    <p class="text-text-light dark:text-text-dark text-base
+  font-medium">OpenRouter Connected</p>
+                    <p class="text-subtext-light dark:text-subtext-dark text-sm">Free tier: 50      
+  requests/day</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button id="disconnectBtn" class="bg-red-500/10 hover:bg-red-500/20 text-red-500        
+  rounded-xl p-4 flex items-center justify-center gap-2 transition-colors">
+              <span class="material-symbols-outlined">logout</span>
+              <span class="font-medium">Disconnect</span>
+            </button>
+          `;
+
+          // Bind disconnect button
+          const disconnectBtn = this.querySelector('#disconnectBtn');
+          this.addEventListener(disconnectBtn, 'click', () => this.handleDisconnect());
+        } else {
+          accountSection.innerHTML = `
+            <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-yellow-500">warning</span>
+                <div>
+                  <p class="text-text-light dark:text-text-dark text-base font-medium">Not
+  Connected</p>
+                  <p class="text-subtext-light dark:text-subtext-dark text-sm">Connect to
+  generate quizzes</p>
+                </div>
+              </div>
+            </div>
+            <a href="#/welcome" class="bg-primary hover:bg-primary/90 text-white rounded-xl p-4     
+  flex items-center justify-center gap-2 transition-colors">
+              <span class="material-symbols-outlined">link</span>
+              <span class="font-medium">Connect with OpenRouter</span>
+            </a>
+          `;
+        }
+      }
+
+      async handleDisconnect() {
+        if (confirm('Are you sure you want to disconnect? You will need to reconnect to generate new quizzes.')) {
+          await removeOpenRouterKey();
+          // Reload the app to show WelcomeView
+          window.location.href = window.location.origin + '/#/';
+          window.location.reload();
+        }
+      }
+
 
     bindEvents() {
       const gradeSelect = this.querySelector('#defaultGradeLevel');

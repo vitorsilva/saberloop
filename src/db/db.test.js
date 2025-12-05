@@ -18,6 +18,10 @@ import {
     updateSession,
     getSetting,
     saveSetting,
+    storeOpenRouterKey,
+    getOpenRouterKey,
+    removeOpenRouterKey,
+    isOpenRouterConnected,
     DB_NAME,
     DB_VERSION
   } from './db.js';
@@ -326,3 +330,61 @@ describe('Sessions CRUD Operations', () => {
         });
 
    });
+
+     describe('OpenRouter Key Storage', () => {
+
+      it('should store and retrieve OpenRouter API key', async () => {
+        await storeOpenRouterKey('sk-or-v1-test123');
+        const key = await getOpenRouterKey();
+        expect(key).toBe('sk-or-v1-test123');
+      });
+
+      it('should store timestamp with the key', async () => {
+        const beforeStore = new Date().toISOString();
+        await storeOpenRouterKey('sk-or-v1-timestamp-test');
+
+        const data = await getSetting('openrouter_api_key');
+
+        expect(data.storedAt).toBeDefined();
+        expect(data.storedAt >= beforeStore).toBe(true);
+      });
+
+      it('should remove OpenRouter key', async () => {
+        await storeOpenRouterKey('sk-or-v1-to-remove');
+
+        let key = await getOpenRouterKey();
+        expect(key).toBe('sk-or-v1-to-remove');
+
+        await removeOpenRouterKey();
+
+        key = await getOpenRouterKey();
+        expect(key).toBeNull();
+      });
+
+      it('should report connected status correctly', async () => {
+        // First remove any existing key
+        await removeOpenRouterKey();
+
+        // Should be disconnected
+        let connected = await isOpenRouterConnected();
+        expect(connected).toBe(false);
+
+        // Connect
+        await storeOpenRouterKey('sk-or-v1-connect-test');
+        connected = await isOpenRouterConnected();
+        expect(connected).toBe(true);
+
+        // Disconnect
+        await removeOpenRouterKey();
+        connected = await isOpenRouterConnected();
+        expect(connected).toBe(false);
+      });
+
+      it('should overwrite existing key when storing new one', async () => {
+        await storeOpenRouterKey('sk-or-v1-old-key');
+        await storeOpenRouterKey('sk-or-v1-new-key');
+
+        const key = await getOpenRouterKey();
+        expect(key).toBe('sk-or-v1-new-key');
+      });
+    });
