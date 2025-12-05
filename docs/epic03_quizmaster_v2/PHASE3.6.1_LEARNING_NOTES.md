@@ -209,5 +209,60 @@ Phase 3.6.1 is now complete:
 ### What's Next
 
 - [ ] Manual testing of user flows
-- [ ] Consider Phase 3.7 or other Epic 3 phases
-- [ ] Review Epic 3 completion status
+- [ ] Phase 4: Observability & Telemetry (plan updated December 5, 2025)
+
+---
+
+## Session 3 - December 5, 2025
+
+### What We Did
+
+**Planning session** - No code changes, documentation updates only.
+
+### Tasks Completed
+
+1. **OpenAI Integration Research**
+   - Investigated adding OpenAI as alternative LLM provider
+   - Created detailed Phase 3.7 plan with 6-session implementation
+   - Research findings:
+     - OpenAI supports CORS (browser calls work)
+     - API format identical to OpenRouter (same request/response)
+     - No free tier for individuals (requires $5 minimum payment)
+     - No OAuth - requires manual API key entry
+   - **Decision:** Moved to parking lot (`docs/parking_lot/PHASE3.7_OPENAI_INTEGRATION.md`)
+   - **Reason:** No practical advantage over OpenRouter for free users
+
+2. **Phase 4 Plan Review & Update**
+   - Compared Phase 4 plan against current codebase
+   - Found several outdated sections:
+     - References to Netlify Functions (we use OpenRouter direct)
+     - Manual `public/sw.js` (we use Vite PWA Plugin)
+     - Wrong file names (`api.js` vs `api.real.js`)
+     - Missing new files from Phase 3.6.1
+   - **Rewrote entire Phase 4 document** with:
+     - Current architecture (browser → OpenRouter)
+     - Correct file names and locations
+     - Existing `devLog()` and `DEBUG` patterns documented
+     - Updated file list to modify
+     - Tailwind CSS CDN fix still included (still needed)
+
+### Files Modified
+
+| File | Action |
+|------|--------|
+| `docs/parking_lot/PHASE3.7_OPENAI_INTEGRATION.md` | Created (moved from epic03) |
+| `docs/epic03_quizmaster_v2/PHASE4_OBSERVABILITY.md` | Completely rewritten |
+| `docs/epic03_quizmaster_v2/PHASE3.6.1_LEARNING_NOTES.md` | Updated (this file) |
+
+### Key Decisions
+
+1. **OpenAI integration parked** - Not worth it without free tier or OAuth
+2. **Phase 4 is next** - Observability & Telemetry after break
+
+### What's Next (When Resuming)
+
+- [ ] Start Phase 4: Observability & Telemetry
+  - Part 1: Structured Logging (`src/utils/logger.js`)
+  - Part 2: Error Tracking (`src/utils/errorHandler.js`)
+  - Part 3: Performance Monitoring (`src/utils/performance.js`)
+  - Part 4: Tailwind CSS Build Fix
