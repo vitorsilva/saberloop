@@ -47,6 +47,36 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
+### [Architecture Testing (JS ArchUnit)](./ARCH_TESTING_JS_ARCHUNIT.md) ⭐ **Ready to Implement**
+
+**Status:** Planning Complete
+
+**What it is:**
+- Architecture testing using dependency-cruiser
+- Layer dependency rules (views, api, db, state, utils)
+- Naming convention enforcement
+- Circular dependency detection
+- Integrated with Vitest and CI
+
+**Why it's optional:**
+- ✅ Project works fine without it
+- ⚠️ Adds development overhead
+- ⚠️ Rules need maintenance
+
+**Why you might want it:**
+- 🏗️ **Prevent architectural drift** as codebase grows
+- 🔒 **Enforce boundaries** between layers
+- 📚 **Executable documentation** of architecture
+- 🎓 **Learn architecture testing** patterns
+- ✅ **Catch violations early** in CI
+
+**When to revisit:**
+- Before Phase 5 (structure changes)
+- When adding new modules
+- When onboarding contributors
+
+---
+
 ### [Phase 8: OAuth Integration](./PHASE8_OAUTH.md) ⭐ **Optional/Experimental**
 
 **Status:** Experimental - OAuth availability unconfirmed
@@ -212,12 +242,12 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 4 ideas (Azure Functions, OAuth, OpenRouter, PHP VPS)
+**Current count:** 5 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter, PHP VPS)
 
 **Status:** All documented and ready to implement when desired
 
 ---
 
-**Last Updated:** 2025-11-26
+**Last Updated:** 2025-12-09
 **Location:** `docs/parking_lot/`
 **Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
