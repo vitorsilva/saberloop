@@ -30,6 +30,181 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 
 ---
 
+## Tool Selection: Why dependency-cruiser?
+
+### Alternatives Considered
+
+| Tool | Description | GitHub Stars | Last Update |
+|------|-------------|--------------|-------------|
+| **dependency-cruiser** | Comprehensive dependency analysis and validation | ~5.5k | Active |
+| **ArchUnitTS** | TypeScript port of Java's ArchUnit | ~200 | Active |
+| **eslint-plugin-import** | ESLint rules for import/export | ~5.5k | Active |
+| **madge** | Circular dependency detection + visualization | ~8k | Active |
+| **Custom solution** | Build with TypeScript compiler API or Babel | N/A | N/A |
+
+### Detailed Comparison
+
+#### 1. dependency-cruiser (Selected)
+
+**Pros:**
+- Comprehensive rule system (forbidden, allowed, required)
+- Multiple output formats (text, JSON, dot/GraphViz, HTML)
+- Circular dependency detection built-in
+- Configurable severity levels (error, warn, info)
+- Supports JavaScript, TypeScript, CoffeeScript, LiveScript
+- Active development and maintenance
+- Good documentation
+- Can be integrated with CI easily
+- Supports custom rules with regex patterns
+
+**Cons:**
+- Configuration can be verbose for complex rules
+- Learning curve for rule syntax
+- Not as fluent/readable as ArchUnit's DSL
+
+**Best for:** Projects needing comprehensive dependency validation with CI integration
+
+---
+
+#### 2. ArchUnitTS
+
+**Pros:**
+- Fluent, readable API similar to Java's ArchUnit:
+  ```typescript
+  files()
+    .inFolder('views')
+    .shouldNot()
+    .dependOnFiles()
+    .inFolder('db')
+  ```
+- TypeScript-native with good type support
+- Designed specifically for architecture testing
+- Easy to understand rule definitions
+
+**Cons:**
+- Smaller community and ecosystem
+- Fewer output formats
+- Less mature than dependency-cruiser
+- Primarily TypeScript-focused (our project is JavaScript)
+- No built-in visualization
+
+**Best for:** TypeScript projects wanting readable, ArchUnit-style rules
+
+---
+
+#### 3. eslint-plugin-import
+
+**Pros:**
+- Integrates with existing ESLint setup
+- Well-maintained, large community
+- Rules like `no-restricted-paths` for layer boundaries
+- Runs during development (IDE integration)
+- Familiar to most JavaScript developers
+
+**Cons:**
+- Limited to what ESLint can express
+- No visualization capabilities
+- Circular dependency detection is basic (`import/no-cycle`)
+- Harder to express complex layer rules
+- Not designed for architecture testing specifically
+
+**Best for:** Projects wanting basic import rules integrated with ESLint
+
+---
+
+#### 4. madge
+
+**Pros:**
+- Excellent visualization (generates graphs)
+- Simple API for circular dependency detection
+- Supports multiple module formats (ES6, CommonJS, AMD)
+- CLI and programmatic usage
+- Easy to set up
+
+**Cons:**
+- Limited rule system (mainly circular deps)
+- No forbidden/allowed dependency rules
+- No naming convention enforcement
+- Visualization is main focus, not validation
+
+**Best for:** Quick circular dependency detection and visualization
+
+---
+
+#### 5. Custom Solution
+
+**Pros:**
+- Complete control over rules and output
+- Can be tailored exactly to project needs
+- Learning opportunity (AST parsing, dependency graphs)
+- No external dependencies
+
+**Cons:**
+- Significant development effort
+- Need to maintain over time
+- Reinventing the wheel
+- Missing features that mature tools have
+- Testing and edge cases to handle
+
+**Best for:** Very specific requirements not met by existing tools
+
+---
+
+### Decision Matrix
+
+| Criteria | Weight | dep-cruiser | ArchUnitTS | eslint-import | madge | Custom |
+|----------|--------|-------------|------------|---------------|-------|--------|
+| Layer rules | High | 5 | 5 | 3 | 1 | 5 |
+| Naming conventions | Med | 4 | 3 | 2 | 1 | 5 |
+| Circular deps | High | 5 | 4 | 3 | 5 | 4 |
+| Visualization | Low | 4 | 2 | 1 | 5 | 2 |
+| CI integration | High | 5 | 4 | 5 | 4 | 3 |
+| Vitest integration | High | 4 | 4 | 5 | 3 | 5 |
+| Maturity | Med | 5 | 3 | 5 | 4 | 1 |
+| Documentation | Med | 5 | 3 | 4 | 4 | 1 |
+| JS support | High | 5 | 3 | 5 | 5 | 5 |
+| Learning effort | Med | 3 | 4 | 5 | 5 | 1 |
+| **Total** | | **45** | **35** | **38** | **37** | **32** |
+
+*(Scale: 1=Poor, 5=Excellent)*
+
+### Final Decision: dependency-cruiser
+
+**Rationale:**
+
+1. **Best overall feature set** - Covers all our requirements (layers, naming, circular deps)
+2. **JavaScript-first** - Our project is vanilla JS, not TypeScript
+3. **Mature and well-maintained** - Active development, good community
+4. **Flexible configuration** - Can start simple, add complexity as needed
+5. **CI-friendly** - Easy to integrate with GitHub Actions
+6. **Visualization bonus** - Can generate dependency graphs when needed
+
+**Trade-offs accepted:**
+
+- Configuration is more verbose than ArchUnitTS's fluent API
+- Will need to learn dependency-cruiser's rule syntax
+- Rule definitions are less "readable English" than ArchUnit style
+
+### Alternative Consideration: Hybrid Approach
+
+For future consideration, we could use multiple tools:
+
+```
+dependency-cruiser  →  Layer rules, naming, CI enforcement
+madge               →  Visualization for documentation
+eslint-plugin-import →  Basic rules in IDE (immediate feedback)
+```
+
+This hybrid approach would give us:
+- Best-in-class for each concern
+- Immediate IDE feedback (ESLint)
+- Comprehensive CI validation (dependency-cruiser)
+- Beautiful documentation (madge graphs)
+
+**Decision:** Start with dependency-cruiser alone, consider hybrid later if needed.
+
+---
+
 ## Architecture Analysis
 
 ### Current State (High Coupling)
