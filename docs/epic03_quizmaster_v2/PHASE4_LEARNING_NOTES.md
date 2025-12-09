@@ -134,13 +134,74 @@ Implemented a professional logging and monitoring system to replace scattered `c
 [INFO] [PERF] LCP {value: 416, rating: 'good'}
 ```
 
+## Session 2 - December 9, 2025
+
+### What We Built
+
+Migrated Tailwind CSS from CDN to PostCSS build for better performance and offline support.
+
+### Completed Tasks
+
+7. **Tailwind CSS Build Setup**
+   - Installed `tailwindcss@3`, `postcss`, `autoprefixer`
+   - Created `tailwind.config.js` with custom theme (colors, fonts, border-radius)
+   - Created `postcss.config.js` for build pipeline
+   - Created `src/styles/main.css` with Tailwind directives
+   - Removed CDN script from `index.html`
+
+### Key Decisions
+
+5. **Tailwind v3 over v4**
+   - Tailwind v4 has breaking changes (CSS-first config, different CLI)
+   - v3 is stable with traditional `tailwind.config.js` approach
+   - Better documentation and community support for v3
+
+6. **PostCSS build over CDN**
+   - CDN adds ~100KB network request on every page load
+   - Build-time CSS only includes used classes (smaller bundle)
+   - Works offline (no CDN dependency)
+   - Proper caching via Vite
+
+### Files Created/Modified
+
+| File | Action |
+|------|--------|
+| `tailwind.config.js` | Created |
+| `postcss.config.js` | Created |
+| `src/styles/main.css` | Created |
+| `src/main.js` | Modified (CSS import) |
+| `index.html` | Modified (removed CDN, inline styles) |
+
+### Dependencies Added
+
+| Package | Version | Purpose | Size |
+|---------|---------|---------|------|
+| `tailwindcss` | ^3.x | CSS framework | Build-time |
+| `postcss` | ^8.x | CSS processor | Build-time |
+| `autoprefixer` | ^10.x | Vendor prefixes | Build-time |
+
+### Key Learnings
+
+5. **Tailwind v3 vs v4**
+   - v4 uses CSS-first configuration (`@config` directive)
+   - v4 CLI is different (`npx tailwindcss init` doesn't work same way)
+   - For learning projects, stable v3 is recommended
+
+6. **PostCSS integration with Vite**
+   - Vite automatically picks up `postcss.config.js`
+   - No additional Vite config needed
+   - CSS imported in JS is processed through PostCSS pipeline
+
+7. **Tailwind directives must not be indented**
+   - `@tailwind base;` must start at column 0
+   - Leading spaces cause parsing issues
+
 ### What's Next
 
 - [ ] Phase 5: Project Structure (code organization)
 - [ ] Phase 6: Validation (comprehensive testing)
-- [ ] Consider: Tailwind CSS build (move from CDN to PostCSS)
 
 ### Test Results
 
-- **Unit Tests**: 100 tests passing (91 + 9 new)
+- **Unit Tests**: All passing
 - **E2E Tests**: All passing

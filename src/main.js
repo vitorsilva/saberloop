@@ -1,3 +1,4 @@
+import './styles/main.css';
 import { initDatabase, storeOpenRouterKey } from './db/db.js';
 import router from './router/router.js';
 import HomeView from './views/HomeView.js';

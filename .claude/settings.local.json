@@ -29,7 +29,8 @@
       "Bash(node -e:*)",
       "Bash(npm test:*)",
       "WebFetch(domain:platform.openai.com)",
-      "WebFetch(domain:www.architjn.com)"
+      "WebFetch(domain:www.architjn.com)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
