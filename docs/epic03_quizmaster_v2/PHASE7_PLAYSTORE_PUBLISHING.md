@@ -16,7 +16,7 @@ This phase covers publishing Saberloop to the Google Play Store using PWABuilder
 
 Before starting this phase, ensure:
 
-- [x] **HTTPS hosting** - Saberloop deployed on Netlify (HTTPS)
+- [x] **HTTPS hosting** - Saberloop deployed at https://osmeusapontamentos.com/quiz-generator/
 - [x] **Valid manifest.json** with:
   - [x] App name: "Saberloop - Learn Through Quizzes"
   - [x] short_name: "Saberloop"
@@ -57,7 +57,7 @@ Before starting this phase, ensure:
 
 1. **Navigate to PWABuilder**
    - Go to https://www.pwabuilder.com
-   - Enter your PWA URL (your Netlify URL)
+   - Enter your PWA URL: `https://osmeusapontamentos.com/quiz-generator/`
    - Click "Start"
 
 2. **Review PWA Score**
@@ -171,27 +171,35 @@ Digital Asset Links prove ownership of both the website and the app, enabling tr
 
 **Deploy the Asset Links File:**
 
-1. Create file: `public/.well-known/assetlinks.json`
-2. Paste your JSON content
-3. Deploy to Netlify
+1. Create the directory on your VPS: `/quiz-generator/.well-known/`
+2. Create file: `.well-known/assetlinks.json`
+3. Paste your JSON content
+4. Upload to your PHP VPS at `osmeusapontamentos.com`
 
 **Verify Deployment:**
 ```
-https://your-netlify-url.netlify.app/.well-known/assetlinks.json
+https://osmeusapontamentos.com/quiz-generator/.well-known/assetlinks.json
 ```
 
 The file must be accessible at this exact path.
 
-**Netlify Configuration (if needed):**
+**Apache Configuration (if needed):**
 
-Add to `netlify.toml`:
-```toml
-[[headers]]
-  for = "/.well-known/*"
-  [headers.values]
-    Content-Type = "application/json"
-    Access-Control-Allow-Origin = "*"
+If `.well-known` directory is not accessible, add to `.htaccess`:
+```apache
+<Directory ".well-known">
+    Options -Indexes
+    AllowOverride None
+    Require all granted
+</Directory>
+
+<FilesMatch "assetlinks\.json$">
+    Header set Content-Type "application/json"
+    Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
 ```
+
+Or ensure the directory is within the web root and properly served.
 
 ---
 
@@ -332,7 +340,7 @@ Download now and start learning!
 }]
 ```
 
-4. Redeploy to Netlify
+4. Upload updated `assetlinks.json` to your VPS
 5. The address bar will disappear within hours once Google verifies
 
 ---
@@ -375,7 +383,7 @@ Only needed for:
 |------|------|-----------|
 | Google Play Developer Account | $25 | One-time |
 | PWABuilder | Free | - |
-| Netlify Hosting | Free tier | Monthly |
+| PHP VPS Hosting | Already covered | (existing VPS) |
 | **Total to Start** | **$25** | **One-time** |
 
 ---
