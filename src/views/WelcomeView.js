@@ -1,9 +1,8 @@
   // WelcomeView - First-time user onboarding
 
   import BaseView from './BaseView.js';
-  import { startAuth } from '../api/openrouter-auth.js';
   import { markWelcomeSeen } from '../utils/welcome-version.js';
-  import { logger } from '../utils/logger.js';
+  import { showConnectModal } from '../components/ConnectModal.js';
 
   export default class WelcomeView extends BaseView {
     async render() {
@@ -14,17 +13,13 @@
 
             <!-- Hero Section -->
             <div class="mb-8 flex flex-col items-center">
-              <div class="mb-6 flex h-24 w-24 items-center justify-center
-  rounded-3xl bg-primary/10">
-                <span class="material-symbols-outlined text-5xl
-  text-primary">psychology</span>
-              </div>
-              <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">    
+              <img src="/icons/icon-192x192.png" alt="Saberloop logo" class="mb-6 h-24 w-24 rounded-3xl">
+              <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">
                 Welcome to Saberloop
               </h1>
               <p class="mt-2 text-center text-subtext-light
   dark:text-subtext-dark">
-                AI-powered quizzes on any topic
+                Learn Anything, Practice Anything
               </p>
             </div>
 
@@ -73,35 +68,26 @@
               </div>
             </div>
 
-            <!-- Action Button -->
+            <!-- Action Buttons -->
             <div class="w-full max-w-sm">
               <button
-                id="getStartedBtn"
-                class="flex h-14 w-full items-center justify-center rounded-xl       
-  bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary/90    
+                id="connectBtn"
+                class="flex h-14 w-full items-center justify-center rounded-xl
+  bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary/90
    transition-colors"
               >
-                Get Started Free
+                Connect to AI Provider
               </button>
-              <p class="mt-3 text-center text-sm text-subtext-light
-  dark:text-subtext-dark">
-                Free tier: 50 quizzes/day • No credit card required
-              </p>
-              <p class="mt-2 text-center text-xs text-subtext-light
-  dark:text-subtext-dark">
-                <span class="material-symbols-outlined text-xs
-  align-middle">info</span>
-                Powered by OpenRouter
-              </p>
-            </div>
 
-            <button
-              id="skipBtn"
-              class="mt-4 text-sm text-subtext-light dark:text-subtext-dark
-hover:text-primary transition-colors underline"
-            >
-              Skip for now
-            </button>
+              <button
+                id="skipBtn"
+                class="flex h-14 w-full items-center justify-center rounded-xl
+  bg-card-light dark:bg-card-dark font-bold text-text-light dark:text-text-dark
+  mt-3 hover:bg-border-light dark:hover:bg-border-dark transition-colors"
+              >
+                Try Free Quizzes
+              </button>
+            </div>
             
           </div>
         </div>
@@ -111,53 +97,15 @@ hover:text-primary transition-colors underline"
     }
 
     attachListeners() {
-
       const skipBtn = this.querySelector('#skipBtn');
-
       this.addEventListener(skipBtn, 'click', async () => {
         await markWelcomeSeen();
         this.navigateTo('/');
       });
-            
-      const btn = this.querySelector('#getStartedBtn');
 
-      this.addEventListener(btn, 'click', async () => {
-        // Check if online
-        if (!navigator.onLine) {
-          this.showError('You need internet to connect. Please check your connection.');
-          return;
-        }
-
-        // Show loading state
-        btn.disabled = true;
-        btn.innerHTML = `
-          <span class="material-symbols-outlined animate-spin
-  mr-2">progress_activity</span>
-          Connecting...
-        `;
-
-        try {
-          await startAuth();
-        } catch (error) {
-          logger.error('Auth failed', { error: error.message });
-          btn.disabled = false;
-          btn.textContent = 'Get Started Free';
-          this.showError('Failed to connect. Please try again.');
-        }
+      const connectBtn = this.querySelector('#connectBtn');
+      this.addEventListener(connectBtn, 'click', async () => {
+        await showConnectModal();
       });
-    }
-
-    showError(message) {
-      // Remove existing error
-      const existing = this.querySelector('#authError');
-      if (existing) existing.remove();
-
-      const errorDiv = document.createElement('div');
-      errorDiv.id = 'authError';
-      errorDiv.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-xl text-red-700 dark:text-red-300 text-sm text-center';
-      errorDiv.textContent = message;
-
-      const btn = this.querySelector('#getStartedBtn');
-      btn.parentElement.appendChild(errorDiv);
     }
   }

@@ -13,7 +13,7 @@ import TopicsView from './views/TopicsView.js';
 import { isAuthCallback, handleCallback } from './api/openrouter-auth.js';
 import WelcomeView from './views/WelcomeView.js';
 import { loadSamplesIfNeeded } from './utils/sample-loader.js';
-import { shouldShowWelcome } from './utils/welcome-version.js';
+import { shouldShowWelcome, markWelcomeSeen } from './utils/welcome-version.js';
 import { logger } from './utils/logger.js';
 import { initErrorHandling } from './utils/errorHandler.js';
 import { initPerformanceMonitoring } from './utils/performance.js'
@@ -94,6 +94,9 @@ async function init() {
 
       // Store the key
       await storeOpenRouterKey(apiKey);
+
+      // Mark welcome as seen so user goes to home
+      await markWelcomeSeen();
 
       logger.info('OpenRouter connected successfully');
 
