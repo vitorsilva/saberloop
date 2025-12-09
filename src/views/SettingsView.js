@@ -40,28 +40,28 @@
       </select>
     </label>
 
-    <!-- Questions Per Quiz -->
-    <label class="flex flex-col">
+    <!-- Default Questions Per Quiz -->
+    <label class="flex flex-col opacity-50">
       <p class="text-base font-medium pb-2 text-text-light
-  dark:text-text-dark">Questions Per Quiz</p>
-      <select id="questionsPerQuiz" class="form-select flex w-full rounded-lg       
-  h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark     
+  dark:text-text-dark">Default Questions Per Quiz</p>
+      <select id="questionsPerQuiz" disabled class="form-select flex w-full rounded-lg
+  h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark
   border border-border-light dark:border-border-dark text-text-light
-  dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary">        
+  dark:text-text-dark cursor-not-allowed">
         <option value="5">5 questions</option>
         <option value="10" selected>10 questions</option>
         <option value="15">15 questions</option>
       </select>
     </label>
 
-    <!-- Difficulty -->
-    <label class="flex flex-col">
+    <!-- Default Difficulty -->
+    <label class="flex flex-col opacity-50">
       <p class="text-base font-medium pb-2 text-text-light
-  dark:text-text-dark">Difficulty</p>
-      <select id="difficulty" class="form-select flex w-full rounded-lg h-14 p-4    
-   text-base font-normal leading-normal bg-card-light dark:bg-card-dark border      
+  dark:text-text-dark">Default Difficulty</p>
+      <select id="difficulty" disabled class="form-select flex w-full rounded-lg h-14 p-4
+   text-base font-normal leading-normal bg-card-light dark:bg-card-dark border
   border-border-light dark:border-border-dark text-text-light
-  dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary">        
+  dark:text-text-dark cursor-not-allowed">
         <option value="easy">Easy</option>
         <option value="medium">Medium</option>
         <option value="hard">Hard</option>
@@ -70,9 +70,9 @@
     </label>
   </div>
 
-               <!-- Account Section -->
-              <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight    
-   tracking-[-0.015em] pb-3 pt-8">Account</h2>
+               <!-- Connection to AI Provider Section -->
+              <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight
+   tracking-[-0.015em] pb-3 pt-8">Connection to AI Provider</h2>
 
               <div id="accountSection" class="flex flex-col gap-3">
                 <!-- Will be populated by loadAccountStatus() -->
