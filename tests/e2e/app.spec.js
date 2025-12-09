@@ -514,10 +514,8 @@ test.describe('Saberloop E2E Tests', () => {
     // Wait for page to fully load
     await expect(page.locator('#defaultGradeLevel')).toBeVisible();
 
-    // Change settings
+    // Change settings (only defaultGradeLevel is enabled, others are disabled for now)
     await page.selectOption('#defaultGradeLevel', 'college');
-    await page.selectOption('#questionsPerQuiz', '15');
-    await page.selectOption('#difficulty', 'hard');
 
     // Wait for settings to be saved (they save on change)
     await page.waitForTimeout(500);
@@ -527,8 +525,6 @@ test.describe('Saberloop E2E Tests', () => {
 
     // Verify settings persisted
     await expect(page.locator('#defaultGradeLevel')).toHaveValue('college');
-    await expect(page.locator('#questionsPerQuiz')).toHaveValue('15');
-    await expect(page.locator('#difficulty')).toHaveValue('hard');
   });
 
   test('should handle offline mode correctly', async ({ page, context }) => {
