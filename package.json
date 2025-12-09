@@ -46,6 +46,7 @@
     "workbox-window": "^7.4.0"
   },
   "dependencies": {
-    "loglevel": "^1.9.2"
+    "loglevel": "^1.9.2",
+    "web-vitals": "^5.1.0"
   }
 }

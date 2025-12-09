@@ -15,9 +15,11 @@ import { loadSamplesIfNeeded } from './utils/sample-loader.js';
 import { shouldShowWelcome } from './utils/welcome-version.js';
 import { logger } from './utils/logger.js';
 import { initErrorHandling } from './utils/errorHandler.js';
+import { initPerformanceMonitoring } from './utils/performance.js'
 
 logger.info('Saberloop initializing');
 initErrorHandling();
+initPerformanceMonitoring();
 
 // Initialize database
 async function init() {
