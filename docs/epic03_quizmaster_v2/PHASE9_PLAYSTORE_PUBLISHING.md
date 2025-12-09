@@ -305,6 +305,200 @@ Navigation bar:    #1a1a2e
 
 ---
 
+### 9.5.5 Automated Testing with Maestro (Optional but Recommended)
+
+For repeatable TWA testing without manual device interaction, use Maestro - a simple mobile UI testing framework.
+
+**Time:** 30-45 minutes (first-time setup)
+
+#### Why Automate?
+- **Repeatable** - Run same tests after each PWA update
+- **CI-friendly** - Can integrate with GitHub Actions
+- **Fast** - Emulator tests run in ~30 seconds
+- **Free** - Open source tool
+
+#### Prerequisites
+
+1. **Install Maestro CLI**
+   ```bash
+   # macOS
+   curl -Ls "https://get.maestro.mobile.dev" | bash
+
+   # Windows (via WSL) or Linux
+   curl -Ls "https://get.maestro.mobile.dev" | bash
+   ```
+
+2. **Install Android Studio** (for emulator)
+   - Download from https://developer.android.com/studio
+   - During setup, ensure "Android Virtual Device" is selected
+   - Create an emulator (Pixel 6, API 33 recommended)
+
+3. **Start the emulator**
+   ```bash
+   # List available emulators
+   emulator -list-avds
+
+   # Start emulator (replace with your AVD name)
+   emulator -avd Pixel_6_API_33
+   ```
+
+#### Create Test Files
+
+Create directory for Maestro tests:
+```bash
+mkdir -p .maestro
+```
+
+**File: `.maestro/smoke-test.yaml`**
+```yaml
+appId: com.saberloop.app
+---
+# Test 1: App launches and shows home screen
+- launchApp
+- assertVisible:
+    text: ".*Saberloop.*"
+    timeout: 15000
+- takeScreenshot: 01-home-loaded
+
+# Test 2: Navigate to Settings
+- tapOn: "Settings"
+- assertVisible: "API"
+- takeScreenshot: 02-settings-visible
+
+# Test 3: Return to Home
+- tapOn: "Home"
+- assertVisible: "Start"
+- takeScreenshot: 03-back-to-home
+```
+
+**File: `.maestro/quiz-flow.yaml`**
+```yaml
+appId: com.saberloop.app
+---
+# Full quiz generation flow
+- launchApp
+- assertVisible:
+    text: ".*Saberloop.*"
+    timeout: 15000
+
+# Start a quiz
+- tapOn: "Start"
+- assertVisible: "topic"
+- inputText: "Basic math addition"
+- tapOn: "Generate"
+
+# Wait for questions (API call)
+- assertVisible:
+    text: "Question"
+    timeout: 30000
+- takeScreenshot: 04-quiz-started
+
+# Answer a question (tap first option)
+- tapOn:
+    index: 0
+- takeScreenshot: 05-answered-question
+```
+
+#### Run Tests
+
+```bash
+# Install APK to emulator first
+adb install app-release-signed.apk
+
+# Run smoke test
+maestro test .maestro/smoke-test.yaml
+
+# Run full quiz flow
+maestro test .maestro/quiz-flow.yaml
+
+# Run all tests in directory
+maestro test .maestro/
+```
+
+#### CI Integration (GitHub Actions)
+
+Add to `.github/workflows/android-test.yml`:
+```yaml
+name: Android TWA Tests
+
+on:
+  workflow_dispatch:  # Manual trigger
+  # Or trigger on release:
+  # push:
+  #   tags: ['v*']
+
+jobs:
+  test-twa:
+    runs-on: macos-latest  # macOS has better emulator support
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Maestro
+        run: curl -Ls "https://get.maestro.mobile.dev" | bash
+
+      - name: Start emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          script: |
+            adb install app-release-signed.apk
+            ~/.maestro/bin/maestro test .maestro/smoke-test.yaml
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maestro-screenshots
+          path: ~/.maestro/tests/
+```
+
+#### Expected Output
+
+Successful test run:
+```
+Running smoke-test.yaml
+
+ ✅ launchApp
+ ✅ assertVisible: Saberloop
+ ✅ takeScreenshot: 01-home-loaded
+ ✅ tapOn: Settings
+ ✅ assertVisible: API
+ ✅ takeScreenshot: 02-settings-visible
+ ✅ tapOn: Home
+ ✅ assertVisible: Start
+ ✅ takeScreenshot: 03-back-to-home
+
+Test passed in 12.4s
+```
+
+#### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| App not found | Ensure `appId` matches package ID in PWABuilder |
+| Element not found | Increase timeout, check element text matches exactly |
+| Emulator slow | Use x86_64 image with hardware acceleration |
+| Screenshots black | Wait for app to fully render before screenshot |
+
+#### When to Run These Tests
+
+- **Before Play Store submission** - Verify APK works
+- **After major PWA updates** - Ensure TWA still functions
+- **After regenerating APK** - Verify new builds work
+- **Optionally in CI** - Automated regression testing
+
+---
+
 ### 9.6 Configure Digital Asset Links
 
 Digital Asset Links prove ownership of both the website and the app, enabling true standalone mode (no address bar).
@@ -554,7 +748,8 @@ Only needed for:
 ### Play Store Setup (9.3-9.5)
 - [ ] Google Play Developer account created and approved
 - [ ] PWABuilder package generated
-- [ ] APK tested on Android device
+- [ ] APK tested on Android device (manual)
+- [ ] Maestro tests passing (optional but recommended)
 - [ ] Signing files backed up securely
 - [ ] assetlinks.json deployed and accessible
 
