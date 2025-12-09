@@ -525,6 +525,138 @@ describe('Architecture Rules', () => {
 
 ---
 
+## Test Impact Analysis
+
+### Current Test Structure
+
+The existing tests likely have these patterns that will need updating:
+
+#### Unit Tests (`src/**/*.test.js`)
+
+| Current Pattern | Issue | Migration Required |
+|-----------------|-------|-------------------|
+| Views mock `db` directly | Views shouldn't know about db | Mock services instead |
+| Views mock `api` directly | Views shouldn't know about api | Mock services instead |
+| Components test API calls | Components should be pure | Remove API mocking, test props/callbacks |
+| API tests mock `db` | API shouldn't fetch from db | Test API with credentials as params |
+
+#### E2E Tests (`tests/e2e/`)
+
+E2E tests should remain mostly unchanged - they test through the UI and don't care about internal architecture. However:
+- May need to update test fixtures if service layer changes data flow
+- Integration points might shift
+
+### Test Migration Strategy
+
+#### Phase 1: Add Services Tests (Before Migration)
+
+Create comprehensive tests for new services layer:
+
+```javascript
+// src/services/quiz-service.test.js
+import { describe, it, expect, vi } from 'vitest';
+import * as quizService from './quiz-service.js';
+
+// Mock the lower layers
+vi.mock('../api/index.js');
+vi.mock('../db/db.js');
+vi.mock('../state/state.js');
+
+describe('quiz-service', () => {
+  describe('generateQuiz', () => {
+    it('calls API and updates state', async () => {
+      // Test service coordinates api + state correctly
+    });
+  });
+
+  describe('saveQuizResults', () => {
+    it('saves to DB and updates state', async () => {
+      // Test service coordinates db + state correctly
+    });
+  });
+});
+```
+
+#### Phase 2: Update View Tests (During Migration)
+
+When migrating each view, update its tests:
+
+**Before (current):**
+```javascript
+// HomeView.test.js - CURRENT
+vi.mock('../db/db.js');
+vi.mock('../api/index.js');
+
+it('loads quiz history from db', async () => {
+  db.getRecentSessions.mockResolvedValue([...]);
+  // Test view calls db directly
+});
+```
+
+**After (target):**
+```javascript
+// HomeView.test.js - TARGET
+vi.mock('../services/quiz-service.js');
+
+it('loads quiz history from service', async () => {
+  quizService.getQuizHistory.mockResolvedValue([...]);
+  // Test view calls service
+});
+```
+
+#### Phase 3: Update Component Tests
+
+Components become easier to test (pure/presentational):
+
+**Before:**
+```javascript
+// ConnectModal.test.js - CURRENT
+vi.mock('../api/openrouter-auth.js');
+
+it('calls startAuth when connect clicked', () => {
+  // Component knows about auth implementation
+});
+```
+
+**After:**
+```javascript
+// ConnectModal.test.js - TARGET
+it('calls onConnect callback when connect clicked', () => {
+  const onConnect = vi.fn();
+  render(<ConnectModal onConnect={onConnect} />);
+  // Component just calls callback, doesn't know implementation
+});
+```
+
+### Test Files to Review/Update
+
+| File | Current Mocks | Target Mocks | Priority |
+|------|---------------|--------------|----------|
+| `src/db/db.test.js` | None (tests db) | No change | Low |
+| `src/utils/network.test.js` | Browser APIs | No change | Low |
+| `src/api/*.test.js` | External fetch | Remove db mocks | Medium |
+| `src/views/*.test.js` | db, api | services | High |
+| `src/components/*.test.js` | api | callbacks/props | High |
+| `tests/e2e/*.spec.js` | None (E2E) | Minimal changes | Low |
+
+### New Test Files to Create
+
+| File | Purpose |
+|------|---------|
+| `src/services/quiz-service.test.js` | Quiz service unit tests |
+| `src/services/settings-service.test.js` | Settings service unit tests |
+| `src/architecture.test.js` | Architecture rules verification |
+
+### Benefits of New Test Structure
+
+1. **Views easier to test** - Just mock one service, not multiple layers
+2. **Services highly testable** - Business logic in isolation
+3. **Components trivially testable** - Pure functions of props
+4. **Better coverage** - Services layer adds explicit test boundary
+5. **Faster tests** - Less complex mocking setup
+
+---
+
 ## File Changes Summary
 
 ### New Files
@@ -546,6 +678,14 @@ describe('Architecture Rules', () => {
 | `package.json` | Add `arch:test` and `arch:graph` scripts |
 | `.github/workflows/test.yml` | Add architecture check step |
 | `CLAUDE.md` | Add architecture section |
+
+### Test Files to Modify (During Migration)
+
+| File | Changes |
+|------|---------|
+| `src/views/*.test.js` | Mock services instead of db/api |
+| `src/components/*.test.js` | Test callbacks/props, remove API mocks |
+| `src/api/*.test.js` | Remove db mocks, test with params |
 
 ---
 
