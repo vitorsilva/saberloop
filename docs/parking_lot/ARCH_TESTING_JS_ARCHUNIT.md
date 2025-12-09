@@ -2,7 +2,7 @@
 
 ## Overview
 
-Implement architecture testing using **dependency-cruiser** to enforce structural rules, prevent architectural violations, and maintain code quality as the codebase evolves.
+Implement architecture testing using **dependency-cruiser** to enforce structural rules, prevent architectural violations, and guide refactoring toward a better architecture.
 
 **Status:** Planning Complete | Ready to Implement
 
@@ -12,8 +12,9 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 
 - **Prevent Architectural Drift** - Ensure code follows defined layer boundaries
 - **Catch Violations Early** - Fail tests before bad patterns merge
+- **Guide Refactoring** - Use rules to transition from current to target architecture
 - **Document Architecture** - Rules serve as executable documentation
-- **Learning Value** - Understand how architecture testing works in JS ecosystem
+- **Learning Value** - Understand low coupling / high cohesion principles
 
 ---
 
@@ -24,16 +25,16 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 | **Tool** | dependency-cruiser (existing, mature library) |
 | **Rule Types** | All: imports, naming, layers, circular deps |
 | **Integration** | Unit tests (Vitest) + CI (GitHub Actions) |
-| **Target Structure** | Phase 5 (future structure) |
+| **Approach** | Document current + Define target + Guide transition |
 | **Default Strictness** | Error (configurable per rule) |
 
 ---
 
-## Architecture Rules to Implement
+## Architecture Analysis
 
-### Layer Dependency Rules
+### Current State (High Coupling)
 
-Based on Phase 5 target structure:
+The current architecture has **too many direct dependencies** between layers:
 
 ```
                     main.js (entry point)
@@ -42,70 +43,209 @@ Based on Phase 5 target structure:
             │           │           │
             ▼           ▼           ▼
         views/      router/     components/
-        (UI)       (singleton)  (reusable UI)
             │                       │
-            └───────────┬───────────┘
-                        │
-            ┌───────────┼───────────┐
-            │           │           │
-            ▼           ▼           ▼
-         api/        state/       db/
-      (external)   (singleton)  (IndexedDB)
+            │ ←─── HIGH COUPLING ───┤
             │                       │
-            └───────────┬───────────┘
+            ├──→ state/             │
+            ├──→ db/     ←──────────┤
+            ├──→ api/    ←──────────┘
+            ├──→ utils/
+            └──→ components/
+                    │
+                    └──→ api/  ← PROBLEM!
+```
+
+#### Current Allowed Dependencies (Problematic)
+
+| From | Currently Imports | Issue |
+|------|-------------------|-------|
+| `views/` | state, db, api, utils, components | **5 dependencies!** Views know too much |
+| `components/` | api | Components should be presentational only |
+| `api/` | db (for keys) | API shouldn't know about storage |
+
+#### Problems with Current Architecture
+
+1. **Views are coupled to everything**
+   - Views import directly from `db` → knows storage details
+   - Views import directly from `api` → knows network details
+   - Hard to test, hard to change
+
+2. **Components aren't reusable**
+   - Components import from `api` → tied to specific data fetching
+   - Should receive data via props/callbacks instead
+
+3. **API layer has wrong dependencies**
+   - API imports from `db` to get keys
+   - Should receive credentials as parameters
+
+4. **No clear business logic layer**
+   - Logic scattered across views
+   - Coordination between api/db happens in views
+
+---
+
+### Target State (Low Coupling, High Cohesion)
+
+Introduce a **services layer** to coordinate business logic:
+
+```
+                    main.js (entry point)
                         │
                         ▼
-                     utils/
-                   (helpers)
+    ┌─────────────────────────────────────────┐
+    │              views/                      │
+    │         (UI / Presentation)              │
+    │                                          │
+    │  Only knows about: services, components  │
+    └─────────────────┬───────────────────────┘
+                      │
+                      ▼
+    ┌─────────────────────────────────────────┐
+    │            services/                     │
+    │       (Business Logic Layer)             │
+    │                                          │
+    │  Coordinates: api, db, state             │
+    │  Exposes: high-level operations          │
+    └─────────────────┬───────────────────────┘
+                      │
+          ┌───────────┼───────────┐
+          │           │           │
+          ▼           ▼           ▼
+       api/        state/       db/
+    (external)   (app state)  (storage)
+          │                       │
+          └───────────┬───────────┘
+                      │
+                      ▼
+                   utils/
+                 (pure helpers)
 ```
 
-#### Allowed Dependencies
+#### Target Allowed Dependencies
 
-| From | Can Import |
-|------|------------|
-| `main.js` | All layers (entry point orchestration) |
-| `views/` | state, db, api, utils, components, BaseView.js |
-| `components/` | api, utils |
-| `api/` | db (for keys), utils, external libs |
-| `db/` | utils, external libs (idb) |
-| `utils/` | external libs only |
-| `state/` | Nothing (pure singleton) |
-| `router/` | Nothing (pure singleton) |
+| From | Can Import | Reasoning |
+|------|------------|-----------|
+| `main.js` | All layers | Entry point orchestration |
+| `views/` | services, components, utils | UI only knows about services |
+| `components/` | utils only | Pure presentational, no side effects |
+| `services/` | api, db, state, utils | Coordinates all business logic |
+| `api/` | utils only | Receives credentials as params |
+| `db/` | utils, external libs (idb) | Pure data layer |
+| `state/` | Nothing | Pure singleton |
+| `router/` | Nothing | Pure singleton |
+| `utils/` | External libs only | Pure helpers |
 
-#### Forbidden Dependencies
+#### Target Forbidden Dependencies
 
-| From | Cannot Import | Reason |
-|------|---------------|--------|
-| `views/` | other views (except BaseView) | Prevents tight coupling |
-| `views/` | main.js | Entry point should not be imported |
-| `api/` | views, state, router, components | API layer should be UI-agnostic |
-| `db/` | views, api, state, router, components | DB layer should be pure data |
-| `utils/` | views, api, state, router, components | Utils should have no app dependencies |
-| `components/` | views, db, state, router | Components should be reusable |
-| `state/` | Anything | Singleton pattern |
-| `router/` | Anything | Singleton pattern |
+| From | Cannot Import | Why |
+|------|---------------|-----|
+| `views/` | api, db, state | Views shouldn't know about data fetching/storage |
+| `views/` | other views | Prevents coupling between views |
+| `components/` | api, db, state, services, views | Must be pure/presentational |
+| `api/` | db, state, views, services | API receives params, doesn't fetch |
+| `db/` | api, state, views, services | Pure data layer |
+| `services/` | views, components | Services don't know about UI |
 
-### Naming Convention Rules
+---
 
-| Location | Required Pattern | Example |
-|----------|-----------------|---------|
-| `src/views/*.js` | `*View.js` or `BaseView.js` | `HomeView.js`, `QuizView.js` |
-| `src/api/*.js` | `api.*.js`, `*-client.js`, `*-auth.js`, `index.js`, `providers.js`, `llm-service.js` | `api.mock.js`, `openrouter-client.js` |
-| `src/db/*.js` | `db.js` or `*.db.js` | `db.js` |
-| `**/*.test.js` | Test files pattern | `network.test.js` |
+### Services Layer Design
 
-### Circular Dependency Detection
+The services layer provides high-level operations that views can call:
 
-- **Severity:** Error (blocks build)
-- **Scope:** All `src/` files
-- **Output:** Full cycle path for debugging
+```javascript
+// src/services/quiz-service.js
+import { generateQuestions as apiGenerateQuestions } from '../api/index.js';
+import { saveSession, getRecentSessions } from '../db/db.js';
+import state from '../state/state.js';
 
-Example violation output:
+/**
+ * Generate a new quiz - coordinates API call and state update
+ */
+export async function generateQuiz(topic, gradeLevel) {
+  // 1. Call API
+  const questions = await apiGenerateQuestions(topic, gradeLevel);
+
+  // 2. Update state
+  state.set('currentQuestions', questions);
+  state.set('currentTopic', topic);
+
+  // 3. Return for UI
+  return questions;
+}
+
+/**
+ * Save quiz results - coordinates DB and state
+ */
+export async function saveQuizResults(sessionData) {
+  // 1. Save to DB
+  const sessionId = await saveSession(sessionData);
+
+  // 2. Update state
+  state.set('lastSessionId', sessionId);
+
+  return sessionId;
+}
+
+/**
+ * Get quiz history - pure data fetch
+ */
+export async function getQuizHistory(limit = 10) {
+  return getRecentSessions(limit);
+}
 ```
-ERROR: Circular dependency detected:
-  src/views/HomeView.js
-    → src/api/index.js
-    → src/views/HomeView.js
+
+**Benefits:**
+- Views become simpler: `await quizService.generateQuiz(topic, level)`
+- Business logic is centralized and testable
+- Easy to mock for testing views
+- Clear separation of concerns
+
+---
+
+## Transition Strategy
+
+### Phase A: Document Current State (Warnings Only)
+
+First, document what currently exists with `warn` severity:
+
+```javascript
+// .dependency-cruiser.cjs - Phase A
+{
+  name: 'views-should-not-import-db-directly',
+  severity: 'warn',  // Start as warning
+  comment: 'TRANSITION: Views will use services layer instead',
+  from: { path: '^src/views/' },
+  to: { path: '^src/db/' }
+}
+```
+
+### Phase B: Create Services Layer
+
+Add the services layer alongside existing code:
+1. Create `src/services/quiz-service.js`
+2. Create `src/services/settings-service.js`
+3. Add tests for services
+
+### Phase C: Migrate Views
+
+Update views one-by-one to use services:
+1. Update `HomeView.js` to use `quiz-service`
+2. Update `QuizView.js` to use `quiz-service`
+3. Update `SettingsView.js` to use `settings-service`
+4. Remove direct db/api imports from views
+
+### Phase D: Enforce Target Architecture
+
+Change rules from `warn` to `error`:
+
+```javascript
+// .dependency-cruiser.cjs - Phase D
+{
+  name: 'views-cannot-import-db',
+  severity: 'error',  // Now enforced!
+  from: { path: '^src/views/' },
+  to: { path: '^src/db/' }
+}
 ```
 
 ---
@@ -151,94 +291,144 @@ ERROR: Circular dependency detected:
 
 ---
 
-### Session 2: Define Layer Rules
+### Session 2: Document Current State Rules
 
-**Goal:** Implement forbidden/allowed dependency rules
+**Goal:** Create rules that document current architecture (warnings)
 
-**Steps:**
+**Rules to create:**
 
-1. Define `forbidden` rules array in config:
-   - Views cannot import other views
-   - API cannot import views
-   - DB cannot import views/api/state
-   - Utils cannot import app layers
-   - State/Router cannot import anything
-
-2. Define `allowed` rules for valid patterns
-
-3. Test each rule:
-   - Create intentional violation
-   - Verify rule catches it
-   - Remove violation
-
-**Configuration structure:**
 ```javascript
 module.exports = {
   forbidden: [
+    // === ALWAYS FORBIDDEN (errors) ===
+    {
+      name: 'no-circular',
+      severity: 'error',
+      from: { path: '^src/' },
+      to: { circular: true }
+    },
     {
       name: 'no-view-to-view',
       severity: 'error',
       from: { path: '^src/views/.+View\\.js$' },
       to: { path: '^src/views/.+View\\.js$' }
     },
-    // ... more rules
+    {
+      name: 'state-imports-nothing',
+      severity: 'error',
+      from: { path: '^src/state/' },
+      to: { path: '^src/' }
+    },
+    {
+      name: 'router-imports-nothing',
+      severity: 'error',
+      from: { path: '^src/router/' },
+      to: { path: '^src/' }
+    },
+
+    // === TRANSITION RULES (warnings → will become errors) ===
+    {
+      name: 'views-should-not-import-db',
+      severity: 'warn',
+      comment: 'TRANSITION: Views should use services layer',
+      from: { path: '^src/views/' },
+      to: { path: '^src/db/' }
+    },
+    {
+      name: 'views-should-not-import-api',
+      severity: 'warn',
+      comment: 'TRANSITION: Views should use services layer',
+      from: { path: '^src/views/' },
+      to: { path: '^src/api/' }
+    },
+    {
+      name: 'components-should-not-import-api',
+      severity: 'warn',
+      comment: 'TRANSITION: Components should be presentational',
+      from: { path: '^src/components/' },
+      to: { path: '^src/api/' }
+    },
+    {
+      name: 'api-should-not-import-db',
+      severity: 'warn',
+      comment: 'TRANSITION: API should receive credentials as params',
+      from: { path: '^src/api/' },
+      to: { path: '^src/db/' }
+    }
   ]
 };
 ```
 
 **Deliverables:**
-- Complete layer rules in `.dependency-cruiser.cjs`
-- Test results showing rules work
+- Current state rules (errors + warnings)
+- Baseline of existing violations
 
 ---
 
-### Session 3: Naming Convention Rules
+### Session 3: Create Services Layer Structure
+
+**Goal:** Add services layer (doesn't require changing existing code yet)
+
+**New files:**
+- `src/services/quiz-service.js` - Quiz generation, saving, history
+- `src/services/settings-service.js` - Settings management
+- `src/services/index.js` - Service exports
+
+**Example structure:**
+```javascript
+// src/services/quiz-service.js
+export async function generateQuiz(topic, gradeLevel) { ... }
+export async function saveQuizResults(session) { ... }
+export async function getQuizHistory(limit) { ... }
+export async function getQuizSession(id) { ... }
+```
+
+**Rules to add:**
+```javascript
+{
+  name: 'services-can-import-api-db-state',
+  severity: 'info',
+  comment: 'Services coordinate api, db, and state',
+  from: { path: '^src/services/' },
+  to: { path: '^src/(api|db|state)/' }
+}
+```
+
+**Deliverables:**
+- Services layer skeleton
+- Services can import from api/db/state
+
+---
+
+### Session 4: Add Naming Convention Rules
 
 **Goal:** Enforce file naming patterns
 
-**Steps:**
-
-1. Add naming rules to config:
-   ```javascript
-   {
-     name: 'views-naming-convention',
-     severity: 'error',
-     from: { path: '^src/views/' },
-     to: { },
-     comment: 'Files in views/ must be named *View.js or BaseView.js',
-     module: {
-       path: '^src/views/(?!.*View\\.js$|BaseView\\.js$).*\\.js$'
-     }
-   }
-   ```
-
-2. Test naming rules work
-
-**Deliverables:**
-- Naming rules added to config
-
----
-
-### Session 4: Circular Dependency Detection
-
-**Goal:** Enable and configure cycle detection
-
-**Steps:**
-
-1. Enable cycle detection in config:
-   ```javascript
-   {
-     name: 'no-circular',
-     severity: 'error',
-     from: { path: '^src/' },
-     to: { circular: true }
-   }
-   ```
-
-2. Verify with test case
+**Rules:**
+```javascript
+// Naming conventions
+{
+  name: 'views-naming-convention',
+  severity: 'error',
+  comment: 'Files in views/ must be *View.js or BaseView.js',
+  from: { },
+  to: {
+    path: '^src/views/(?!.*View\\.js$|BaseView\\.js$|index\\.js$).*\\.js$'
+  }
+},
+{
+  name: 'services-naming-convention',
+  severity: 'error',
+  comment: 'Files in services/ must be *-service.js or index.js',
+  from: { },
+  to: {
+    path: '^src/services/(?!.*-service\\.js$|index\\.js$).*\\.js$'
+  }
+}
+```
 
 **Deliverables:**
-- Circular dependency rule configured
+- Naming rules configured
 
 ---
 
@@ -246,48 +436,49 @@ module.exports = {
 
 **Goal:** Run architecture checks as part of `npm test`
 
-**Steps:**
+**Create `src/architecture.test.js`:**
+```javascript
+import { describe, it, expect } from 'vitest';
+import { cruise } from 'dependency-cruiser';
+import config from '../.dependency-cruiser.cjs';
 
-1. Create `src/architecture.test.js`:
-   ```javascript
-   import { describe, it, expect } from 'vitest';
-   import { cruise } from 'dependency-cruiser';
-   import config from '../.dependency-cruiser.cjs';
+describe('Architecture Rules', () => {
+  it('should have no architecture errors', async () => {
+    const result = cruise(['src'], config);
 
-   describe('Architecture Rules', () => {
-     it('should have no architecture violations', async () => {
-       const result = cruise(['src'], config);
+    const errors = result.output.summary.violations
+      .filter(v => v.rule.severity === 'error');
 
-       const violations = result.output.summary.violations;
+    if (errors.length > 0) {
+      console.error('Architecture violations:');
+      errors.forEach(v => {
+        console.error(`  [${v.rule.name}] ${v.from} → ${v.to}`);
+      });
+    }
 
-       if (violations.length > 0) {
-         console.error('Architecture violations found:');
-         violations.forEach(v => {
-           console.error(`  ${v.rule.name}: ${v.from} -> ${v.to}`);
-         });
-       }
+    expect(errors).toHaveLength(0);
+  });
 
-       expect(violations).toHaveLength(0);
-     });
+  it('should report transition warnings (not blocking)', async () => {
+    const result = cruise(['src'], config);
 
-     it('should have no circular dependencies', async () => {
-       const result = cruise(['src'], config);
+    const warnings = result.output.summary.violations
+      .filter(v => v.rule.severity === 'warn');
 
-       const cycles = result.output.summary.violations
-         .filter(v => v.rule.name === 'no-circular');
+    if (warnings.length > 0) {
+      console.log('Transition warnings (to be fixed):');
+      warnings.forEach(v => {
+        console.log(`  [${v.rule.name}] ${v.from} → ${v.to}`);
+      });
+    }
 
-       expect(cycles).toHaveLength(0);
-     });
-   });
-   ```
-
-2. Verify `npm test` includes architecture tests
-
-3. Test failure scenario
+    // Don't fail on warnings - just report them
+  });
+});
+```
 
 **Deliverables:**
-- `src/architecture.test.js`
-- Architecture tests run with `npm test`
+- Architecture tests integrated with `npm test`
 
 ---
 
@@ -295,55 +486,42 @@ module.exports = {
 
 **Goal:** Add architecture check to GitHub Actions
 
-**Steps:**
-
-1. Update `.github/workflows/test.yml`:
-   ```yaml
-   jobs:
-     test:
-       steps:
-         - name: Install dependencies
-           run: npm ci
-
-         - name: Architecture check
-           run: npm run arch:test
-
-         - name: Unit tests
-           run: npm test
-
-         - name: E2E tests
-           run: npm run test:e2e
-   ```
-
-2. Test CI pipeline with PR
+**Update `.github/workflows/test.yml`:**
+```yaml
+- name: Architecture check
+  run: npm run arch:test
+```
 
 **Deliverables:**
-- Updated GitHub Actions workflow
 - CI runs architecture checks
 
 ---
 
 ### Session 7: Documentation
 
-**Goal:** Document rules and usage
+**Goal:** Document architecture rules and transition plan
 
-**Steps:**
-
-1. Create `docs/architecture/ARCHITECTURE_RULES.md`:
-   - Why we have architecture rules
-   - List of all rules with explanations
-   - How to run checks locally
-   - How to add/modify rules
-   - Common violations and fixes
-
-2. Update `CLAUDE.md` with architecture testing info
-
-3. Add architecture section to `CONTRIBUTING.md`
+**Create `docs/architecture/ARCHITECTURE_RULES.md`:**
+- Current vs target architecture diagrams
+- List of all rules with explanations
+- Transition plan and timeline
+- How to fix common violations
 
 **Deliverables:**
-- `docs/architecture/ARCHITECTURE_RULES.md`
-- Updated `CLAUDE.md`
-- Updated `CONTRIBUTING.md`
+- Architecture documentation
+
+---
+
+### Future Sessions: Migration
+
+**Session 8+:** Migrate views to use services (separate epic/phase)
+
+1. Migrate `HomeView.js`
+2. Migrate `QuizView.js`
+3. Migrate `SettingsView.js`
+4. Migrate `ResultsView.js`
+5. Update components to be presentational
+6. Change transition rules from `warn` to `error`
 
 ---
 
@@ -355,8 +533,11 @@ module.exports = {
 |------|---------|
 | `.dependency-cruiser.cjs` | Configuration with all rules |
 | `src/architecture.test.js` | Vitest integration |
+| `src/services/quiz-service.js` | Quiz business logic |
+| `src/services/settings-service.js` | Settings business logic |
+| `src/services/index.js` | Service exports |
 | `docs/architecture/ARCHITECTURE_RULES.md` | Rules documentation |
-| `docs/architecture/dependency-graph.svg` | Visual dependency graph (generated) |
+| `docs/architecture/dependency-graph.svg` | Visual graph (generated) |
 
 ### Modified Files
 
@@ -364,20 +545,68 @@ module.exports = {
 |------|---------|
 | `package.json` | Add `arch:test` and `arch:graph` scripts |
 | `.github/workflows/test.yml` | Add architecture check step |
-| `CLAUDE.md` | Add architecture testing section |
-| `CONTRIBUTING.md` | Add architecture rules info |
+| `CLAUDE.md` | Add architecture section |
 
 ---
 
 ## Success Criteria
 
-1. **All layer rules enforced** - Violations fail the build
-2. **Naming conventions enforced** - Wrong file names are caught
-3. **No circular dependencies** - Cycles are detected and reported
-4. **Integrated with tests** - `npm test` includes architecture checks
-5. **CI enforcement** - GitHub Actions fails on violations
-6. **Documented** - Rules are documented for contributors
-7. **Visual graph** - Dependency graph can be generated
+### Phase A-B (This Plan)
+
+1. **dependency-cruiser configured** - Tool installed and working
+2. **Current state documented** - Rules capture existing architecture
+3. **Transition rules in place** - Warnings for violations to fix
+4. **Services layer skeleton** - Structure ready for migration
+5. **Tests integrated** - `npm test` includes architecture checks
+6. **CI enforced** - GitHub Actions fails on errors
+7. **Documented** - Architecture and rules documented
+
+### Phase C-D (Future - Migration)
+
+1. **Views migrated** - All views use services
+2. **Components pure** - No side effects in components
+3. **API decoupled** - Receives credentials as params
+4. **All rules errors** - No more warnings, full enforcement
+
+---
+
+## Architecture Principles Reference
+
+### Low Coupling
+
+**Definition:** Modules should have minimal dependencies on each other.
+
+**Applied here:**
+- Views only know about services (1 dependency for business logic)
+- Components have zero app dependencies (pure)
+- API/DB layers are independent
+
+### High Cohesion
+
+**Definition:** Related functionality should be grouped together.
+
+**Applied here:**
+- All quiz logic in `quiz-service.js`
+- All settings logic in `settings-service.js`
+- Views focus only on UI rendering
+
+### Dependency Inversion
+
+**Definition:** High-level modules shouldn't depend on low-level modules.
+
+**Applied here:**
+- Views (high-level) don't depend on DB/API (low-level)
+- Services act as abstraction layer
+- Easy to swap implementations
+
+### Single Responsibility
+
+**Definition:** Each module should have one reason to change.
+
+**Applied here:**
+- Views change for UI reasons only
+- Services change for business logic reasons
+- DB changes for storage reasons
 
 ---
 
@@ -403,77 +632,11 @@ npx depcruise src --output-type dot    # GraphViz format
 
 ### Rule Severity Levels
 
-| Level | Behavior |
-|-------|----------|
-| `error` | Fails the check (exit code 1) |
-| `warn` | Reports but doesn't fail |
-| `info` | Informational only |
-
-### Rule Structure
-
-```javascript
-{
-  name: 'rule-name',           // Unique identifier
-  severity: 'error',           // error | warn | info
-  comment: 'Why this rule exists',
-  from: {
-    path: '^src/views/'        // Regex for source files
-  },
-  to: {
-    path: '^src/api/',         // Regex for target files
-    pathNot: '^src/api/index'  // Exceptions
-  }
-}
-```
-
----
-
-## Risks & Considerations
-
-### 1. False Positives
-
-Some valid patterns might be flagged initially.
-
-**Mitigation:**
-- Start with `warn` severity, promote to `error` after tuning
-- Add exceptions for known valid cases
-- Review each rule carefully
-
-### 2. Performance
-
-Large codebases can slow down analysis.
-
-**Mitigation:**
-- This is a small codebase (~30 files), not a concern
-- Can add caching if needed later
-
-### 3. Developer Friction
-
-Strict rules might slow development initially.
-
-**Mitigation:**
-- Document all rules clearly
-- Provide fix suggestions in error messages
-- Start with core rules, add more gradually
-
-### 4. Rule Maintenance
-
-Rules need updating as architecture evolves.
-
-**Mitigation:**
-- Keep rules in sync with `docs/architecture/`
-- Review rules during Phase 5 structure changes
-- Use comments to explain rule purpose
-
----
-
-## Future Enhancements (Out of Scope)
-
-- **Custom reporters** - Format output for specific tools
-- **IDE integration** - Show violations in editor
-- **Git hooks** - Pre-commit architecture checks
-- **Metrics tracking** - Track violation trends over time
-- **Interactive graph** - HTML visualization with click-through
+| Level | Behavior | Use For |
+|-------|----------|---------|
+| `error` | Fails the check | Hard rules, must fix |
+| `warn` | Reports but passes | Transition rules |
+| `info` | Informational | Documentation |
 
 ---
 
@@ -482,11 +645,12 @@ Rules need updating as architecture evolves.
 - [dependency-cruiser Documentation](https://github.com/sverweij/dependency-cruiser)
 - [dependency-cruiser Rules Reference](https://github.com/sverweij/dependency-cruiser/blob/main/doc/rules-reference.md)
 - [ArchUnit (Java inspiration)](https://www.archunit.org/)
-- [ArchUnitTS](https://lukasniessen.github.io/ArchUnitTS/)
-- Phase 5 target structure: `docs/epic03_quizmaster_v2/PHASE5_PROJECT_STRUCTURE.md`
+- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- Phase 5 structure: `docs/epic03_quizmaster_v2/PHASE5_PROJECT_STRUCTURE.md`
 
 ---
 
 **Created:** 2025-12-09
+**Updated:** 2025-12-09
 **Location:** `docs/parking_lot/ARCH_TESTING_JS_ARCHUNIT.md`
-**Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md), [Phase 5](../epic03_quizmaster_v2/PHASE5_PROJECT_STRUCTURE.md)
+**Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
