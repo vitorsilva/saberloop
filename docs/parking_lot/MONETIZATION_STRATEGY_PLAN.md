@@ -353,127 +353,243 @@ Add to your CSS (`src/styles/main.css` or equivalent):
 
 ### Phase M4: Strategic Ad Placement (Day 3)
 
-#### Placement Strategy
+#### Placement Strategy - Loading States (Optimal UX)
 
-| Location | Priority | Rationale |
-|----------|----------|-----------|
-| **Results page** | HIGH | User completed action, natural break |
-| **Home page** | MEDIUM | Between sections, not intrusive |
-| **Topic selection** | LOW | Don't interrupt flow |
-| **During quiz** | NEVER | Would ruin UX |
-| **Settings** | NEVER | Utility page, feels spammy |
+The key insight is to show ads **during natural wait times** when the user is already idle waiting for LLM responses. This creates **zero disruption** to user flow.
 
-#### M4.1 Results View Integration
+| Location | Wait Time | User State | Priority | Rationale |
+|----------|-----------|------------|----------|-----------|
+| **Quiz generation** | 10-15s | Waiting for LLM | **PRIMARY** | Natural wait, user expects delay |
+| **After last question** | 5-10s | Waiting for results | **PRIMARY** | Already waiting for processing |
+| **Results page** | 0s | Ready to act | LOW | Delays next action |
+| **Home page** | 0s | Browsing | LOW | Clutters UI |
+| **During quiz questions** | 0s | Actively engaged | **NEVER** | Ruins focus |
+| **Settings** | 0s | Utility task | **NEVER** | Feels spammy |
 
-Update `src/views/ResultsView.js`:
+#### Why Loading States Are Better
+
+```
+Traditional Approach (Worse UX):
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│ Results     │ --> │ AD BLOCKS   │ --> │ Next Action │
+│ (instant)   │     │ USER FLOW   │     │ (delayed)   │
+└─────────────┘     └─────────────┘     └─────────────┘
+
+Loading State Approach (Better UX):
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│ User clicks │ --> │ AD + LOADER │ --> │ Content     │
+│ "Start"     │     │ (10s wait)  │     │ (ready!)    │
+└─────────────┘     └─────────────┘     └─────────────┘
+                    User is already
+                    waiting anyway!
+```
+
+#### M4.1 Quiz Generation Loading Screen (PRIMARY)
+
+When user starts a new quiz, show ad while questions are being generated:
+
+Update `src/views/LoadingView.js` (or create):
 
 ```javascript
 import AdManager from '../utils/adManager.js';
 
-export function renderResultsView(session) {
-  const score = session.score;
-  const total = session.questions.length;
-  const percentage = Math.round((score / total) * 100);
-
+/**
+ * Loading view shown while LLM generates quiz questions
+ * Perfect ad placement - user is waiting 10-15 seconds anyway
+ */
+export function renderQuizLoadingView(topic, gradeLevel) {
   return `
-    <div class="results-view">
-      <div class="results-header">
-        <h1>Quiz Complete!</h1>
-        <div class="score-display">
-          <span class="score">${score}/${total}</span>
-          <span class="percentage">(${percentage}%)</span>
-        </div>
+    <div class="loading-view">
+      <div class="loading-header">
+        <h2>Creating Your Quiz</h2>
+        <p>Generating questions about <strong>${topic}</strong>...</p>
       </div>
 
-      <div class="results-message">
-        ${getResultMessage(percentage)}
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p class="loading-tip">This usually takes 10-15 seconds</p>
       </div>
 
-      <!-- PRIMARY AD PLACEMENT: After results, before actions -->
-      <div id="results-ad" class="ad-container"></div>
+      <!-- PRIMARY AD: User is already waiting for LLM -->
+      <div id="quiz-loading-ad" class="ad-container loading-ad"></div>
 
-      <div class="results-actions">
-        <button class="btn-primary" data-action="new-quiz">
-          Start New Quiz
-        </button>
-        <button class="btn-secondary" data-action="review">
-          Review Answers
-        </button>
-        <button class="btn-tertiary" data-action="home">
-          Back to Home
-        </button>
+      <div class="loading-info">
+        <p>Our AI is crafting ${gradeLevel} level questions just for you.</p>
       </div>
     </div>
   `;
 }
 
-// Call after rendering
-export function initResultsAds() {
-  AdManager.loadAd('results-ad', AdManager.slots.resultsPage);
+// Call immediately after rendering loading view
+export function initQuizLoadingAds() {
+  AdManager.loadAd('quiz-loading-ad', AdManager.slots.quizLoading);
 }
 ```
 
-#### M4.2 Home View Integration (Optional)
+#### M4.2 Results Loading Screen (PRIMARY)
 
-Update `src/views/HomeView.js`:
+After answering the last question, show ad while results/explanation are generated:
 
 ```javascript
 import AdManager from '../utils/adManager.js';
 
-export function renderHomeView(recentQuizzes) {
+/**
+ * Loading view shown while calculating results / generating explanation
+ * Another perfect ad moment - user finished quiz and is waiting
+ */
+export function renderResultsLoadingView(questionsAnswered) {
   return `
-    <div class="home-view">
-      <section class="hero">
-        <h1>Welcome to SaberLoop</h1>
-        <p>Test your knowledge on any topic</p>
-        <button class="btn-primary" data-action="start-quiz">
-          Start a Quiz
-        </button>
-      </section>
+    <div class="loading-view results-loading">
+      <div class="loading-header">
+        <h2>Quiz Complete!</h2>
+        <p>Calculating your results...</p>
+      </div>
 
-      <!-- AD: Between hero and recent quizzes -->
-      <div id="home-ad" class="ad-container"></div>
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p class="loading-tip">Preparing your score and feedback</p>
+      </div>
 
-      <section class="recent-quizzes">
-        <h2>Recent Quizzes</h2>
-        ${renderRecentQuizzes(recentQuizzes)}
-      </section>
+      <!-- PRIMARY AD: User just finished, waiting for results -->
+      <div id="results-loading-ad" class="ad-container loading-ad"></div>
+
+      <div class="completion-message">
+        <p>You answered ${questionsAnswered} questions!</p>
+      </div>
     </div>
   `;
 }
 
+// Call immediately after rendering
+export function initResultsLoadingAds() {
+  AdManager.loadAd('results-loading-ad', AdManager.slots.resultsLoading);
+}
+```
+
+#### M4.3 Updated Ad Slots Configuration
+
+Update `src/utils/adManager.js` slots:
+
+```javascript
+const AdManager = {
+  // Your AdSense publisher ID
+  publisherId: 'ca-pub-XXXXXXXXXXXXXXXX',
+
+  // Ad slot IDs - focused on loading states
+  slots: {
+    // PRIMARY: Loading states (user already waiting)
+    quizLoading: 'XXXXXXXXXX',      // While generating questions
+    resultsLoading: 'XXXXXXXXXX',   // While calculating results
+
+    // SECONDARY: Static pages (optional, lower priority)
+    homePage: 'XXXXXXXXXX',         // Only if needed
+  },
+
+  // ... rest of implementation
+};
+```
+
+#### M4.4 Quiz Flow Integration
+
+Update your quiz flow to show ads during loading:
+
+```javascript
+// In your quiz controller/state management
+
+async function startNewQuiz(topic, gradeLevel) {
+  // 1. Show loading view WITH ad
+  renderQuizLoadingView(topic, gradeLevel);
+  initQuizLoadingAds();  // Ad loads while LLM works
+
+  // 2. Call LLM API (10-15 seconds)
+  const questions = await generateQuestions(topic, gradeLevel);
+
+  // 3. Transition to quiz (ad was viewed during wait!)
+  renderQuizView(questions);
+}
+
+async function submitFinalAnswer(answer) {
+  // 1. Record answer
+  recordAnswer(answer);
+
+  // 2. Show results loading WITH ad
+  renderResultsLoadingView(session.questions.length);
+  initResultsLoadingAds();  // Ad loads while processing
+
+  // 3. Calculate results / generate explanations (5-10 seconds)
+  const results = await calculateResults(session);
+
+  // 4. Show final results (ad was viewed during wait!)
+  renderResultsView(results);
+}
+```
+
+#### M4.5 Loading Ad Styles
+
+```css
+/* Loading screen ad container */
+.loading-ad {
+  margin: 2rem auto;
+  max-width: 336px;  /* Medium rectangle works well in loading contexts */
+}
+
+/* Ensure ad doesn't shift layout when loading */
+.loading-view {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Loading spinner above ad */
+.loading-spinner {
+  margin-bottom: 1.5rem;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-tip {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+```
+
+#### M4.6 Fallback: Static Page Ads (Optional)
+
+If you want additional ad placements beyond loading states:
+
+```javascript
+// Only add these if loading state ads aren't generating enough revenue
+
+// Home page - between sections (low priority)
 export function initHomeAds() {
-  // Only load home ad if user has taken quizzes (engaged user)
-  if (hasRecentQuizzes()) {
+  // Only for engaged users who have completed quizzes
+  if (getCompletedQuizCount() > 3) {
     AdManager.loadAd('home-ad', AdManager.slots.homePage);
   }
 }
-```
 
-#### M4.3 Router Integration
-
-Update router to handle ad lifecycle:
-
-```javascript
-import AdManager from '../utils/adManager.js';
-
-// In your router's navigation handler
-function navigateTo(route) {
-  // Reset ad tracking on navigation
-  AdManager.resetForNavigation();
-
-  // ... existing routing logic ...
-
-  // After view renders, init ads for that view
-  switch(route) {
-    case '/results':
-      initResultsAds();
-      break;
-    case '/':
-    case '/home':
-      initHomeAds();
-      break;
-    // Other routes don't have ads
+// Results page - after viewing results (low priority)
+// User already saw ad during loading, so this is optional
+export function initResultsPageAds() {
+  // Consider skipping if user saw loading ad recently
+  if (!AdManager.recentlyShowedAd('resultsLoading', 60000)) {
+    AdManager.loadAd('results-page-ad', AdManager.slots.resultsPage);
   }
 }
 ```
@@ -643,10 +759,11 @@ Low effort, complements ads, builds community goodwill.
 | `public/ads.txt` | Create | Ad inventory authorization |
 | `src/views/PrivacyView.js` | Create | Privacy policy page |
 | `src/utils/adManager.js` | Create | Ad loading utility |
-| `src/styles/ads.css` | Create | Ad container styles |
-| `src/views/ResultsView.js` | Modify | Add ad container |
-| `src/views/HomeView.js` | Modify | Add ad container (optional) |
-| `src/router/index.js` | Modify | Handle ad lifecycle |
+| `src/styles/ads.css` | Create | Ad container & loading styles |
+| `src/views/LoadingView.js` | Create/Modify | Quiz generation loading with ad |
+| `src/views/ResultsLoadingView.js` | Create | Results loading with ad |
+| `src/state/quizState.js` | Modify | Integrate ads into quiz flow |
+| `src/router/index.js` | Modify | Handle loading states with ads |
 
 ---
 
