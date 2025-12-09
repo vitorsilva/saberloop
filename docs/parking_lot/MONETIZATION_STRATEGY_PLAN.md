@@ -616,7 +616,290 @@ export function initResultsPageAds() {
 - [ ] Mobile responsive ads work
 - [ ] Page speed still acceptable
 
-#### M5.2 AdSense Testing Mode
+#### M5.2 Unit Tests (Vitest)
+
+Create `tests/unit/adManager.test.js`:
+
+```javascript
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import AdManager from '../../src/utils/adManager.js';
+
+describe('AdManager', () => {
+  let mockContainer;
+
+  beforeEach(() => {
+    // Reset AdManager state
+    AdManager.loadedAds.clear();
+
+    // Create mock container
+    mockContainer = document.createElement('div');
+    mockContainer.id = 'test-ad-container';
+    document.body.appendChild(mockContainer);
+
+    // Mock adsbygoogle global
+    window.adsbygoogle = [];
+  });
+
+  afterEach(() => {
+    document.body.removeChild(mockContainer);
+    delete window.adsbygoogle;
+  });
+
+  describe('canLoadAds', () => {
+    it('returns true when online and adsbygoogle exists', () => {
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+      expect(AdManager.canLoadAds()).toBe(true);
+    });
+
+    it('returns false when offline', () => {
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+      expect(AdManager.canLoadAds()).toBe(false);
+    });
+
+    it('returns false when adsbygoogle not loaded', () => {
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+      delete window.adsbygoogle;
+      expect(AdManager.canLoadAds()).toBe(false);
+    });
+  });
+
+  describe('loadAd', () => {
+    it('creates ad element in container', () => {
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+
+      AdManager.loadAd('test-ad-container', '12345');
+
+      const adElement = mockContainer.querySelector('.adsbygoogle');
+      expect(adElement).toBeTruthy();
+      expect(adElement.dataset.adSlot).toBe('12345');
+    });
+
+    it('prevents duplicate ad loads for same container/slot', () => {
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+
+      AdManager.loadAd('test-ad-container', '12345');
+      const firstContent = mockContainer.innerHTML;
+
+      AdManager.loadAd('test-ad-container', '12345');
+
+      // Should not have changed (no duplicate)
+      expect(mockContainer.innerHTML).toBe(firstContent);
+      expect(AdManager.loadedAds.size).toBe(1);
+    });
+
+    it('hides container when offline', () => {
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+      mockContainer.style.display = 'block';
+
+      AdManager.loadAd('test-ad-container', '12345');
+
+      expect(mockContainer.style.display).toBe('none');
+    });
+
+    it('does nothing if container not found', () => {
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+
+      // Should not throw
+      expect(() => {
+        AdManager.loadAd('nonexistent-container', '12345');
+      }).not.toThrow();
+    });
+  });
+
+  describe('resetForNavigation', () => {
+    it('clears loaded ads set', () => {
+      AdManager.loadedAds.add('test-key');
+      expect(AdManager.loadedAds.size).toBe(1);
+
+      AdManager.resetForNavigation();
+
+      expect(AdManager.loadedAds.size).toBe(0);
+    });
+  });
+
+  describe('hideContainer', () => {
+    it('hides the specified container', () => {
+      mockContainer.style.display = 'block';
+
+      AdManager.hideContainer('test-ad-container');
+
+      expect(mockContainer.style.display).toBe('none');
+    });
+
+    it('does nothing if container not found', () => {
+      expect(() => {
+        AdManager.hideContainer('nonexistent');
+      }).not.toThrow();
+    });
+  });
+});
+```
+
+#### M5.3 E2E Tests (Playwright)
+
+Create `tests/e2e/ads.spec.js`:
+
+```javascript
+import { test, expect } from '@playwright/test';
+
+test.describe('Ad Integration', () => {
+
+  test.describe('Quiz Generation Loading - Ad Placement', () => {
+    test('shows ad container during quiz generation', async ({ page }) => {
+      await page.goto('/');
+
+      // Start a new quiz
+      await page.fill('[data-testid="topic-input"]', 'Math');
+      await page.click('[data-testid="start-quiz-btn"]');
+
+      // Should show loading view with ad container
+      await expect(page.locator('.loading-view')).toBeVisible();
+      await expect(page.locator('#quiz-loading-ad')).toBeVisible();
+
+      // Ad placeholder should be visible (dev mode shows placeholder)
+      await expect(page.locator('#quiz-loading-ad')).toContainText('Ad Placeholder');
+    });
+
+    test('ad container has correct attributes', async ({ page }) => {
+      await page.goto('/');
+      await page.fill('[data-testid="topic-input"]', 'Science');
+      await page.click('[data-testid="start-quiz-btn"]');
+
+      const adContainer = page.locator('#quiz-loading-ad');
+      await expect(adContainer).toHaveClass(/ad-container/);
+      await expect(adContainer).toHaveClass(/loading-ad/);
+    });
+  });
+
+  test.describe('Results Loading - Ad Placement', () => {
+    test('shows ad container while calculating results', async ({ page }) => {
+      // Setup: Complete a quiz first
+      await page.goto('/');
+      await page.fill('[data-testid="topic-input"]', 'History');
+      await page.click('[data-testid="start-quiz-btn"]');
+
+      // Wait for quiz to load and answer all questions
+      await expect(page.locator('.quiz-view')).toBeVisible({ timeout: 20000 });
+
+      // Answer questions (5 questions by default)
+      for (let i = 0; i < 5; i++) {
+        await page.click('[data-testid="answer-option"]:first-child');
+        await page.click('[data-testid="next-btn"]');
+      }
+
+      // After last question, should show results loading with ad
+      await expect(page.locator('.results-loading')).toBeVisible();
+      await expect(page.locator('#results-loading-ad')).toBeVisible();
+    });
+  });
+
+  test.describe('Offline Handling', () => {
+    test('hides ad containers when offline', async ({ page, context }) => {
+      await page.goto('/');
+
+      // Start quiz to get to loading screen
+      await page.fill('[data-testid="topic-input"]', 'Geography');
+      await page.click('[data-testid="start-quiz-btn"]');
+
+      // Verify ad container is visible while online
+      await expect(page.locator('#quiz-loading-ad')).toBeVisible();
+
+      // Go offline
+      await context.setOffline(true);
+
+      // Trigger offline event
+      await page.evaluate(() => {
+        window.dispatchEvent(new Event('offline'));
+      });
+
+      // Ad containers should be hidden
+      await expect(page.locator('.ad-container')).toBeHidden();
+    });
+
+    test('ad containers remain functional after coming back online', async ({ page, context }) => {
+      await page.goto('/');
+
+      // Go offline then online
+      await context.setOffline(true);
+      await page.evaluate(() => window.dispatchEvent(new Event('offline')));
+
+      await context.setOffline(false);
+      await page.evaluate(() => window.dispatchEvent(new Event('online')));
+
+      // Start a quiz - ads should work
+      await page.fill('[data-testid="topic-input"]', 'Art');
+      await page.click('[data-testid="start-quiz-btn"]');
+
+      await expect(page.locator('#quiz-loading-ad')).toBeVisible();
+    });
+  });
+
+  test.describe('No Ads During Active Quiz', () => {
+    test('quiz question view has no ad containers', async ({ page }) => {
+      await page.goto('/');
+      await page.fill('[data-testid="topic-input"]', 'Music');
+      await page.click('[data-testid="start-quiz-btn"]');
+
+      // Wait for actual quiz (not loading)
+      await expect(page.locator('.quiz-view')).toBeVisible({ timeout: 20000 });
+
+      // Should NOT have any ad containers during active quiz
+      await expect(page.locator('.quiz-view .ad-container')).toHaveCount(0);
+    });
+  });
+
+  test.describe('Settings Page - No Ads', () => {
+    test('settings page has no ad containers', async ({ page }) => {
+      await page.goto('/settings');
+
+      await expect(page.locator('.settings-view')).toBeVisible();
+      await expect(page.locator('.ad-container')).toHaveCount(0);
+    });
+  });
+
+  test.describe('Privacy Policy Accessibility', () => {
+    test('privacy policy page is accessible', async ({ page }) => {
+      await page.goto('/privacy');
+
+      await expect(page.locator('h1')).toContainText('Privacy Policy');
+      await expect(page.locator('text=Google AdSense')).toBeVisible();
+    });
+
+    test('privacy link is visible in footer/settings', async ({ page }) => {
+      await page.goto('/settings');
+
+      const privacyLink = page.locator('a[href="/privacy"], a[href*="privacy"]');
+      await expect(privacyLink).toBeVisible();
+    });
+  });
+});
+```
+
+#### M5.4 Test Configuration
+
+Add to `playwright.config.js` (if not already configured):
+
+```javascript
+// Extend existing config for ad testing
+export default {
+  // ... existing config ...
+
+  projects: [
+    // ... existing projects ...
+    {
+      name: 'ads-integration',
+      testMatch: '**/ads.spec.js',
+      use: {
+        // Longer timeouts for LLM responses
+        timeout: 30000,
+        actionTimeout: 15000,
+      },
+    },
+  ],
+};
+```
+
+#### M5.5 AdSense Dev Mode (Placeholders)
 
 For testing without affecting your account:
 
@@ -626,12 +909,12 @@ const AdManager = {
   // ... other code ...
 
   loadAd(containerId, slotId) {
-    // In dev, show placeholder instead
-    if (import.meta.env.DEV) {
+    // In dev/test, show placeholder instead
+    if (import.meta.env.DEV || import.meta.env.MODE === 'test') {
       const container = document.getElementById(containerId);
       if (container) {
         container.innerHTML = `
-          <div style="background:#f0f0f0;padding:20px;text-align:center;border:1px dashed #ccc;">
+          <div class="ad-placeholder" data-testid="ad-placeholder" style="background:#f0f0f0;padding:20px;text-align:center;border:1px dashed #ccc;">
             [Ad Placeholder: ${slotId}]
           </div>
         `;
@@ -644,7 +927,7 @@ const AdManager = {
 };
 ```
 
-#### M5.3 Performance Monitoring
+#### M5.6 Performance Monitoring
 
 Track ad performance in your observability:
 
@@ -764,6 +1047,9 @@ Low effort, complements ads, builds community goodwill.
 | `src/views/ResultsLoadingView.js` | Create | Results loading with ad |
 | `src/state/quizState.js` | Modify | Integrate ads into quiz flow |
 | `src/router/index.js` | Modify | Handle loading states with ads |
+| `tests/unit/adManager.test.js` | Create | Unit tests for AdManager |
+| `tests/e2e/ads.spec.js` | Create | E2E tests for ad placements |
+| `playwright.config.js` | Modify | Add ads-integration test project |
 
 ---
 
