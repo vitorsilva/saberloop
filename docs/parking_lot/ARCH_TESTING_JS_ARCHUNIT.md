@@ -37,6 +37,7 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 | Tool | Description | GitHub Stars | Last Update |
 |------|-------------|--------------|-------------|
 | **dependency-cruiser** | Comprehensive dependency analysis and validation | ~5.5k | Active |
+| **ts-arch** | Architecture testing with fluent API + PlantUML | ~300 | Active (Dec 2024) |
 | **ArchUnitTS** | TypeScript port of Java's ArchUnit | ~200 | Active |
 | **eslint-plugin-import** | ESLint rules for import/export | ~5.5k | Active |
 | **madge** | Circular dependency detection + visualization | ~8k | Active |
@@ -66,7 +67,38 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 
 ---
 
-#### 2. ArchUnitTS
+#### 2. ts-arch
+
+**Pros:**
+- Fluent, readable API similar to ArchUnit:
+  ```typescript
+  const rule = filesOfProject()
+    .inFolder('views')
+    .shouldNot()
+    .dependOnFiles()
+    .inFolder('db')
+
+  await expect(rule).toPassAsync()
+  ```
+- **PlantUML diagram integration** - Define architecture in diagrams, enforce in tests
+- **Nx monorepo support** - Works with Nx project graphs
+- Cyclic dependency detection built-in
+- Actively maintained (v5.4.1, Dec 2024)
+- Works with any test runner (Jest integration provided)
+- Slice-based architecture testing
+
+**Cons:**
+- Async-heavy (requires longer test timeouts)
+- Tests can be slower than dependency-cruiser
+- Smaller community than dependency-cruiser
+- TypeScript-focused (works with JS but optimized for TS)
+- Less output format options
+
+**Best for:** Projects wanting fluent API + diagram-driven architecture validation
+
+---
+
+#### 3. ArchUnitTS
 
 **Pros:**
 - Fluent, readable API similar to Java's ArchUnit:
@@ -84,15 +116,16 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 **Cons:**
 - Smaller community and ecosystem
 - Fewer output formats
-- Less mature than dependency-cruiser
+- Less mature than dependency-cruiser and ts-arch
 - Primarily TypeScript-focused (our project is JavaScript)
 - No built-in visualization
+- No diagram support
 
 **Best for:** TypeScript projects wanting readable, ArchUnit-style rules
 
 ---
 
-#### 3. eslint-plugin-import
+#### 5. eslint-plugin-import
 
 **Pros:**
 - Integrates with existing ESLint setup
@@ -112,7 +145,7 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 
 ---
 
-#### 4. madge
+#### 6. madge
 
 **Pros:**
 - Excellent visualization (generates graphs)
@@ -131,7 +164,7 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 
 ---
 
-#### 5. Custom Solution
+#### 7. Custom Solution
 
 **Pros:**
 - Complete control over rules and output
@@ -152,38 +185,59 @@ Implement architecture testing using **dependency-cruiser** to enforce structura
 
 ### Decision Matrix
 
-| Criteria | Weight | dep-cruiser | ArchUnitTS | eslint-import | madge | Custom |
-|----------|--------|-------------|------------|---------------|-------|--------|
-| Layer rules | High | 5 | 5 | 3 | 1 | 5 |
-| Naming conventions | Med | 4 | 3 | 2 | 1 | 5 |
-| Circular deps | High | 5 | 4 | 3 | 5 | 4 |
-| Visualization | Low | 4 | 2 | 1 | 5 | 2 |
-| CI integration | High | 5 | 4 | 5 | 4 | 3 |
-| Vitest integration | High | 4 | 4 | 5 | 3 | 5 |
-| Maturity | Med | 5 | 3 | 5 | 4 | 1 |
-| Documentation | Med | 5 | 3 | 4 | 4 | 1 |
-| JS support | High | 5 | 3 | 5 | 5 | 5 |
-| Learning effort | Med | 3 | 4 | 5 | 5 | 1 |
-| **Total** | | **45** | **35** | **38** | **37** | **32** |
+| Criteria | Weight | dep-cruiser | ts-arch | ArchUnitTS | eslint-import | madge | Custom |
+|----------|--------|-------------|---------|------------|---------------|-------|--------|
+| Layer rules | High | 5 | 5 | 5 | 3 | 1 | 5 |
+| Naming conventions | Med | 4 | 3 | 3 | 2 | 1 | 5 |
+| Circular deps | High | 5 | 5 | 4 | 3 | 5 | 4 |
+| Visualization | Low | 4 | 3 | 2 | 1 | 5 | 2 |
+| Diagram support | Low | 2 | 5 | 1 | 1 | 1 | 3 |
+| CI integration | High | 5 | 5 | 4 | 5 | 4 | 3 |
+| Vitest integration | High | 4 | 4 | 4 | 5 | 3 | 5 |
+| Maturity | Med | 5 | 4 | 3 | 5 | 4 | 1 |
+| Documentation | Med | 5 | 4 | 3 | 4 | 4 | 1 |
+| JS support | High | 5 | 4 | 3 | 5 | 5 | 5 |
+| Fluent API | Med | 2 | 5 | 5 | 2 | 3 | 3 |
+| Learning effort | Med | 3 | 4 | 4 | 5 | 5 | 1 |
+| **Total** | | **49** | **51** | **41** | **41** | **41** | **38** |
 
 *(Scale: 1=Poor, 5=Excellent)*
 
+**Note:** ts-arch scores highest overall, but dependency-cruiser wins on **JS support** (our project is vanilla JS) and **output formats** (we want visualization + CI reports).
+
 ### Final Decision: dependency-cruiser
 
-**Rationale:**
+**Why not ts-arch (highest score)?**
 
-1. **Best overall feature set** - Covers all our requirements (layers, naming, circular deps)
-2. **JavaScript-first** - Our project is vanilla JS, not TypeScript
-3. **Mature and well-maintained** - Active development, good community
-4. **Flexible configuration** - Can start simple, add complexity as needed
-5. **CI-friendly** - Easy to integrate with GitHub Actions
-6. **Visualization bonus** - Can generate dependency graphs when needed
+ts-arch scored 51 vs dependency-cruiser's 49, but we chose dependency-cruiser because:
+
+1. **Our project is vanilla JavaScript** - ts-arch is optimized for TypeScript projects
+2. **Better output formats** - dependency-cruiser has JSON, dot/GraphViz, HTML, text
+3. **More mature** - Larger community, more real-world usage, better docs
+4. **No async overhead** - ts-arch requires longer test timeouts due to async nature
+
+**Rationale for dependency-cruiser:**
+
+1. **Best JS support** - Works natively with vanilla JavaScript (no TS compilation)
+2. **Comprehensive rule system** - Covers all our requirements (layers, naming, circular deps)
+3. **Multiple output formats** - Can generate reports, graphs, and CI-friendly output
+4. **Mature and well-maintained** - ~5.5k stars, active development, proven in production
+5. **Flexible configuration** - Can start simple, add complexity as needed
+6. **CI-friendly** - Easy to integrate with GitHub Actions
 
 **Trade-offs accepted:**
 
-- Configuration is more verbose than ArchUnitTS's fluent API
+- Configuration is more verbose than ts-arch/ArchUnitTS fluent API
 - Will need to learn dependency-cruiser's rule syntax
 - Rule definitions are less "readable English" than ArchUnit style
+- No PlantUML diagram support (could add madge for visualization if needed)
+
+**Reconsidering ts-arch:**
+
+If we migrate to TypeScript in the future, ts-arch becomes more attractive because:
+- Fluent API is more readable
+- PlantUML diagram integration is excellent for documentation
+- Actively maintained with modern features
 
 ### Alternative Consideration: Hybrid Approach
 
