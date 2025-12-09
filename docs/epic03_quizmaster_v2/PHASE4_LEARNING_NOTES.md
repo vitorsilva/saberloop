@@ -196,6 +196,43 @@ Migrated Tailwind CSS from CDN to PostCSS build for better performance and offli
    - `@tailwind base;` must start at column 0
    - Leading spaces cause parsing issues
 
+## Session 3 - December 9, 2025
+
+### What We Built
+
+UI refinements to Settings and Welcome pages.
+
+### Completed Tasks
+
+8. **Settings Page Updates** (`src/views/SettingsView.js`)
+   - Renamed "Questions Per Quiz" → "Default Questions Per Quiz" (disabled)
+   - Renamed "Difficulty" → "Default Difficulty" (disabled)
+   - Renamed "Account" → "Connection to AI Provider"
+   - Disabled selects styled with `opacity-50` and `cursor-not-allowed`
+
+9. **Welcome Page Updates** (`src/views/WelcomeView.js`)
+   - Icon → App logo (`/icons/icon-192x192.png`)
+   - Tagline → "Learn Anything, Practice Anything"
+   - "Get Started Free" → "Connect to AI Provider" (opens ConnectModal)
+   - "Skip for now" → "Try Free Quizzes" (styled as button)
+   - Removed "Free tier" and "Powered by OpenRouter" text
+
+10. **OAuth Flow Fix** (`src/main.js`)
+    - Added `markWelcomeSeen()` after successful OpenRouter connection
+    - User now goes to homepage after connecting (not back to welcome)
+
+11. **E2E Test Update** (`tests/e2e/app.spec.js`)
+    - Updated settings persistence test to only test enabled fields
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/views/SettingsView.js` | Label renames, disabled selects |
+| `src/views/WelcomeView.js` | Logo, tagline, buttons, removed text |
+| `src/main.js` | markWelcomeSeen on OAuth success |
+| `tests/e2e/app.spec.js` | Updated settings test |
+
 ### What's Next
 
 - [ ] Phase 5: Project Structure (code organization)
@@ -204,4 +241,4 @@ Migrated Tailwind CSS from CDN to PostCSS build for better performance and offli
 ### Test Results
 
 - **Unit Tests**: All passing
-- **E2E Tests**: All passing
+- **E2E Tests**: All passing (16 tests)
