@@ -1,4 +1,4 @@
-# Phase 7: Google Play Store Publishing
+# Phase 9: Google Play Store Publishing
 
 ## Overview
 
@@ -16,7 +16,8 @@ This phase covers publishing Saberloop to the Google Play Store using PWABuilder
 
 Before starting this phase, ensure:
 
-- [x] **HTTPS hosting** - Saberloop deployed at https://osmeusapontamentos.com/quiz-generator/
+- [ ] **Domain** - saberloop.com registered and DNS configured
+- [ ] **HTTPS hosting** - Saberloop deployed at https://saberloop.com
 - [x] **Valid manifest.json** with:
   - [x] App name: "Saberloop - Learn Through Quizzes"
   - [x] short_name: "Saberloop"
@@ -31,7 +32,171 @@ Before starting this phase, ensure:
 
 ## Phase Structure
 
-### 7.1 Google Play Developer Account Setup
+### 9.1 Domain & Hosting Setup (LAMP + cPanel)
+
+**Time:** 1-2 hours
+
+#### 9.1.1 DNS Configuration
+
+1. **Log into your domain registrar** (where you bought saberloop.com)
+2. **Update nameservers** to point to your LAMP host (get these from cPanel)
+   - Or add A record pointing to your host's IP address:
+   ```
+   Type: A
+   Host: @
+   Value: YOUR_SERVER_IP
+   TTL: 3600
+   ```
+3. **Add www subdomain** (optional but recommended):
+   ```
+   Type: CNAME
+   Host: www
+   Value: saberloop.com
+   TTL: 3600
+   ```
+4. **Wait for DNS propagation** (can take 15 minutes to 48 hours)
+   - Check with: https://dnschecker.org/#A/saberloop.com
+
+#### 9.1.2 cPanel Domain Setup
+
+1. **Log into cPanel**
+2. **Add the domain** (if not primary):
+   - Go to "Domains" or "Addon Domains"
+   - Add saberloop.com
+   - Note the document root (e.g., `/public_html/saberloop.com/`)
+3. **Verify domain is accessible** via HTTP first
+
+#### 9.1.3 SSL Certificate Setup
+
+1. **In cPanel, go to "SSL/TLS Status"** or "Let's Encrypt"
+2. **Issue free SSL certificate** for saberloop.com
+   - Select saberloop.com (and www.saberloop.com if added)
+   - Click "Issue" or "Run AutoSSL"
+3. **Wait for certificate issuance** (usually 5-15 minutes)
+4. **Verify HTTPS works**: https://saberloop.com
+
+**Troubleshooting SSL:**
+- If AutoSSL fails, ensure DNS is fully propagated
+- Check "SSL/TLS" → "Manage SSL Sites" for manual installation
+- Contact host support if issues persist
+
+---
+
+### 9.2 Deploy Saberloop via FTP
+
+**Time:** 30-45 minutes
+
+#### 9.2.1 Build the Production Version
+
+On your local machine:
+```bash
+cd /path/to/demo-pwa-app
+npm run build
+```
+
+This creates a `dist/` folder with all production files.
+
+#### 9.2.2 FTP Connection Setup
+
+1. **Get FTP credentials from cPanel**:
+   - Go to "FTP Accounts"
+   - Use existing account or create new one
+   - Note: Host, Username, Password, Port (usually 21)
+
+2. **Connect with FTP client** (FileZilla, Cyberduck, etc.):
+   ```
+   Host: ftp.saberloop.com (or server IP)
+   Username: your_ftp_username
+   Password: your_ftp_password
+   Port: 21
+   ```
+
+#### 9.2.3 Upload Files
+
+1. **Navigate to document root**:
+   - Usually `/public_html/` or `/public_html/saberloop.com/`
+
+2. **Upload contents of `dist/` folder**:
+   ```
+   dist/
+   ├── index.html          → upload to root
+   ├── assets/             → upload folder
+   ├── manifest.json       → upload to root
+   ├── sw.js               → upload to root
+   ├── icons/              → upload folder
+   └── ...
+   ```
+
+3. **Upload PHP backend files** (from your existing setup):
+   ```
+   api/
+   ├── generate-questions.php
+   ├── generate-explanation.php
+   ├── health-check.php
+   └── .env (with API keys - keep secure!)
+   ```
+
+#### 9.2.4 Configure .htaccess for SPA Routing
+
+Create/update `.htaccess` in document root:
+
+```apache
+# Enable RewriteEngine
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Handle SPA routing - serve index.html for all non-file requests
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(?!api/).*$ index.html [L]
+
+# Correct MIME types
+AddType application/javascript .js
+AddType application/json .json
+AddType text/css .css
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType text/css "access plus 1 week"
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+```
+
+#### 9.2.5 Update API Base URL
+
+If your frontend needs to know the API location, update the configuration:
+
+**In your `.env` or config:**
+```
+VITE_API_BASE_URL=https://saberloop.com/api
+```
+
+Or if API is at root level, ensure paths are correct.
+
+#### 9.2.6 Verify Deployment
+
+1. **Test the app**: https://saberloop.com
+2. **Check PWA features**:
+   - Open DevTools → Application → Manifest (should load)
+   - Open DevTools → Application → Service Workers (should register)
+3. **Test quiz generation** (ensure API works)
+4. **Test offline mode** (disconnect and refresh)
+
+---
+
+### 9.3 Google Play Developer Account Setup
 
 **Time:** 30 minutes
 
@@ -49,7 +214,7 @@ Before starting this phase, ensure:
 
 ---
 
-### 7.2 Generate Android Package with PWABuilder
+### 9.4 Generate Android Package with PWABuilder
 
 **Time:** 15-30 minutes
 
@@ -57,7 +222,7 @@ Before starting this phase, ensure:
 
 1. **Navigate to PWABuilder**
    - Go to https://www.pwabuilder.com
-   - Enter your PWA URL: `https://osmeusapontamentos.com/quiz-generator/`
+   - Enter your PWA URL: `https://saberloop.com`
    - Click "Start"
 
 2. **Review PWA Score**
@@ -104,7 +269,7 @@ Navigation bar:    #1a1a2e
 
 ---
 
-### 7.3 Test APK on Android Device
+### 9.5 Test APK on Android Device
 
 **Time:** 15 minutes
 
@@ -140,7 +305,7 @@ Navigation bar:    #1a1a2e
 
 ---
 
-### 7.4 Configure Digital Asset Links
+### 9.6 Configure Digital Asset Links
 
 Digital Asset Links prove ownership of both the website and the app, enabling true standalone mode (no address bar).
 
@@ -171,39 +336,23 @@ Digital Asset Links prove ownership of both the website and the app, enabling tr
 
 **Deploy the Asset Links File:**
 
-1. Create the directory on your VPS: `/quiz-generator/.well-known/`
+1. Create the directory via FTP/cPanel: `/.well-known/`
 2. Create file: `.well-known/assetlinks.json`
 3. Paste your JSON content
-4. Upload to your PHP VPS at `osmeusapontamentos.com`
+4. Upload to saberloop.com
 
 **Verify Deployment:**
 ```
-https://osmeusapontamentos.com/quiz-generator/.well-known/assetlinks.json
+https://saberloop.com/.well-known/assetlinks.json
 ```
 
 The file must be accessible at this exact path.
 
-**Apache Configuration (if needed):**
-
-If `.well-known` directory is not accessible, add to `.htaccess`:
-```apache
-<Directory ".well-known">
-    Options -Indexes
-    AllowOverride None
-    Require all granted
-</Directory>
-
-<FilesMatch "assetlinks\.json$">
-    Header set Content-Type "application/json"
-    Header set Access-Control-Allow-Origin "*"
-</FilesMatch>
-```
-
-Or ensure the directory is within the web root and properly served.
+**Note:** The `.htaccess` from section 9.2.4 should already handle serving this correctly. If issues persist, ensure the `.well-known` directory exists and is readable.
 
 ---
 
-### 7.5 Prepare Play Store Listing Assets
+### 9.7 Prepare Play Store Listing Assets
 
 **Time:** 1-2 hours
 
@@ -268,7 +417,7 @@ Download now and start learning!
 
 ---
 
-### 7.6 Submit to Google Play Store
+### 9.8 Submit to Google Play Store
 
 **Time:** 30-60 minutes
 
@@ -318,7 +467,7 @@ Download now and start learning!
 
 ---
 
-### 7.7 Post-Publication: Digital Asset Links Update
+### 9.9 Post-Publication: Digital Asset Links Update
 
 **Important:** If you used Play App Signing, Google signs your app with their key. You'll need to:
 
@@ -340,7 +489,7 @@ Download now and start learning!
 }]
 ```
 
-4. Upload updated `assetlinks.json` to your VPS
+4. Upload updated `assetlinks.json` to saberloop.com via FTP
 5. The address bar will disappear within hours once Google verifies
 
 ---
@@ -381,16 +530,28 @@ Only needed for:
 
 | Item | Cost | Frequency |
 |------|------|-----------|
+| saberloop.com domain | ~$10-15 | Yearly |
+| LAMP hosting (cPanel) | Varies | Monthly/Yearly |
 | Google Play Developer Account | $25 | One-time |
 | PWABuilder | Free | - |
-| PHP VPS Hosting | Already covered | (existing VPS) |
-| **Total to Start** | **$25** | **One-time** |
+| **Total to Start** | **$25 + hosting** | **One-time + recurring** |
 
 ---
 
 ## Checklist
 
-### Pre-Submission
+### Domain & Hosting Setup (9.1-9.2)
+- [ ] saberloop.com DNS configured (A record pointing to host)
+- [ ] Domain added in cPanel
+- [ ] SSL certificate issued (Let's Encrypt/AutoSSL)
+- [ ] HTTPS verified working: https://saberloop.com
+- [ ] Production build created (`npm run build`)
+- [ ] Frontend files uploaded via FTP
+- [ ] PHP backend files uploaded
+- [ ] .htaccess configured for SPA routing
+- [ ] App tested and working at https://saberloop.com
+
+### Play Store Setup (9.3-9.5)
 - [ ] Google Play Developer account created and approved
 - [ ] PWABuilder package generated
 - [ ] APK tested on Android device
@@ -444,6 +605,7 @@ Common reasons:
 
 ## Success Criteria
 
+- [ ] Saberloop deployed and working at https://saberloop.com
 - [ ] Saberloop listed on Google Play Store
 - [ ] App installs successfully from Play Store
 - [ ] No address bar (TWA verification complete)
@@ -455,7 +617,7 @@ Common reasons:
 
 ## Future Enhancements
 
-### Phase 7.5: Apple App Store (Optional)
+### Phase 9.5: Apple App Store (Optional)
 PWABuilder also supports iOS packaging, though with more limitations:
 - Requires Apple Developer account ($99/year)
 - Uses Web Clips or PWA wrapper

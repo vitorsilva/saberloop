@@ -1001,7 +1001,7 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 ### **Phase 9: Google Play Store Publishing (Optional)** 📱 *Distribution*
 Publish Saberloop to Google Play Store using PWABuilder and Trusted Web Activities (TWA).
 
-📄 [PHASE7_PLAYSTORE_PUBLISHING.md](./PHASE7_PLAYSTORE_PUBLISHING.md)
+📄 [PHASE9_PLAYSTORE_PUBLISHING.md](./PHASE9_PLAYSTORE_PUBLISHING.md)
 
 **Status:** Optional - expands app distribution
 
