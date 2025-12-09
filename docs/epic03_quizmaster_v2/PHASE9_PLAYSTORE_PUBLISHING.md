@@ -1,0 +1,840 @@
+# Phase 9: Google Play Store Publishing
+
+## Overview
+
+This phase covers publishing Saberloop to the Google Play Store using PWABuilder. PWAs can be packaged as Android apps using Trusted Web Activities (TWA), allowing distribution through the Play Store while maintaining all PWA benefits.
+
+**Why Publish to Play Store?**
+- **Discoverability** - Users find apps in the Play Store, not through web search
+- **Credibility** - App store presence builds trust
+- **Installation** - One-tap install, no browser prompts
+- **Updates** - Web updates are instant (no app store review needed for content changes)
+
+---
+
+## Prerequisites
+
+Before starting this phase, ensure:
+
+- [ ] **Domain** - saberloop.com registered and DNS configured
+- [ ] **HTTPS hosting** - Saberloop deployed at https://saberloop.com
+- [x] **Valid manifest.json** with:
+  - [x] App name: "Saberloop - Learn Through Quizzes"
+  - [x] short_name: "Saberloop"
+  - [x] Icons: 192x192 and 512x512 PNG
+  - [x] start_url, display: "standalone"
+  - [x] theme_color: "#FF6B35"
+  - [x] background_color: "#1a1a2e"
+- [x] **Service worker** for offline capability
+- [ ] **Google Play Developer Account** ($25 one-time fee)
+
+---
+
+## Phase Structure
+
+### 9.1 Domain & Hosting Setup (LAMP + cPanel)
+
+**Time:** 1-2 hours
+
+#### 9.1.1 DNS Configuration
+
+1. **Log into your domain registrar** (where you bought saberloop.com)
+2. **Update nameservers** to point to your LAMP host (get these from cPanel)
+   - Or add A record pointing to your host's IP address:
+   ```
+   Type: A
+   Host: @
+   Value: YOUR_SERVER_IP
+   TTL: 3600
+   ```
+3. **Add www subdomain** (optional but recommended):
+   ```
+   Type: CNAME
+   Host: www
+   Value: saberloop.com
+   TTL: 3600
+   ```
+4. **Wait for DNS propagation** (can take 15 minutes to 48 hours)
+   - Check with: https://dnschecker.org/#A/saberloop.com
+
+#### 9.1.2 cPanel Domain Setup
+
+1. **Log into cPanel**
+2. **Add the domain** (if not primary):
+   - Go to "Domains" or "Addon Domains"
+   - Add saberloop.com
+   - Note the document root (e.g., `/public_html/saberloop.com/`)
+3. **Verify domain is accessible** via HTTP first
+
+#### 9.1.3 SSL Certificate Setup
+
+1. **In cPanel, go to "SSL/TLS Status"** or "Let's Encrypt"
+2. **Issue free SSL certificate** for saberloop.com
+   - Select saberloop.com (and www.saberloop.com if added)
+   - Click "Issue" or "Run AutoSSL"
+3. **Wait for certificate issuance** (usually 5-15 minutes)
+4. **Verify HTTPS works**: https://saberloop.com
+
+**Troubleshooting SSL:**
+- If AutoSSL fails, ensure DNS is fully propagated
+- Check "SSL/TLS" → "Manage SSL Sites" for manual installation
+- Contact host support if issues persist
+
+---
+
+### 9.2 Deploy Saberloop via FTP
+
+**Time:** 30-45 minutes
+
+#### 9.2.1 Build the Production Version
+
+On your local machine:
+```bash
+cd /path/to/demo-pwa-app
+npm run build
+```
+
+This creates a `dist/` folder with all production files.
+
+#### 9.2.2 FTP Connection Setup
+
+1. **Get FTP credentials from cPanel**:
+   - Go to "FTP Accounts"
+   - Use existing account or create new one
+   - Note: Host, Username, Password, Port (usually 21)
+
+2. **Connect with FTP client** (FileZilla, Cyberduck, etc.):
+   ```
+   Host: ftp.saberloop.com (or server IP)
+   Username: your_ftp_username
+   Password: your_ftp_password
+   Port: 21
+   ```
+
+#### 9.2.3 Upload Files
+
+1. **Navigate to document root**:
+   - Usually `/public_html/` or `/public_html/saberloop.com/`
+
+2. **Upload contents of `dist/` folder**:
+   ```
+   dist/
+   ├── index.html          → upload to root
+   ├── assets/             → upload folder
+   ├── manifest.json       → upload to root
+   ├── sw.js               → upload to root
+   ├── icons/              → upload folder
+   └── ...
+   ```
+
+3. **Upload PHP backend files** (from your existing setup):
+   ```
+   api/
+   ├── generate-questions.php
+   ├── generate-explanation.php
+   ├── health-check.php
+   └── .env (with API keys - keep secure!)
+   ```
+
+#### 9.2.4 Configure .htaccess for SPA Routing
+
+Create/update `.htaccess` in document root:
+
+```apache
+# Enable RewriteEngine
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Handle SPA routing - serve index.html for all non-file requests
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(?!api/).*$ index.html [L]
+
+# Correct MIME types
+AddType application/javascript .js
+AddType application/json .json
+AddType text/css .css
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType text/css "access plus 1 week"
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+```
+
+#### 9.2.5 Update API Base URL
+
+If your frontend needs to know the API location, update the configuration:
+
+**In your `.env` or config:**
+```
+VITE_API_BASE_URL=https://saberloop.com/api
+```
+
+Or if API is at root level, ensure paths are correct.
+
+#### 9.2.6 Verify Deployment
+
+1. **Test the app**: https://saberloop.com
+2. **Check PWA features**:
+   - Open DevTools → Application → Manifest (should load)
+   - Open DevTools → Application → Service Workers (should register)
+3. **Test quiz generation** (ensure API works)
+4. **Test offline mode** (disconnect and refresh)
+
+---
+
+### 9.3 Google Play Developer Account Setup
+
+**Time:** 30 minutes
+
+**Steps:**
+1. Go to [Google Play Console](https://play.google.com/console)
+2. Sign in with your Google account
+3. Pay the $25 registration fee (one-time)
+4. Complete developer profile (name, address, etc.)
+5. Wait for account approval (usually instant, can take 48 hours)
+
+**Important Notes:**
+- Use a personal or business Google account you control
+- The $25 fee is non-refundable
+- Account name will be visible to users
+
+---
+
+### 9.4 Generate Android Package with PWABuilder
+
+**Time:** 15-30 minutes
+
+**Steps:**
+
+1. **Navigate to PWABuilder**
+   - Go to https://www.pwabuilder.com
+   - Enter your PWA URL: `https://saberloop.com`
+   - Click "Start"
+
+2. **Review PWA Score**
+   - PWABuilder analyzes your PWA
+   - Review scores for manifest and service worker
+   - Address any critical issues before proceeding
+
+3. **Build Android Package**
+   - Click "Build My PWA"
+   - Select **Android** platform
+   - Configure the following options:
+
+**Package Configuration:**
+```
+Package ID:        com.saberloop.app
+App name:          Saberloop
+Short name:        Saberloop
+Version name:      1.0.0
+Version code:      1
+Display mode:      Standalone
+Status bar color:  #1a1a2e
+Navigation bar:    #1a1a2e
+```
+
+4. **Signing Key Setup (CRITICAL)**
+   - Select **"Generate new signing key"** (first release)
+   - PWABuilder creates a signing key for you
+   - Download the ZIP file
+
+5. **Save the ZIP Contents**
+   The ZIP contains:
+   ```
+   /output/
+   ├── app-release-signed.apk     # For testing
+   ├── app-release-signed.aab     # For Play Store upload
+   ├── signing.keystore           # YOUR SIGNING KEY (CRITICAL!)
+   └── signing-key-info.txt       # Key passwords and alias
+   ```
+
+**⚠️ CRITICAL: Keep the signing files safe!**
+- `signing.keystore` and `signing-key-info.txt` are required for ALL future updates
+- Store them securely (password manager, secure backup)
+- Without these, you CANNOT update your app ever
+
+---
+
+### 9.5 Test APK on Android Device
+
+**Time:** 15 minutes
+
+**Prerequisites:**
+- Android phone or tablet
+- USB cable (or file transfer method)
+
+**Steps:**
+
+1. **Enable Developer Mode on Phone**
+   - Go to Settings → About Phone
+   - Tap "Build Number" 7 times
+   - You'll see "Developer mode enabled"
+
+2. **Enable Unknown Sources**
+   - Settings → Security → Unknown sources (or Apps from unknown sources)
+   - Enable it for your file manager or browser
+
+3. **Transfer and Install APK**
+   - Transfer `app-release-signed.apk` to your phone
+   - Open the APK file
+   - Tap "Install"
+
+4. **Test the App**
+   - Open Saberloop from your app drawer
+   - Test all features (quiz generation, offline, etc.)
+   - **Note:** You'll see an address bar initially - this is normal and will disappear after Digital Asset Links verification
+
+**Expected Behavior:**
+- App opens in standalone mode (but with address bar)
+- All features work as expected
+- App icon appears correctly
+
+---
+
+### 9.5.5 Automated Testing with Maestro (Optional but Recommended)
+
+For repeatable TWA testing without manual device interaction, use Maestro - a simple mobile UI testing framework.
+
+**Time:** 30-45 minutes (first-time setup)
+
+#### Why Automate?
+- **Repeatable** - Run same tests after each PWA update
+- **CI-friendly** - Can integrate with GitHub Actions
+- **Fast** - Emulator tests run in ~30 seconds
+- **Free** - Open source tool
+
+#### Prerequisites
+
+1. **Install Maestro CLI**
+   ```bash
+   # macOS
+   curl -Ls "https://get.maestro.mobile.dev" | bash
+
+   # Windows (via WSL) or Linux
+   curl -Ls "https://get.maestro.mobile.dev" | bash
+   ```
+
+2. **Install Android Studio** (for emulator)
+   - Download from https://developer.android.com/studio
+   - During setup, ensure "Android Virtual Device" is selected
+   - Create an emulator (Pixel 6, API 33 recommended)
+
+3. **Start the emulator**
+   ```bash
+   # List available emulators
+   emulator -list-avds
+
+   # Start emulator (replace with your AVD name)
+   emulator -avd Pixel_6_API_33
+   ```
+
+#### Create Test Files
+
+Create directory for Maestro tests:
+```bash
+mkdir -p .maestro
+```
+
+**File: `.maestro/smoke-test.yaml`**
+```yaml
+appId: com.saberloop.app
+---
+# Test 1: App launches and shows home screen
+- launchApp
+- assertVisible:
+    text: ".*Saberloop.*"
+    timeout: 15000
+- takeScreenshot: 01-home-loaded
+
+# Test 2: Navigate to Settings
+- tapOn: "Settings"
+- assertVisible: "API"
+- takeScreenshot: 02-settings-visible
+
+# Test 3: Return to Home
+- tapOn: "Home"
+- assertVisible: "Start"
+- takeScreenshot: 03-back-to-home
+```
+
+**File: `.maestro/quiz-flow.yaml`**
+```yaml
+appId: com.saberloop.app
+---
+# Full quiz generation flow
+- launchApp
+- assertVisible:
+    text: ".*Saberloop.*"
+    timeout: 15000
+
+# Start a quiz
+- tapOn: "Start"
+- assertVisible: "topic"
+- inputText: "Basic math addition"
+- tapOn: "Generate"
+
+# Wait for questions (API call)
+- assertVisible:
+    text: "Question"
+    timeout: 30000
+- takeScreenshot: 04-quiz-started
+
+# Answer a question (tap first option)
+- tapOn:
+    index: 0
+- takeScreenshot: 05-answered-question
+```
+
+#### Run Tests
+
+```bash
+# Install APK to emulator first
+adb install app-release-signed.apk
+
+# Run smoke test
+maestro test .maestro/smoke-test.yaml
+
+# Run full quiz flow
+maestro test .maestro/quiz-flow.yaml
+
+# Run all tests in directory
+maestro test .maestro/
+```
+
+#### CI Integration (GitHub Actions)
+
+Add to `.github/workflows/android-test.yml`:
+```yaml
+name: Android TWA Tests
+
+on:
+  workflow_dispatch:  # Manual trigger
+  # Or trigger on release:
+  # push:
+  #   tags: ['v*']
+
+jobs:
+  test-twa:
+    runs-on: macos-latest  # macOS has better emulator support
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Maestro
+        run: curl -Ls "https://get.maestro.mobile.dev" | bash
+
+      - name: Start emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          script: |
+            adb install app-release-signed.apk
+            ~/.maestro/bin/maestro test .maestro/smoke-test.yaml
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maestro-screenshots
+          path: ~/.maestro/tests/
+```
+
+#### Expected Output
+
+Successful test run:
+```
+Running smoke-test.yaml
+
+ ✅ launchApp
+ ✅ assertVisible: Saberloop
+ ✅ takeScreenshot: 01-home-loaded
+ ✅ tapOn: Settings
+ ✅ assertVisible: API
+ ✅ takeScreenshot: 02-settings-visible
+ ✅ tapOn: Home
+ ✅ assertVisible: Start
+ ✅ takeScreenshot: 03-back-to-home
+
+Test passed in 12.4s
+```
+
+#### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| App not found | Ensure `appId` matches package ID in PWABuilder |
+| Element not found | Increase timeout, check element text matches exactly |
+| Emulator slow | Use x86_64 image with hardware acceleration |
+| Screenshots black | Wait for app to fully render before screenshot |
+
+#### When to Run These Tests
+
+- **Before Play Store submission** - Verify APK works
+- **After major PWA updates** - Ensure TWA still functions
+- **After regenerating APK** - Verify new builds work
+- **Optionally in CI** - Automated regression testing
+
+---
+
+### 9.6 Configure Digital Asset Links
+
+Digital Asset Links prove ownership of both the website and the app, enabling true standalone mode (no address bar).
+
+**Time:** 30 minutes
+
+**Option A: Using Peter's Asset Link Tool (Easier)**
+
+1. Install "Asset Link Tool" from Play Store on your test device
+2. Open the tool and select your installed Saberloop APK
+3. The tool generates the required JSON
+4. Copy the generated JSON
+
+**Option B: Manual Creation**
+
+1. Find your SHA256 fingerprint in `signing-key-info.txt`
+2. Create the following JSON:
+
+```json
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.saberloop.app",
+    "sha256_cert_fingerprints": ["YOUR_SHA256_FINGERPRINT_FROM_SIGNING_KEY_INFO"]
+  }
+}]
+```
+
+**Deploy the Asset Links File:**
+
+1. Create the directory via FTP/cPanel: `/.well-known/`
+2. Create file: `.well-known/assetlinks.json`
+3. Paste your JSON content
+4. Upload to saberloop.com
+
+**Verify Deployment:**
+```
+https://saberloop.com/.well-known/assetlinks.json
+```
+
+The file must be accessible at this exact path.
+
+**Note:** The `.htaccess` from section 9.2.4 should already handle serving this correctly. If issues persist, ensure the `.well-known` directory exists and is readable.
+
+---
+
+### 9.7 Prepare Play Store Listing Assets
+
+**Time:** 1-2 hours
+
+Before uploading to Play Store, prepare these required assets:
+
+**Screenshots (Required):**
+- **Phone screenshots:** At least 2, up to 8
+  - Size: 1080x1920 (portrait) or 1920x1080 (landscape)
+  - Show key features: home screen, quiz in progress, results
+
+- **Tablet screenshots:** Optional but recommended
+  - Size: 1920x1200 or similar
+
+**Feature Graphic (Required):**
+- Size: 1024x500 pixels
+- Displayed at top of store listing
+- Should showcase app branding
+
+**App Icon (Required):**
+- Size: 512x512 PNG
+- Already have: `public/icons/icon-512x512.png`
+
+**Text Content:**
+
+| Field | Max Length | Content |
+|-------|------------|---------|
+| Title | 30 chars | Saberloop |
+| Short Description | 80 chars | Learn any topic with AI-powered quizzes. Track progress and master subjects. |
+| Full Description | 4000 chars | See template below |
+
+**Full Description Template:**
+```
+Saberloop - The Fun Way to Learn Through Quizzes
+
+📚 LEARN ANY TOPIC
+Generate quizzes on any subject - from math and science to history and languages. Our AI creates personalized questions tailored to your learning level.
+
+🎯 TRACK YOUR PROGRESS
+See your quiz history, track scores, and watch your knowledge grow over time.
+
+📱 WORKS OFFLINE
+Study anywhere, even without internet. Your quizzes and progress are saved locally.
+
+✨ KEY FEATURES
+• AI-powered question generation
+• Multiple difficulty levels
+• Instant explanations for wrong answers
+• Progress tracking and history
+• Works offline
+• No ads or tracking
+
+🎓 PERFECT FOR
+• Students preparing for exams
+• Parents helping kids learn
+• Anyone wanting to test their knowledge
+• Self-directed learners
+
+Built with privacy in mind - no tracking, no ads, no data collection.
+
+Download now and start learning!
+```
+
+---
+
+### 9.8 Submit to Google Play Store
+
+**Time:** 30-60 minutes
+
+**Steps:**
+
+1. **Create App in Play Console**
+   - Go to [Play Console](https://play.google.com/console)
+   - Click "Create app"
+   - Fill in:
+     - App name: Saberloop
+     - Default language: English
+     - App or game: App
+     - Free or paid: Free
+
+2. **Complete Store Listing**
+   - Upload all screenshots and graphics
+   - Enter title, descriptions
+   - Select category: Education
+   - Add contact email
+
+3. **Complete Content Rating**
+   - Answer the IARC questionnaire
+   - Saberloop should qualify for "Everyone" rating
+
+4. **Set Up Pricing & Distribution**
+   - Select: Free
+   - Choose countries for distribution
+
+5. **Upload AAB File**
+   - Go to Release → Production → Create new release
+   - Upload `app-release-signed.aab`
+
+   **About Play App Signing:**
+   - Google recommends using Play App Signing
+   - If you use it, you'll need to add Google's signing key to your `assetlinks.json`
+   - Alternatively, opt out to use only your key (simpler)
+
+6. **Review and Submit**
+   - Review all information
+   - Click "Start rollout to Production"
+   - App goes into review queue
+
+**Review Timeline:**
+- First submission: Usually 1-7 days
+- Updates: Usually 1-3 days
+- May take longer if flagged for manual review
+
+---
+
+### 9.9 Post-Publication: Digital Asset Links Update
+
+**Important:** If you used Play App Signing, Google signs your app with their key. You'll need to:
+
+1. Go to Play Console → Release → Setup → App integrity
+2. Find the SHA256 fingerprint under "App signing key certificate"
+3. Add this fingerprint to your `assetlinks.json`:
+
+```json
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.saberloop.app",
+    "sha256_cert_fingerprints": [
+      "YOUR_UPLOAD_KEY_FINGERPRINT",
+      "GOOGLE_PLAY_SIGNING_KEY_FINGERPRINT"
+    ]
+  }
+}]
+```
+
+4. Upload updated `assetlinks.json` to saberloop.com via FTP
+5. The address bar will disappear within hours once Google verifies
+
+---
+
+## Updating Your App
+
+### Web Content Updates (Instant)
+Changes to your PWA (UI, features, bug fixes) are **instant** - users get updates automatically when they open the app. No Play Store review needed!
+
+### Play Store Metadata Updates
+To update screenshots, description, or app info:
+1. Go to Play Console
+2. Make changes
+3. Submit for review
+
+### APK/AAB Updates (Version Bumps)
+Only needed for:
+- Android-specific changes
+- Major version announcements
+- Minimum SDK requirements changes
+
+**To update the app package:**
+
+1. Go to PWABuilder
+2. In Signing key section, select **"Use mine"**
+3. Upload your `signing.keystore` file
+4. Enter credentials from `signing-key-info.txt`:
+   - Key alias
+   - Key password
+   - Keystore password
+5. **Increment version code** (e.g., 1 → 2)
+6. Generate new AAB
+7. Upload to Play Console
+
+---
+
+## Cost Breakdown
+
+| Item | Cost | Frequency |
+|------|------|-----------|
+| saberloop.com domain | ~$10-15 | Yearly |
+| LAMP hosting (cPanel) | Varies | Monthly/Yearly |
+| Google Play Developer Account | $25 | One-time |
+| PWABuilder | Free | - |
+| **Total to Start** | **$25 + hosting** | **One-time + recurring** |
+
+---
+
+## Checklist
+
+### Domain & Hosting Setup (9.1-9.2)
+- [ ] saberloop.com DNS configured (A record pointing to host)
+- [ ] Domain added in cPanel
+- [ ] SSL certificate issued (Let's Encrypt/AutoSSL)
+- [ ] HTTPS verified working: https://saberloop.com
+- [ ] Production build created (`npm run build`)
+- [ ] Frontend files uploaded via FTP
+- [ ] PHP backend files uploaded
+- [ ] .htaccess configured for SPA routing
+- [ ] App tested and working at https://saberloop.com
+
+### Play Store Setup (9.3-9.5)
+- [ ] Google Play Developer account created and approved
+- [ ] PWABuilder package generated
+- [ ] APK tested on Android device (manual)
+- [ ] Maestro tests passing (optional but recommended)
+- [ ] Signing files backed up securely
+- [ ] assetlinks.json deployed and accessible
+
+### Store Listing
+- [ ] App icon (512x512)
+- [ ] Phone screenshots (2-8)
+- [ ] Feature graphic (1024x500)
+- [ ] Short description (80 chars)
+- [ ] Full description (4000 chars)
+- [ ] Category selected (Education)
+- [ ] Content rating completed
+
+### Submission
+- [ ] AAB file uploaded
+- [ ] Pricing set (Free)
+- [ ] Countries selected
+- [ ] App submitted for review
+
+### Post-Publication
+- [ ] App approved and live
+- [ ] assetlinks.json updated with Play signing key (if applicable)
+- [ ] Address bar removed (TWA verified)
+- [ ] Test installation from Play Store
+
+---
+
+## Troubleshooting
+
+### Address Bar Won't Disappear
+- Verify `assetlinks.json` is accessible at `/.well-known/assetlinks.json`
+- Check SHA256 fingerprint matches (both upload and Play signing keys if applicable)
+- Wait 24-48 hours for Google verification
+- Clear app data and reinstall
+
+### App Rejected
+Common reasons:
+- Missing privacy policy (required for apps collecting any data)
+- Screenshots show incorrect content
+- Description doesn't match app functionality
+- Metadata policy violations
+
+### PWABuilder Issues
+- Ensure manifest.json is valid (use PWABuilder's validator)
+- Check service worker is registered correctly
+- Verify HTTPS is working
+
+---
+
+## Success Criteria
+
+- [ ] Saberloop deployed and working at https://saberloop.com
+- [ ] Saberloop listed on Google Play Store
+- [ ] App installs successfully from Play Store
+- [ ] No address bar (TWA verification complete)
+- [ ] All features work in Android app
+- [ ] At least "Everyone" content rating
+- [ ] Signing files securely stored for future updates
+
+---
+
+## Future Enhancements
+
+### Phase 9.5: Apple App Store (Optional)
+PWABuilder also supports iOS packaging, though with more limitations:
+- Requires Apple Developer account ($99/year)
+- Uses Web Clips or PWA wrapper
+- iOS PWA limitations apply
+
+### AdMob Integration (Optional)
+If monetization is desired:
+- Create AdMob account
+- Integrate AdMob SDK
+- Update privacy policy
+- Consider user experience impact
+
+---
+
+## References
+
+- [PWABuilder Documentation](https://docs.pwabuilder.com/)
+- [Trusted Web Activities Overview](https://developer.chrome.com/docs/android/trusted-web-activity/)
+- [Digital Asset Links](https://developers.google.com/digital-asset-links/)
+- [Play Console Help](https://support.google.com/googleplay/android-developer/)
+- [David Rousset's PWABuilder Guide](https://www.davrous.com/2020/02/07/publishing-your-pwa-in-the-play-store-in-a-couple-of-minutes-using-pwa-builder/)
+
+---
+
+**Ready to publish Saberloop to Google Play Store? Start with Section 7.1!**
