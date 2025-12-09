@@ -998,6 +998,62 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 
 ---
 
+### **Phase 9: Google Play Store Publishing (Optional)** 📱 *Distribution*
+Publish Saberloop to Google Play Store using PWABuilder and Trusted Web Activities (TWA).
+
+📄 [PHASE7_PLAYSTORE_PUBLISHING.md](./PHASE7_PLAYSTORE_PUBLISHING.md)
+
+**Status:** Optional - expands app distribution
+
+**Learning Objectives:**
+- Understand PWABuilder packaging workflow
+- Learn Trusted Web Activities (TWA) concept
+- Configure Digital Asset Links for verification
+- Navigate Google Play Console
+- Prepare app store listing assets
+
+**Why This is Optional:**
+- ✅ PWA already installable via browser
+- ✅ Web distribution works globally
+- ⚠️ Requires $25 Google Play Developer fee
+- ⚠️ Adds app store review process
+
+**Why You Might Want It:**
+- 📱 **Discoverability** - Users find apps in Play Store
+- 🏪 **Credibility** - App store presence builds trust
+- 📲 **Installation** - One-tap install from Play Store
+- 🔄 **Instant updates** - Web changes are immediate (no app review)
+- 💼 **Professional presence** - Listed alongside other apps
+
+**What You'll Build:**
+- ✅ Android package via PWABuilder
+- ✅ Digital Asset Links (assetlinks.json)
+- ✅ Play Store listing (screenshots, description)
+- ✅ Published app in Google Play Store
+
+**Key Features:**
+- PWA wrapped as Android app (TWA)
+- True standalone mode (no address bar after verification)
+- Web updates instant - no Play Store review needed
+- One-time $25 fee (no ongoing costs)
+
+**Estimated Time:** 1-2 sessions
+
+**Cost:** $25 one-time Google Play Developer fee
+
+**Success Criteria:**
+- ✅ Saberloop listed on Google Play Store
+- ✅ App installs successfully from Play Store
+- ✅ No address bar (TWA verification complete)
+- ✅ All PWA features work in Android wrapper
+- ✅ Signing files securely stored for updates
+
+**Decision Matrix:**
+- **Do Phase 9 if:** Want Play Store presence, targeting Android users, willing to pay $25
+- **Skip Phase 9 if:** Web-only distribution is sufficient, avoiding app store overhead
+
+---
+
 ## Success Criteria (Epic 3 Complete)
 
 ### Technical Milestones
@@ -1054,11 +1110,13 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 | Phase 6 | Ongoing | Validation & Iteration | Real user testing |
 | **Phase 7** | **2-3** | **Azure Migration** | **⭐ Optional: Azure experience** |
 | **Phase 8** | **2-3** | **OAuth Integration** | **⭐ Optional/Experimental** |
+| **Phase 9** | **1-2** | **Play Store Publishing** | **📱 Optional: $25 fee, Android distribution** |
 
 **Core Phases (1-3.6, 4-6)**: ~16-24 sessions (required)
 **Phase 6**: Ongoing (can overlap with future epics)
 **Phase 7**: +2-3 sessions (optional Azure)
 **Phase 8**: +2-3 sessions (optional OAuth, if available)
+**Phase 9**: +1-2 sessions (optional Play Store, $25 fee)
 
 ---
 
