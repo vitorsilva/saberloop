@@ -384,6 +384,69 @@ Loading State Approach (Better UX):
                     waiting anyway!
 ```
 
+#### Ad Format: Responsive Display (NOT Full-Page Interstitial)
+
+**Important:** Ads are displayed **alongside** app feedback, NOT as full-page takeovers.
+
+The user always sees:
+- Status message ("Creating Your Quiz", "Calculating Results")
+- Visual progress indicator (spinner)
+- The ad (partial screen, responsive)
+- Additional context/reassurance
+
+```
+┌─────────────────────────────────────────┐
+│                                         │
+│        🎯 Creating Your Quiz            │  ← Header (always visible)
+│   Generating questions about Math...    │
+│                                         │
+│              ⏳ [spinner]               │  ← Loading indicator
+│        This takes 10-15 seconds         │
+│                                         │
+│    ┌─────────────────────────────┐      │
+│    │                             │      │
+│    │     [RESPONSIVE AD]        │      │  ← Ad (partial screen)
+│    │      ~300x250 max          │      │     NOT full-page
+│    │                             │      │
+│    └─────────────────────────────┘      │
+│                                         │
+│    Our AI is crafting 5th grade         │  ← Context (always visible)
+│    questions just for you.              │
+│                                         │
+└─────────────────────────────────────────┘
+
+Mobile Layout (same principle):
+┌───────────────────────┐
+│  Creating Your Quiz   │ ← Header
+│  Math questions...    │
+│                       │
+│      ⏳ spinner       │ ← Progress
+│    10-15 seconds      │
+│                       │
+│  ┌─────────────────┐  │
+│  │  [RESPONSIVE]   │  │ ← Ad
+│  │      AD         │  │
+│  └─────────────────┘  │
+│                       │
+│  Crafting questions   │ ← Context
+│  for you...           │
+└───────────────────────┘
+```
+
+**Ad Formats to Use:**
+| Format | Size | Best For |
+|--------|------|----------|
+| Responsive Display | Auto-sized | Recommended - adapts to container |
+| Medium Rectangle | 300x250 | Good fallback for loading screens |
+| Mobile Banner | 320x100 | Smaller option for mobile |
+
+**Formats to AVOID:**
+| Format | Why Avoid |
+|--------|-----------|
+| Interstitial (full-page) | Blocks app feedback, feels intrusive |
+| Vignette | Covers content, bad UX |
+| Anchor/Sticky | Persists beyond loading state |
+
 #### M4.1 Quiz Generation Loading Screen (PRIMARY)
 
 When user starts a new quiz, show ad while questions are being generated:
