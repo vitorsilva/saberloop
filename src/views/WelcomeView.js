@@ -3,6 +3,7 @@
   import BaseView from './BaseView.js';
   import { startAuth } from '../api/openrouter-auth.js';
   import { markWelcomeSeen } from '../utils/welcome-version.js';
+  import { logger } from '../utils/logger.js';
 
   export default class WelcomeView extends BaseView {
     async render() {
@@ -138,7 +139,7 @@ hover:text-primary transition-colors underline"
         try {
           await startAuth();
         } catch (error) {
-          console.error('Auth failed:', error);
+          logger.error('Auth failed', { error: error.message });
           btn.disabled = false;
           btn.textContent = 'Get Started Free';
           this.showError('Failed to connect. Please try again.');

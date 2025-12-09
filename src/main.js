@@ -13,21 +13,22 @@ import { isAuthCallback, handleCallback } from './api/openrouter-auth.js';
 import WelcomeView from './views/WelcomeView.js';
 import { loadSamplesIfNeeded } from './utils/sample-loader.js';
 import { shouldShowWelcome } from './utils/welcome-version.js';
+import { logger } from './utils/logger.js';
 
-console.log('🎓 Saberloop initializing...');
+logger.info('Saberloop initializing');
 
 // Initialize database
 async function init() {
   try {
     await initDatabase();
-    console.log('✅ Database initialized');
+    logger.info('Database initialized');
 
     // Load sample quizzes if needed
     await loadSamplesIfNeeded();
 
     // Check if this is an OAuth callback BEFORE router starts
     if (isAuthCallback()) {
-      console.log('🔐 OAuth callback detected');
+      logger.debug('OAuth callback detected');
       await handleOAuthCallback();
       return; // Don't continue with normal init
     }
@@ -44,20 +45,20 @@ async function init() {
     
     // Start the router
     router.init();
-    console.log('✅ Router initialized');
+    logger.info('Router initialized');
 
     // Initialize network status monitoring
     initNetworkMonitoring();    
 
     // Redirect to welcome if needed (after router init)
     const showWelcome = await shouldShowWelcome();
-    console.log('👋 Show welcome:', showWelcome);
+    logger.debug('Show welcome check', { showWelcome });
     if (showWelcome) {
       window.location.hash = '#/welcome';
     }    
 
   } catch (error) {
-    console.error('❌ Initialization failed:', error);
+    logger.error('Initialization failed', { error: error.message });
   }
 }
 
@@ -89,13 +90,13 @@ async function init() {
       // Store the key
       await storeOpenRouterKey(apiKey);
 
-      console.log('✅ OpenRouter connected successfully');
+      logger.info('OpenRouter connected successfully');
 
       // Redirect to home (removes ?code from URL)
       window.location.href = window.location.origin + '/#/';
 
     } catch (error) {
-      console.error('❌ OAuth callback failed:', error);
+      logger.error('OAuth callback failed', { error: error.message });
 
       // Show error
       appContainer.innerHTML = `
@@ -136,13 +137,13 @@ if ('serviceWorker' in navigator) {
       }
     },
     onOfflineReady() {
-      console.log('✅ App ready to work offline');
+      logger.info('App ready to work offline');
     },
     onRegistered(registration) {
-      console.log('✅ Service Worker registered');
+      logger.info('Service Worker registered');
     },
     onRegisterError(error) {
-      console.error('❌ Service Worker registration failed:', error);
+      logger.error('Service Worker registration failed', { error: error.message });
     }
   });
 }

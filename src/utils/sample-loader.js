@@ -1,6 +1,7 @@
   import { getSetting, saveSetting, saveSession, deleteSampleSessions } from
   '../db/db.js';
   import sampleData from '../data/sample-quizzes.json';
+  import { logger } from './logger.js';
 
   const SAMPLES_VERSION_KEY = 'samplesVersion';
 
@@ -13,11 +14,11 @@
     const currentVersion = sampleData.version;
 
     if (storedVersion === currentVersion) {
-      console.log('[Samples] Already loaded, version:', storedVersion);
+      logger.debug('Samples already loaded', { version: storedVersion });
       return;
     }
 
-    console.log('[Samples] Loading samples, version:', currentVersion);
+    logger.debug('Loading samples', { version: currentVersion });
 
     // Clear old samples before loading new ones
     await deleteSampleSessions();
@@ -37,12 +38,12 @@
 
       try {
         await saveSession(session);
-        console.log('[Samples] Loaded:', sample.topic);
+        logger.debug('Sample loaded', { topic: sample.topic });
       } catch (error) {
-        console.error('[Samples] Failed to load:', sample.topic, error);
+        logger.error('Failed to load sample', { topic: sample.topic, error: error.message });
       }
     }
 
     await saveSetting(SAMPLES_VERSION_KEY, currentVersion);
-    console.log('[Samples] All samples loaded successfully');
+    logger.info('All samples loaded successfully');
   }

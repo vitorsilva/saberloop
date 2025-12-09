@@ -1,6 +1,7 @@
 import BaseView from './BaseView.js';
 import state from '../state/state.js';
 import { generateQuestions } from '../api/index.js';
+import { logger } from '../utils/logger.js';
 
 export default class LoadingView extends BaseView {
   constructor() {
@@ -122,7 +123,7 @@ export default class LoadingView extends BaseView {
       this.navigateTo('/quiz');
 
     } catch (error) {
-      console.error('Failed to generate questions:', error);
+      logger.error('Failed to generate questions', { error: error.message });
       this.cleanup();
 
       // Show error and go back

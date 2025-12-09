@@ -9,18 +9,13 @@
    * 5. Exchange code + code_verifier for API key
    */
 
+  import { logger } from '../utils/logger.js';
+
   const OPENROUTER_AUTH_URL = 'https://openrouter.ai/auth';
   const OPENROUTER_KEY_URL = 'https://openrouter.ai/api/v1/auth/keys';
 
   // Callback URL - where OpenRouter sends the user after login
   const CALLBACK_URL = window.location.origin + '/auth/callback';
-
-  // Set to true to see debug logs
-  const DEBUG = false;
-
-  function log(...args) {
-    if (DEBUG) console.log('[OpenRouter Auth]', ...args);
-  }
 
   /**
    * Generate a random code_verifier for PKCE
@@ -80,13 +75,12 @@
   }
 
   export async function handleCallback() {
-    log('handleCallback() called');
-    log('Current URL:', window.location.href);
+    logger.debug('OAuth handleCallback called');
 
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
-    log('Authorization code:', code ? 'Found' : 'NOT FOUND');
+    logger.debug('Authorization code check', { found: !!code });
 
     if (!code) {
       throw new Error('No authorization code found in URL');
@@ -94,13 +88,13 @@
 
     const codeVerifier = sessionStorage.getItem('openrouter_code_verifier');
 
-    log('Code verifier:', codeVerifier ? 'Found in sessionStorage' : 'NOT FOUND');
+    logger.debug('Code verifier check', { found: !!codeVerifier });
 
     if (!codeVerifier) {
-      throw new Error('No code verifier found. Please try logging in again.');       
+      throw new Error('No code verifier found. Please try logging in again.');
     }
 
-    log('Exchanging code for API key...');
+    logger.debug('Exchanging code for API key');
 
     const response = await fetch(OPENROUTER_KEY_URL, {
       method: 'POST',
@@ -114,17 +108,17 @@
       })
     });
 
-    log('Response status:', response.status);
+    logger.debug('Token exchange response', { status: response.status });
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      log('Error response:', error);
-      throw new Error(error.message || 'Failed to exchange code for API key');       
+      logger.error('Token exchange failed', { status: response.status });
+      throw new Error(error.message || 'Failed to exchange code for API key');
     }
 
     const data = await response.json();
 
-    log('API key received:', data.key ? 'Yes (hidden)' : 'No');
+    logger.debug('API key received', { success: !!data.key });
 
     sessionStorage.removeItem('openrouter_code_verifier');
     window.history.replaceState({}, '', window.location.pathname);

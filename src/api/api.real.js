@@ -2,18 +2,13 @@
 
   import { callOpenRouter } from './openrouter-client.js';
   import { getOpenRouterKey } from '../db/db.js';
-
-  const devLog = (...args) => {
-    if (import.meta.env.DEV) {
-      console.log(...args);
-    }
-  };
+  import { logger } from '../utils/logger.js';
 
   /**
    * Generate quiz questions using OpenRouter
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school') {
-    devLog(`[OpenRouter API] Generating questions for "${topic}" (${gradeLevel})`);
+    logger.debug('Generating questions', { topic, gradeLevel });
 
     // Get stored API key
     const apiKey = await getOpenRouterKey();
@@ -71,7 +66,7 @@
         temperature: 0.7
       });
 
-      devLog('[OpenRouter API] Raw response:', result.text);
+      logger.debug('OpenRouter raw response received');
 
       // Parse JSON from response
       let data;
@@ -89,18 +84,17 @@
         }
         data = JSON.parse(jsonText.trim());
       } catch (parseError) {
-        console.error('Failed to parse questions JSON:', result.text);
+        logger.error('Failed to parse questions JSON', { parseError: parseError.message });
         throw new Error('Invalid response format from AI');
       }
 
       // Validate structure
       if (!data.questions || !Array.isArray(data.questions) || data.questions.length !== 5) {
-        console.error('Invalid questions structure:', data);
+        logger.error('Invalid questions structure', { questionCount: data.questions?.length });
         throw new Error('AI returned invalid question format');
       }
 
-      devLog('[OpenRouter API] Generated questions:', data.questions);
-      devLog('[OpenRouter API] Detected language:', data.language);
+      logger.debug('Questions generated successfully', { language: data.language, count: data.questions.length });
 
       return {
         language: data.language || 'EN-US',
@@ -108,7 +102,7 @@
       };
 
     } catch (error) {
-      console.error('Question generation failed:', error);
+      logger.error('Question generation failed', { error: error.message });
       throw error;
     }
   }
@@ -118,7 +112,7 @@
    */
   export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel =
   'middle school') {
-    devLog(`[OpenRouter API] Generating explanation for incorrect answer`);
+    logger.debug('Generating explanation for incorrect answer');
 
     // Get stored API key
     const apiKey = await getOpenRouterKey();
@@ -150,12 +144,12 @@
         temperature: 0.7
       });
 
-      devLog('[OpenRouter API] Generated explanation:', result.text);
+      logger.debug('Explanation generated successfully');
 
       return result.text.trim();
 
     } catch (error) {
-      console.error('Explanation generation failed:', error);
+      logger.error('Explanation generation failed', { error: error.message });
       return 'Sorry, we couldn\'t generate an explanation at this time.';
     }
   }

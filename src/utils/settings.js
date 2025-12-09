@@ -2,6 +2,8 @@
    * Settings utility for managing user preferences in localStorage
    */
 
+  import { logger } from './logger.js';
+
   const SETTINGS_KEY = 'quizmaster_settings';
 
   // Default values for all settings
@@ -21,7 +23,7 @@
         return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
       }
     } catch (error) {
-      console.error('Error reading settings:', error);
+      logger.error('Error reading settings', { error: error.message });
     }
     return { ...DEFAULT_SETTINGS };
   }
@@ -44,7 +46,7 @@
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     } catch (error) {
-      console.error('Error saving setting:', error);
+      logger.error('Error saving setting', { key, error: error.message });
     }
   }
 
@@ -57,6 +59,6 @@
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     } catch (error) {
-      console.error('Error saving settings:', error);
+      logger.error('Error saving settings', { error: error.message });
     }
   }

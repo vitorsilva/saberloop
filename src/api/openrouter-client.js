@@ -3,16 +3,12 @@
    * Makes direct browser → OpenRouter API calls (CORS supported)
    */
 
-  const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';        
+  import { logger } from '../utils/logger.js';
+
+  const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
   // Default free model - good for structured JSON output
   const DEFAULT_MODEL = 'tngtech/deepseek-r1t2-chimera:free';
-
-  // Debug logging
-  const DEBUG = false;
-  function log(...args) {
-    if (DEBUG) console.log('[OpenRouter Client]', ...args);
-  }
 
   /**
    * Call OpenRouter Chat API
@@ -28,7 +24,7 @@
       temperature = 0.7
     } = options;
 
-    log('Calling OpenRouter:', { model, maxTokens, temperature });
+    logger.debug('Calling OpenRouter', { model, maxTokens, temperature });
 
     const response = await fetch(OPENROUTER_API_URL, {
       method: 'POST',
@@ -46,7 +42,7 @@
       })
     });
 
-    log('Response status:', response.status);
+    logger.debug('OpenRouter response', { status: response.status });
 
     // Handle errors
     if (!response.ok) {
@@ -61,7 +57,7 @@
       throw new Error('Empty response from OpenRouter');
     }
 
-    log('Response received, length:', text.length);
+    logger.debug('OpenRouter response received', { length: text.length });
 
     return {
       text,
@@ -101,7 +97,7 @@
       await callOpenRouter(apiKey, 'Say "ok"', { maxTokens: 10 });
       return true;
     } catch (error) {
-      log('API key test failed:', error.message);
+      logger.debug('API key test failed', { error: error.message });
       return false;
     }
   }

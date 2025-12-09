@@ -1,6 +1,7 @@
 import BaseView from './BaseView.js';
 import state from '../state/state.js';
 import { saveSession, updateSession } from '../db/db.js';
+import { logger } from '../utils/logger.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -169,9 +170,9 @@ export default class ResultsView extends BaseView {
           answers,
           timestamp: Date.now()  // Update timestamp to show when last played
         });
-        console.log('Replay session updated:', replaySessionId);
+        logger.debug('Replay session updated', { sessionId: replaySessionId });
       } catch (error) {
-        console.error('Failed to update session:', error);
+        logger.error('Failed to update session', { error: error.message });
       }
       state.set('replaySessionId', null);
       return;
@@ -192,9 +193,9 @@ export default class ResultsView extends BaseView {
 
     try {
       await saveSession(session);
-      console.log('Quiz session saved:', session.topic);
+      logger.debug('Quiz session saved', { topic: session.topic });
     } catch (error) {
-      console.error('Failed to save session:', error);
+      logger.error('Failed to save session', { error: error.message });
     }
   }
 

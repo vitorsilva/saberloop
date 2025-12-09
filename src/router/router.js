@@ -1,5 +1,7 @@
   // Router - Handles navigation between views
 
+  import { logger } from '../utils/logger.js';
+
   class Router {
     constructor() {
       this.routes = new Map();      // Store route → ViewClass mappings
@@ -37,7 +39,7 @@
         this.render(ViewClass);
       } else {
         // Route not found, go to default route
-        console.warn(`Route ${hash} not found, redirecting to /`);
+        logger.warn('Route not found, redirecting to /', { hash });
         this.navigateTo('/');
       }
     }

@@ -1,9 +1,5 @@
 // api.mock.js - Mock API for testing without real Claude API calls
-    const devLog = (...args) => {
-      if (import.meta.env.DEV) {
-        console.log(...args);
-      }
-    };
+import { logger } from '../utils/logger.js';
 
   /**
    * Mock question generation - returns fake but realistic questions
@@ -15,8 +11,7 @@
     // Simulate network delay (real APIs take time)
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-
-    devLog(`[MOCK API] Generating questions for "${topic}" (${gradeLevel})`);
+    logger.debug('Mock API generating questions', { topic, gradeLevel });
 
     // Return realistic mock data
     const mockQuestions = [
@@ -77,8 +72,7 @@
       }
     ];
 
-    devLog('[MOCK API] Generated questions:', mockQuestions);
-    devLog('[MOCK API] Detected language:', 'EN-US');
+    logger.debug('Mock API questions generated', { count: mockQuestions.length, language: 'EN-US' });
 
     return {
       language: 'EN-US',
@@ -99,7 +93,7 @@
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    devLog(`[MOCK API] Generating explanation for incorrect answer`);
+    logger.debug('Mock API generating explanation');
 
     const mockExplanation =  `Your answer (${userAnswer}) wasn't quite right, but that's okay - this is how we learn!    
 
@@ -108,10 +102,10 @@
   might have initially thought. Think of it like this: imagine you're building with blocks - you       
   need to understand how each piece fits together before you can build something complex.
 
-  The key thing to remember is that understanding the foundations helps everything else make sense.    
+  The key thing to remember is that understanding the foundations helps everything else make sense.
    Keep practicing, and you'll get it! 🌟`;
-   
-   devLog('[MOCK API] Generated explanation:', mockExplanation);
+
+   logger.debug('Mock API explanation generated');
 
    return mockExplanation;
   }

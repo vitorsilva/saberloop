@@ -1,4 +1,5 @@
   import { startAuth } from '../api/openrouter-auth.js';
+  import { logger } from '../utils/logger.js';
 
   /**
    * Show a modal prompting user to connect to OpenRouter
@@ -65,7 +66,7 @@
           await startAuth();
           // Auth redirects, so we won't reach here
         } catch (error) {
-          console.error('Auth failed:', error);
+          logger.error('Auth failed in ConnectModal', { error: error.message });
           connectBtn.disabled = false;
           connectBtn.textContent = 'Connect with OpenRouter';
         }

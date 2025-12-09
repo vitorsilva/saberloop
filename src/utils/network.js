@@ -3,6 +3,8 @@
    * Detects and monitors online/offline state
    */
 
+  import { logger } from './logger.js';
+
   /**
    * Check if browser is currently online
    * @returns {boolean} True if online, false if offline
@@ -84,5 +86,5 @@
       updateOfflineUI();
     });
 
-    console.log('✅ Network monitoring initialized');
+    logger.info('Network monitoring initialized');
   }

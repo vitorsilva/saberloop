@@ -3,7 +3,6 @@
   export default class BaseView {
     constructor() {
       this.appContainer = document.getElementById('app');
-     console.log('BaseView initialized, appContainer:', this.appContainer); 
       this.listeners = []; // Track event listeners for cleanup
     }
 
