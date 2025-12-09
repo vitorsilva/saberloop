@@ -14,8 +14,10 @@ import WelcomeView from './views/WelcomeView.js';
 import { loadSamplesIfNeeded } from './utils/sample-loader.js';
 import { shouldShowWelcome } from './utils/welcome-version.js';
 import { logger } from './utils/logger.js';
+import { initErrorHandling } from './utils/errorHandler.js';
 
 logger.info('Saberloop initializing');
+initErrorHandling();
 
 // Initialize database
 async function init() {
