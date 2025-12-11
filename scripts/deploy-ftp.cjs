@@ -2,6 +2,7 @@ require('dotenv').config();
 const FtpDeploy = require('ftp-deploy');
 const ftpDeploy = new FtpDeploy();
 
+// FTP configuration for saberloop.com
 const baseConfig = {
     user: process.env.FTP_USER,
     password: process.env.FTP_PASSWORD,
@@ -11,35 +12,25 @@ const baseConfig = {
     deleteRemote: false
 };
 
-// Deploy frontend (dist/)
+// Deploy frontend to /app/ subdirectory
+// saberloop.com/app/ will host the PWA
+// saberloop.com/ (root) reserved for future landing page
 const frontendConfig = {
     ...baseConfig,
     localRoot: './dist',
-    remoteRoot: '/',
+    remoteRoot: '/app',
     include: ['*', '**/*'],
     exclude: []
 };
 
-// Deploy PHP backend (php-api/)
-const phpConfig = {
-    ...baseConfig,
-    localRoot: './php-api',
-    remoteRoot: '/',
-    include: ['**/*.php', '.htaccess'],
-    exclude: ['composer.json', 'composer.lock', 'vendor/**', 'tests/**', 'phpunit.xml','.env', '.env.example', 'Dockerfile']
-};
-
 async function deploy() {
     try {
-        console.log('📦 Deploying frontend...');
+        console.log('📦 Deploying frontend to saberloop.com/app/...');
         await ftpDeploy.deploy(frontendConfig);
         console.log('✅ Frontend deployed!');
 
-        console.log('🐘 Deploying PHP backend...');
-        await ftpDeploy.deploy(phpConfig);
-        console.log('✅ PHP backend deployed!');
-
-        console.log('🎉 All deployments complete!');
+        console.log('🎉 Deployment complete!');
+        console.log('🌐 Visit: https://saberloop.com/app/');
     } catch (err) {
         console.error('❌ Deployment failed:', err);
         process.exit(1);
