@@ -831,13 +831,87 @@ Common reasons:
 
 ## Success Criteria
 
-- [ ] Saberloop deployed and working at https://saberloop.com
+- [ ] Saberloop deployed and working at https://saberloop.com/app/
+- [ ] Landing page live at https://saberloop.com/
 - [ ] Saberloop listed on Google Play Store
 - [ ] App installs successfully from Play Store
 - [ ] No address bar (TWA verification complete)
 - [ ] All features work in Android app
 - [ ] At least "Everyone" content rating
 - [ ] Signing files securely stored for future updates
+
+---
+
+## 9.10 Landing Page (saberloop.com root)
+
+**Time:** 1-2 hours
+
+The root of saberloop.com will host a landing page that promotes the app and directs users to install it.
+
+### 9.10.1 Landing Page Purpose
+
+- **Marketing** - Explain what Saberloop is and why users should try it
+- **App Store Links** - Direct link to Google Play Store listing
+- **Web App Link** - "Try it now" button to https://saberloop.com/app/
+- **SEO** - Help users discover Saberloop via search
+
+### 9.10.2 Landing Page Structure
+
+```
+saberloop.com/
+├── index.html       # Landing page
+├── styles.css       # Landing page styles (or inline)
+├── images/          # Screenshots, hero images
+│   ├── hero.png
+│   ├── screenshot-1.png
+│   └── screenshot-2.png
+└── app/             # PWA lives here (separate deployment)
+```
+
+### 9.10.3 Landing Page Sections
+
+1. **Hero Section**
+   - App name and tagline: "Learn Any Topic with AI-Powered Quizzes"
+   - Hero image or app screenshot
+   - CTA buttons: "Try Web App" | "Get on Google Play"
+
+2. **Features Section**
+   - 🧠 AI-Generated Questions
+   - 📱 Works Offline
+   - 🔒 Privacy-First (your data stays on your device)
+   - 🆓 Free to Use (bring your own API key)
+
+3. **How It Works**
+   - Step 1: Enter any topic
+   - Step 2: Get 5 quiz questions instantly
+   - Step 3: Learn from explanations
+
+4. **Screenshots**
+   - Mobile screenshots showing the app in action
+
+5. **Footer**
+   - Links: Privacy Policy, GitHub, Contact
+   - Copyright
+
+### 9.10.4 Technical Considerations
+
+- **Static HTML** - Simple, fast-loading, no build step needed
+- **Responsive** - Must look good on mobile (most visitors)
+- **Separate from PWA** - Landing page is NOT part of the PWA build
+- **Manual deployment** - Upload via FTP to root, separate from `/app/`
+
+### 9.10.5 Deployment
+
+```bash
+# Landing page files go to server root
+/public_html/saberloop.com/
+├── index.html        # Landing page
+├── styles.css
+├── images/
+└── app/              # PWA (deployed via npm run deploy)
+```
+
+**Note:** The landing page is deployed separately from the PWA. Use FTP to upload landing page files to the root.
 
 ---
 
