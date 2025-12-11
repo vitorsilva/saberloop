@@ -2,7 +2,7 @@
 
 ## High-Level Architecture
 
-Saberloop (QuizMaster) follows a serverless full-stack architecture:
+Saberloop is a **client-side PWA** with no backend required. AI calls are made directly from the browser using OpenRouter (user-provided API keys).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -14,38 +14,36 @@ Saberloop (QuizMaster) follows a serverless full-stack architecture:
 │  │   SPA Router     │    │   IndexedDB      │               │
 │  │   (Hash-based)   │    │   (Persistence)  │               │
 │  └────────┬─────────┘    └──────────────────┘               │
-│           │                                                  │
+│           │                      │                           │
 │  ┌────────▼─────────────────────────────────┐               │
 │  │              Views                        │               │
-│  │  Home │ Quiz │ Results │ Settings │ Help │               │
+│  │  Home │ Quiz │ Results │ Settings │ ...  │               │
 │  └────────┬─────────────────────────────────┘               │
 │           │                                                  │
 │  ┌────────▼─────────────────────────────────┐               │
 │  │           API Client Layer               │               │
-│  │     (Mock API / Real API / OpenRouter)   │               │
+│  │     (Mock API / OpenRouter Client)       │               │
 │  └────────┬─────────────────────────────────┘               │
 │           │                                                  │
 └───────────┼──────────────────────────────────────────────────┘
-            │ HTTPS
+            │ HTTPS (direct from browser)
             │
-┌───────────▼──────────────────────────────────────────────────┐
-│                    Netlify Functions                          │
-│                    (Serverless Backend)                       │
+            ▼
+┌───────────────────────────────────────────────────────────────┐
+│                       OpenRouter API                          │
+│              (User-provided API key in browser)               │
 ├───────────────────────────────────────────────────────────────┤
 │                                                               │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐  │
-│  │ generate-       │  │ generate-       │  │ health-      │  │
-│  │ questions       │  │ explanation     │  │ check        │  │
-│  └────────┬────────┘  └────────┬────────┘  └──────────────┘  │
-│           │                    │                              │
-└───────────┼────────────────────┼──────────────────────────────┘
-            │                    │
-            ▼                    ▼
-┌───────────────────────────────────────────────────────────────┐
-│                    AI Provider                                 │
-│           (Anthropic Claude / OpenRouter)                      │
+│  Supported Models:                                            │
+│  - Claude (Anthropic)                                         │
+│  - GPT-4 (OpenAI)                                             │
+│  - Gemini (Google)                                            │
+│  - Llama, Mistral, and more                                   │
+│                                                               │
 └───────────────────────────────────────────────────────────────┘
 ```
+
+**Note:** No server-side backend is required. The app is fully static and can be hosted on any web server.
 
 ## Components
 
@@ -60,18 +58,22 @@ Saberloop (QuizMaster) follows a serverless full-stack architecture:
 | Styling | Tailwind CSS (PostCSS) | Utility-first CSS |
 | PWA | Vite PWA Plugin + Workbox | Offline support, installability |
 
-### Backend
+### AI Integration (Client-Side)
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| Platform | Netlify Functions | Serverless compute |
-| Runtime | Node.js 18 | JavaScript execution |
-| AI Provider | Anthropic Claude API / OpenRouter | Question generation |
+| API Gateway | OpenRouter | Multi-model AI access |
+| Key Storage | IndexedDB | Secure local storage |
+| Default Model | Claude 3 Haiku | Fast, cost-effective |
 
-**Functions:**
-- `generate-questions` - Generate quiz questions for a topic
-- `generate-explanation` - Generate explanation for wrong answers
-- `health-check` - Backend health and configuration status
+**Client-Side Functions:**
+- `generateQuestions()` - Call OpenRouter to generate quiz questions
+- `generateExplanation()` - Call OpenRouter for wrong answer explanations
+
+**No Server Backend Required:**
+- Users provide their own OpenRouter API key
+- API calls made directly from browser to OpenRouter
+- Keys stored securely in browser's IndexedDB
 
 ### Data Layer
 

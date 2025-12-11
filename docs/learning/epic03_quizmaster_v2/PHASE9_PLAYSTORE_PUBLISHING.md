@@ -16,17 +16,25 @@ This phase covers publishing Saberloop to the Google Play Store using PWABuilder
 
 Before starting this phase, ensure:
 
-- [ ] **Domain** - saberloop.com registered and DNS configured
-- [ ] **HTTPS hosting** - Saberloop deployed at https://saberloop.com
+- [x] **Domain** - saberloop.com registered ✅
+- [ ] **HTTPS hosting** - Saberloop deployed at https://saberloop.com/app/
 - [x] **Valid manifest.json** with:
   - [x] App name: "Saberloop - Learn Through Quizzes"
   - [x] short_name: "Saberloop"
   - [x] Icons: 192x192 and 512x512 PNG
-  - [x] start_url, display: "standalone"
+  - [x] start_url: "/app/", display: "standalone"
   - [x] theme_color: "#FF6B35"
   - [x] background_color: "#1a1a2e"
 - [x] **Service worker** for offline capability
+- [x] **FTP deployment script** configured (`npm run build:deploy`)
+- [x] **No backend required** - App uses client-side OpenRouter integration
 - [ ] **Google Play Developer Account** ($25 one-time fee)
+
+**Current Status:**
+- Domain registered: ✅ saberloop.com
+- Manual deploy attempted: http://saberloop.com/app/ (not working - needs configuration fixes)
+- SSL certificate: Needs verification
+- FTP credentials: Need to be configured in `.env` for saberloop.com
 
 ---
 
@@ -129,61 +137,48 @@ Help
 
 ### 9.2 Deploy Saberloop via FTP
 
-**Time:** 30-45 minutes
+**Time:** 15-30 minutes
 
-#### 9.2.1 Build the Production Version
+**Note:** Saberloop uses client-side OpenRouter integration - **no PHP backend needed!** Only static files are deployed.
 
-On your local machine:
+#### 9.2.1 Configure FTP Credentials
+
+Update your `.env` file with saberloop.com FTP credentials:
+
 ```bash
-cd /path/to/demo-pwa-app
-npm run build
+# FTP Deployment for saberloop.com
+FTP_HOST=ftp.saberloop.com  # or your server IP
+FTP_USER=your-ftp-username
+FTP_PASSWORD=your-ftp-password
 ```
 
-This creates a `dist/` folder with all production files.
+#### 9.2.2 Build and Deploy
 
-#### 9.2.2 FTP Connection Setup
+```bash
+# Build and deploy in one command
+npm run build:deploy
 
-1. **Get FTP credentials from cPanel**:
-   - Go to "FTP Accounts"
-   - Use existing account or create new one
-   - Note: Host, Username, Password, Port (usually 21)
+# Or separately:
+npm run build    # Creates dist/ folder
+npm run deploy   # FTP uploads to /app/ on server
+```
 
-2. **Connect with FTP client** (FileZilla, Cyberduck, etc.):
-   ```
-   Host: ftp.saberloop.com (or server IP)
-   Username: your_ftp_username
+The deploy script (`scripts/deploy-ftp.cjs`) uploads `dist/` contents to `/app/` subdirectory on the server.
+
+#### 9.2.3 FTP Manual Setup (if needed)
+
+If automated deploy doesn't work, use FTP client (FileZilla, Cyberduck):
+
+```
+Host: ftp.saberloop.com (or server IP)
+Username: your_ftp_username
    Password: your_ftp_password
    Port: 21
    ```
 
-#### 9.2.3 Upload Files
-
-1. **Navigate to document root**:
-   - Usually `/public_html/` or `/public_html/saberloop.com/`
-
-2. **Upload contents of `dist/` folder**:
-   ```
-   dist/
-   ├── index.html          → upload to root
-   ├── assets/             → upload folder
-   ├── manifest.json       → upload to root
-   ├── sw.js               → upload to root
-   ├── icons/              → upload folder
-   └── ...
-   ```
-
-3. **Upload PHP backend files** (from your existing setup):
-   ```
-   api/
-   ├── generate-questions.php
-   ├── generate-explanation.php
-   ├── health-check.php
-   └── .env (with API keys - keep secure!)
-   ```
-
 #### 9.2.4 Configure .htaccess for SPA Routing
 
-Create/update `.htaccess` in document root:
+Create `.htaccess` in the `/app/` directory on the server:
 
 ```apache
 # Enable RewriteEngine
@@ -196,7 +191,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # Handle SPA routing - serve index.html for all non-file requests
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(?!api/).*$ index.html [L]
+RewriteRule ^(.*)$ index.html [L]
 
 # Correct MIME types
 AddType application/javascript .js
@@ -219,25 +214,16 @@ AddType text/css .css
 </IfModule>
 ```
 
-#### 9.2.5 Update API Base URL
+**Note:** No API configuration needed - Saberloop uses client-side OpenRouter calls directly from the browser.
 
-If your frontend needs to know the API location, update the configuration:
+#### 9.2.5 Verify Deployment
 
-**In your `.env` or config:**
-```
-VITE_API_BASE_URL=https://saberloop.com/api
-```
-
-Or if API is at root level, ensure paths are correct.
-
-#### 9.2.6 Verify Deployment
-
-1. **Test the app**: https://saberloop.com
+1. **Test the app**: https://saberloop.com/app/
 2. **Check PWA features**:
    - Open DevTools → Application → Manifest (should load)
    - Open DevTools → Application → Service Workers (should register)
-3. **Test quiz generation** (ensure API works)
-4. **Test offline mode** (disconnect and refresh)
+3. **Test quiz generation** (requires user to connect OpenRouter API key in Settings)
+4. **Test offline mode** (disconnect and refresh - sample quizzes should work)
 
 ---
 

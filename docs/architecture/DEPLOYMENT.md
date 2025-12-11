@@ -2,12 +2,12 @@
 
 ## Overview
 
-Saberloop uses a CI/CD pipeline with GitHub Actions for testing and Netlify for deployment.
+Saberloop uses GitHub Actions for CI testing and FTP deployment to a VPS (LAMP server).
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   GitHub    │────▶│   GitHub    │────▶│   Netlify   │
-│    Push     │     │   Actions   │     │   Deploy    │
+│   GitHub    │────▶│   GitHub    │────▶│   VPS       │
+│    Push     │     │   Actions   │     │ (FTP Deploy)│
 └─────────────┘     └─────────────┘     └─────────────┘
                           │
                     ┌─────▼─────┐
@@ -23,38 +23,55 @@ Saberloop uses a CI/CD pipeline with GitHub Actions for testing and Netlify for 
 | Component | Platform | Purpose |
 |-----------|----------|---------|
 | CI Pipeline | GitHub Actions | Run tests, verify build |
-| Frontend | Netlify CDN | Static file hosting |
-| Backend | Netlify Functions | Serverless API |
-| DNS | Netlify | Domain management |
+| Frontend | VPS (Apache) | Static file hosting |
+| AI Integration | OpenRouter (client-side) | User-provided API keys |
+| DNS | Domain registrar | Point to VPS |
 
 ## Prerequisites
 
 1. **GitHub Repository** - Code hosted on GitHub
-2. **Netlify Account** - Free tier is sufficient
-3. **Anthropic API Key** - For Claude API access
+2. **VPS with cPanel** - LAMP stack (Apache, PHP)
+3. **FTP Access** - For automated deployment
+4. **Domain** - saberloop.com configured to point to VPS
 
 ## Configuration Files
 
-### `netlify.toml`
+### `vite.config.js` (Build Configuration)
 
-```toml
-[build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
+```javascript
+export default defineConfig(({ command }) => ({
+    // Base path for production deployment
+    base: command === 'serve' ? '/' : '/app/',
 
-[dev]
-  command = "npm run dev"
-  targetPort = 3000
-  port = 8888
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+    plugins: [
+        VitePWA({
+            manifest: {
+                scope: '/app/',
+                start_url: '/app/',
+                // ... other PWA settings
+            },
+            workbox: {
+                navigateFallback: '/app/index.html'
+            }
+        })
+    ]
+}));
 ```
 
-### `.github/workflows/test.yml`
+### `scripts/deploy-ftp.cjs` (FTP Deployment)
+
+```javascript
+const frontendConfig = {
+    host: process.env.FTP_HOST,
+    user: process.env.FTP_USER,
+    password: process.env.FTP_PASSWORD,
+    localRoot: './dist',
+    remoteRoot: '/app',  // Deploy to /app subdirectory
+    include: ['*', '**/*']
+};
+```
+
+### `.github/workflows/test.yml` (CI Pipeline)
 
 ```yaml
 name: Tests
@@ -77,56 +94,54 @@ jobs:
 
 ## Environment Variables
 
-### Netlify Dashboard
+### Local `.env` File
 
-Set these in Netlify Dashboard → Site Settings → Environment Variables:
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `ANTHROPIC_API_KEY` | Yes | Your Anthropic API key |
-| `NODE_VERSION` | No | Node.js version (default: 18) |
-
-### Local Development
-
-Create a `.env` file (not committed):
+Create a `.env` file (not committed to git):
 
 ```bash
-# Required for real API
-ANTHROPIC_API_KEY=sk-ant-your-key-here
+# FTP Deployment Credentials
+FTP_HOST=ftp.saberloop.com
+FTP_USER=your-ftp-username
+FTP_PASSWORD=your-ftp-password
 
-# Optional: Use mock API in development
-VITE_USE_REAL_API=false
+# Development Options
+VITE_USE_REAL_API=false  # Use mock API in development
 ```
+
+### Production (No Server-Side Variables Needed)
+
+Saberloop uses **client-side OpenRouter integration**. Users provide their own API keys, stored securely in their browser's IndexedDB. No server-side API keys required!
 
 ## Deployment Process
 
-### Automatic Deployment
-
-Every push to `main` triggers:
-
-1. **GitHub Actions** runs tests
-2. **Netlify** detects push and builds
-3. **Deploy Preview** for pull requests
-4. **Production Deploy** for main branch
-
-### Manual Deployment
+### Manual Deployment (Primary Method)
 
 ```bash
-# Build locally
-npm run build
+# Build and deploy in one command
+npm run build:deploy
 
-# Deploy via Netlify CLI
-netlify deploy --prod
+# Or separately:
+npm run build    # Build to dist/
+npm run deploy   # FTP upload to VPS
 ```
+
+### CI Pipeline
+
+Every push to `main` triggers GitHub Actions:
+1. Run unit tests (Vitest)
+2. Run E2E tests (Playwright)
+3. Verify build succeeds
+
+**Note:** Automated FTP deployment from CI is not yet configured. Deploy manually after tests pass.
 
 ## Deployment Checklist
 
 ### Before First Deploy
 
-- [ ] Create Netlify account and site
-- [ ] Connect GitHub repository
-- [ ] Set `ANTHROPIC_API_KEY` in Netlify environment
-- [ ] Configure build settings in Netlify
+- [ ] Domain DNS pointing to VPS
+- [ ] FTP credentials configured in `.env`
+- [ ] SSL certificate installed on VPS (Let's Encrypt)
+- [ ] `.htaccess` configured for SPA routing
 
 ### Before Each Deploy
 
@@ -137,19 +152,18 @@ netlify deploy --prod
 
 ### After Deploy
 
-- [ ] Verify site loads
-- [ ] Test API endpoints
+- [ ] Verify site loads at https://saberloop.com/app/
 - [ ] Check PWA installability
 - [ ] Verify offline functionality
+- [ ] Test quiz flow with OpenRouter
 - [ ] Check browser console for errors
 
 ## Rollback
 
-### Via Netlify Dashboard
+### Via FTP
 
-1. Go to Deploys tab
-2. Find previous working deploy
-3. Click "Publish deploy"
+1. Keep backup of previous `dist/` folder before deploy
+2. Re-upload previous version via FTP if needed
 
 ### Via Git
 
@@ -157,42 +171,55 @@ netlify deploy --prod
 # Revert to previous commit
 git revert HEAD
 git push origin main
+
+# Rebuild and redeploy
+npm run build:deploy
 ```
 
 ## Domain Configuration
 
-### Custom Domain
+### DNS Setup (saberloop.com)
 
-1. In Netlify Dashboard → Domain settings
-2. Add custom domain
-3. Configure DNS records:
+Configure DNS at your domain registrar:
 
 ```
-A     @     75.2.60.5
-CNAME www   your-site.netlify.app
+A     @     YOUR_VPS_IP_ADDRESS
+A     www   YOUR_VPS_IP_ADDRESS
 ```
 
 ### SSL Certificate
 
-Netlify provides free SSL via Let's Encrypt. Automatic renewal.
+Use Let's Encrypt via cPanel:
+1. Go to cPanel → SSL/TLS Status
+2. Run AutoSSL for saberloop.com
+3. Certificate auto-renews
+
+### Apache .htaccess (SPA Routing)
+
+Create `.htaccess` in the `/app/` directory:
+
+```apache
+# Force HTTPS
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# SPA routing - serve index.html for all non-file requests
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.html [L]
+```
 
 ## Monitoring
-
-### Netlify Analytics
-
-- Page views
-- Top pages
-- Bandwidth usage
-- Function invocations
-
-### Function Logs
-
-View in Netlify Dashboard → Functions → Select function → Logs
 
 ### Error Tracking
 
 Application uses structured logging (see `src/utils/logger.js`).
-Errors logged to console, visible in browser DevTools.
+Errors logged to browser console, visible in DevTools.
+
+### Apache Access Logs
+
+Available via cPanel → Raw Access Logs
 
 ## Troubleshooting
 
@@ -207,39 +234,37 @@ npm cache clean --force
 npm ci
 ```
 
-### Functions Not Working
+### FTP Deploy Fails
 
-1. Check environment variables are set
-2. View function logs in Netlify Dashboard
-3. Test locally with `netlify dev`
+1. Check FTP credentials in `.env`
+2. Verify VPS disk space available
+3. Check FTP port 21 not blocked
 
 ### PWA Not Updating
 
-1. Increment service worker version
-2. Clear browser cache
+1. Service worker auto-updates on new deploy
+2. Clear browser cache if needed
 3. Unregister old service worker in DevTools
 
-### CORS Errors
+### SPA Routes Return 404
 
-Check that Netlify Functions include CORS headers (they should by default).
+Ensure `.htaccess` is deployed and Apache `mod_rewrite` is enabled.
 
 ## Cost Considerations
 
-### Netlify Free Tier
+### VPS Hosting
 
-| Resource | Limit |
-|----------|-------|
-| Bandwidth | 100GB/month |
-| Build minutes | 300/month |
-| Function invocations | 125K/month |
-| Concurrent builds | 1 |
+Using existing VPS - **zero additional cost**
 
-### Anthropic API
+### OpenRouter API
 
-See [Anthropic pricing](https://www.anthropic.com/pricing) for current rates.
+Users provide their own API keys - **zero API cost to you**
+
+See [OpenRouter pricing](https://openrouter.ai/pricing) for user costs.
 
 ## Related Documentation
 
 - [System Overview](./SYSTEM_OVERVIEW.md)
 - [API Design](./API_DESIGN.md)
 - [Installation Guide](../developer-guide/INSTALLATION.md)
+- [Phase 3.4 Learning Notes](../learning/epic03_quizmaster_v2/PHASE3.4_LEARNING_NOTES.md) - VPS migration details
