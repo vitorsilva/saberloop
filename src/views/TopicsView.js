@@ -1,6 +1,6 @@
  import BaseView from './BaseView.js';
-  import { getRecentSessions, getSession } from '../db/db.js';
-  import state from '../state/state.js';
+  import { getRecentSessions, getSession } from '../core/db.js';
+  import state from '../core/state.js';
 
   export default class TopicsView extends BaseView {
     async render() {

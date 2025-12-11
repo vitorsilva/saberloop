@@ -1,4 +1,4 @@
-  import { getSetting, saveSetting } from '../db/db.js';
+  import { getSetting, saveSetting } from '../core/db.js';
 
   const WELCOME_VERSION_KEY = 'welcomeScreenVersion';
 

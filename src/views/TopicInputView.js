@@ -1,5 +1,5 @@
 import BaseView from './BaseView.js';
-import state from '../state/state.js';
+import state from '../core/state.js';
 
 export default class TopicInputView extends BaseView {
   render() {

@@ -1,6 +1,6 @@
 import './styles/main.css';
-import { initDatabase, storeOpenRouterKey } from './db/db.js';
-import router from './router/router.js';
+import { initDatabase, storeOpenRouterKey } from './core/db.js';
+import router from './core/router.js';
 import HomeView from './views/HomeView.js';
 import TopicInputView from './views/TopicInputView.js';
 import QuizView from './views/QuizView.js';
@@ -12,8 +12,8 @@ import SettingsView from './views/SettingsView.js';
 import TopicsView from './views/TopicsView.js';
 import { isAuthCallback, handleCallback } from './api/openrouter-auth.js';
 import WelcomeView from './views/WelcomeView.js';
-import { loadSamplesIfNeeded } from './utils/sample-loader.js';
-import { shouldShowWelcome, markWelcomeSeen } from './utils/welcome-version.js';
+import { loadSamplesIfNeeded } from './features/sample-loader.js';
+import { shouldShowWelcome, markWelcomeSeen } from './features/onboarding.js';
 import { logger } from './utils/logger.js';
 import { initErrorHandling } from './utils/errorHandler.js';
 import { initPerformanceMonitoring } from './utils/performance.js'

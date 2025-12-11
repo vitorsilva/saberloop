@@ -1,7 +1,7 @@
   // api.real.js - Uses OpenRouter for LLM calls (client-side)
 
   import { callOpenRouter } from './openrouter-client.js';
-  import { getOpenRouterKey } from '../db/db.js';
+  import { getOpenRouterKey } from '../core/db.js';
   import { logger } from '../utils/logger.js';
 
   /**

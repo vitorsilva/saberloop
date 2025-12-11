@@ -1,7 +1,7 @@
   import BaseView from './BaseView.js';
-  import { getSettings, saveSetting } from '../utils/settings.js';
+  import { getSettings, saveSetting } from '../core/settings.js';
   import { APP_VERSION, BUILD_DATE } from '../version.js';
-  import { isOpenRouterConnected, removeOpenRouterKey } from '../db/db.js';
+  import { isOpenRouterConnected, removeOpenRouterKey } from '../core/db.js';
 
   export default class SettingsView extends BaseView {
     constructor() {

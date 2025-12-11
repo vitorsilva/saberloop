@@ -1,6 +1,6 @@
 import BaseView from './BaseView.js';
-import state from '../state/state.js';
-import { saveSession, updateSession } from '../db/db.js';
+import state from '../core/state.js';
+import { saveSession, updateSession } from '../core/db.js';
 import { logger } from '../utils/logger.js';
 
 export default class ResultsView extends BaseView {

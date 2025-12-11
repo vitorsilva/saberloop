@@ -1,7 +1,7 @@
   import { getSetting, saveSetting, saveSession, deleteSampleSessions } from
-  '../db/db.js';
+  '../core/db.js';
   import sampleData from '../data/sample-quizzes.json';
-  import { logger } from './logger.js';
+  import { logger } from '../utils/logger.js';
 
   const SAMPLES_VERSION_KEY = 'samplesVersion';
 

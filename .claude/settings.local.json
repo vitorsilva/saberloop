@@ -30,7 +30,8 @@
       "Bash(npm test:*)",
       "WebFetch(domain:platform.openai.com)",
       "WebFetch(domain:www.architjn.com)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,5 +1,5 @@
 import BaseView from './BaseView.js';
-import state from '../state/state.js';
+import state from '../core/state.js';
 import { generateQuestions } from '../api/index.js';
 import { logger } from '../utils/logger.js';
 

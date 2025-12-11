@@ -1,8 +1,8 @@
 import BaseView from './BaseView.js';
 import { updateNetworkIndicator, isOnline } from '../utils/network.js';
-import { getRecentSessions, getSession } from '../db/db.js';
-import state from '../state/state.js';
-import { isOpenRouterConnected } from '../db/db.js';
+import { getRecentSessions, getSession } from '../core/db.js';
+import state from '../core/state.js';
+import { isOpenRouterConnected } from '../core/db.js';
 import { showConnectModal } from '../components/ConnectModal.js';
 export default class HomeView extends BaseView {
   async render() {

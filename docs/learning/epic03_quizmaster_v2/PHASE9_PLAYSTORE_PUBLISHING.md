@@ -32,6 +32,51 @@ Before starting this phase, ensure:
 
 ## Phase Structure
 
+### 9.0 In-App Help (Pre-requisite)
+
+**Time:** 1-2 hours
+
+Before publishing to the Play Store, add user-facing help documentation within the app.
+
+#### 9.0.1 Help Page Implementation
+
+Create a simple Help view accessible from Settings:
+
+**Tasks:**
+1. Create `src/views/HelpView.js` with:
+   - FAQ section (common questions)
+   - Quick start guide
+   - Contact/feedback information
+   - Link to full documentation (if available)
+
+2. Add `/help` route in `src/main.js`
+
+3. Add "Help" link in Settings page
+
+**Why before Play Store:**
+- Play Store reviewers may check for help/support options
+- Users from Play Store expect in-app guidance
+- Reduces support requests
+
+#### 9.0.2 Help Content Structure
+
+```
+Help
+├── Getting Started
+│   ├── How to create a quiz
+│   ├── How to connect your API key
+│   └── Using sample quizzes offline
+├── FAQ
+│   ├── Does it work offline?
+│   ├── How do I get an API key?
+│   ├── Is my data private?
+│   └── How do I report issues?
+└── Contact
+    └── GitHub issues link
+```
+
+---
+
 ### 9.1 Domain & Hosting Setup (LAMP + cPanel)
 
 **Time:** 1-2 hours

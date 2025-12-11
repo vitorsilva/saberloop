@@ -10,9 +10,9 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 - **Epic 02: QuizMaster V1** - Initial AI-powered quiz application with mock API
 - **Epic 03: QuizMaster V2** - Production-ready version with real backend integration ✅ **Current**
 
-The project follows a guided, incremental learning methodology with detailed documentation in `docs/epic0X_*/` directories.
+The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 03 Phase 4 Complete | Next: Phase 5 Project Structure
+**Current Status:** Epic 03 Phase 5 Complete | Next: Phase 6 Validation
 
 **Repository**: https://github.com/vitorsilva/demo-pwa-app
 
@@ -113,9 +113,9 @@ Even then, ask for confirmation first.
 
 When user says "what's next" or similar:
 1. Determine which epic/learning plan is active:
-   - Epic 01 (Infrastructure): `docs/epic01_infrastructure/LEARNING_PLAN.md` and `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
-   - Epic 02 (QuizMaster V1): `docs/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and phase files
-   - Epic 03 (QuizMaster V2): `docs/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and `docs/epic03_quizmaster_v2/PHASE*_*.md` files
+   - Epic 01 (Infrastructure): `docs/learning/epic01_infrastructure/LEARNING_PLAN.md` and `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
+   - Epic 02 (QuizMaster V1): `docs/learning/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and phase files
+   - Epic 03 (QuizMaster V2): `docs/learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and `docs/learning/epic03_quizmaster_v2/PHASE*_*.md` files
 2. Identify current phase and next step
 3. **Present the next topic and ask if they want to proceed**
 4. Once confirmed, **teach it step-by-step** (don't execute autonomously)
@@ -134,9 +134,9 @@ When user says "that's a wrap" or similar:
 When the user asks **"what's next"** or similar phrases (e.g., "what should I do next", "next step", "continue"), always:
 
 1. Determine the active epic/learning plan:
-   - **Epic 01 (Infrastructure)**: Read `docs/epic01_infrastructure/LEARNING_PLAN.md` and check `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
-   - **Epic 02 (QuizMaster V1)**: Read `docs/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and related phase files
-   - **Epic 03 (QuizMaster V2)**: Read `docs/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and related phase files
+   - **Epic 01 (Infrastructure)**: Read `docs/learning/epic01_infrastructure/LEARNING_PLAN.md` and check `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
+   - **Epic 02 (QuizMaster V1)**: Read `docs/learning/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and related phase files
+   - **Epic 03 (QuizMaster V2)**: Read `docs/learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and related phase files
 2. Identify the current phase and next steps in the learning progression
 3. Guide the user through the next appropriate task or learning objective
 
@@ -145,9 +145,9 @@ When the user asks **"what's next"** or similar phrases (e.g., "what should I do
 When the user says **"that's a wrap"**, **"let's call it a day"**, **"let's pause"**, or similar phrases indicating they want to stop, always:
 
 1. Document the current state in the appropriate learning notes file for the active epic:
-   - **Epic 01**: `docs/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
-   - **Epic 02**: Create/update learning notes in `docs/epic02_quizmaster_v1/`
-   - **Epic 03**: Update learning notes in `docs/epic03_quizmaster_v2/PHASE*_LEARNING_NOTES.md`
+   - **Epic 01**: `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
+   - **Epic 02**: Create/update learning notes in `docs/learning/epic02_quizmaster_v1/`
+   - **Epic 03**: Update learning notes in `docs/learning/epic03_quizmaster_v2/PHASE*_LEARNING_NOTES.md`
    - What was just completed in this session
    - Current phase and specific step/task
    - What's next when they resume
@@ -158,19 +158,53 @@ This is a learning-focused project with a structured progression - respect this 
 
 ## Architecture
 
+### Project Structure
+
+```
+demo-pwa-app/
+├── docs/
+│   ├── architecture/          # System design docs
+│   ├── developer-guide/       # Developer guides
+│   ├── learning/              # Learning journey (epics, phases, notes)
+│   │   ├── epic01_infrastructure/
+│   │   ├── epic02_quizmaster_v1/
+│   │   ├── epic03_quizmaster_v2/
+│   │   └── parking_lot/       # Optional/deferred phases
+│   └── product-info/          # Product assets (mockups, logos)
+├── src/
+│   ├── api/                   # API clients (mock, real, OpenRouter)
+│   ├── core/                  # Core infrastructure
+│   │   ├── db.js              # IndexedDB wrapper
+│   │   ├── router.js          # SPA router
+│   │   ├── state.js           # Global state
+│   │   └── settings.js        # User settings
+│   ├── features/              # Feature-specific modules
+│   │   ├── onboarding.js      # Welcome flow
+│   │   └── sample-loader.js   # Sample quiz loading
+│   ├── views/                 # UI views (SPA pages)
+│   ├── components/            # Reusable UI components
+│   ├── utils/                 # Utilities (logger, network, etc.)
+│   ├── styles/                # CSS (Tailwind)
+│   └── main.js                # Entry point
+├── netlify/functions/         # Serverless backend
+├── tests/e2e/                 # E2E tests (Playwright)
+├── public/                    # Static assets
+└── [config files]             # vite.config.js, netlify.toml, etc.
+```
+
 ### Core PWA Structure
 
 **Frontend** - Vanilla JavaScript SPA with build tools (Epic 03+):
 - **index.html**: Main entry point with semantic HTML structure
 - **src/main.js**: Application entry point, router initialization
-- **src/router/**: SPA routing system
+- **src/core/router.js**: SPA routing system
 - **src/views/**: View components (QuizView, ResultsView, etc.)
-- **src/state/**: Global state management
+- **src/core/state.js**: Global state management
 - **src/api/**: API clients (mock and real)
-- **src/db/**: IndexedDB wrapper for offline storage
-- **src/utils/**: Utility functions (network monitoring, etc.)
-- **public/sw.js**: Service worker with cache-first strategy
-- **manifest.json**: PWA manifest defining app metadata and icons
+- **src/core/db.js**: IndexedDB wrapper for offline storage
+- **src/utils/**: Utility functions (logger, network, errorHandler, performance)
+- **src/features/**: Feature modules (onboarding, sample-loader)
+- **public/**: Static assets and PWA manifest
 - **Build tools**: Vite for bundling and development
 
 **Backend** - Serverless architecture (Epic 03+):
@@ -301,10 +335,10 @@ Text echo functionality (app.js:1-17):
 
 ## Learning Documentation
 
-This repository contains extensive learning documentation organized by epic:
+This repository contains extensive learning documentation organized by epic in `docs/learning/`:
 
 ### Epic 01: Infrastructure (PWA Fundamentals)
-Located in `docs/epic01_infrastructure/`:
+Located in `docs/learning/epic01_infrastructure/`:
 - **LEARNING_PLAN.md**: Complete 4-phase learning guide from PWA basics to advanced features
 - **PHASE1_LEARNING_NOTES.md**: Phase 1 (understanding the pieces)
 - **PHASE2_LEARNING_NOTES.md**: Phase 2 (offline functionality)
@@ -317,7 +351,7 @@ Located in `docs/epic01_infrastructure/`:
 - **PHASE4_ARCHITECTURE.md**: Phase 4 architecture overview
 
 ### Epic 02: QuizMaster V1 (AI-Powered Quiz Application)
-Located in `docs/epic02_quizmaster_v1/`:
+Located in `docs/learning/epic02_quizmaster_v1/`:
 - **QUIZMASTER_V1_LEARNING_PLAN.md**: Complete 10-phase learning plan
 - **QUIZMASTER_QUICK_START.md**: Navigation guide and getting started
 - **PHASE1_ARCHITECTURE.md**: System architecture and data flow
@@ -326,15 +360,14 @@ Located in `docs/epic02_quizmaster_v1/`:
 - **PHASES_4-10_SUMMARY.md**: Overview of remaining implementation phases
 
 ### Epic 03: QuizMaster V2 (Production-Ready Backend) ✅ Current
-Located in `docs/epic03_quizmaster_v2/`:
+Located in `docs/learning/epic03_quizmaster_v2/`:
 - **EPIC3_QUIZMASTER_V2_PLAN.md**: Complete Epic 3 multi-phase plan
 - **PHASE1_BACKEND.md**: Serverless backend integration (✅ Complete)
-- **PHASE1_LEARNING_NOTES.md**: Detailed learning notes with 4 sessions
-- **PHASE2_OFFLINE.md**: Offline capabilities (Next)
-- **PHASE3_PROJECT_STRUCTURE.md**: Code organization
-- **PHASE4_OBSERVABILITY.md**: Logging and monitoring
-- **PHASE5_PROJECT_STRUCTURE.md**: Advanced architecture
-- **PHASE6_VALIDATION.md**: Comprehensive testing
+- **PHASE2_OFFLINE.md**: Offline capabilities (✅ Complete)
+- **PHASE3_UI_POLISH.md**: UI refinements (✅ Complete)
+- **PHASE4_OBSERVABILITY.md**: Logging and monitoring (✅ Complete)
+- **PHASE5_PROJECT_STRUCTURE.md**: Repository organization (✅ Complete)
+- **PHASE6_VALIDATION.md**: Comprehensive testing (Next)
 
 When making changes, respect the learning-focused nature of the project. Keep code simple and well-commented rather than introducing complex patterns or dependencies.
 

@@ -2,7 +2,7 @@
    * Settings utility for managing user preferences in localStorage
    */
 
-  import { logger } from './logger.js';
+  import { logger } from '../utils/logger.js';
 
   const SETTINGS_KEY = 'quizmaster_settings';
 

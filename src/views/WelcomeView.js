@@ -1,7 +1,7 @@
   // WelcomeView - First-time user onboarding
 
   import BaseView from './BaseView.js';
-  import { markWelcomeSeen } from '../utils/welcome-version.js';
+  import { markWelcomeSeen } from '../features/onboarding.js';
   import { showConnectModal } from '../components/ConnectModal.js';
 
   export default class WelcomeView extends BaseView {
