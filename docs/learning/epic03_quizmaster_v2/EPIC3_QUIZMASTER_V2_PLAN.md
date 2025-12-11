@@ -792,10 +792,12 @@ This project was built as a learning journey. See [Learning Documentation](./doc
 
 ---
 
-### **Phase 6: Validation & Iteration** (Ongoing)
+### **Phase 6: Validation & Iteration** (Ongoing) 📋 *After Phase 9*
 Beta test with real users, gather feedback, and iterate.
 
 📄 [PHASE6_VALIDATION.md](./PHASE6_VALIDATION.md)
+
+**Note:** This phase now follows Phase 9 (Play Store Publishing). Deploying to Play Store first enables easier distribution for beta testing.
 
 **Learning Objectives:**
 - User feedback collection
@@ -998,12 +1000,12 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 
 ---
 
-### **Phase 9: Google Play Store Publishing (Optional)** 📱 *Distribution*
+### **Phase 9: Google Play Store Publishing** 📱 *Next Phase*
 Publish Saberloop to Google Play Store using PWABuilder and Trusted Web Activities (TWA).
 
 📄 [PHASE9_PLAYSTORE_PUBLISHING.md](./PHASE9_PLAYSTORE_PUBLISHING.md)
 
-**Status:** Optional - expands app distribution
+**Status:** 🎯 **NEXT** - Prioritized before Phase 6 for easier beta distribution
 
 **Learning Objectives:**
 - Understand PWABuilder packaging workflow
@@ -1099,24 +1101,23 @@ Publish Saberloop to Google Play Store using PWABuilder and Trusted Web Activiti
 
 | Phase | Sessions | Focus | Notes |
 |-------|----------|-------|-------|
-| Phase 1 | 2-3 | Backend Integration | New: Serverless functions |
-| Phase 2 | 2-3 | Offline Capabilities | New: Vite PWA Plugin |
-| Phase 3 | 3-4 | UI Polish | New: Settings, dynamic data |
-| **Phase 3.4** | **3-4** | **PHP VPS Migration** | **🆕 REQUIRED: Cost solution (Netlify credits)** |
-| **Phase 3.5** | **2-3** | **Branding & Identity** | **New: Name, icon, visual identity** |
-| **Phase 3.6** | **1-2** | **OpenRouter Integration** | **🆕 PRIORITY: User API keys, free LLMs** |
-| Phase 4 | 2-3 | Observability | New: Logging, monitoring |
-| Phase 5 | 1-2 | Project Structure | Cleanup and documentation |
-| Phase 6 | Ongoing | Validation & Iteration | Real user testing |
-| **Phase 7** | **2-3** | **Azure Migration** | **⭐ Optional: Azure experience** |
-| **Phase 8** | **2-3** | **OAuth Integration** | **⭐ Optional/Experimental** |
-| **Phase 9** | **1-2** | **Play Store Publishing** | **📱 Optional: $25 fee, Android distribution** |
+| Phase 1 | 2-3 | Backend Integration | ✅ Complete |
+| Phase 2 | 2-3 | Offline Capabilities | ✅ Complete |
+| Phase 3 | 3-4 | UI Polish | ✅ Complete |
+| Phase 3.4 | 3-4 | PHP VPS Migration | ✅ Complete |
+| Phase 3.5 | 2-3 | Branding & Identity | ✅ Complete |
+| Phase 3.6 | 1-2 | OpenRouter Integration | ✅ Complete |
+| Phase 4 | 2-3 | Observability | ✅ Complete |
+| Phase 5 | 1-2 | Project Structure | ✅ Complete |
+| **Phase 9** | **1-2** | **Play Store Publishing** | **🎯 NEXT: $25 fee, Android distribution** |
+| Phase 6 | Ongoing | Validation & Iteration | After Phase 9: Real user testing |
+| Phase 7 | 2-3 | Azure Migration | ⭐ Optional: Azure experience |
+| Phase 8 | 2-3 | OAuth Integration | ⭐ Optional/Experimental |
 
-**Core Phases (1-3.6, 4-6)**: ~16-24 sessions (required)
-**Phase 6**: Ongoing (can overlap with future epics)
-**Phase 7**: +2-3 sessions (optional Azure)
-**Phase 8**: +2-3 sessions (optional OAuth, if available)
-**Phase 9**: +1-2 sessions (optional Play Store, $25 fee)
+**Completed Phases (1-5, 3.4-3.6, 4)**: All core development complete
+**Phase 9**: 🎯 Next - Play Store deployment for distribution
+**Phase 6**: Ongoing validation after Play Store deployment
+**Phase 7-8**: Optional enhancements
 
 ---
 

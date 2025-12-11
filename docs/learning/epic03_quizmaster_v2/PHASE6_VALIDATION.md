@@ -1,9 +1,11 @@
 # Phase 6: Validation & Iteration
 
 **Epic:** 3 - QuizMaster V2
-**Status:** Not Started
+**Status:** Pending (after Phase 9)
 **Estimated Time:** Ongoing (3-4 weeks recommended)
-**Prerequisites:** Phases 1-3.5, 4-5 complete
+**Prerequisites:** Phases 1-5 complete, **Phase 9 (Play Store Publishing) complete**
+
+**Note:** This phase was reordered to follow Phase 9. Publishing to the Play Store first enables easier distribution for beta testing - family members can install directly from the Play Store.
 
 ---
 
