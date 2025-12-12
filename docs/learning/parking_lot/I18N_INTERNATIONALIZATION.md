@@ -7,7 +7,8 @@ This plan transforms Saberloop from an English-only application to a fully inter
 - **UI Translation** - All static text (buttons, labels, messages) translated
 - **AI Content Localization** - Quiz questions and explanations generated in the user's preferred language
 - **Locale-Aware Formatting** - Dates, numbers, and relative times formatted per locale
-- **Translation Workflow** - Hybrid approach with manual + API-assisted translations
+- **Translation Workflow** - Hybrid approach with manual + CLI-assisted translations
+- **Test Migration** - Update E2E tests to use data-testid instead of text matching
 
 **Project Impact**: Makes Saberloop accessible to users worldwide, significantly expanding potential user base.
 
@@ -25,6 +26,7 @@ This plan transforms Saberloop from an English-only application to a fully inter
 6. **Language Detection** - Auto-detecting user's preferred language
 7. **Lazy Loading** - Loading translations on-demand
 8. **Translation Memory** - Caching API-generated translations
+9. **data-testid Pattern** - Decoupling tests from UI text
 
 ---
 
@@ -34,12 +36,34 @@ Before starting this plan, you should have:
 
 - ✅ **Epic 03 Phase 3** complete (Settings page exists)
 - ✅ **IndexedDB** working (for caching translations)
-- ✅ **OpenRouter/LLM integration** working (for AI content)
+- ✅ **OpenRouter integration** working (for AI content)
 - ✅ Understanding of ES6 modules
+- ✅ E2E tests passing (will be migrated)
 
 ---
 
 ## Current State Analysis
+
+### Architecture Overview
+
+```
+Current LLM Flow:
+┌─────────────┐     ┌──────────────────────┐     ┌─────────────────┐
+│ User types  │────►│ src/api/api.real.js  │────►│ OpenRouter API  │
+│ topic       │     │ (auto-detect lang)   │     │ (via browser)   │
+└─────────────┘     └──────────────────────┘     └─────────────────┘
+
+Target LLM Flow:
+┌─────────────┐     ┌──────────────────────┐     ┌─────────────────┐
+│ User sets   │────►│ src/api/api.real.js  │────►│ OpenRouter API  │
+│ language    │     │ (use user setting)   │     │ (via browser)   │
+└─────────────┘     └──────────────────────┘     └─────────────────┘
+```
+
+**Key Files:**
+- `src/api/api.real.js` - LLM prompts (OpenRouter client-side)
+- `src/api/openrouter-client.js` - Direct browser → OpenRouter calls
+- `src/api/api.mock.js` - Mock API (stays English-only for dev)
 
 ### Where Strings Live Today
 
@@ -75,6 +99,28 @@ src/utils/
 
 **Total static strings**: ~65 strings to extract
 
+### E2E Tests with Hardcoded Strings
+
+**Critical Issue**: `tests/e2e/app.spec.js` has ~30+ text-based assertions that will break with i18n:
+
+| String | Occurrences |
+|--------|-------------|
+| `'Welcome back!'` | 7 |
+| `'Recent Topics'` | 1 |
+| `'New Quiz'` | 1 |
+| `'Question 1 of 5'` | 3 |
+| `'Are you sure you want to leave?'` | 1 |
+| `'No quizzes yet'` | 1 |
+| `'Today'` | 1 |
+| `'Great Job!'` | 1 |
+| `'Review Your Answers'` | 1 |
+| `'Settings'` | 1 |
+| `'Preferences'` | 1 |
+| `"You're offline"` | 1 |
+| `'Quiz History'` | 1 |
+
+**Solution**: Migrate to `data-testid` attributes (Phase 2).
+
 ---
 
 ## Architecture
@@ -88,7 +134,7 @@ src/utils/
 │                                                              │
 │  ┌──────────────────┐      ┌──────────────────────────┐    │
 │  │  i18next         │      │  Translation Files        │    │
-│  │  (Core library)  │◄────►│  /locales/{lang}.json    │    │
+│  │  (Core library)  │◄────►│  /public/locales/{lang}  │    │
 │  └────────┬─────────┘      └──────────────────────────┘    │
 │           │                                                  │
 │           │  t('key')                                        │
@@ -100,8 +146,8 @@ src/utils/
 │                            └──────────────────────────┘    │
 │                                                              │
 │  ┌──────────────────┐      ┌──────────────────────────┐    │
-│  │  LLM Prompts     │      │  Translation Cache        │    │
-│  │  (AI Content)    │◄────►│  (IndexedDB)             │    │
+│  │  src/api/        │      │  Translation Cache        │    │
+│  │  api.real.js     │◄────►│  (IndexedDB)             │    │
 │  │  +language param │      │  - API translations      │    │
 │  └──────────────────┘      └──────────────────────────┘    │
 │                                                              │
@@ -110,6 +156,12 @@ src/utils/
 │  │  - DateTimeFormat│                                       │
 │  │  - RelativeTime  │                                       │
 │  │  - NumberFormat  │                                       │
+│  └──────────────────┘                                       │
+│                                                              │
+│  ┌──────────────────┐                                       │
+│  │  CLI Translator  │  ← npm run translate:es               │
+│  │  scripts/        │                                       │
+│  │  translate.js    │                                       │
 │  └──────────────────┘                                       │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
@@ -207,6 +259,12 @@ export default i18next;
     "submitAnswer": "Submit Answer",
     "confirmLeave": "Are you sure you want to leave? Your progress will be lost."
   },
+  "results": {
+    "title": "Results",
+    "reviewAnswers": "Review Your Answers",
+    "greatJob": "Great Job!",
+    "tryAnother": "Try Another Topic"
+  },
   "dates": {
     "today": "Today",
     "yesterday": "Yesterday",
@@ -226,7 +284,104 @@ export default i18next;
 
 ---
 
-### **Phase 2: String Extraction & Migration** (2-3 sessions)
+### **Phase 2: Test Migration to data-testid** (1-2 sessions)
+
+Migrate E2E tests from text-based selectors to data-testid attributes.
+
+**Learning Objectives:**
+- Understand why text-based tests break with i18n
+- Learn the data-testid pattern
+- Systematically update views and tests
+- Maintain test coverage during migration
+
+**Why This Phase is Critical:**
+- Tests currently check `toContainText('Welcome back!')`
+- When UI is translated, these tests will fail
+- `data-testid` decouples tests from displayed text
+- Industry best practice for internationalized apps
+
+**Deliverables:**
+- [ ] Add data-testid attributes to all tested elements in views
+- [ ] Update `tests/e2e/app.spec.js` to use data-testid selectors
+- [ ] Verify all tests still pass
+- [ ] Document testing conventions
+
+**Migration Pattern:**
+
+```javascript
+// BEFORE (in HomeView.js)
+<h2 class="...">Welcome back!</h2>
+
+// AFTER (in HomeView.js)
+<h2 class="..." data-testid="welcome-heading">${t('home.welcome')}</h2>
+```
+
+```javascript
+// BEFORE (in app.spec.js)
+await expect(page.locator('h2')).toContainText('Welcome back!');
+
+// AFTER (in app.spec.js)
+await expect(page.locator('[data-testid="welcome-heading"]')).toBeVisible();
+```
+
+**Elements to Add data-testid:**
+
+| Element | data-testid | Current Text |
+|---------|-------------|--------------|
+| Welcome heading | `welcome-heading` | "Welcome back!" |
+| Recent topics heading | `recent-topics-heading` | "Recent Topics" |
+| No quizzes message | `no-quizzes-message` | "No quizzes yet" |
+| Start quiz button | `start-quiz-btn` | Already has `#startQuizBtn` |
+| New quiz heading | `new-quiz-heading` | "New Quiz" |
+| Question progress | `question-progress` | "Question X of Y" |
+| Submit button | `submit-btn` | Already has `#submitBtn` |
+| Results heading | `results-heading` | "Results" |
+| Score display | `score-display` | "80%" |
+| Success message | `success-message` | "Great Job!" |
+| Review heading | `review-heading` | "Review Your Answers" |
+| Settings heading | `settings-heading` | "Settings" |
+| Preferences heading | `preferences-heading` | "Preferences" |
+| Offline banner | `offline-banner` | Already has `#offlineBanner` |
+| Quiz history heading | `quiz-history-heading` | "Quiz History" |
+
+**Testing Conventions Document:**
+
+```markdown
+## E2E Testing Conventions
+
+### Selectors (Priority Order)
+1. `data-testid` - For elements that need testing
+2. `#id` - For interactive elements (buttons, inputs)
+3. `.class` - For groups of similar elements
+4. Tag selectors - Avoid for text content
+
+### Naming Convention
+- Use kebab-case: `data-testid="welcome-heading"`
+- Be descriptive: `quiz-progress` not `qp`
+- Include element type: `*-heading`, `*-btn`, `*-input`
+
+### What NOT to Test
+- Exact translated text (will change per language)
+- CSS classes for styling (can change)
+- DOM structure (implementation detail)
+
+### What TO Test
+- Element visibility
+- Element presence
+- User interactions (click, type)
+- Navigation (URL changes)
+- State changes (enabled/disabled)
+```
+
+**Success Criteria:**
+- All E2E tests pass using data-testid selectors
+- No tests rely on specific English text
+- Tests will work regardless of UI language
+- Testing conventions documented
+
+---
+
+### **Phase 3: String Extraction & Migration** (2-3 sessions)
 
 Extract all hardcoded strings from views and replace with translation keys.
 
@@ -256,8 +411,8 @@ Extract all hardcoded strings from views and replace with translation keys.
 // AFTER
 import { t } from '../core/i18n.js';
 
-<h2>${t('home.welcome')}</h2>
-<p>${t('quiz.questionOf', { current: index + 1, total })}</p>
+<h2 data-testid="welcome-heading">${t('home.welcome')}</h2>
+<p data-testid="question-progress">${t('quiz.questionOf', { current: index + 1, total })}</p>
 ```
 
 **Handling Plurals:**
@@ -280,10 +435,11 @@ t('dates.daysAgo', { count: 1 }); // "1 day ago"
 - App displays correctly with English
 - No hardcoded user-facing text remains
 - Interpolation works for dynamic content
+- E2E tests still pass (using data-testid)
 
 ---
 
-### **Phase 3: Language Settings UI** (1 session)
+### **Phase 4: Language Settings UI** (1 session)
 
 Add language preference to Settings page.
 
@@ -303,9 +459,9 @@ Add language preference to Settings page.
 
 ```javascript
 // In SettingsView.js
-<div class="setting-group">
+<div class="setting-group" data-testid="language-setting">
   <label>${t('settings.language')}</label>
-  <select id="languageSelect">
+  <select id="languageSelect" data-testid="language-select">
     <option value="en">English</option>
     <option value="pt">Português</option>
     <option value="es">Español</option>
@@ -328,11 +484,11 @@ languageSelect.addEventListener('change', async (e) => {
 **Supported Languages (Initial):**
 | Code | Language | Status |
 |------|----------|--------|
-| en | English | ✅ Complete |
+| en | English | ✅ Complete (manual) |
 | pt | Portuguese | 🔄 Manual |
-| es | Spanish | 🔄 API + Review |
-| fr | French | 🔄 API + Review |
-| de | German | 🔄 API + Review |
+| es | Spanish | 🔄 CLI + Review |
+| fr | French | 🔄 CLI + Review |
+| de | German | 🔄 CLI + Review |
 
 **Success Criteria:**
 - Language selector visible in Settings
@@ -342,79 +498,96 @@ languageSelect.addEventListener('change', async (e) => {
 
 ---
 
-### **Phase 4: LLM Language Integration** (1-2 sessions)
+### **Phase 5: LLM Language Integration** (1 session)
 
-Pass user's language preference to all LLM prompts.
+Modify LLM prompts to use user's language preference instead of auto-detection.
 
 **Learning Objectives:**
-- Modify prompt templates to include language
-- Update API client to pass language parameter
-- Ensure AI generates content in correct language
+- Understand current auto-detection in `api.real.js`
+- Modify prompts to use explicit language parameter
+- Pass language from frontend to API
 - Handle language in explanations
 
-**Current Flow:**
-```
-User types topic → LLM detects language → Generates in detected language
+**Current Flow (in `src/api/api.real.js:23-31`):**
+```javascript
+// AUTO-DETECTION (current)
+LANGUAGE REQUIREMENT (CRITICAL):
+- Detect the language of the topic "${topic}"
+- Generate ALL questions in the SAME language as the topic
 ```
 
 **New Flow:**
-```
-User types topic → App passes language setting → LLM generates in specified language
+```javascript
+// USER SETTING (target)
+LANGUAGE REQUIREMENT (CRITICAL):
+- Generate ALL content in ${languageName} (${languageCode})
+- The questions, options, and explanations must be in ${languageName}
+- Do NOT auto-detect from topic - use the specified language
 ```
 
 **Deliverables:**
-- [ ] Update `generate-questions` function prompt
-- [ ] Update `generate-explanation` function prompt
-- [ ] Pass `language` parameter from frontend
+- [ ] Update `generateQuestions()` in `src/api/api.real.js`
+- [ ] Update `generateExplanation()` in `src/api/api.real.js`
+- [ ] Add `language` parameter to function signatures
+- [ ] Get language from user settings in LoadingView
 - [ ] Test with multiple languages
 
 **Implementation:**
 
 ```javascript
-// netlify/functions/generate-questions.js (or PHP equivalent)
-const prompt = `Generate ${count} multiple choice questions about "${topic}"
-for a ${gradeLevel} student.
+// src/api/api.real.js
+export async function generateQuestions(topic, gradeLevel = 'middle school', language = 'en') {
+  const languageNames = {
+    en: 'English',
+    pt: 'Portuguese (Brazilian)',
+    es: 'Spanish',
+    fr: 'French',
+    de: 'German',
+    it: 'Italian',
+    ja: 'Japanese',
+    ko: 'Korean',
+    zh: 'Chinese (Simplified)'
+  };
 
-IMPORTANT: Generate all content in ${language} (${languageName}).
-The questions, options, and any explanations must be in ${language}.
+  const languageName = languageNames[language] || 'English';
 
-Return as JSON...`;
+  const prompt = `You are an expert educational content creator. Generate exactly 5
+multiple-choice questions about "${topic}" appropriate for ${gradeLevel} students.
+
+LANGUAGE REQUIREMENT (CRITICAL):
+- Generate ALL content in ${languageName} (${language})
+- The questions, ALL answer options, and any text must be in ${languageName}
+- Do NOT auto-detect language from the topic
+- Even if the topic is in a different language, respond in ${languageName}
+
+Requirements:
+...`;
 ```
 
 ```javascript
-// Frontend API call
-const questions = await generateQuestions({
-  topic: 'Photosynthesis',
-  gradeLevel: 'middle school',
-  count: 5,
-  language: 'pt'  // User's preferred language
-});
+// src/views/LoadingView.js
+import { getSetting } from '../core/db.js';
+
+// Get user's language preference
+const language = await getSetting('language') || 'en';
+
+// Pass to API
+const result = await generateQuestions(topic, gradeLevel, language);
 ```
 
-**Language Code Mapping:**
-```javascript
-const languageNames = {
-  en: 'English',
-  pt: 'Portuguese (Brazilian)',
-  es: 'Spanish',
-  fr: 'French',
-  de: 'German',
-  it: 'Italian',
-  ja: 'Japanese',
-  ko: 'Korean',
-  zh: 'Chinese (Simplified)'
-};
-```
+**Mock API Note:**
+The mock API (`src/api/api.mock.js`) will continue to return English questions only. This is intentional for development simplicity. Real API calls will use the language parameter.
 
 **Success Criteria:**
 - Quiz questions generated in user's language
 - Explanations generated in user's language
 - Language parameter passed through entire flow
 - Works offline with cached content (in original language)
+- Mock API unaffected (English only)
 
 ---
 
-### **Phase 5: Locale-Aware Formatting** (1 session)
+### **Phase 6: Locale-Aware Formatting** (1 session)
 
 Use Intl API for dates, numbers, and relative time.
 
@@ -504,81 +677,246 @@ const scoreStr = formatPercent(score / total);
 
 ---
 
-### **Phase 6: Translation Workflow** (1-2 sessions)
+### **Phase 7: CLI Translation Utility** (1-2 sessions)
 
-Implement hybrid translation approach: manual + API-assisted.
+Build CLI tool to translate locale files using LLM.
 
 **Learning Objectives:**
-- Organize translation files
-- Set up translation caching in IndexedDB
-- Implement API translation fallback
-- Build translation management utilities
+- Create Node.js CLI scripts
+- Use LLM for translation
+- Handle JSON file I/O
+- Implement caching to avoid re-translating
 
 **Deliverables:**
-- [ ] Complete manual translations for core languages (en, pt)
-- [ ] Translation cache schema in IndexedDB
-- [ ] API translation utility (for new languages)
-- [ ] Translation status tracking
-- [ ] Documentation for adding new languages
+- [ ] `scripts/translate.js` - CLI translation tool
+- [ ] `npm run translate:es` script in package.json
+- [ ] Translation cache to avoid duplicates
+- [ ] Documentation for adding languages
 
-**Translation Cache Schema:**
+**Implementation:**
+
 ```javascript
-// IndexedDB store: translations
+// scripts/translate.js
+#!/usr/bin/env node
+
+import fs from 'fs';
+import path from 'path';
+
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+
+const languageNames = {
+  es: 'Spanish',
+  fr: 'French',
+  de: 'German',
+  it: 'Italian',
+  pt: 'Portuguese (Brazilian)',
+  ja: 'Japanese',
+  ko: 'Korean',
+  zh: 'Chinese (Simplified)'
+};
+
+async function translateFile(targetLang) {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    console.error('Error: OPENROUTER_API_KEY environment variable not set');
+    process.exit(1);
+  }
+
+  const langName = languageNames[targetLang];
+  if (!langName) {
+    console.error(`Error: Unknown language code "${targetLang}"`);
+    console.error('Supported:', Object.keys(languageNames).join(', '));
+    process.exit(1);
+  }
+
+  // Read English source
+  const enPath = path.join(process.cwd(), 'public/locales/en.json');
+  const enContent = JSON.parse(fs.readFileSync(enPath, 'utf-8'));
+
+  // Check for existing translation (for incremental updates)
+  const targetPath = path.join(process.cwd(), `public/locales/${targetLang}.json`);
+  let existingTranslation = {};
+  if (fs.existsSync(targetPath)) {
+    existingTranslation = JSON.parse(fs.readFileSync(targetPath, 'utf-8'));
+    console.log(`Found existing ${targetLang}.json, will update missing keys only`);
+  }
+
+  // Find keys that need translation
+  const keysToTranslate = findMissingKeys(enContent, existingTranslation);
+
+  if (keysToTranslate.length === 0) {
+    console.log(`All keys already translated for ${targetLang}`);
+    return;
+  }
+
+  console.log(`Translating ${keysToTranslate.length} keys to ${langName}...`);
+
+  // Build translation prompt
+  const prompt = `Translate the following JSON keys from English to ${langName}.
+Keep the JSON structure exactly the same, only translate the string values.
+Preserve any interpolation variables like {{count}} or {{current}}.
+
+JSON to translate:
+${JSON.stringify(extractKeys(enContent, keysToTranslate), null, 2)}
+
+Return ONLY the translated JSON object, no explanation.`;
+
+  const response = await fetch(OPENROUTER_API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'anthropic/claude-3.5-sonnet',
+      max_tokens: 4096,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  if (!response.ok) {
+    console.error('API Error:', response.status);
+    process.exit(1);
+  }
+
+  const data = await response.json();
+  let translatedText = data.choices[0].message.content;
+
+  // Clean markdown code blocks if present
+  if (translatedText.startsWith('```')) {
+    translatedText = translatedText.replace(/```json?\n?/g, '').replace(/```$/g, '');
+  }
+
+  const translated = JSON.parse(translatedText.trim());
+
+  // Merge with existing
+  const merged = deepMerge(existingTranslation, translated);
+
+  // Write output
+  fs.writeFileSync(targetPath, JSON.stringify(merged, null, 2));
+  console.log(`✅ Saved to public/locales/${targetLang}.json`);
+  console.log(`   Review the translation before committing!`);
+}
+
+// Helper functions
+function findMissingKeys(source, target, prefix = '') {
+  const missing = [];
+  for (const [key, value] of Object.entries(source)) {
+    const fullKey = prefix ? `${prefix}.${key}` : key;
+    if (typeof value === 'object' && value !== null) {
+      missing.push(...findMissingKeys(value, target?.[key] || {}, fullKey));
+    } else if (!target?.[key]) {
+      missing.push(fullKey);
+    }
+  }
+  return missing;
+}
+
+function extractKeys(source, keys) {
+  // Extract only the keys that need translation
+  const result = {};
+  for (const key of keys) {
+    const parts = key.split('.');
+    let src = source;
+    let dst = result;
+    for (let i = 0; i < parts.length - 1; i++) {
+      src = src[parts[i]];
+      dst[parts[i]] = dst[parts[i]] || {};
+      dst = dst[parts[i]];
+    }
+    dst[parts[parts.length - 1]] = src[parts[parts.length - 1]];
+  }
+  return result;
+}
+
+function deepMerge(target, source) {
+  const result = { ...target };
+  for (const [key, value] of Object.entries(source)) {
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      result[key] = deepMerge(result[key] || {}, value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+// Run
+const targetLang = process.argv[2];
+if (!targetLang) {
+  console.error('Usage: npm run translate <language-code>');
+  console.error('Example: npm run translate es');
+  process.exit(1);
+}
+
+translateFile(targetLang);
+```
+
+**Package.json Scripts:**
+```json
 {
-  id: 'es:home.welcome',  // language:key
-  language: 'es',
-  key: 'home.welcome',
-  value: '¡Bienvenido de nuevo!',
-  source: 'api',  // 'manual' | 'api' | 'reviewed'
-  createdAt: Date,
-  reviewedAt: null
+  "scripts": {
+    "translate": "node scripts/translate.js",
+    "translate:es": "node scripts/translate.js es",
+    "translate:fr": "node scripts/translate.js fr",
+    "translate:de": "node scripts/translate.js de",
+    "translate:pt": "node scripts/translate.js pt"
+  }
 }
 ```
 
-**API Translation Utility:**
-```javascript
-// src/utils/translator.js
-export async function translateMissing(language, keys) {
-  // Check cache first
-  const cached = await getCachedTranslations(language, keys);
-  const missing = keys.filter(k => !cached[k]);
+**Usage:**
+```bash
+# Set API key
+export OPENROUTER_API_KEY=sk-or-v1-...
 
-  if (missing.length === 0) return cached;
+# Translate to Spanish
+npm run translate:es
 
-  // Call translation API (could use LLM)
-  const translated = await callTranslationAPI(missing, language);
+# Translate to French
+npm run translate fr
 
-  // Cache results
-  await cacheTranslations(language, translated);
-
-  return { ...cached, ...translated };
-}
+# Output
+# Translating 65 keys to Spanish...
+# ✅ Saved to public/locales/es.json
+#    Review the translation before committing!
 ```
 
 **Adding a New Language:**
 ```markdown
 ## How to Add a New Language
 
-1. Create `public/locales/{code}.json` (copy from en.json)
-2. Add language to selector in SettingsView
-3. Either:
-   a. Translate manually (preferred for quality)
-   b. Run translation utility for initial pass
-   c. Review and correct API translations
-4. Test thoroughly
-5. Update language list in documentation
+1. Run the translation CLI:
+   ```bash
+   export OPENROUTER_API_KEY=your-key
+   npm run translate <lang-code>
+   ```
+
+2. Review the generated `public/locales/<lang>.json`
+   - Check for translation errors
+   - Verify interpolation variables preserved
+   - Test pluralization
+
+3. Add language to selector in `SettingsView.js`:
+   ```html
+   <option value="<lang-code>">Language Name</option>
+   ```
+
+4. Test the app with new language selected
+
+5. Commit the translation file
 ```
 
 **Success Criteria:**
-- English fully translated (manual)
-- Portuguese fully translated (manual)
-- At least 2 additional languages via API
-- Translations cached for offline use
-- Clear workflow for adding languages
+- CLI tool generates translations
+- Incremental updates (only translates new keys)
+- Output requires human review before committing
+- At least 2 languages generated via CLI
+- Clear documentation for adding more
 
 ---
 
-### **Phase 7: RTL Support** (Future Phase) ⏸️
+### **Phase 8: RTL Support** (Future Phase) ⏸️
 
 *Deferred - document for future implementation*
 
@@ -616,24 +954,29 @@ src/
 │   └── ...
 ├── utils/
 │   ├── formatters.js        # Intl-based formatters
-│   ├── translator.js        # API translation utility
 │   └── ...
+├── api/
+│   ├── api.real.js          # Updated with language param
+│   ├── api.mock.js          # Unchanged (English only)
+│   └── openrouter-client.js # Unchanged
 ├── views/
-│   └── ... (all updated with t() calls)
+│   └── ... (all updated with t() calls + data-testid)
 └── ...
 
 public/
 └── locales/
     ├── en.json              # English (complete, manual)
     ├── pt.json              # Portuguese (complete, manual)
-    ├── es.json              # Spanish (API + review)
-    ├── fr.json              # French (API + review)
-    └── de.json              # German (API + review)
+    ├── es.json              # Spanish (CLI + review)
+    ├── fr.json              # French (CLI + review)
+    └── de.json              # German (CLI + review)
 
-netlify/functions/
-├── generate-questions.js    # Updated with language param
-├── generate-explanation.js  # Updated with language param
-└── ...
+scripts/
+└── translate.js             # CLI translation utility
+
+tests/
+└── e2e/
+    └── app.spec.js          # Updated with data-testid selectors
 ```
 
 ---
@@ -643,12 +986,13 @@ netlify/functions/
 ### Technical Milestones
 - [ ] i18next configured and working
 - [ ] All ~65 strings extracted and translated
+- [ ] E2E tests migrated to data-testid (language-independent)
 - [ ] Language selector in Settings
 - [ ] Preference persists in IndexedDB
-- [ ] LLM generates content in user's language
+- [ ] LLM generates content in user's language (not auto-detect)
 - [ ] Dates/numbers use Intl API
 - [ ] At least 5 languages supported
-- [ ] Translations cached for offline
+- [ ] CLI translation utility working
 - [ ] No hardcoded user-facing text
 
 ### User-Facing Milestones
@@ -666,38 +1010,48 @@ netlify/functions/
 | Phase | Sessions | Focus |
 |-------|----------|-------|
 | Phase 1 | 1 | i18n Infrastructure Setup |
-| Phase 2 | 2-3 | String Extraction & Migration |
-| Phase 3 | 1 | Language Settings UI |
-| Phase 4 | 1-2 | LLM Language Integration |
-| Phase 5 | 1 | Locale-Aware Formatting |
-| Phase 6 | 1-2 | Translation Workflow |
-| **Total** | **7-10** | **Full i18n Implementation** |
+| Phase 2 | 1-2 | Test Migration to data-testid |
+| Phase 3 | 2-3 | String Extraction & Migration |
+| Phase 4 | 1 | Language Settings UI |
+| Phase 5 | 1 | LLM Language Integration |
+| Phase 6 | 1 | Locale-Aware Formatting |
+| Phase 7 | 1-2 | CLI Translation Utility |
+| **Total** | **8-11** | **Full i18n Implementation** |
 
-Phase 7 (RTL) deferred to future.
+Phase 8 (RTL) deferred to future.
 
 ---
 
 ## Risks & Mitigation
 
-### Risk 1: Translation Quality (API)
+### Risk 1: Translation Quality (CLI)
 **Impact:** Medium
 **Likelihood:** Medium
 **Mitigation:**
-- Use high-quality translation API (DeepL > Google)
-- Mark API translations as "needs review"
+- CLI output marked as "needs review"
+- Human review required before commit
 - Prioritize manual review for key languages
-- Allow community corrections
+- Allow corrections via direct JSON editing
 
 ### Risk 2: LLM Language Consistency
 **Impact:** Medium
 **Likelihood:** Low
 **Mitigation:**
-- Explicit language instruction in prompts
+- Explicit language instruction in prompts (not auto-detect)
 - Test with various topics and languages
-- Fallback to English if detection fails
-- User can report language issues
+- User can change language setting if issues
+- Fallback to English for errors
 
-### Risk 3: Bundle Size Increase
+### Risk 3: Test Migration Complexity
+**Impact:** Medium
+**Likelihood:** Low
+**Mitigation:**
+- Migrate tests before string extraction
+- Keep test functionality identical
+- Run tests after each view migration
+- Document data-testid conventions
+
+### Risk 4: Bundle Size Increase
 **Impact:** Low
 **Likelihood:** Low
 **Mitigation:**
@@ -706,13 +1060,13 @@ Phase 7 (RTL) deferred to future.
 - Cache translations in IndexedDB
 - Only load languages user selects
 
-### Risk 4: Missing Translations in Production
+### Risk 5: Missing Translations in Production
 **Impact:** Medium
 **Likelihood:** Medium
 **Mitigation:**
 - Fallback to English for missing keys
 - Log missing translations for tracking
-- Automated CI check for missing keys
+- CLI detects missing keys automatically
 - Default to English in edge cases
 
 ---
@@ -742,6 +1096,10 @@ Phase 7 (RTL) deferred to future.
 - [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat)
 - [Intl.RelativeTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat)
 - [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat)
+
+**Testing:**
+- [Playwright data-testid](https://playwright.dev/docs/locators#locate-by-test-id)
+- [Testing Library - data-testid](https://testing-library.com/docs/queries/bytestid/)
 
 **Best Practices:**
 - [W3C Internationalization](https://www.w3.org/International/)
