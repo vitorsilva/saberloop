@@ -1213,6 +1213,100 @@ saberloop.com/
 
 ---
 
+## Learning Notes: Play Console Configuration
+
+### Content Rating (IARC Questionnaire)
+**Completed:** 2025-12-12
+
+Answers for Saberloop:
+- Violence: Não
+- Sexual content: Não
+- Gambling: Não
+- Drugs/alcohol: Não
+- Profanity: Não
+- **Educational product: Sim** (Important! Saberloop is an educational quiz app)
+
+**Result:** Ratings suitable for all ages (L, 3+, etc.)
+
+### Target Audience (Público-alvo)
+**Completed:** 2025-12-12
+
+Selected age groups: **13-15, 16-17, 18+**
+
+**Why not younger?** Selecting under-13 triggers Google's "Families Policy" requirements which adds complexity. Since Saberloop doesn't specifically target children and has no child-specific features, targeting 13+ is appropriate and simpler.
+
+### Data Safety (Segurança dos dados)
+**Completed:** 2025-12-12
+
+This section declares what data the app collects/shares. Key answers:
+
+| Question | Answer | Reason |
+|----------|--------|--------|
+| App collects/shares user data? | **Sim** | Quiz topics sent to OpenRouter API |
+| Data encrypted in transit? | **Sim** | OpenRouter uses HTTPS |
+| Account creation method | **No accounts** | Saberloop doesn't require login |
+| Users can sign in with external accounts? | **Não** | No login functionality |
+| Data deletion request URL | **Não** | Data stored locally, users delete via browser |
+
+**Data Types NOT Collected:**
+- ❌ Location (approximate or exact)
+- ❌ Personal info (name, email, phone, address, etc.)
+- ❌ Financial info
+- ❌ Health & fitness
+- ❌ Messages
+- ❌ Photos & videos
+- ❌ Audio files
+- ❌ Files & documents
+- ❌ Calendar
+- ❌ Contacts
+- ❌ Web browsing history
+- ❌ App performance/diagnostics
+- ❌ Device IDs
+
+**Data Type Collected:**
+- ✅ **Other user-generated content** (quiz topics entered by user, sent to AI API)
+
+### Privacy Policy
+**URL:** https://saberloop.com/privacy.html
+
+Created privacy policy page with:
+- Local data storage explanation (IndexedDB)
+- AI Provider (OpenRouter) data transmission disclosure
+- Future-proofing clauses for additional providers and anonymized analytics
+- Data deletion instructions
+- Link in landing page footer
+
+### Store Listing (Ficha da loja)
+**In Progress:** 2025-12-12
+
+Completed:
+- ✅ App name: Saberloop
+- ✅ Category: Educação (Education)
+- ✅ Contact email: vitorsilva.com@gmail.com
+- ✅ Website: https://saberloop.com/
+
+**Next steps when resuming:**
+1. Add short description (80 chars max)
+2. Add full description (4000 chars max)
+3. Upload app icon (512x512)
+4. Upload screenshots (phone)
+5. Upload feature graphic (1024x500)
+
+**Prepared descriptions:**
+
+Short (80 chars):
+```
+Learn any topic with AI-powered quizzes. Free, offline-capable, privacy-first.
+```
+
+Full description - see PHASE9_PLAYSTORE_PUBLISHING.md section 9.7
+
+### Future Improvements Noted
+- Add data deletion request functionality (URL for Play Store)
+- Consider in-app data management/export features
+
+---
+
 ## Future Enhancements
 
 ### Phase 9.5: Apple App Store (Optional)
