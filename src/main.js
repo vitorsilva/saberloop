@@ -12,6 +12,7 @@ import SettingsView from './views/SettingsView.js';
 import TopicsView from './views/TopicsView.js';
 import { isAuthCallback, handleCallback } from './api/openrouter-auth.js';
 import WelcomeView from './views/WelcomeView.js';
+import HelpView from './views/HelpView.js';
 import { loadSamplesIfNeeded } from './features/sample-loader.js';
 import { shouldShowWelcome, markWelcomeSeen } from './features/onboarding.js';
 import { logger } from './utils/logger.js';
@@ -47,6 +48,7 @@ async function init() {
     router.addRoute('/settings', SettingsView);
     router.addRoute('/history', TopicsView);
     router.addRoute('/welcome', WelcomeView);
+    router.addRoute('/help', HelpView);
     
     // Start the router
     router.init();

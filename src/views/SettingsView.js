@@ -83,6 +83,19 @@
    leading-tight tracking-[-0.015em] pb-3 pt-8">About</h2>
 
             <div class="flex flex-col gap-3">
+              <!-- Help Link -->
+              <a href="#/help" class="bg-card-light dark:bg-card-dark rounded-xl p-4
+  flex items-center justify-between hover:bg-primary/10 transition-colors">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-text-light
+  dark:text-text-dark">help</span>
+                  <p class="text-text-light dark:text-text-dark text-base
+  font-medium">Help & FAQ</p>
+                </div>
+                <span class="material-symbols-outlined text-subtext-light
+  dark:text-subtext-dark">chevron_right</span>
+              </a>
+
               <!-- Version Card -->
               <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
                 <div class="flex items-center justify-between">
