@@ -885,8 +885,8 @@ Common reasons:
 
 ## Success Criteria
 
-- [ ] Saberloop deployed and working at https://saberloop.com/app/
-- [ ] Landing page live at https://saberloop.com/
+- [x] Saberloop deployed and working at https://saberloop.com/app/
+- [x] Landing page live at https://saberloop.com/
 - [ ] Saberloop listed on Google Play Store
 - [ ] App installs successfully from Play Store
 - [ ] No address bar (TWA verification complete)
@@ -896,9 +896,10 @@ Common reasons:
 
 ---
 
-## 9.10 Landing Page (saberloop.com root)
+## 9.10 Landing Page (saberloop.com root) ✅ COMPLETE
 
 **Time:** 1-2 hours
+**Completed:** 2025-12-12
 
 The root of saberloop.com will host a landing page that promotes the app and directs users to install it.
 
