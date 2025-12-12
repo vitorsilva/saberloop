@@ -8,10 +8,10 @@ export default defineConfig(({ command }) => ({
     plugins: [
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['icons/*.png', 'manifest.json'],
+            includeAssets: ['icons/*.png'],
 
             manifest: {
-                name: 'Saberloop - Learn Through Quizzes',
+                name: 'Saberloop - Learn Anything, Practice Anything',
                 short_name: 'Saberloop',
                 description: 'The fun way to learn and track your progress with AI-powered quizzes',
                 theme_color: '#FF6B35',
@@ -25,13 +25,48 @@ export default defineConfig(({ command }) => ({
                         src: '/app/icons/icon-192x192.png',
                         sizes: '192x192',
                         type: 'image/png',
-                        purpose: 'any maskable'
+                        purpose: 'any'
                     },
                     {
                         src: '/app/icons/icon-512x512.png',
                         sizes: '512x512',
                         type: 'image/png',
-                        purpose: 'any maskable'
+                        purpose: 'any'
+                    },
+                    {
+                        src: '/app/icons/icon-192x192-maskable.png',
+                        sizes: '192x192',
+                        type: 'image/png',
+                        purpose: 'maskable'
+                    },
+                    {
+                        src: '/app/icons/icon-512x512-maskable.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                        purpose: 'maskable'
+                    }
+                ],
+                screenshots: [
+                    {
+                        src: '/app/icons/screenshot-mobile-1.png',
+                        sizes: '400x855',
+                        type: 'image/png',
+                        form_factor: 'narrow',
+                        label: 'Saberloop Welcome Screen'
+                    },
+                    {
+                        src: '/app/icons/screenshot-mobile-2.png',
+                        sizes: '400x855',
+                        type: 'image/png',
+                        form_factor: 'narrow',
+                        label: 'Saberloop Home Screen'
+                    },
+                    {
+                        src: '/app/icons/screenshot-desktop-1.png',
+                        sizes: '1280x720',
+                        type: 'image/png',
+                        form_factor: 'wide',
+                        label: 'Saberloop on Desktop'
                     }
                 ],
                 categories: ['education', 'learning', 'quiz']
