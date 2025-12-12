@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Saberloop - Learn any topic with AI-powered quizzes. Free, offline-capable, and privacy-first.">
+    <meta name="theme-color" content="#FF6B35">
+    <title>Saberloop - Learn Anything, Practice Anything</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="/app/icons/icon-192x192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #e55a2b;
+            --background: #1a1a2e;
+            --background-light: #252542;
+            --text: #ffffff;
+            --text-muted: #a0a0b0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+
+        .header-cta {
+            background: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .header-cta:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+        }
+
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .hero-content h1 span {
+            color: var(--primary);
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--background-light);
+            color: var(--text);
+            border: 2px solid var(--background-light);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            max-width: 300px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Features */
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: var(--background-light);
+            padding: 32px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* How it works */
+        .how-it-works {
+            padding: 100px 0;
+            background: var(--background-light);
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+
+        .step h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .step p {
+            color: var(--text-muted);
+        }
+
+        /* Screenshots */
+        .screenshots {
+            padding: 100px 0;
+        }
+
+        .screenshots-grid {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .screenshots-grid img {
+            max-width: 280px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #ff8f65 100%);
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            font-size: 1.25rem;
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+
+        .cta .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border-color: white;
+        }
+
+        .cta .btn-secondary:hover {
+            background: rgba(255,255,255,0.9);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 16px;
+        }
+
+        footer a:hover {
+            color: var(--primary);
+        }
+
+        .footer-links {
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-image {
+                order: -1;
+            }
+
+            .hero-image img {
+                max-width: 250px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .header-cta {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/app/icons/icon-192x192.png" alt="Saberloop">
+                Saberloop
+            </a>
+            <a href="/app/" class="header-cta">Try Free</a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Learn <span>Anything</span>,<br>Practice <span>Anything</span></h1>
+                <p>AI-powered quizzes on any topic you want to master. Free, works offline, and your data stays private.</p>
+                <div class="hero-buttons">
+                    <a href="/app/" class="btn btn-primary">
+                        Try Web App Free
+                    </a>
+                    <a href="https://github.com/vitorsilva/demo-pwa-app" class="btn btn-secondary" target="_blank">
+                        View on GitHub
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App Screenshot">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why Saberloop?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>AI-Generated Questions</h3>
+                    <p>Get unique quiz questions on any topic, powered by advanced AI models.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Works Offline</h3>
+                    <p>Review past quizzes and try sample topics even without internet.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy First</h3>
+                    <p>Your quiz history and data stay on your device. No tracking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🆓</div>
+                    <h3>Free to Use</h3>
+                    <p>Try sample quizzes free. Connect your own API key for unlimited access.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Enter Any Topic</h3>
+                    <p>Type any subject you want to learn about - history, science, coding, languages, anything!</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Get Quiz Questions</h3>
+                    <p>AI generates 5 unique multiple-choice questions tailored to your topic instantly.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Learn & Improve</h3>
+                    <p>Answer questions and get detailed explanations to reinforce your learning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots -->
+    <section class="screenshots">
+        <div class="container">
+            <h2 class="section-title">See It In Action</h2>
+            <div class="screenshots-grid">
+                <img src="/app/icons/screenshot-mobile-1.png" alt="Welcome Screen">
+                <img src="/app/icons/screenshot-mobile-2.png" alt="Home Screen">
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Start Learning?</h2>
+            <p>No sign-up required. Try it free right now.</p>
+            <div class="hero-buttons" style="justify-content: center;">
+                <a href="/app/" class="btn btn-secondary">
+                    Launch Saberloop
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/vitorsilva/demo-pwa-app" target="_blank">GitHub</a>
+                <a href="https://github.com/vitorsilva/demo-pwa-app/issues" target="_blank">Report Issue</a>
+            </div>
+            <p>&copy; 2025 Saberloop. Built with Claude AI.</p>
+        </div>
+    </footer>
+</body>
+</html>
