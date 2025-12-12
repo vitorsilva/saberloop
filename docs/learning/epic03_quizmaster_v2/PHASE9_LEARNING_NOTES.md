@@ -186,6 +186,34 @@ Section 9.0.0 (Deployment Validation) is complete. Next up:
 
 ---
 
+## Section 9.0 In-App Help - COMPLETE ✅
+
+**Completed:** 2025-12-12
+
+### Implementation
+
+Created a simple Help page with FAQ accordion accessible from Settings.
+
+**Files created/modified:**
+- `src/views/HelpView.js` - NEW: Help page with expandable FAQ
+- `src/main.js` - Added import and `/help` route
+- `src/views/SettingsView.js` - Added "Help & FAQ" link in About section
+
+**FAQ Content:**
+1. How do I create a quiz?
+2. Does the app work offline?
+3. How do I connect to OpenRouter?
+4. Is my data private?
+5. What is OpenRouter?
+
+**Features:**
+- Expandable accordion for each FAQ
+- Back button to Settings
+- GitHub issues link for reporting problems
+- Consistent styling with rest of app
+
+---
+
 **Last Updated:** 2025-12-12
-**Phase Status:** In Progress - Section 9.0.0 Complete
-**Next Session:** Section 9.0 In-App Help
+**Phase Status:** In Progress - Sections 9.0.0 and 9.0 Complete
+**Next Session:** Section 9.1 onwards (PWABuilder and Play Store)
