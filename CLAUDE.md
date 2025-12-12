@@ -125,6 +125,32 @@ When user says "that's a wrap" or similar:
 2. Note what was completed
 3. Note what's next for resumption
 
+### Planning Any New Phase or Task (CRITICAL)
+
+**ALWAYS review existing documentation before planning.** When creating or updating a plan for any phase or task:
+
+1. **Read the learning notes of related previous phases** to identify:
+   - Dependencies and integration points
+   - Implementation details that may be affected
+   - Potential issues or gotchas already documented
+
+2. **Read the phase definition files** of features that will be touched:
+   - If the task involves deployment → review deployment-related phases
+   - If the task involves OAuth/API → review API integration phases
+   - If the task involves UI changes → review UI-related phases
+
+3. **Cross-reference with the current task** to identify:
+   - What existing functionality might break
+   - What configurations or paths need to change
+   - What should be added to the validation checklist
+
+**This applies to ALL planning, not just specific cases.** The goal is to avoid discovering issues reactively by proactively reviewing what was already built and documented.
+
+**Example:** Before planning deployment validation for a new server:
+- Read Phase 3.6 (OpenRouter) notes → discover OAuth callback URLs exist
+- Read deployment notes → understand path dependencies
+- Add "test OAuth callback flow" to the validation checklist
+
 ---
 
 ## Working with the Learning Plan
