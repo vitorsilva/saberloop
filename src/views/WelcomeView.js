@@ -13,7 +13,7 @@
 
             <!-- Hero Section -->
             <div class="mb-8 flex flex-col items-center">
-              <img src="/icons/icon-192x192.png" alt="Saberloop logo" class="mb-6 h-24 w-24 rounded-3xl">
+              <img src="/app/icons/icon-192x192.png" alt="Saberloop logo" class="mb-6 h-24 w-24 rounded-3xl">
               <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">
                 Welcome to Saberloop
               </h1>

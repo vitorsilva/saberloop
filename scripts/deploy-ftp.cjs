@@ -9,6 +9,8 @@ const baseConfig = {
     host: process.env.FTP_HOST,
     port: 21,
     forcePasv: true,
+    secure: true,
+    secureOptions: { rejectUnauthorized: false },
     deleteRemote: false
 };
 
