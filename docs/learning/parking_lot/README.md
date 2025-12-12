@@ -165,6 +165,37 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
+### [Internationalization (i18n)](./I18N_INTERNATIONALIZATION.md) ⭐ **Ready to Implement**
+
+**Status:** Planning Complete
+
+**What it is:**
+- Full internationalization using i18next library
+- UI translation with ~65 extracted strings
+- LLM content generation in user's preferred language
+- Locale-aware date/number formatting (Intl API)
+- Hybrid translation workflow (manual + API-assisted)
+
+**Why it's optional:**
+- ✅ App works fine in English only
+- ⚠️ Significant effort (~7-10 sessions)
+- ⚠️ Requires ongoing translation maintenance
+
+**Why you might want it:**
+- 🌍 **Global reach** - Accessible to users worldwide
+- 🎓 **Learn i18n patterns** - Industry-standard practices
+- 👥 **Expand user base** - Non-English speakers
+- 📱 **Professional quality** - Expected in production apps
+- 🔤 **AI content localization** - Quiz questions in any language
+
+**When to revisit:**
+- Targeting international markets
+- Family members prefer other languages
+- Preparing for wider distribution
+- Want to learn i18n best practices
+
+---
+
 ## How to Use This Folder
 
 ### If You're Planning Epic 3
@@ -242,12 +273,12 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 5 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter, PHP VPS)
+**Current count:** 6 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter, PHP VPS, Internationalization)
 
 **Status:** All documented and ready to implement when desired
 
 ---
 
-**Last Updated:** 2025-12-09
+**Last Updated:** 2025-12-12
 **Location:** `docs/parking_lot/`
 **Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
