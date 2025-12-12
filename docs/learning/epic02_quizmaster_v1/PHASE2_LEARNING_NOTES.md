@@ -77,7 +77,7 @@ Successfully built a complete IndexedDB wrapper module (`db.js`) for QuizMaster 
 ## Code Structure
 
 ```
-demo-pwa-app/
+saberloop/
 ├── db.js                    ✅ Created
 ├── db.test.js               ✅ Created
 ├── package.json             ✅ Updated (added idb, fake-indexeddb)

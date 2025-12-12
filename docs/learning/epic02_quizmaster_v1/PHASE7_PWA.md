@@ -74,7 +74,7 @@ You already have a working manifest from Epic 01. Just update these fields:
   "name": "QuizMaster - AI-Powered Quiz App",
   "short_name": "QuizMaster",
   "description": "Test your knowledge on any topic with AI-generated questions",
-  "start_url": "/demo-pwa-app/",
+  "start_url": "/app/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4F46E5",
@@ -82,13 +82,13 @@ You already have a working manifest from Epic 01. Just update these fields:
   "categories": ["education", "learning", "quiz"],
   "icons": [
     {
-      "src": "/demo-pwa-app/public/icons/icon-192x192.png",
+      "src": "/app/public/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/demo-pwa-app/public/icons/icon-512x512.png",
+      "src": "/app/public/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -96,12 +96,12 @@ You already have a working manifest from Epic 01. Just update these fields:
   ],
   "screenshots": [
     {
-      "src": "/demo-pwa-app/public/screenshots/home.png",
+      "src": "/app/public/screenshots/home.png",
       "sizes": "540x720",
       "type": "image/png"
     },
     {
-      "src": "/demo-pwa-app/public/screenshots/quiz.png",
+      "src": "/app/public/screenshots/quiz.png",
       "sizes": "540x720",
       "type": "image/png"
     }
@@ -133,7 +133,7 @@ You already know service workers from Epic 01. The SPA challenge is:
 ```javascript
 // For navigation requests → serve index.html
 if (request.mode === 'navigate') {
-  return caches.match('/demo-pwa-app/index.html');
+  return caches.match('/app/index.html');
 }
 ```
 
@@ -151,24 +151,24 @@ const RUNTIME_CACHE = 'quizmaster-runtime-v1';
 
 // Files to cache on install
 const FILES_TO_CACHE = [
-  '/demo-pwa-app/',
-  '/demo-pwa-app/index.html',
-  '/demo-pwa-app/styles.css',
-  '/demo-pwa-app/src/main.js',
-  '/demo-pwa-app/src/router/router.js',
-  '/demo-pwa-app/src/state.js',
-  '/demo-pwa-app/src/views/BaseView.js',
-  '/demo-pwa-app/src/views/HomeView.js',
-  '/demo-pwa-app/src/views/QuizView.js',
-  '/demo-pwa-app/src/views/ResultsView.js',
-  '/demo-pwa-app/src/views/HistoryView.js',
-  '/demo-pwa-app/src/views/SettingsView.js',
-  '/demo-pwa-app/src/api/api.mock.js',
-  '/demo-pwa-app/src/api/prompts.js',
-  '/demo-pwa-app/src/db/db.js',
-  '/demo-pwa-app/public/icons/icon-192x192.png',
-  '/demo-pwa-app/public/icons/icon-512x512.png',
-  '/demo-pwa-app/public/manifest.json'
+  '/app/',
+  '/app/index.html',
+  '/app/styles.css',
+  '/app/src/main.js',
+  '/app/src/router/router.js',
+  '/app/src/state.js',
+  '/app/src/views/BaseView.js',
+  '/app/src/views/HomeView.js',
+  '/app/src/views/QuizView.js',
+  '/app/src/views/ResultsView.js',
+  '/app/src/views/HistoryView.js',
+  '/app/src/views/SettingsView.js',
+  '/app/src/api/api.mock.js',
+  '/app/src/api/prompts.js',
+  '/app/src/db/db.js',
+  '/app/public/icons/icon-192x192.png',
+  '/app/public/icons/icon-512x512.png',
+  '/app/public/manifest.json'
 ];
 
 // Install event - cache files
@@ -233,7 +233,7 @@ self.addEventListener('fetch', (event) => {
   // Handle navigation requests (all HTML requests)
   if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match('/demo-pwa-app/index.html')
+      caches.match('/app/index.html')
         .then((response) => {
           return response || fetch(request);
         })
@@ -300,7 +300,7 @@ async function networkFirst(request) {
 // Register service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/demo-pwa-app/public/sw.js')
+    navigator.serviceWorker.register('/app/public/sw.js')
       .then((registration) => {
         console.log('Service Worker registered:', registration);
       })
@@ -335,7 +335,7 @@ export function onOffline(callback) {
 // Check if network request will work
 export async function checkConnectivity() {
   try {
-    const response = await fetch('/demo-pwa-app/public/manifest.json', {
+    const response = await fetch('/app/public/manifest.json', {
       method: 'HEAD',
       cache: 'no-store'
     });
@@ -601,7 +601,7 @@ export default class HomeView extends BaseView {
 **3. Files Not Cached**
 ```javascript
 // Check sw.js FILES_TO_CACHE array
-// Verify paths are correct (include /demo-pwa-app/ prefix)
+// Verify paths are correct (include /app/ prefix)
 ```
 
 **4. Offline Not Working**

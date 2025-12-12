@@ -241,8 +241,8 @@ echo "text" >> file
 
 **Example:**
 ```
-Windows path: C:\Users\vitor410rodrigues\source\repos\demo-pwa-app
-WSL path:     /mnt/c/Users/vitor410rodrigues/source/repos/demo-pwa-app
+Windows path: C:\Users\vitor410rodrigues\source\repos\saberloop
+WSL path:     /mnt/c/Users/vitor410rodrigues/source/repos/saberloop
 ```
 
 **Why This Matters:**
@@ -931,7 +931,7 @@ services:
 - `dockerfile: Dockerfile` = use this Dockerfile
 
 ```yaml
-    container_name: demo-pwa-app
+    container_name: saberloop
 ```
 - Gives container a friendly name (instead of random name)
 

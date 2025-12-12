@@ -2,7 +2,7 @@
 
 This directory contains all learning notes and documentation for the QuizMaster project, organized by epic.
 
-Live version available at [https://vitorsilva.github.io/demo-pwa-app/](https://vitorsilva.github.io/demo-pwa-app/)
+Live version available at [https://saberloop.com/app/](https://saberloop.com/app/)
 
 ---
 

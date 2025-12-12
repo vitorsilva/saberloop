@@ -12,11 +12,11 @@ Be respectful, collaborative, and constructive. We're all here to learn and buil
 
 ```bash
 # Fork the repository on GitHub, then clone your fork
-git clone https://github.com/YOUR_USERNAME/demo-pwa-app.git
-cd demo-pwa-app
+git clone https://github.com/YOUR_USERNAME/saberloop.git
+cd saberloop
 
 # Add upstream remote
-git remote add upstream https://github.com/vitorsilva/demo-pwa-app.git
+git remote add upstream https://github.com/vitorsilva/saberloop.git
 ```
 
 ### 2. Install Dependencies
@@ -168,7 +168,7 @@ docs/
 
 Found a bug? Great!
 
-1. Check if it's already reported in [Issues](https://github.com/vitorsilva/demo-pwa-app/issues)
+1. Check if it's already reported in [Issues](https://github.com/vitorsilva/saberloop/issues)
 2. If not, create a new issue with:
    - Description of the bug
    - Steps to reproduce

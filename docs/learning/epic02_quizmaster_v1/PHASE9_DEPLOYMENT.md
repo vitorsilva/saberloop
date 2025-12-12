@@ -60,7 +60,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   // Base path for GitHub Pages
-  base: '/demo-pwa-app/',
+  base: '/app/',
 
   // Root directory
   root: '.',
@@ -203,7 +203,7 @@ python -m http.server 8080
 ```
 
 **Test the production build:**
-- Navigate to http://localhost:8080/demo-pwa-app/
+- Navigate to http://localhost:8080/app/
 - Test all flows
 - Check console for errors
 - Verify service worker works
@@ -267,12 +267,12 @@ git commit -m "chore: prepare for deployment"
 git push origin main
 
 # 4. GitHub Actions automatically builds and deploys
-# Watch progress at: https://github.com/yourusername/demo-pwa-app/actions
+# Watch progress at: https://github.com/yourusername/app/actions
 
 # 5. Wait 2-3 minutes for deployment
 
 # 6. Visit your site
-# https://yourusername.github.io/demo-pwa-app/
+# https://yourusername.github.io/app/
 ```
 
 ### Verify Deployment
@@ -505,7 +505,7 @@ router.addEventListener('routechange', (event) => {
 
 ## Live Demo
 
-🚀 **[Try QuizMaster](https://yourusername.github.io/demo-pwa-app/)**
+🚀 **[Try QuizMaster](https://yourusername.github.io/app/)**
 
 ## Features
 
@@ -537,7 +537,7 @@ Thanks for testing QuizMaster!
 
 ## Getting Started
 
-1. Visit: https://yourusername.github.io/demo-pwa-app/
+1. Visit: https://yourusername.github.io/app/
 2. Install the app (optional but recommended)
 3. Try creating a quiz on any topic
 4. Complete the quiz and view results
@@ -598,7 +598,7 @@ git push origin main --force  # Use with caution
 
 **2. Assets not loading**
 - **Cause**: Wrong base path in vite.config.js
-- **Fix**: Verify `base: '/demo-pwa-app/'` matches repository name
+- **Fix**: Verify `base: '/app/'` matches repository name
 
 **3. Service worker not updating**
 - **Cause**: Old service worker cached
@@ -622,7 +622,7 @@ git push origin main --force  # Use with caution
 <summary>Answer</summary>
 
 **Local**: Base is `/` (root of localhost:3000)
-**GitHub Pages**: Base is `/demo-pwa-app/` (subdirectory)
+**GitHub Pages**: Base is `/app/` (subdirectory)
 
 If we don't set the base path correctly:
 - Assets won't load (404 errors)

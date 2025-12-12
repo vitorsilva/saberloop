@@ -27,8 +27,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/vitorsilva/demo-pwa-app.git
-cd demo-pwa-app
+git clone https://github.com/vitorsilva/saberloop.git
+cd saberloop
 
 # Install dependencies
 npm install

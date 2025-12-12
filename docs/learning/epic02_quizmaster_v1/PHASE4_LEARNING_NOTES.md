@@ -111,7 +111,7 @@ This is better than manually checking every file!
 ## Project Structure (After Phase 4)
 
 ```
-demo-pwa-app/
+saberloop/
 ├── src/
 │   ├── api/
 │   │   ├── api.js          # Real API (Phase 11)

@@ -866,7 +866,7 @@ Set up professional local development environment with HTTPS, build tools, and a
 ## Project Structure
 
 ```
-demo-pwa-app/
+saberloop/
 │
 ├── index.html              # Main HTML file (entry point)
 │   └── Contains: structure, form elements, links to CSS/JS/manifest
@@ -1011,7 +1011,7 @@ git push origin main
 6. Wait a few minutes for deployment
 
 **Step 3: Access Your App**
-- URL will be: `https://yourusername.github.io/demo-pwa-app/`
+- URL will be: `https://yourusername.github.io/saberloop/`
 - Check DevTools > Application for PWA features
 - Test installation on mobile
 

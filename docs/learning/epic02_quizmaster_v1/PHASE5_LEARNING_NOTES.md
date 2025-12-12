@@ -30,7 +30,7 @@
 
 **How it works:**
 ```
-URL: http://localhost:3000/demo-pwa-app/#/test
+URL: http://localhost:3000/#/test
                                           ↑
                                        Hash part
 ```
@@ -233,7 +233,7 @@ export default class TestView extends BaseView {
 ## Project Structure (After Phase 5)
 
 ```
-demo-pwa-app/
+saberloop/
 ├── src/
 │   ├── api/
 │   │   ├── api.js

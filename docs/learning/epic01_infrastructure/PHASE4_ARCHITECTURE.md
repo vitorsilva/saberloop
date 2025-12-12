@@ -188,7 +188,7 @@ SOURCE FILES (Your Code)
 │  • Serves files as-is                                 │
 │  • Hot Module Replacement                             │
 │  • Fast refresh on changes                            │
-│  localhost:3000/demo-pwa-app/                         │
+│  localhost:3000/                                      │
 └───────────────────────────────────────────────────────┘
          │
          │ npm run build
@@ -227,7 +227,7 @@ PRODUCTION BUILD (dist/)
          ▼
 ┌───────────────────────────────────────────────────────┐
 │              GITHUB PAGES (Live Site)                 │
-│  https://vitorsilva.github.io/demo-pwa-app/          │
+│  https://saberloop.com/app/                          │
 │                                                       │
 │  Serves optimized dist/ files to users               │
 └───────────────────────────────────────────────────────┘

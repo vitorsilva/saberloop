@@ -29,8 +29,8 @@ To use real AI-generated questions, you need an API key from one of:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/vitorsilva/demo-pwa-app.git
-cd demo-pwa-app
+git clone https://github.com/vitorsilva/saberloop.git
+cd saberloop
 ```
 
 ### 2. Install Dependencies

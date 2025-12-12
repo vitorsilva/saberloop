@@ -26,8 +26,8 @@ Yes! Once you've loaded the app, it works offline:
 ### How do I run the app locally?
 
 ```bash
-git clone https://github.com/vitorsilva/demo-pwa-app.git
-cd demo-pwa-app
+git clone https://github.com/vitorsilva/saberloop.git
+cd saberloop
 npm install
 npm run dev
 ```
@@ -224,7 +224,7 @@ Or in Settings → Clear Data (if implemented)
 
 ### How can I contribute?
 
-- Report bugs via [GitHub Issues](https://github.com/vitorsilva/demo-pwa-app/issues)
+- Report bugs via [GitHub Issues](https://github.com/vitorsilva/saberloop/issues)
 - Submit pull requests for fixes/features
 - Improve documentation
 - Share feedback

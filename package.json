@@ -2,13 +2,13 @@
   "name": "saberloop",
   "version": "2.0.0",
   "description": "Saberloop - The fun way to learn and track your progress with AI-powered quizzes",
-  "homepage": "https://github.com/vitorsilva/demo-pwa-app#readme",
+  "homepage": "https://github.com/vitorsilva/saberloop#readme",
   "bugs": {
-    "url": "https://github.com/vitorsilva/demo-pwa-app/issues"
+    "url": "https://github.com/vitorsilva/saberloop/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vitorsilva/demo-pwa-app.git"
+    "url": "git+https://github.com/vitorsilva/saberloop.git"
   },
   "license": "ISC",
   "author": "",

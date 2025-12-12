@@ -208,7 +208,7 @@ Quiz Complete
 ### Project Structure
 
 ```
-demo-pwa-app/
+saberloop/
 ├── index.html                    # Main HTML (converted from mockups)
 ├── manifest.json                 # PWA manifest
 ├── sw.js                         # Service worker

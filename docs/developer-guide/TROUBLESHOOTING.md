@@ -283,7 +283,7 @@ netlify functions:invoke generate-questions --payload '{"topic":"Math"}'
 
 If you can't resolve an issue:
 
-1. **Search existing issues:** [GitHub Issues](https://github.com/vitorsilva/demo-pwa-app/issues)
+1. **Search existing issues:** [GitHub Issues](https://github.com/vitorsilva/saberloop/issues)
 2. **Create new issue** with:
    - Description of problem
    - Steps to reproduce

@@ -583,7 +583,7 @@ Organize project for production-quality codebase and comprehensive documentation
 
 **Proposed Structure:**
 ```
-demo-pwa-app/
+saberloop/
 ├── docs/
 │   ├── epic01_infrastructure/       # Learning notes (Epic 01)
 │   ├── epic02_quizmaster_v1/        # Learning notes (Epic 02)
@@ -634,7 +634,7 @@ demo-pwa-app/
 
 > Test your knowledge on any topic with AI-generated questions
 
-[Demo](https://vitorsilva.github.io/demo-pwa-app/) • [Documentation](./docs/) • [Contributing](./CONTRIBUTING.md)
+[Demo](https://saberloop.com/app/) • [Documentation](./docs/) • [Contributing](./CONTRIBUTING.md)
 
 ## ✨ Features
 
@@ -653,8 +653,8 @@ demo-pwa-app/
 
 ### Installation
 \`\`\`bash
-git clone https://github.com/vitorsilva/demo-pwa-app.git
-cd demo-pwa-app
+git clone https://github.com/vitorsilva/saberloop.git
+cd saberloop
 npm install
 \`\`\`
 

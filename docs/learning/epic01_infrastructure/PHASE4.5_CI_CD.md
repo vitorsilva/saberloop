@@ -160,7 +160,7 @@ Reports success/failure
 **JSON:**
 ```json
 {
-  "name": "demo-pwa-app",
+  "name": "saberloop",
   "version": "1.0.0",
   "scripts": {
     "test": "vitest"
@@ -170,7 +170,7 @@ Reports success/failure
 
 **YAML (same data):**
 ```yaml
-name: demo-pwa-app
+name: saberloop
 version: 1.0.0
 scripts:
   test: vitest
@@ -243,13 +243,13 @@ Users access optimized site
 - Stores source code
 - Version control (commits, branches)
 - You see: `index.html`, `app.js`, `styles.css`
-- URL: github.com/vitorsilva/demo-pwa-app
+- URL: github.com/vitorsilva/saberloop
 
 **2. GitHub Pages (Web server)**
 - Serves static files over HTTP/HTTPS
 - Acts like nginx/Apache
 - Users see: Your live site
-- URL: vitorsilva.github.io/demo-pwa-app/
+- URL: saberloop.com/app/ (originally vitorsilva.github.io/saberloop/)
 
 **3. GitHub Actions (CI/CD runner) - NEW!**
 - Builds `dist/` folder
@@ -694,21 +694,21 @@ GET /manifest.json 404 (Not Found)
 
 **Cause:**
 - Vite generated absolute paths: `/assets/main-abc123.js`
-- But site deployed to subfolder: `/demo-pwa-app/`
-- Should be: `/demo-pwa-app/assets/main-abc123.js`
+- But site deployed to subfolder: `/app/`
+- Should be: `/app/assets/main-abc123.js`
 
 **Fix:**
 Added `base` to `vite.config.js`:
 ```javascript
 export default defineConfig({
-  base: '/demo-pwa-app/',  // Prepend to all asset paths
+  base: '/app/',  // Prepend to all asset paths
   // ... rest of config
 });
 ```
 
 **How it works:**
-- Development (`npm run dev`): Serves at `http://localhost:3000/demo-pwa-app/`
-- Production build: Paths become `/demo-pwa-app/assets/...`
+- Development (`npm run dev`): Serves at `http://localhost:3000/`
+- Production build: Paths become `/app/assets/...`
 - Works in both environments!
 
 **Q: Won't this break local development?**
@@ -770,17 +770,17 @@ Service worker can't know hashed filenames (`main-abc123.js` changes every build
 ```javascript
 const CACHE_NAME = 'pwa-text-echo-v7';
 const FILES_TO_CACHE = [
-    '/demo-pwa-app/',
-    '/demo-pwa-app/index.html',
-    '/demo-pwa-app/manifest.json',
-    '/demo-pwa-app/icons/icon-192x192.png',
-    '/demo-pwa-app/icons/icon-512x512.png'
+    '/app/',
+    '/app/index.html',
+    '/app/manifest.json',
+    '/app/icons/icon-192x192.png',
+    '/app/icons/icon-512x512.png'
 ];
 // No app.js or styles.css - they have hashed names!
 ```
 
 **Why absolute paths now?**
-`sw.js` is at `/demo-pwa-app/sw.js`, needs to cache files relative to site root.
+`sw.js` is at `/app/sw.js`, needs to cache files relative to site root.
 
 **Tradeoff:**
 - ✅ Simple to manage
@@ -800,12 +800,12 @@ const FILES_TO_CACHE = [
 **Two Separate Systems:**
 
 **1. GitHub Repository**
-- URL: github.com/vitorsilva/demo-pwa-app
+- URL: github.com/vitorsilva/saberloop
 - Stores: Source code (`index.html`, `app.js`, etc.)
 - Visible: All files in repo tree
 
 **2. GitHub Pages**
-- URL: vitorsilva.github.io/demo-pwa-app/
+- URL: saberloop.com/app/ (originally vitorsilva.github.io/saberloop/)
 - Serves: Build artifacts from `dist/`
 - Visible: Only by downloading artifacts from Actions
 
@@ -954,7 +954,7 @@ npm run build             # Production build
 
 **Updated Configuration:**
 - `package.json` - Changed `"type": "module"`
-- `vite.config.js` - Added `base: '/demo-pwa-app/'`
+- `vite.config.js` - Added `base: '/app/'`
 - `vitest.config.js` - Excluded E2E tests
 - `playwright.config.js` - Added `webServer` section
 
@@ -1041,7 +1041,7 @@ Your PWA now has:
   - E2E testing (Playwright)
   - Continuous Integration (GitHub Actions test.yml)
   - Continuous Deployment (GitHub Actions deploy.yml)
-- Live site: https://vitorsilva.github.io/demo-pwa-app/
+- Live site: https://saberloop.com/app/
 - Serving minified, optimized production build
 - All Phase 4.5 learnings fully documented
 

@@ -98,7 +98,7 @@ npm run preview
 ```
 
 **Verified locally:**
-- ✅ App loads at http://localhost:4173/demo-pwa-app/
+- ✅ App loads at http://localhost:4173/app/
 - ✅ Service Worker registers correctly
 - ✅ Database initializes
 - ✅ Router initializes
@@ -110,7 +110,7 @@ npm run preview
 
 **Console output:**
 ```
-✅ Service Worker registered: http://localhost:4173/demo-pwa-app/
+✅ Service Worker registered: http://localhost:4173/app/
 ✅ Database initialized
 ✅ Router initialized
 ✅ Network monitoring initialized
@@ -164,7 +164,7 @@ git push origin main
 - Site updates in ~1-2 minutes
 
 **Final result:**
-- ✅ Live at: https://vitorsilva.github.io/demo-pwa-app/
+- ✅ Live at: https://vitorsilva.github.io/app/
 - ✅ All features working in production
 - ✅ Service Worker active
 - ✅ PWA installable
@@ -351,7 +351,7 @@ export function a(){return navigator.onLine}
 
 **URL structure:**
 - Pattern: `https://[username].github.io/[repository]/`
-- QuizMaster: `https://vitorsilva.github.io/demo-pwa-app/`
+- QuizMaster: `https://vitorsilva.github.io/app/`
 
 **How it works:**
 1. Deploy workflow uploads `dist/` folder
@@ -506,7 +506,7 @@ steps:
   - Setup GitHub Pages      # Configure Pages settings
   - Upload artifact         # Upload dist/ folder
   - Deploy to Pages         # Make it live
-    → https://vitorsilva.github.io/demo-pwa-app/ ✅
+    → https://vitorsilva.github.io/app/ ✅
 ```
 
 **5. Live in Production**
@@ -581,7 +581,7 @@ All features working in production
 
 ### Android (Chrome/Edge)
 1. Open Chrome on Android
-2. Navigate to: `https://vitorsilva.github.io/demo-pwa-app/`
+2. Navigate to: `https://vitorsilva.github.io/app/`
 3. Look for "Add to Home Screen" banner
 4. Or tap menu (⋮) → "Add to Home Screen" or "Install app"
 5. Tap "Install" or "Add"
@@ -590,7 +590,7 @@ All features working in production
 
 ### iOS (Safari)
 1. Open Safari on iPhone/iPad
-2. Navigate to: `https://vitorsilva.github.io/demo-pwa-app/`
+2. Navigate to: `https://vitorsilva.github.io/app/`
 3. Tap Share button (square with arrow up)
 4. Scroll down and tap "Add to Home Screen"
 5. Edit name if desired
@@ -665,7 +665,7 @@ All features working in production
 **The Big Lesson:**
 **Infrastructure investment compounds**. The 2-3 hours spent in Epic 01 Phase 4.5 saved 2+ hours in Epic 02 Phase 9. Every future project will save even more time. This is why experienced developers invest heavily in tooling and infrastructure - the ROI grows exponentially.
 
-**Live URL**: https://vitorsilva.github.io/demo-pwa-app/
+**Live URL**: https://vitorsilva.github.io/app/
 
 ---
 

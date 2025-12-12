@@ -152,7 +152,7 @@ A JSON file that describes your project and its dependencies.
 
 ```json
 {
-  "name": "demo-pwa-app",           // Project name
+  "name": "saberloop",              // Project name
   "version": "1.0.0",                // Project version
   "description": "",                 // Project description
 
@@ -737,7 +737,7 @@ npm run <script-name>          # Run custom script
 
 **Understanding Output:**
 ```bash
-> demo-pwa-app@1.0.0 build    # Script running from package.json
+> saberloop@1.0.0 build       # Script running from package.json
 > vite build                  # Actual command executed
 ```
 

@@ -94,7 +94,7 @@ const response = await fetch('https://api.anthropic.com/v1/messages', {
 ```javascript
 // ✅ Correct configuration
 export default defineConfig({
-    base: '/demo-pwa-app/',
+    base: '/app/',
     root: '.',
     build: {
         outDir: 'dist',

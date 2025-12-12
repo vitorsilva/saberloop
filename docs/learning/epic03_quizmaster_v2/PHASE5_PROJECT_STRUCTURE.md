@@ -112,7 +112,7 @@ CLAUDE.md                       (Updated for Epic 3)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PWA](https://img.shields.io/badge/PWA-enabled-blue.svg)](https://web.dev/progressive-web-apps/)
 
-[Live Demo](https://vitorsilva.github.io/demo-pwa-app/) • [Documentation](./docs/) • [Contributing](./CONTRIBUTING.md)
+[Live Demo](https://saberloop.com/app/) • [Documentation](./docs/) • [Contributing](./CONTRIBUTING.md)
 
 ## ✨ Features
 
@@ -135,8 +135,8 @@ CLAUDE.md                       (Updated for Epic 3)
 
 ```bash
 # Clone the repository
-git clone https://github.com/vitorsilva/demo-pwa-app.git
-cd demo-pwa-app
+git clone https://github.com/vitorsilva/saberloop.git
+cd saberloop
 
 # Install dependencies
 npm install
@@ -240,7 +240,7 @@ The entire development journey is documented in the `docs/` directory, showing t
 ## 📧 Contact
 
 - **GitHub:** [@vitorsilva](https://github.com/vitorsilva)
-- **Project:** [demo-pwa-app](https://github.com/vitorsilva/demo-pwa-app)
+- **Project:** [demo-pwa-app](https://github.com/vitorsilva/saberloop)
 
 ---
 
@@ -269,10 +269,10 @@ Be respectful, collaborative, and constructive. We're all here to learn and buil
 ```bash
 # Fork the repository on GitHub, then clone your fork
 git clone https://github.com/YOUR_USERNAME/demo-pwa-app.git
-cd demo-pwa-app
+cd saberloop
 
 # Add upstream remote
-git remote add upstream https://github.com/vitorsilva/demo-pwa-app.git
+git remote add upstream https://github.com/vitorsilva/saberloop.git
 ```
 
 ### 2. Install Dependencies
@@ -422,7 +422,7 @@ docs/
 
 Found a bug? Great!
 
-1. Check if it's already reported in [Issues](https://github.com/vitorsilva/demo-pwa-app/issues)
+1. Check if it's already reported in [Issues](https://github.com/vitorsilva/saberloop/issues)
 2. If not, create a new issue with:
    - Description of the bug
    - Steps to reproduce
@@ -555,10 +555,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/vitorsilva/demo-pwa-app/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/vitorsilva/demo-pwa-app/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/vitorsilva/demo-pwa-app/compare/v0.1.0...v1.0.0
-[0.1.0]: https://github.com/vitorsilva/demo-pwa-app/releases/tag/v0.1.0
+[Unreleased]: https://github.com/vitorsilva/saberloop/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/vitorsilva/saberloop/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/vitorsilva/saberloop/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/vitorsilva/saberloop/releases/tag/v0.1.0
 ```
 
 ---
@@ -596,7 +596,7 @@ QuizMaster is an AI-powered quiz application built as a Progressive Web App (PWA
 
 **Current Version:** 2.0.0
 **Status:** Production
-**Repository:** https://github.com/vitorsilva/demo-pwa-app
+**Repository:** https://github.com/vitorsilva/saberloop
 
 ### Architecture
 

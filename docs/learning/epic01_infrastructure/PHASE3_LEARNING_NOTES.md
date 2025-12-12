@@ -406,7 +406,7 @@ git push    # Push to GitHub
 
 **Step 4: Access your deployed app**
 
-Example: `https://vitorsilva.github.io/demo-pwa-app/`
+Example: `https://saberloop.com/app/` (originally at `https://vitorsilva.github.io/saberloop/`)
 
 ### Testing the Deployed App
 
@@ -427,7 +427,7 @@ Example: `https://vitorsilva.github.io/demo-pwa-app/`
 
 **The Issue:**
 
-When your app is at a subfolder (like `/demo-pwa-app/`), absolute paths break:
+When your app is at a subfolder (like `/app/`), absolute paths break:
 
 ```javascript
 // In your code
@@ -436,10 +436,10 @@ When your app is at a subfolder (like `/demo-pwa-app/`), absolute paths break:
 // On localhost
 http://localhost:5500/icons/icon-192x192.png ✅ Works
 
-// On GitHub Pages
-https://vitorsilva.github.io/icons/icon-192x192.png ❌ Wrong!
+// On production (subdirectory deployment)
+https://saberloop.com/icons/icon-192x192.png ❌ Wrong!
 // Should be:
-https://vitorsilva.github.io/demo-pwa-app/icons/icon-192x192.png ✅ Correct
+https://saberloop.com/app/icons/icon-192x192.png ✅ Correct
 ```
 
 ### Understanding Path Types
@@ -620,7 +620,7 @@ const CACHE_NAME = 'pwa-text-echo-v4';  // Increment!
 
 1. **Open Chrome on Android phone**
 2. **Visit your deployed URL**
-   - Example: `https://vitorsilva.github.io/demo-pwa-app/`
+   - Example: `https://saberloop.com/app/`
 3. **Look for install prompt**
    - Banner at bottom of screen, OR
    - Three dots menu → "Install app", OR

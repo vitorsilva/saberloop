@@ -14,7 +14,7 @@ The project follows a guided, incremental learning methodology with detailed doc
 
 **Current Status:** Epic 03 Phase 9.10 (Landing Page) Complete | Next: Phase 9.1 PWABuilder & Play Store
 
-**Repository**: https://github.com/vitorsilva/demo-pwa-app
+**Repository**: https://github.com/vitorsilva/saberloop
 
 ## Claude's Teaching Methodology (CRITICAL)
 
