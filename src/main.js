@@ -101,7 +101,7 @@ async function init() {
       logger.info('OpenRouter connected successfully');
 
       // Redirect to home (removes ?code from URL)
-      window.location.href = window.location.origin + '/#/';
+      window.location.href = window.location.origin + '/app/#/';
 
     } catch (error) {
       logger.error('OAuth callback failed', { error: error.message });
@@ -121,7 +121,7 @@ async function init() {
               ${error.message}
             </p>
             <button
-              onclick="window.location.href = '/'"
+              onclick="window.location.href = '/app/'"
               class="mt-6 px-6 py-3 bg-primary text-white rounded-xl font-medium     
   hover:bg-primary/90"
             >

@@ -15,7 +15,7 @@
   const OPENROUTER_KEY_URL = 'https://openrouter.ai/api/v1/auth/keys';
 
   // Callback URL - where OpenRouter sends the user after login
-  const CALLBACK_URL = window.location.origin + '/auth/callback';
+  const CALLBACK_URL = window.location.origin + '/app/auth/callback';
 
   /**
    * Generate a random code_verifier for PKCE
