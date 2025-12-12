@@ -93,6 +93,226 @@ Common issues to address:
 
 ---
 
+### 9.0.1 Repository Rename: demo-pwa-app → saberloop
+
+**Time:** 30-60 minutes
+**Status:** 🎯 IN PROGRESS
+
+Before publishing to Play Store, rename the GitHub repository to match the product branding. This ensures all public links, documentation, and references use the final product name.
+
+#### Why Rename Before Play Store?
+
+- **Consistency** - Play Store listing will link to GitHub; URLs should match branding
+- **Professionalism** - "demo-pwa-app" suggests a test project, not a real product
+- **SEO** - Repository name affects discoverability
+- **One-time effort** - Better to do now than after Play Store launch
+
+#### Pre-Rename Checklist
+
+Before renaming on GitHub:
+
+- [ ] Ensure all local changes are committed and pushed
+- [ ] Note current clone URL: `https://github.com/vitorsilva/demo-pwa-app.git`
+- [ ] Backup any local branches not pushed to remote
+
+#### Step 1: Rename Repository on GitHub
+
+1. Go to https://github.com/vitorsilva/demo-pwa-app
+2. Click **Settings** (top menu)
+3. In "Repository name" field, change `demo-pwa-app` to `saberloop`
+4. Click **Rename**
+5. GitHub will automatically redirect old URLs (temporarily)
+
+**Note:** GitHub provides automatic redirects from old URL to new URL, but these redirects can break if you create a new repo with the old name. Update all references promptly.
+
+#### Step 2: Update Local Git Remote
+
+After renaming on GitHub, update your local repository:
+
+```bash
+# Check current remote
+git remote -v
+
+# Update to new URL
+git remote set-url origin https://github.com/vitorsilva/saberloop.git
+
+# Verify the change
+git remote -v
+
+# Test connection
+git fetch
+```
+
+#### Step 3: Update Critical Files
+
+These files contain repository URLs that will break:
+
+**3.1 package.json** (lines 5, 7, 11)
+
+Update these three fields:
+```json
+{
+  "homepage": "https://github.com/vitorsilva/saberloop#readme",
+  "bugs": {
+    "url": "https://github.com/vitorsilva/saberloop/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitorsilva/saberloop.git"
+  }
+}
+```
+
+**3.2 README.md** (lines 30-31)
+
+Update clone instructions:
+```markdown
+git clone https://github.com/vitorsilva/saberloop.git
+cd saberloop
+```
+
+**3.3 CONTRIBUTING.md** (lines 15, 16, 19, 171)
+
+Update all repository URLs:
+- Line 15: `git clone https://github.com/YOUR_USERNAME/saberloop.git`
+- Line 16: `cd saberloop`
+- Line 19: `git remote add upstream https://github.com/vitorsilva/saberloop.git`
+- Line 171: `[Issues](https://github.com/vitorsilva/saberloop/issues)`
+
+**3.4 CHANGELOG.md** (lines 94-97)
+
+Update release comparison URLs:
+```markdown
+[Unreleased]: https://github.com/vitorsilva/saberloop/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/vitorsilva/saberloop/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/vitorsilva/saberloop/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/vitorsilva/saberloop/releases/tag/v0.1.0
+```
+
+**3.5 landing/index.html** (lines 390, 482, 483)
+
+Update GitHub links:
+- Line 390: `href="https://github.com/vitorsilva/saberloop"`
+- Line 482: `href="https://github.com/vitorsilva/saberloop"`
+- Line 483: `href="https://github.com/vitorsilva/saberloop/issues"`
+
+**3.6 CLAUDE.md** (line 17)
+
+Update repository reference:
+```markdown
+**Repository**: https://github.com/vitorsilva/saberloop
+```
+
+**3.7 docker-compose.yml** (line 8)
+
+Update container name:
+```yaml
+container_name: saberloop
+```
+
+#### Step 4: Update Developer Guide Files
+
+**docs/developer-guide/INSTALLATION.md** (lines 32-33):
+```markdown
+git clone https://github.com/vitorsilva/saberloop.git
+cd saberloop
+```
+
+**docs/developer-guide/FAQ.md** (lines 29-30, 227):
+```markdown
+git clone https://github.com/vitorsilva/saberloop.git
+cd saberloop
+...
+[GitHub Issues](https://github.com/vitorsilva/saberloop/issues)
+```
+
+**docs/developer-guide/TROUBLESHOOTING.md** (line 286):
+```markdown
+[GitHub Issues](https://github.com/vitorsilva/saberloop/issues)
+```
+
+**docs/README.md** (line 5):
+```markdown
+Live version available at [https://saberloop.com/app/](https://saberloop.com/app/)
+```
+
+#### Step 5: Update Learning Documentation
+
+These files contain historical references that need updating for consistency:
+
+**Epic 01 - Infrastructure:**
+
+| File | Lines to Update | Content |
+|------|-----------------|---------|
+| `LEARNING_PLAN.md` | 869, 1014 | Project structure examples, deployment paths |
+| `PHASE3_LEARNING_NOTES.md` | 409, 430, 442, 623 | GitHub Pages URLs |
+| `PHASE4.1_LOCAL_HTTPS.md` | 244, 245, 934 | Windows/WSL paths, Docker container name |
+| `PHASE4.2_BUILD_TOOLS.md` | 155, 740 | Package name examples |
+| `PHASE4.5_CI_CD.md` | 163, 173, 246, 252, 697-777, 803, 808, 957, 1044 | Multiple deployment examples |
+
+**Epic 02 - QuizMaster V1:**
+
+| File | Lines to Update | Content |
+|------|-----------------|---------|
+| `PHASE5_LEARNING_NOTES.md` | 33 | Development URL |
+| `PHASE7_PWA.md` | 77-171 | PWA configuration examples |
+| `PHASE9_DEPLOYMENT.md` | 63, 77-171, 206, 270, 275, 508, 540, 601, 625 | Deployment examples |
+| `PHASE9_LEARNING_NOTES.md` | 101, 113, 167, 354, 509, 584, 593, 668 | GitHub Pages URLs |
+
+#### Step 6: Commit and Push Changes
+
+```bash
+# Stage all updated files
+git add -A
+
+# Commit with descriptive message
+git commit -m "chore: rename repository from demo-pwa-app to saberloop
+
+- Update package.json repository URLs
+- Update all documentation links
+- Update clone instructions
+- Update landing page GitHub links
+- Update CLAUDE.md project reference
+- Update docker-compose container name
+- Update all learning documentation references"
+
+# Push to new repository URL
+git push origin main
+```
+
+#### Step 7: Post-Rename Verification
+
+- [ ] `git push` works without errors
+- [ ] https://github.com/vitorsilva/saberloop loads correctly
+- [ ] Old URL https://github.com/vitorsilva/demo-pwa-app redirects
+- [ ] All links in README work (click-test them)
+- [ ] Clone with new URL works: `git clone https://github.com/vitorsilva/saberloop.git`
+
+#### Files Updated Summary
+
+| Category | Files | Priority |
+|----------|-------|----------|
+| Package config | `package.json` | Critical |
+| Main docs | `README.md`, `CONTRIBUTING.md`, `CHANGELOG.md` | Critical |
+| Project config | `CLAUDE.md`, `docker-compose.yml` | High |
+| Landing page | `landing/index.html` | High |
+| Developer guides | 4 files in `docs/developer-guide/` | Medium |
+| Learning docs | 9+ files in `docs/learning/` | Medium |
+
+#### Success Criteria
+
+- [ ] Repository renamed on GitHub
+- [ ] Local git remote updated
+- [ ] All critical files updated (package.json, README, CONTRIBUTING, CHANGELOG)
+- [ ] Landing page links updated
+- [ ] CLAUDE.md updated
+- [ ] Developer guide files updated
+- [ ] Learning documentation updated
+- [ ] All changes committed and pushed
+- [ ] Old URL redirects to new URL
+
+---
+
 ### 9.0 In-App Help (Pre-requisite) ✅ COMPLETE
 
 **Time:** 1-2 hours
