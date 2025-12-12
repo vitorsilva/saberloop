@@ -95,31 +95,70 @@ src/utils/
 | **Labels** | Question X of Y, Score | ~20 |
 | **Messages** | Errors, confirmations | ~15 |
 | **Dates** | Today, Yesterday, X days ago | ~5 |
+| **Errors** | Network error, API key, Rate limit | ~10 |
+| **Placeholders** | "Your text will appear here..." | ~2 |
 | **Dynamic** | AI-generated content | N/A |
 
-**Total static strings**: ~65 strings to extract
+**Total static strings**: ~75 strings to extract (including error messages)
 
 ### E2E Tests with Hardcoded Strings
 
-**Critical Issue**: `tests/e2e/app.spec.js` has ~30+ text-based assertions that will break with i18n:
+**Critical Issue**: `tests/e2e/app.spec.js` has ~38 text-based assertions that will break with i18n:
 
-| String | Occurrences |
-|--------|-------------|
-| `'Welcome back!'` | 7 |
-| `'Recent Topics'` | 1 |
-| `'New Quiz'` | 1 |
-| `'Question 1 of 5'` | 3 |
-| `'Are you sure you want to leave?'` | 1 |
-| `'No quizzes yet'` | 1 |
-| `'Today'` | 1 |
-| `'Great Job!'` | 1 |
-| `'Review Your Answers'` | 1 |
-| `'Settings'` | 1 |
-| `'Preferences'` | 1 |
-| `"You're offline"` | 1 |
-| `'Quiz History'` | 1 |
+| String | Occurrences | Notes |
+|--------|-------------|-------|
+| `'Welcome back!'` | 7 | Static heading |
+| `'Recent Topics'` | 1 | Static heading |
+| `'New Quiz'` | 1 | Static heading |
+| `'Question 1 of 5'` | 3 | Interpolated text |
+| `'Are you sure you want to leave?'` | 1 | **Browser dialog (special)** |
+| `'No quizzes yet'` | 1 | Static message |
+| `'Today'` | 1 | **Intl.RelativeTimeFormat** |
+| `'Great Job!'` | 1 | Static message |
+| `'Review Your Answers'` | 1 | Static heading |
+| `'Settings'` | 1 | Static heading |
+| `'Preferences'` | 1 | Static heading |
+| `"You're offline"` | 1 | Static banner |
+| `'Quiz History'` | 1 | Static heading |
+| `'Science Quiz'` | 1 | **Dynamic: `${topic} Quiz`** |
+| `'Ancient Egypt Quiz'` | 1 | **Dynamic: `${topic} Quiz`** |
+| `'Marine Biology Quiz'` | 1 | **Dynamic: `${topic} Quiz`** |
+| `'80%'` | 1 | **Locale-dependent format** |
+| `'5/5'` | 2 | Score format |
+| `'About'` | 1 | Static label |
+| `'Version'` | 1 | Static label |
+| `'View on GitHub'` | 1 | Static link text |
+| `'Results'` | 1 | Static heading |
 
 **Solution**: Migrate to `data-testid` attributes (Phase 2).
+
+### Unit Tests with Hardcoded Strings
+
+**Also affected**: Unit tests check error messages and placeholder text:
+
+**`src/utils/errorHandler.test.js`** (8 assertions):
+| String | Notes |
+|--------|-------|
+| `'Network error'` | User-facing error |
+| `'API key'` | User-facing error |
+| `'Rate limit'` | User-facing error |
+| `'timed out'` | User-facing error |
+| `'An error occurred'` | User-facing error |
+
+**`src/api/openrouter-client.test.js`** (4 assertions):
+| String | Notes |
+|--------|-------|
+| `'Invalid API key'` | Thrown error message |
+| `'Rate limit exceeded'` | Thrown error message |
+| `'Insufficient credits'` | Thrown error message |
+| `'Empty response from OpenRouter'` | Thrown error message |
+
+**`src/app.test.js`** (1 assertion):
+| String | Notes |
+|--------|-------|
+| `'Your text will appear here...'` | Placeholder text |
+
+**Decision**: Error messages WILL be translated (user-facing). Unit tests will need to import translation keys or check for key substrings that remain constant.
 
 ---
 
@@ -326,23 +365,74 @@ await expect(page.locator('[data-testid="welcome-heading"]')).toBeVisible();
 
 **Elements to Add data-testid:**
 
-| Element | data-testid | Current Text |
-|---------|-------------|--------------|
-| Welcome heading | `welcome-heading` | "Welcome back!" |
-| Recent topics heading | `recent-topics-heading` | "Recent Topics" |
-| No quizzes message | `no-quizzes-message` | "No quizzes yet" |
-| Start quiz button | `start-quiz-btn` | Already has `#startQuizBtn` |
-| New quiz heading | `new-quiz-heading` | "New Quiz" |
-| Question progress | `question-progress` | "Question X of Y" |
-| Submit button | `submit-btn` | Already has `#submitBtn` |
-| Results heading | `results-heading` | "Results" |
-| Score display | `score-display` | "80%" |
-| Success message | `success-message` | "Great Job!" |
-| Review heading | `review-heading` | "Review Your Answers" |
-| Settings heading | `settings-heading` | "Settings" |
-| Preferences heading | `preferences-heading` | "Preferences" |
-| Offline banner | `offline-banner` | Already has `#offlineBanner` |
-| Quiz history heading | `quiz-history-heading` | "Quiz History" |
+| Element | data-testid | Current Text | Notes |
+|---------|-------------|--------------|-------|
+| Welcome heading | `welcome-heading` | "Welcome back!" | |
+| Recent topics heading | `recent-topics-heading` | "Recent Topics" | |
+| No quizzes message | `no-quizzes-message` | "No quizzes yet" | |
+| Start quiz button | `start-quiz-btn` | Already has `#startQuizBtn` | Keep ID |
+| New quiz heading | `new-quiz-heading` | "New Quiz" | |
+| **Quiz title** | `quiz-title` | "Science Quiz" | **Dynamic!** |
+| Question progress | `question-progress` | "Question X of Y" | Interpolated |
+| Submit button | `submit-btn` | Already has `#submitBtn` | Keep ID |
+| Results heading | `results-heading` | "Results" | |
+| **Score display** | `score-display` | "80%" | Locale format |
+| **Score fraction** | `score-fraction` | "5/5" | |
+| Success message | `success-message` | "Great Job!" | |
+| Review heading | `review-heading` | "Review Your Answers" | |
+| Settings heading | `settings-heading` | "Settings" | |
+| Preferences heading | `preferences-heading` | "Preferences" | |
+| **About section** | `about-section` | "About" | |
+| **Version label** | `version-label` | "Version" | |
+| **GitHub link** | `github-link` | "View on GitHub" | |
+| Offline banner | `offline-banner` | Already has `#offlineBanner` | Keep ID |
+| Quiz history heading | `quiz-history-heading` | "Quiz History" | |
+
+**Special Cases:**
+
+**1. Dynamic Quiz Title (`${topic} Quiz`):**
+```javascript
+// BEFORE
+<h1>${topic} Quiz</h1>
+
+// AFTER
+<h1 data-testid="quiz-title">${t('quiz.title', { topic })}</h1>
+
+// Translation key
+"quiz": {
+  "title": "{{topic}} Quiz"
+}
+
+// E2E Test - check visibility, NOT text content
+await expect(page.locator('[data-testid="quiz-title"]')).toBeVisible();
+```
+
+**2. Browser Dialog (confirm/alert):**
+```javascript
+// BEFORE - checks exact text
+page.once('dialog', dialog => {
+  expect(dialog.message()).toContain('Are you sure you want to leave?');
+  dialog.dismiss();
+});
+
+// AFTER - just verify dialog appeared (text is translated)
+page.once('dialog', dialog => {
+  expect(dialog.type()).toBe('confirm');
+  dialog.dismiss();
+});
+```
+
+**3. Locale-Dependent Values ("Today", "80%"):**
+```javascript
+// Don't check exact text - it changes per locale
+// BEFORE
+await expect(page.locator('text=Today')).toBeVisible();
+await expect(page.locator('text=80%')).toBeVisible();
+
+// AFTER - use data-testid, check visibility only
+await expect(page.locator('[data-testid="quiz-date"]')).toBeVisible();
+await expect(page.locator('[data-testid="score-display"]')).toBeVisible();
+```
 
 **Testing Conventions Document:**
 
@@ -390,9 +480,10 @@ Extract all hardcoded strings from views and replace with translation keys.
 - Organize strings into logical namespaces
 - Handle interpolation (dynamic values)
 - Understand pluralization patterns
+- Translate error messages (user-facing)
 
 **Deliverables:**
-- [ ] Complete `en.json` with all strings (~65 keys)
+- [ ] Complete `en.json` with all strings (~75 keys including errors)
 - [ ] Updated `HomeView.js` using `t()` function
 - [ ] Updated `QuizView.js` using `t()` function
 - [ ] Updated `ResultsView.js` using `t()` function
@@ -400,6 +491,10 @@ Extract all hardcoded strings from views and replace with translation keys.
 - [ ] Updated `TopicInputView.js` using `t()` function
 - [ ] Updated `LoadingView.js` using `t()` function
 - [ ] Updated all components using `t()` function
+- [ ] Updated `errorHandler.js` with translated errors
+- [ ] Updated `openrouter-client.js` with translated errors
+- [ ] Updated `app.js` placeholder text
+- [ ] Updated unit tests for translated strings
 
 **Migration Pattern:**
 
@@ -430,12 +525,100 @@ t('dates.daysAgo', { count: 3 }); // "3 days ago"
 t('dates.daysAgo', { count: 1 }); // "1 day ago"
 ```
 
+**Error Message Translation:**
+
+```json
+// public/locales/en.json - errors namespace
+{
+  "errors": {
+    "network": "Network error. Please check your connection and try again.",
+    "apiKey": "Invalid API key. Please reconnect with OpenRouter.",
+    "rateLimit": "Rate limit exceeded. Free tier allows 50 requests/day.",
+    "insufficientCredits": "Insufficient credits. Add credits at openrouter.ai",
+    "timeout": "Request timed out. Please try again.",
+    "generic": "An error occurred. Please try again.",
+    "emptyResponse": "Empty response from AI. Please try again."
+  },
+  "placeholders": {
+    "textOutput": "Your text will appear here..."
+  }
+}
+```
+
+```javascript
+// src/utils/errorHandler.js - BEFORE
+if (message.includes('network') || message.includes('Failed to fetch')) {
+  return 'Network error. Please check your connection and try again.';
+}
+
+// src/utils/errorHandler.js - AFTER
+import { t } from '../core/i18n.js';
+
+if (message.includes('network') || message.includes('Failed to fetch')) {
+  return t('errors.network');
+}
+```
+
+**Unit Test Updates:**
+
+Since error messages are now translated, unit tests need adjustment:
+
+```javascript
+// BEFORE - checks exact English text
+it('should return network error message for fetch errors', () => {
+  const error = new Error('Failed to fetch');
+  const message = handleApiError(error);
+  expect(message).toContain('Network error');
+});
+
+// AFTER - Option A: Check translation key was used
+it('should return network error message for fetch errors', () => {
+  const error = new Error('Failed to fetch');
+  const message = handleApiError(error);
+  // Import English translations for test verification
+  expect(message).toBe(translations.errors.network);
+});
+
+// AFTER - Option B: Mock i18n and check key
+it('should return network error message for fetch errors', () => {
+  const error = new Error('Failed to fetch');
+  const message = handleApiError(error);
+  expect(t).toHaveBeenCalledWith('errors.network');
+});
+```
+
+**Recommended Approach for Unit Tests:**
+1. Create a test helper that loads English translations
+2. Compare against the English translation value
+3. This verifies the correct key is used without hardcoding
+
+```javascript
+// tests/helpers/i18n-test-helper.js
+import en from '../../public/locales/en.json';
+
+export function getTranslation(key) {
+  const keys = key.split('.');
+  let value = en;
+  for (const k of keys) {
+    value = value[k];
+  }
+  return value;
+}
+
+// In test file
+import { getTranslation } from '../helpers/i18n-test-helper.js';
+
+expect(message).toBe(getTranslation('errors.network'));
+```
+
 **Success Criteria:**
-- All static strings extracted
+- All static strings extracted (~75 keys)
+- All error messages use translation keys
 - App displays correctly with English
 - No hardcoded user-facing text remains
 - Interpolation works for dynamic content
 - E2E tests still pass (using data-testid)
+- Unit tests pass with translated error messages
 
 ---
 
@@ -954,18 +1137,19 @@ src/
 │   └── ...
 ├── utils/
 │   ├── formatters.js        # Intl-based formatters
+│   ├── errorHandler.js      # Updated with t() calls
 │   └── ...
 ├── api/
 │   ├── api.real.js          # Updated with language param
 │   ├── api.mock.js          # Unchanged (English only)
-│   └── openrouter-client.js # Unchanged
+│   └── openrouter-client.js # Updated with t() for errors
 ├── views/
 │   └── ... (all updated with t() calls + data-testid)
 └── ...
 
 public/
 └── locales/
-    ├── en.json              # English (complete, manual)
+    ├── en.json              # English (complete, manual) ~75 keys
     ├── pt.json              # Portuguese (complete, manual)
     ├── es.json              # Spanish (CLI + review)
     ├── fr.json              # French (CLI + review)
@@ -975,8 +1159,11 @@ scripts/
 └── translate.js             # CLI translation utility
 
 tests/
-└── e2e/
-    └── app.spec.js          # Updated with data-testid selectors
+├── helpers/
+│   └── i18n-test-helper.js  # Translation helper for unit tests
+├── e2e/
+│   └── app.spec.js          # Updated with data-testid selectors
+└── ... (unit tests updated for translated strings)
 ```
 
 ---
@@ -985,8 +1172,11 @@ tests/
 
 ### Technical Milestones
 - [ ] i18next configured and working
-- [ ] All ~65 strings extracted and translated
-- [ ] E2E tests migrated to data-testid (language-independent)
+- [ ] All ~75 strings extracted and translated (including errors)
+- [ ] E2E tests migrated to data-testid (~38 assertions updated)
+- [ ] Unit tests updated for translated error messages (~13 assertions)
+- [ ] Dynamic content patterns working (`{{topic}} Quiz`)
+- [ ] Browser dialogs handled correctly in tests
 - [ ] Language selector in Settings
 - [ ] Preference persists in IndexedDB
 - [ ] LLM generates content in user's language (not auto-detect)
@@ -994,12 +1184,14 @@ tests/
 - [ ] At least 5 languages supported
 - [ ] CLI translation utility working
 - [ ] No hardcoded user-facing text
+- [ ] Test helper for translation verification
 
 ### User-Facing Milestones
 - [ ] Can switch language in Settings
 - [ ] UI updates immediately on change
 - [ ] Quiz questions in selected language
 - [ ] Explanations in selected language
+- [ ] Error messages in selected language
 - [ ] Dates formatted per locale
 - [ ] Works offline in selected language
 
@@ -1007,16 +1199,16 @@ tests/
 
 ## Estimated Timeline
 
-| Phase | Sessions | Focus |
-|-------|----------|-------|
-| Phase 1 | 1 | i18n Infrastructure Setup |
-| Phase 2 | 1-2 | Test Migration to data-testid |
-| Phase 3 | 2-3 | String Extraction & Migration |
-| Phase 4 | 1 | Language Settings UI |
-| Phase 5 | 1 | LLM Language Integration |
-| Phase 6 | 1 | Locale-Aware Formatting |
-| Phase 7 | 1-2 | CLI Translation Utility |
-| **Total** | **8-11** | **Full i18n Implementation** |
+| Phase | Sessions | Focus | Key Deliverables |
+|-------|----------|-------|------------------|
+| Phase 1 | 1 | i18n Infrastructure Setup | i18next config, starter locale files |
+| Phase 2 | 1-2 | Test Migration to data-testid | ~38 E2E assertions, ~21 data-testid attrs |
+| Phase 3 | 2-3 | String Extraction & Migration | ~75 keys, error msgs, unit test updates |
+| Phase 4 | 1 | Language Settings UI | Language selector, persistence |
+| Phase 5 | 1 | LLM Language Integration | Modify prompts, pass language param |
+| Phase 6 | 1 | Locale-Aware Formatting | Intl API formatters |
+| Phase 7 | 1-2 | CLI Translation Utility | `npm run translate:es` |
+| **Total** | **8-11** | **Full i18n Implementation** | 5+ languages supported |
 
 Phase 8 (RTL) deferred to future.
 
@@ -1107,6 +1299,6 @@ Phase 8 (RTL) deferred to future.
 
 ---
 
-**Last Updated:** 2025-12-12
+**Last Updated:** 2025-12-12 (v2 - added test analysis, error translation, unit test updates)
 **Location:** `docs/learning/parking_lot/I18N_INTERNATIONALIZATION.md`
 **Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
