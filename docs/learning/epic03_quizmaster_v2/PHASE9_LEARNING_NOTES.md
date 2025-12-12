@@ -90,6 +90,102 @@ The `docs/architecture/` files still referenced Netlify Functions, but the proje
 
 ---
 
-**Last Updated:** 2025-12-11
-**Phase Status:** In Progress - Configuration complete, deployment pending
-**Next Session:** Deploy to saberloop.com/app/ and troubleshoot
+## Session 2 - December 12, 2025
+
+### Section 9.0.0 Deployment Validation - COMPLETE ✅
+
+Today we completed the deployment validation that was added as a prerequisite before Play Store publishing.
+
+### Issues Found & Fixed
+
+#### 1. FTP Deployment Authentication
+- **Problem:** `npm run deploy` failed with "Login authentication failed"
+- **Cause:** Server requires FTPS (FTP over TLS), not plain FTP
+- **Fix:** Added `secure: true` and `secureOptions: { rejectUnauthorized: false }` to `scripts/deploy-ftp.cjs`
+
+#### 2. Hardcoded Paths for Subdirectory Deployment
+Multiple files had paths hardcoded without the `/app/` prefix:
+
+| File | Issue | Fix |
+|------|-------|-----|
+| `index.html` | Icon paths `/icons/...` | Changed to `/app/icons/...` |
+| `src/views/WelcomeView.js` | Logo path `/icons/...` | Changed to `/app/icons/...` |
+| `vite.config.js` | Icon src in manifest | Changed to `/app/icons/...` |
+| `src/api/openrouter-auth.js` | OAuth callback URL `/auth/callback` | Changed to `/app/auth/callback` |
+| `src/main.js` | Post-OAuth redirect `/#/` | Changed to `/app/#/` |
+
+#### 3. PWA Manifest Warnings
+- **Problem:** DevTools showed warnings about icons and screenshots
+- **Cause 1:** Icons had `purpose: 'any maskable'` which is discouraged
+- **Fix 1:** Created separate maskable icons with proper padding, updated manifest to have distinct `purpose: 'any'` and `purpose: 'maskable'` icons
+- **Cause 2:** Missing screenshots for Richer Install UI
+- **Fix 2:** Added mobile and desktop screenshots to manifest
+
+#### 4. Old manifest.json Overriding Generated Manifest
+- **Problem:** Browser showing old manifest name despite config changes
+- **Root Cause:** Old `public/manifest.json` was being deployed alongside Vite PWA's generated `manifest.webmanifest`, and `index.html` was linking to the old one
+- **Fix:**
+  - Deleted `public/manifest.json`
+  - Removed `<link rel="manifest">` from `index.html` (Vite PWA auto-injects)
+  - Removed `manifest.json` from `includeAssets` in `vite.config.js`
+
+### Validation Checklist Results
+
+- [x] https://saberloop.com/app/ loads without errors
+- [x] HTTPS working (green padlock)
+- [x] PWA manifest recognized by browser
+- [x] Service worker registers successfully
+- [x] Sample quizzes work offline
+- [x] API calls work (OAuth/PKCE with OpenRouter)
+- [x] Lighthouse scores: Performance 97%, Accessibility 87%, Best Practices 96%, SEO 100%
+
+### Key Learnings
+
+#### 1. Planning Must Include Documentation Review (CRITICAL)
+**Added to CLAUDE.md:** Before planning any phase, always review learning notes of related previous phases to identify dependencies and potential issues.
+
+Example: If we had reviewed Phase 3.6 (OpenRouter) notes before planning deployment validation, we would have known OAuth callbacks exist and added them to the checklist.
+
+#### 2. OAuth vs PKCE Clarified
+- **OAuth 2.0** is the authorization framework/protocol
+- **PKCE** (Proof Key for Code Exchange) is a security extension for public clients
+- Saberloop uses: OAuth 2.0 with PKCE
+
+#### 3. Subdirectory Deployment is Tricky
+When deploying a PWA to a subdirectory (e.g., `/app/`), ALL of these need updating:
+- Vite `base` path
+- PWA manifest `scope` and `start_url`
+- Icon paths in manifest
+- OAuth callback URLs
+- Post-auth redirects
+- Any hardcoded absolute paths in the codebase
+
+#### 4. Dual Manifest Files Cause Confusion
+If `public/manifest.json` exists AND Vite PWA generates `manifest.webmanifest`, both get deployed. The `index.html` link determines which one is used. Best practice: Let Vite PWA handle manifest generation entirely.
+
+### Files Modified This Session
+
+| File | Change |
+|------|--------|
+| `scripts/deploy-ftp.cjs` | Added FTPS support |
+| `index.html` | Fixed icon paths, removed manual manifest link |
+| `src/views/WelcomeView.js` | Fixed logo path |
+| `vite.config.js` | Fixed icon paths, added maskable icons, added screenshots |
+| `src/api/openrouter-auth.js` | Fixed OAuth callback URL |
+| `src/main.js` | Fixed post-OAuth redirect |
+| `public/manifest.json` | DELETED |
+| `public/icons/` | Added maskable icons and screenshots |
+| `CLAUDE.md` | Added planning instruction about reviewing docs |
+| `PHASE9_PLAYSTORE_PUBLISHING.md` | Added section 9.0.0 |
+
+### What's Next
+
+Section 9.0.0 (Deployment Validation) is complete. Next up:
+- **Section 9.0: In-App Help** - Add help documentation to the app
+- Then continue with PWABuilder and Play Store submission
+
+---
+
+**Last Updated:** 2025-12-12
+**Phase Status:** In Progress - Section 9.0.0 Complete
+**Next Session:** Section 9.0 In-App Help
