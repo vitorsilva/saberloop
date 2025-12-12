@@ -47,6 +47,49 @@ Before starting this phase, ensure:
 
 ## Phase Structure
 
+### 9.0.0 Deployment Validation (Pre-requisite) 🆕
+
+**Time:** 30 minutes - 1 hour
+
+Before proceeding with Play Store publishing, validate the current deployment status after the server migration.
+
+#### 9.0.0.1 Verify Current State
+
+1. **Check live site**: https://saberloop.com/app/
+   - Does it load?
+   - Any SSL/HTTPS errors?
+   - Any CORS errors in console?
+
+2. **Check PWA features**:
+   - DevTools → Application → Manifest (valid?)
+   - DevTools → Application → Service Workers (registered?)
+   - Install prompt works?
+
+3. **Test core functionality**:
+   - Can you start a quiz with sample data (offline)?
+   - Can you generate questions with an OpenRouter API key?
+   - Do settings persist?
+
+#### 9.0.0.2 Fix Any Issues Found
+
+Common issues to address:
+- SSL certificate not issued → Issue via cPanel AutoSSL
+- SPA routing broken → Verify .htaccess configuration
+- Assets not loading → Check file paths after build
+- Service worker errors → Clear cache and redeploy
+
+#### 9.0.0.3 Success Criteria
+
+- [ ] https://saberloop.com/app/ loads without errors
+- [ ] HTTPS working (green padlock)
+- [ ] PWA manifest recognized by browser
+- [ ] Service worker registers successfully
+- [ ] Sample quizzes work offline
+- [ ] API calls work (with valid OpenRouter key)
+- [ ] Lighthouse PWA score acceptable
+
+---
+
 ### 9.0 In-App Help (Pre-requisite)
 
 **Time:** 1-2 hours
