@@ -12,7 +12,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 03 Phase 9.10 (Landing Page) Complete | Next: Phase 9.1 PWABuilder & Play Store
+**Current Status:** Epic 03 Phase 9.0.1 (Repo Rename) Complete | Next: Phase 9.1 PWABuilder & Play Store
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
