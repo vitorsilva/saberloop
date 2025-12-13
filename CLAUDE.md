@@ -12,7 +12,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 03 Phase 9 - Store Listing Complete | Next: PWABuilder AAB Generation & Submission
+**Current Status:** Epic 03 Phase 9 - AAB Uploaded to Play Console | Waiting: Google Account Verification (1-7 days)
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
