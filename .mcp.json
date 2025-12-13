@@ -1,0 +1,16 @@
+  {
+    "mcpServers": {
+      "context7": {
+        "command": "cmd",
+        "args": ["/c", "npx", "-y", "@upstash/context7-mcp"],
+        "env": {
+          "CONTEXT7_API_KEY": "ctx7sk-af138e47-6796-4887-be3b-508ed3a444de"
+        }
+      },
+      "chrome-devtools": {
+        "command": "cmd",
+        "args": ["/c", "npx", "-y", "@anthropic/chrome-devtools-mcp"],
+        "env": {}
+      }
+    }
+  }

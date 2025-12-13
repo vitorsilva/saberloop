@@ -32,9 +32,18 @@
       "WebFetch(domain:www.architjn.com)",
       "Bash(cat:*)",
       "Bash(npm run build:*)",
-      "WebFetch(domain:saberloop.com)"
+      "WebFetch(domain:saberloop.com)",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_run_code",
+      "mcp__playwright__browser_snapshot",
+      "Bash(node scripts/record-playstore-video.cjs:*)",
+      "Bash(move \".playwright-mcp\\22355ebad3062df2efea9ebcbe28673b.webm\" \".playwright-mcp\\saberloop-promo-video.webm\")"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "context7",
+    "chrome-devtools"
+  ]
 }

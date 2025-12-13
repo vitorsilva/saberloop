@@ -19,3 +19,4 @@ coverage/
 docs/nul
 # PHP dependencies
 php-api/vendor/
+nul
