@@ -13,6 +13,7 @@ export default defineConfig(({ command }) => ({
             manifest: {
                 name: 'Saberloop - Learn Anything, Practice Anything',
                 short_name: 'Saberloop',
+                id: '/app/',
                 description: 'The fun way to learn and track your progress with AI-powered quizzes',
                 theme_color: '#FF6B35',
                 background_color: '#1a1a2e',
