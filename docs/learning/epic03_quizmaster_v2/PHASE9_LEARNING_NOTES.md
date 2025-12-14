@@ -444,6 +444,114 @@ This means Phase 6 (Validation/Beta Testing) will happen naturally during the re
 
 ---
 
-**Last Updated:** 2025-12-13
-**Phase Status:** In Progress - AAB Uploaded, Waiting for Google Account Verification
-**Next Session:** Complete account verification → Submit internal test → Set up closed testing
+## Session 5 - December 14, 2025
+
+### Section 9.5.5: Automated Testing with Maestro - IN PROGRESS
+
+Setting up Maestro for automated TWA testing on Windows with WSL.
+
+### Environment Setup Completed
+
+#### 1. Android Studio Installation
+- Downloaded and installed Android Studio (Otter 2 Feature Drop | 2025)
+- Setup wizard downloaded SDK components (~2.45 GB):
+  - Android Emulator (427 MB)
+  - Android Emulator hypervisor driver (172 KB)
+  - Android SDK Build-Tools 36.1 (56.6 MB)
+  - Android SDK Platform 36 (62.8 MB)
+  - Android SDK Platform-Tools (6.81 MB)
+  - Google Play Intel x86_64 Atom System Image (1.86 GB)
+
+#### 2. Android Emulator Created
+- Default device: "Medium Phone API 36.1"
+- Android 16.0 ("Baklava") | x86_64
+- Successfully launched emulator
+
+#### 3. APK Testing on Emulator
+- Installed `Saberloop.apk` via drag-and-drop onto emulator
+- App launched successfully
+- **No address bar visible** - TWA verification working!
+- Chrome first-run setup required (selected "Use without an account")
+
+#### 4. Maestro Installation (WSL)
+- Initial WSL was Docker Desktop minimal environment (no bash/curl)
+- Installed Ubuntu WSL: `wsl --install -d Ubuntu`
+- Installed dependencies:
+  - Java: `sudo apt install -y openjdk-17-jdk`
+  - Unzip: `sudo apt install -y unzip`
+- Installed Maestro: `curl -Ls "https://get.maestro.mobile.dev" | bash`
+- **Maestro version: 2.0.10**
+
+### Key Learnings
+
+#### 1. TWA Testing Workflow
+- Android Studio is needed for the emulator, not for code development
+- APKs can be installed via drag-and-drop onto emulator window
+- TWA apps require Chrome setup on first launch
+
+#### 2. WSL on Windows
+- Docker Desktop WSL is minimal (missing bash, curl, etc.)
+- Need full Ubuntu WSL for development tools
+- Install via: `wsl --install -d Ubuntu`
+
+#### 3. Maestro Dependencies
+- Requires Java (openjdk-17-jdk works)
+- Requires unzip
+- Installs to `$HOME/.maestro/bin`
+- Need to add to PATH: `export PATH="$PATH":"$HOME/.maestro/bin"`
+
+### Experiment 1: WSL as Admin - FAILED
+- Ran WSL as administrator
+- ADB saw the device (`emulator-5554`)
+- Maestro still reported "0 devices connected"
+- **Root cause:** Maestro in WSL can't communicate with Windows emulator due to WSL/Windows boundary
+
+### Experiment 2: Maestro on Windows Native - SUCCESS ✅
+
+#### Installation Steps (Windows)
+1. Download Maestro:
+   ```powershell
+   Invoke-WebRequest -Uri "https://github.com/mobile-dev-inc/maestro/releases/latest/download/maestro.zip" -OutFile "$env:USERPROFILE\Downloads\maestro.zip"
+   ```
+
+2. Extract (note: creates nested folder):
+   ```powershell
+   Expand-Archive -Path "$env:USERPROFILE\Downloads\maestro.zip" -DestinationPath "$env:USERPROFILE\maestro" -Force
+   ```
+
+3. Add to PATH (note the double `maestro\maestro` due to nested extraction):
+   ```powershell
+   $newPath = "$env:USERPROFILE\maestro\maestro\bin"
+   [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$newPath", "User")
+   ```
+
+4. Set JAVA_HOME to Android Studio's JDK:
+   ```powershell
+   [Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Android\Android Studio\jbr", "User")
+   ```
+
+5. Restart PowerShell and verify:
+   ```powershell
+   maestro --version
+   ```
+
+**Result:** Maestro 2.0.10 working on Windows!
+
+#### Key Learnings from Experiments
+1. **WSL + Windows emulator = problematic** - Maestro in WSL cannot see devices on Windows host
+2. **Native Windows installation works** - Download ZIP, extract, set PATH and JAVA_HOME
+3. **Android Studio includes JDK** - Located at `C:\Program Files\Android\Android Studio\jbr`
+4. **Nested ZIP extraction** - Maestro ZIP extracts to `maestro\maestro\bin`, not `maestro\bin`
+5. **Always validate paths** - Check paths exist before setting environment variables
+
+### What's Next
+
+1. Run Maestro tests on Windows
+2. Verify smoke test passes
+3. (Optional) Add CI integration
+
+---
+
+**Last Updated:** 2025-12-14
+**Phase Status:** In Progress - Maestro installed on Windows, ready to run tests
+**Next Step:** Run smoke tests with Maestro
