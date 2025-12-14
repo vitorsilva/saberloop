@@ -552,6 +552,93 @@ Setting up Maestro for automated TWA testing on Windows with WSL.
 
 ---
 
+## Session 6 - December 14, 2025 (Evening)
+
+### Maestro Smoke Test - First Run
+
+Successfully ran the first Maestro smoke test on the Android emulator.
+
+#### Test Results
+
+| Step | Status | Notes |
+|------|--------|-------|
+| Launch app | ✅ Pass | App launched successfully |
+| Assert "Saberloop" visible | ✅ Pass | Home/Welcome screen detected |
+| Screenshot 01-app-loaded | ✅ Pass | Captured |
+| Tap Settings (83%, 97%) | ✅ Pass | Navigation attempted |
+| Assert Settings text | ❌ Fail | Expected "Preferences/Connect/AI Provider" not found |
+
+**Failure reason:** The Settings page text assertions don't match the actual UI text. Need to check screenshot and update assertions.
+
+#### Issues Discovered
+
+1. **Output directory not respected**
+   - `config.yaml` has `testOutputDir: tests` but output still goes to `C:\Users\omeue\.maestro\tests\`
+   - Workaround: Use `--output` flag explicitly: `maestro test .maestro/smoke-test.yaml --output .maestro/tests`
+
+2. **Test assertions need adjustment**
+   - Coordinate-based tapping (83%, 97%) worked for navigation
+   - Text assertions need to match actual UI text
+
+#### Commands Used
+
+```bash
+# Start emulator (via Android Studio Device Manager)
+
+# Run Maestro test
+maestro test .maestro/smoke-test.yaml
+
+# Open test output folder
+explorer "C:\Users\omeue\.maestro\tests\2025-12-14_191749"
+```
+
+### Smoke Test Fixed and Passing ✅
+
+After reviewing the screenshot, discovered the app was resuming a previous quiz session. Fixed the test:
+
+**Changes to `.maestro/smoke-test.yaml`:**
+1. Updated first assertion to accept Quiz/Question screens (handles existing data)
+2. Changed from coordinate-based tapping (`point: "83%,97%"`) to text-based (`tapOn: "Settings"`)
+3. Simplified all assertions
+
+**Output directory fix:**
+- Correct flag is `--test-output-dir`, not `--output`
+- Command: `maestro test .maestro/smoke-test.yaml --test-output-dir .maestro/tests`
+
+**Final test results:**
+```
+✅ Launch app "com.saberloop.app"
+✅ Assert that ".*Saberloop.*|.*Quiz.*|.*Question.*|.*Welcome.*" is visible
+✅ Take screenshot 01-app-loaded
+✅ Tap on "Settings"
+✅ Assert that ".*Settings.*|.*API.*|.*Provider.*" is visible
+✅ Take screenshot 02-settings-visible
+✅ Tap on "Home"
+✅ Take screenshot 03-back-to-home
+```
+
+### Section 9.5.5 Complete ✅
+
+Maestro automated testing is now working:
+- Smoke test passes
+- Screenshots saved to project folder (`.maestro/tests/`)
+- Text-based tapping is more reliable than coordinates
+
+### What's Next
+
+**Blocked by Google account verification:**
+- Identity verification pending (submitted Dec 13)
+- After verification: phone verification, then 12 testers for 14 days
+
+**When unblocked:**
+1. Complete phone verification
+2. Submit internal test release
+3. Set up closed testing with 12 testers
+4. Run 14-day closed test
+5. Apply for production access
+
+---
+
 **Last Updated:** 2025-12-14
-**Phase Status:** In Progress - Maestro installed on Windows, ready to run tests
-**Next Step:** Run smoke tests with Maestro
+**Phase Status:** Section 9.5.5 Complete - Waiting for Google verification
+**Next Step:** Complete Google account verification, then submit for closed testing
