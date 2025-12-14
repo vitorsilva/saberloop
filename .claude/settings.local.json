@@ -37,7 +37,18 @@
       "mcp__playwright__browser_run_code",
       "mcp__playwright__browser_snapshot",
       "Bash(node scripts/record-playstore-video.cjs:*)",
-      "Bash(move \".playwright-mcp\\22355ebad3062df2efea9ebcbe28673b.webm\" \".playwright-mcp\\saberloop-promo-video.webm\")"
+      "Bash(move \".playwright-mcp\\22355ebad3062df2efea9ebcbe28673b.webm\" \".playwright-mcp\\saberloop-promo-video.webm\")",
+      "WebFetch(domain:maestro.mobile.dev)",
+      "WebFetch(domain:docs.maestro.dev)",
+      "Bash(findstr:*)",
+      "Bash(maestro test:*)",
+      "Bash(powershell.exe -Command \"cd C:\\Users\\omeue\\source\\repos\\demo-pwa-app; maestro test .maestro\\smoke-test.yaml\")",
+      "Bash(powershell.exe -Command \"cd C:\\Users\\omeue\\source\\repos\\demo-pwa-app; C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml\")",
+      "Bash(powershell.exe -Command \"$env:JAVA_HOME=''C:\\Program Files\\Android\\Android Studio\\jbr''; cd C:\\Users\\omeue\\source\\repos\\demo-pwa-app; C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml\")",
+      "Bash(cmd.exe /c \"set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr && C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml\")",
+      "Bash(cmd.exe /c \"set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr && C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml 2>&1\")",
+      "Bash(cmd.exe /c \"dir C:\\Users\\omeue\\.maestro\\tests /b /o-d 2>&1 | head -5\")",
+      "Bash(cmd.exe /c \"cd /d C:\\Users\\omeue\\source\\repos\\demo-pwa-app && set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr&& C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml\")"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,18 @@
+appId: com.saberloop.app
+---
+# Test 1: App launches and shows welcome or home screen
+- launchApp
+- assertVisible: ".*Saberloop.*"
+- takeScreenshot: 01-app-loaded
+
+# Test 2: Navigate to Settings (Settings icon is at ~83% horizontal in bottom nav)
+- tapOn:
+    point: "83%,97%"
+- assertVisible: ".*Preferences.*|.*Connect.*|.*AI Provider.*"
+- takeScreenshot: 02-settings-visible
+
+# Test 3: Return to Home (Home icon is at ~17% horizontal in bottom nav)
+- tapOn:
+    point: "17%,97%"
+- assertVisible: ".*Start.*|.*Welcome.*"
+- takeScreenshot: 03-back-to-home

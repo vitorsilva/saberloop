@@ -1,0 +1,3 @@
+# Maestro workspace configuration
+# Output directory for test artifacts (screenshots, logs, reports)
+testOutputDir: tests
