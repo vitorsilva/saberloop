@@ -2,8 +2,9 @@
 
 **Epic:** 3 - QuizMaster V2
 **Phase:** 9.6 - Maestro Testing Expansion
-**Status:** Planning
+**Status:** Parked (ready for implementation)
 **Created:** 2025-12-15
+**Location:** `docs/learning/parking_lot/`
 
 ---
 
@@ -304,10 +305,9 @@ jobs:
 
 ### CI Considerations
 
-1. **APK Source:** Need to decide where APK comes from:
-   - Check into repo (simple but increases repo size)
-   - Download from GitHub releases
-   - Build fresh with PWABuilder (complex)
+1. **APK Source:** Check `Saberloop.apk` into the repo at `package/Saberloop.apk`
+   - **Decision:** Option A - simple approach, ~1MB added to repo
+   - Can optimize later (GitHub Releases) if needed
 
 2. **Emulator Startup Time:** ~2-3 minutes, cached snapshots help
 
