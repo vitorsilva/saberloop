@@ -639,8 +639,109 @@ Maestro automated testing is now working:
 
 ---
 
+## Session 7 - December 15, 2025
+
+### Internal Testing Published - SUCCESS ✅
+
+Google account verification completed! Successfully published Saberloop to Internal Testing track.
+
+### Steps Completed
+
+1. **Google Play Console Access**
+   - Account verified and fully accessible
+   - App already in "Rascunho" (Draft) status from previous session
+
+2. **Internal Test Release Created**
+   - AAB already uploaded (940 KB, version 1.0.0.0)
+   - Release notes: "Initial release of Saberloop - Learn any topic with AI-powered quizzes."
+   - Status: "Pronto para o lançamento" (Ready for launch)
+
+3. **Testers Added**
+   - Added personal email as tester
+   - Published internal test (instant - no review wait for internal)
+
+4. **Installation from Play Store**
+   - Found internal testing link in Play Console
+   - Opened link on Android phone
+   - Accepted tester invitation
+   - Installed Saberloop from Play Store
+
+5. **Verification**
+   - ✅ App installed successfully
+   - ✅ **No address bar** - TWA verification working perfectly!
+   - ✅ All features functional
+
+### Key Learnings
+
+#### 1. Manual APK vs Play Store Installation Conflict
+
+**Situation:** Had previously installed APK directly on phone (from Section 9.5 testing).
+
+**Behavior:** When clicking Play Store internal test link, it said "already installed but not from this link."
+
+**Solution:** Uninstall the manually installed APK first, then install from Play Store link.
+
+**Why this matters:** Play Store tracks installation source. For proper testing and future updates, install via Play Store, not direct APK.
+
+#### 2. App Data Persists After Uninstall
+
+**Discovery:** After uninstalling and reinstalling from Play Store:
+- Welcome screen did NOT appear (should show on first launch)
+- Settings (OpenRouter connection) were still configured
+
+**Root cause:** Android does not clear app data (IndexedDB, localStorage) on uninstall by default.
+
+**Implications:**
+- Users who reinstall will have their data preserved
+- For true "fresh install" testing, must manually clear app data:
+  - Settings → Apps → Saberloop → Storage → Clear Data
+- Consider adding "Reset App" option in Settings for users
+
+#### 3. OpenRouter Reconnection After Fresh Install
+
+**Issue:** First quiz generation attempt failed quickly after reinstall.
+
+**Solution:** Went to Settings, disconnected from OpenRouter, reconnected.
+
+**Hypothesis:** OAuth token may have been in an inconsistent state after the install/uninstall cycle. Reconnecting refreshed the token.
+
+**Future consideration:** Add better error handling/auto-reconnect for stale OAuth tokens.
+
+#### 4. TWA Verification Confirmed Working
+
+**Result:** No address bar visible in Play Store installed version.
+
+**This confirms:**
+- `assetlinks.json` correctly deployed at `/.well-known/assetlinks.json`
+- SHA256 fingerprint matches signing key
+- Google/Chrome verified the domain-app connection
+
+### Section 9.8 Status Update
+
+| Requirement | Status |
+|-------------|--------|
+| Google account verified | ✅ Complete |
+| Internal test published | ✅ Complete |
+| Tester added | ✅ Complete |
+| Installation verified | ✅ Complete |
+| TWA verification (no address bar) | ✅ Complete |
+
+### What's Next
+
+**For Production Release:**
+1. Set up **Closed Testing** track with 12+ testers
+2. Run closed test for **14+ days** (Google requirement for new developers)
+3. Apply for production access
+4. Submit to production
+
+**Optional improvements noted:**
+- Add "Reset App Data" option in Settings
+- Improve OAuth token error handling
+- Add first-launch detection that survives reinstall (server-side tracking would be needed)
+
+---
+
 **Last Updated:** 2025-12-15
-**Phase Status:** Pre-Submission Complete (Sections 9.0-9.7, 9.10) | Section 9.8 Blocked
-**Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6, 9.7, 9.10
-**Blocked:** Google Account Verification (submitted Dec 13, expected 1-7 days)
-**Next Step:** After Google verification → Phone verification → Submit internal test → 12 testers for 14 days
+**Phase Status:** Internal Testing LIVE ✅
+**Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6, 9.7, 9.8 (Internal), 9.10
+**Next Step:** Set up Closed Testing with 12+ testers for 14+ days → Then apply for Production access
