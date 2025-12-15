@@ -48,13 +48,17 @@
       "Bash(cmd.exe /c \"set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr && C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml\")",
       "Bash(cmd.exe /c \"set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr && C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml 2>&1\")",
       "Bash(cmd.exe /c \"dir C:\\Users\\omeue\\.maestro\\tests /b /o-d 2>&1 | head -5\")",
-      "Bash(cmd.exe /c \"cd /d C:\\Users\\omeue\\source\\repos\\demo-pwa-app && set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr&& C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml\")"
+      "Bash(cmd.exe /c \"cd /d C:\\Users\\omeue\\source\\repos\\demo-pwa-app && set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr&& C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml\")",
+      "Bash(git check-ignore:*)",
+      "Bash(git fetch:*)"
     ],
     "deny": [],
     "ask": []
   },
   "enabledMcpjsonServers": [
     "context7",
-    "chrome-devtools"
-  ]
+    "chrome-devtools",
+    "playwright"
+  ],
+  "enableAllProjectMcpServers": true
 }
