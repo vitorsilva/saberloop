@@ -1000,59 +1000,47 @@ As of November 2025, Anthropic's OAuth for Claude API may not be publicly availa
 
 ---
 
-### **Phase 9: Google Play Store Publishing** 📱 *Next Phase*
+### **Phase 9: Google Play Store Publishing** 📱 *Internal Testing LIVE*
 Publish Saberloop to Google Play Store using PWABuilder and Trusted Web Activities (TWA).
 
-📄 [PHASE9_PLAYSTORE_PUBLISHING.md](./PHASE9_PLAYSTORE_PUBLISHING.md)
+📄 [PHASE9_PLAYSTORE_PUBLISHING.md](./PHASE9_PLAYSTORE_PUBLISHING.md) | 📝 [Learning Notes](./PHASE9_LEARNING_NOTES.md)
 
-**Status:** 🎯 **NEXT** - Prioritized before Phase 6 for easier beta distribution
+**Status:** 🎯 **Internal Testing LIVE** | Next: Closed Testing (12 testers, 14 days)
 
-**Learning Objectives:**
-- Understand PWABuilder packaging workflow
-- Learn Trusted Web Activities (TWA) concept
-- Configure Digital Asset Links for verification
-- Navigate Google Play Console
-- Prepare app store listing assets
+**Completed:**
+- ✅ Domain & hosting setup (saberloop.com)
+- ✅ Google Play Developer account verified
+- ✅ PWABuilder package generated (AAB + signing keys)
+- ✅ Digital Asset Links configured (no address bar!)
+- ✅ Store listing complete (screenshots, descriptions, video)
+- ✅ Privacy policy published
+- ✅ Content rating & data safety completed
+- ✅ Internal testing published and verified
+- ✅ Maestro automated testing configured
+- ✅ Landing page live at saberloop.com
 
-**Why This is Optional:**
-- ✅ PWA already installable via browser
-- ✅ Web distribution works globally
-- ⚠️ Requires $25 Google Play Developer fee
-- ⚠️ Adds app store review process
+**Remaining:**
+- [ ] Set up Closed Testing track with 12+ testers
+- [ ] Complete 14-day closed testing period (Google requirement)
+- [ ] Apply for production access
+- [ ] Submit to production
 
-**Why You Might Want It:**
-- 📱 **Discoverability** - Users find apps in Play Store
-- 🏪 **Credibility** - App store presence builds trust
-- 📲 **Installation** - One-tap install from Play Store
-- 🔄 **Instant updates** - Web changes are immediate (no app review)
-- 💼 **Professional presence** - Listed alongside other apps
-
-**What You'll Build:**
-- ✅ Android package via PWABuilder
-- ✅ Digital Asset Links (assetlinks.json)
-- ✅ Play Store listing (screenshots, description)
-- ✅ Published app in Google Play Store
-
-**Key Features:**
-- PWA wrapped as Android app (TWA)
-- True standalone mode (no address bar after verification)
-- Web updates instant - no Play Store review needed
-- One-time $25 fee (no ongoing costs)
-
-**Estimated Time:** 1-2 sessions
-
-**Cost:** $25 one-time Google Play Developer fee
+**Learning Objectives (Completed):**
+- ✅ Understand PWABuilder packaging workflow
+- ✅ Learn Trusted Web Activities (TWA) concept
+- ✅ Configure Digital Asset Links for verification
+- ✅ Navigate Google Play Console
+- ✅ Prepare app store listing assets
+- ✅ Maestro mobile UI testing
 
 **Success Criteria:**
-- ✅ Saberloop listed on Google Play Store
-- ✅ App installs successfully from Play Store
-- ✅ No address bar (TWA verification complete)
-- ✅ All PWA features work in Android wrapper
-- ✅ Signing files securely stored for updates
-
-**Decision Matrix:**
-- **Do Phase 9 if:** Want Play Store presence, targeting Android users, willing to pay $25
-- **Skip Phase 9 if:** Web-only distribution is sufficient, avoiding app store overhead
+- [x] Saberloop on Google Play Store (Internal Testing)
+- [x] App installs successfully from Play Store
+- [x] No address bar (TWA verification complete)
+- [x] All PWA features work in Android wrapper
+- [x] Signing files securely stored for updates
+- [ ] Closed testing completed (12+ testers, 14 days)
+- [ ] Production release approved
 
 ---
 
@@ -1109,14 +1097,14 @@ Publish Saberloop to Google Play Store using PWABuilder and Trusted Web Activiti
 | Phase 3.6 | 1-2 | OpenRouter Integration | ✅ Complete |
 | Phase 4 | 2-3 | Observability | ✅ Complete |
 | Phase 5 | 1-2 | Project Structure | ✅ Complete |
-| **Phase 9** | **1-2** | **Play Store Publishing** | **🎯 NEXT: $25 fee, Android distribution** |
+| **Phase 9** | **1-2** | **Play Store Publishing** | **🎯 Internal Testing LIVE → Closed Testing** |
 | Phase 6 | Ongoing | Validation & Iteration | After Phase 9: Real user testing |
 | Phase 7 | 2-3 | Azure Migration | ⭐ Optional: Azure experience |
 | Phase 8 | 2-3 | OAuth Integration | ⭐ Optional/Experimental |
 
 **Completed Phases (1-5, 3.4-3.6, 4)**: All core development complete
-**Phase 9**: 🎯 Next - Play Store deployment for distribution
-**Phase 6**: Ongoing validation after Play Store deployment
+**Phase 9**: 🎯 Internal Testing LIVE - Next: Set up Closed Testing (12 testers, 14 days)
+**Phase 6**: Will run during 14-day closed testing period
 **Phase 7-8**: Optional enhancements
 
 ---

@@ -1,8 +1,9 @@
 # Phase 9: Google Play Store Publishing
 
 **Epic:** 3 - QuizMaster V2
-**Status:** 🎯 In Progress
+**Status:** 🎯 Internal Testing LIVE | Next: Closed Testing
 **Started:** 2025-12-11
+**Last Updated:** 2025-12-16
 **Learning Notes:** [PHASE9_LEARNING_NOTES.md](./PHASE9_LEARNING_NOTES.md)
 
 ---
@@ -1062,45 +1063,53 @@ Only needed for:
 
 ## Checklist
 
-### Domain & Hosting Setup (9.1-9.2)
-- [ ] saberloop.com DNS configured (A record pointing to host)
-- [ ] Domain added in cPanel
-- [ ] SSL certificate issued (Let's Encrypt/AutoSSL)
-- [ ] HTTPS verified working: https://saberloop.com
-- [ ] Production build created (`npm run build`)
-- [ ] Frontend files uploaded via FTP
-- [ ] PHP backend files uploaded
-- [ ] .htaccess configured for SPA routing
-- [ ] App tested and working at https://saberloop.com
+### Domain & Hosting Setup (9.1-9.2) ✅ COMPLETE
+- [x] saberloop.com DNS configured (A record pointing to host)
+- [x] Domain added in cPanel
+- [x] SSL certificate issued (Let's Encrypt/AutoSSL)
+- [x] HTTPS verified working: https://saberloop.com
+- [x] Production build created (`npm run build`)
+- [x] Frontend files uploaded via FTP
+- [x] .htaccess configured for SPA routing
+- [x] App tested and working at https://saberloop.com/app/
 
-### Play Store Setup (9.3-9.5)
-- [ ] Google Play Developer account created and approved
-- [ ] PWABuilder package generated
-- [ ] APK tested on Android device (manual)
-- [ ] Maestro tests passing (optional but recommended)
-- [ ] Signing files backed up securely
-- [ ] assetlinks.json deployed and accessible
+### Play Store Setup (9.3-9.6) ✅ COMPLETE
+- [x] Google Play Developer account created and approved
+- [x] PWABuilder package generated
+- [x] APK tested on Android device (manual)
+- [x] Maestro tests passing
+- [x] Signing files backed up securely
+- [x] assetlinks.json deployed and accessible
 
-### Store Listing
-- [ ] App icon (512x512)
-- [ ] Phone screenshots (2-8)
-- [ ] Feature graphic (1024x500)
-- [ ] Short description (80 chars)
-- [ ] Full description (4000 chars)
-- [ ] Category selected (Education)
-- [ ] Content rating completed
+### Store Listing (9.7) ✅ COMPLETE
+- [x] App icon (512x512)
+- [x] Phone screenshots (5 images)
+- [x] Feature graphic (1024x500)
+- [x] Promotional video (YouTube)
+- [x] Short description (80 chars)
+- [x] Full description (4000 chars)
+- [x] Category selected (Education)
+- [x] Content rating completed (IARC questionnaire)
+- [x] Target audience configured (13+)
+- [x] Data safety declaration completed
+- [x] Privacy policy published (https://saberloop.com/privacy.html)
 
-### Submission
-- [ ] AAB file uploaded
-- [ ] Pricing set (Free)
-- [ ] Countries selected
-- [ ] App submitted for review
+### Submission (9.8) - IN PROGRESS
+- [x] AAB file uploaded (940 KB, v1.0.0.0)
+- [x] Pricing set (Free)
+- [x] Countries selected
+- [x] Internal testing published ✅
+- [ ] **Closed testing setup (12+ testers)** ← NEXT STEP
+- [ ] Closed testing completed (14+ days)
+- [ ] Production release submitted
 
-### Post-Publication
-- [ ] App approved and live
-- [ ] assetlinks.json updated with Play signing key (if applicable)
-- [ ] Address bar removed (TWA verified)
-- [ ] Test installation from Play Store
+### Post-Publication - Internal Testing ✅ COMPLETE
+- [x] Internal testing live and verified
+- [x] assetlinks.json working (TWA verified)
+- [x] Address bar removed (no browser chrome!)
+- [x] Test installation from Play Store verified
+- [ ] Closed testing with 12+ testers (14 days) - PENDING
+- [ ] Production release approved - PENDING
 
 ---
 
@@ -1130,12 +1139,15 @@ Common reasons:
 
 - [x] Saberloop deployed and working at https://saberloop.com/app/
 - [x] Landing page live at https://saberloop.com/
-- [ ] Saberloop listed on Google Play Store
-- [ ] App installs successfully from Play Store
-- [ ] No address bar (TWA verification complete)
-- [ ] All features work in Android app
-- [ ] At least "Everyone" content rating
-- [ ] Signing files securely stored for future updates
+- [x] Privacy policy published at https://saberloop.com/privacy.html
+- [x] Saberloop on Google Play Store (Internal Testing) ✅
+- [x] App installs successfully from Play Store ✅
+- [x] No address bar (TWA verification complete) ✅
+- [x] All features work in Android app ✅
+- [x] Content rating completed (all ages) ✅
+- [x] Signing files securely stored for future updates ✅
+- [ ] Closed testing completed (12+ testers, 14+ days) - NEXT
+- [ ] Production release approved - PENDING
 
 ---
 
