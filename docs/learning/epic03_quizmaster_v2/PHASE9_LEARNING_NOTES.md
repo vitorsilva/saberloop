@@ -742,9 +742,9 @@ Google account verification completed! Successfully published Saberloop to Inter
 ---
 
 **Last Updated:** 2025-12-16
-**Phase Status:** Internal Testing LIVE ✅
-**Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6, 9.7, 9.8 (Internal), 9.10
-**Next Step:** Set up Closed Testing with 12+ testers for 14+ days → Then apply for Production access
+**Phase Status:** Closed Testing IN REVIEW 🔄
+**Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6, 9.7, 9.8 (Internal + Closed), 9.10
+**Next Step:** Await Google approval → 14-day testing period → Production release
 
 ---
 
@@ -765,5 +765,50 @@ Google account verification completed! Successfully published Saberloop to Inter
 | 9.7 | Play Store Listing Assets | ✅ Complete |
 | 9.8 | Internal Testing | ✅ LIVE |
 | 9.10 | Landing Page | ✅ Complete |
-| 9.8 | Closed Testing (12+ testers) | 🎯 NEXT |
-| 9.8 | Production Release | ⏳ After 14-day closed test |
+| 9.8 | Closed Testing (14 testers) | 🔄 IN REVIEW |
+| 9.8 | Google Approval | ⏳ Awaiting |
+| 9.8 | 14-day Testing Period | ⏳ After approval |
+| 9.8 | Production Release | ⏳ After 14-day test |
+
+---
+
+## Session 8 - December 16, 2025
+
+### Closed Testing Submitted for Review ✅
+
+Successfully set up and submitted Closed Testing to Google for review.
+
+### Steps Completed
+
+1. **Accessed Closed Testing (Alpha) track** in Play Console
+2. **Selected testers:**
+   - Used existing "lista testes 1" with 14 testers
+   - Exceeds Google's 12-tester minimum requirement
+3. **Created release:**
+   - Added AAB from library (same v1.0.0.0 from Internal Testing)
+   - Release name: "1 (1.0.0.0)"
+   - Release notes carried over from Internal Testing
+4. **Submitted for review:**
+   - 14 changes submitted total
+   - Includes: release, countries (176), testers, store listing, content rating, data safety, etc.
+
+### What's Next
+
+| Step | Status |
+|------|--------|
+| Google reviews Closed Testing | 🔄 IN REVIEW (usually hours to 1 day) |
+| Testers receive invite emails | After approval |
+| Testers install from Play Store | After approval |
+| 14-day testing period begins | After first tester installs |
+| Apply for Production access | After 14 days |
+| Submit to Production | After production access granted |
+
+### Key Learning
+
+**Reusing releases:** Play Console allows adding AAB "from library" - no need to re-upload the same file for different testing tracks.
+
+### Timeline Estimate
+
+- **Closed Testing approval:** Within 24-48 hours (usually faster)
+- **14-day testing period:** Starts when first tester opts in
+- **Production eligibility:** ~2 weeks from now (around Dec 30-31)

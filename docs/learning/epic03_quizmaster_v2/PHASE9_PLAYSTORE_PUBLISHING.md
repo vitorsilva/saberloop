@@ -1,7 +1,7 @@
 # Phase 9: Google Play Store Publishing
 
 **Epic:** 3 - QuizMaster V2
-**Status:** 🎯 Internal Testing LIVE | Next: Closed Testing
+**Status:** 🔄 Closed Testing IN REVIEW | Awaiting Google approval
 **Started:** 2025-12-11
 **Last Updated:** 2025-12-16
 **Learning Notes:** [PHASE9_LEARNING_NOTES.md](./PHASE9_LEARNING_NOTES.md)
@@ -1094,22 +1094,26 @@ Only needed for:
 - [x] Data safety declaration completed
 - [x] Privacy policy published (https://saberloop.com/privacy.html)
 
-### Submission (9.8) - IN PROGRESS
+### Submission (9.8) - CLOSED TESTING IN REVIEW
 - [x] AAB file uploaded (940 KB, v1.0.0.0)
 - [x] Pricing set (Free)
-- [x] Countries selected
+- [x] Countries selected (176 countries)
 - [x] Internal testing published ✅
-- [ ] **Closed testing setup (12+ testers)** ← NEXT STEP
-- [ ] Closed testing completed (14+ days)
+- [x] Closed testing setup (14 testers in "lista testes 1") ✅
+- [x] Closed testing submitted for review 🔄 (2025-12-16)
+- [ ] Closed testing approved by Google ← AWAITING
+- [ ] 14-day closed testing period completed
 - [ ] Production release submitted
 
-### Post-Publication - Internal Testing ✅ COMPLETE
-- [x] Internal testing live and verified
-- [x] assetlinks.json working (TWA verified)
-- [x] Address bar removed (no browser chrome!)
-- [x] Test installation from Play Store verified
-- [ ] Closed testing with 12+ testers (14 days) - PENDING
-- [ ] Production release approved - PENDING
+### Post-Publication Status
+- [x] Internal testing live and verified ✅
+- [x] assetlinks.json working (TWA verified) ✅
+- [x] Address bar removed (no browser chrome!) ✅
+- [x] Test installation from Play Store verified ✅
+- [x] Closed testing submitted (14 testers) 🔄 IN REVIEW
+- [ ] Closed testing approved by Google ← AWAITING
+- [ ] 14-day closed testing period (starts after approval)
+- [ ] Production release approved
 
 ---
 
@@ -1146,8 +1150,10 @@ Common reasons:
 - [x] All features work in Android app ✅
 - [x] Content rating completed (all ages) ✅
 - [x] Signing files securely stored for future updates ✅
-- [ ] Closed testing completed (12+ testers, 14+ days) - NEXT
-- [ ] Production release approved - PENDING
+- [x] Closed testing submitted (14 testers) 🔄 IN REVIEW
+- [ ] Closed testing approved by Google ← AWAITING
+- [ ] 14-day closed testing period completed
+- [ ] Production release approved
 
 ---
 

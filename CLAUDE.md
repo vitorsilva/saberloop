@@ -12,7 +12,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 03 Phase 9 Internal Testing LIVE ✅ | Next: Closed Testing (12 testers, 14 days)
+**Current Status:** Epic 03 Phase 9 Closed Testing IN REVIEW 🔄 | 14 testers, awaiting Google approval
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
