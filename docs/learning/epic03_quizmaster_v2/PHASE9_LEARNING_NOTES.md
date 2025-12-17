@@ -742,10 +742,10 @@ Google account verification completed! Successfully published Saberloop to Inter
 ---
 
 **Last Updated:** 2025-12-17
-**Phase Status:** Closed Testing LIVE ✅ | First feedback received!
+**Phase Status:** Closed Testing LIVE ✅ | Day 1: 4 issues from tester feedback!
 **Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6, 9.7, 9.8 (Internal + Closed), 9.10
-**Next Step:** 14-day testing period (ends ~Dec 31) → Apply for Production → Production release
-**Feedback Tracking:** GitHub Issues with labels (ux, bug, enhancement, from-tester, etc.)
+**Next Step:** Fix priority issues → Send OpenRouter follow-up → Continue collecting feedback
+**Feedback Tracking:** GitHub Issues (#1, #11, #12, #13) with labels (ux, bug, enhancement, priority-high, from-tester)
 
 ---
 
@@ -770,7 +770,7 @@ Google account verification completed! Successfully published Saberloop to Inter
 | 9.8 | Google Approval | ✅ Complete |
 | 9.8 | Testers Invited | ✅ WhatsApp messages sent |
 | 9.8 | Feedback Tracking | ✅ GitHub Issues + Labels |
-| 9.8 | First Feedback | ✅ Issue #1 created |
+| 9.8 | Feedback Day 1 | ✅ 4 issues created (#1, #11, #12, #13) |
 | 9.8 | 14-day Testing Period | 🔄 IN PROGRESS (Dec 17 - Dec 31) |
 | 9.8 | Production Release | ⏳ After 14-day test |
 
@@ -925,30 +925,50 @@ Se tiveres dúvidas, diz-me que eu ajudo. 😊
 3. Add appropriate labels
 4. Fix and close when resolved
 
-### First Tester Feedback Received! 🎉
+### Tester Feedback Received! 🎉
 
-**Issue #1:** Continue button not visible without scrolling
+Multiple issues reported on first day of testing:
 
-**Feedback (PT-PT):**
+| Issue | Title | Type | Labels |
+|-------|-------|------|--------|
+| #1 | Continue button not visible without scrolling | UX | `ux`, `from-tester` |
+| #11 | Share button misleading + request to share results | UX + Enhancement | `ux`, `enhancement`, `from-tester` |
+| #12 | OpenRouter onboarding confusing | UX | `ux`, `priority-high`, `from-tester` |
+| #13 | Incomplete quiz shows null/5 and 01/01/1970 | Bug | `bug`, `from-tester` |
+
+#### Issue #1: Continue button not visible
 > "Demorei uns 30 segundos a perceber que tinha scroll para ver o botão de continuar"
 
-**Translation:** "It took me about 30 seconds to realize I had to scroll to see the continue button"
+#### Issue #11: Share button confusing
+> "Aquele botão n é para partilha do resultado... É da aplicação mesmo. Mas era fixe partilhar os resultados"
 
-**Type:** UX issue - button below the fold after selecting quiz answer
+#### Issue #12: OpenRouter onboarding (PRIORITY HIGH)
+> "Ao clicar em start new quizz pede-me para criar uma conta numa cena openrouter (q n sei o que é...)"
+> "OK!! Já consegui. Mas sim, n tá muito claro"
 
-**Possible solutions:**
-1. Auto-scroll to show button after answer selected
-2. Sticky button at bottom of screen
-3. Reduce spacing to keep button visible
-4. Visual indicator for more content below
+**This confirms the main friction point** - users don't understand what OpenRouter is or how to get free access.
+
+#### Issue #13: Incomplete quiz display bugs
+> "Em topics, qdo n está feito o quizz aparece null onde normalmente aparece o nr de perguntas acertadas"
+> "se ainda n fiz o quizz n devia aparecer a data 01/01/1970"
+
+Two bugs: score shows `null/5` and date shows Unix epoch `01/01/1970` for incomplete quizzes.
+
+### Play Console Stats
+
+- **Installation base:** Shows 0.00% (stats delayed 24-48 hours)
+- **Confirmed installs:** At least 1 tester actively using (based on feedback)
+- **Check again:** Tomorrow for accurate numbers
 
 ### What's Next
 
 | Task | Timeline |
 |------|----------|
-| Send invite messages to remaining testers | Dec 17 |
 | Send OpenRouter follow-up message | Dec 18-19 |
-| Collect feedback via WhatsApp → GitHub Issues | Ongoing |
-| Fix UX issue (continue button visibility) | When ready |
+| Collect more feedback via WhatsApp → GitHub Issues | Ongoing |
+| Fix Issue #12 (OpenRouter onboarding) | Priority - blocking users |
+| Fix Issue #13 (null/epoch display bugs) | High - visible bug |
+| Fix Issue #1 (continue button) | Medium - UX improvement |
+| Consider Issue #11 (share results feature) | Low - enhancement |
 | Apply for Production access | ~Dec 31 |
 | Submit to Production | After approval |
