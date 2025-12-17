@@ -742,9 +742,10 @@ Google account verification completed! Successfully published Saberloop to Inter
 ---
 
 **Last Updated:** 2025-12-17
-**Phase Status:** Closed Testing LIVE ✅
+**Phase Status:** Closed Testing LIVE ✅ | First feedback received!
 **Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6, 9.7, 9.8 (Internal + Closed), 9.10
 **Next Step:** 14-day testing period (ends ~Dec 31) → Apply for Production → Production release
+**Feedback Tracking:** GitHub Issues with labels (ux, bug, enhancement, from-tester, etc.)
 
 ---
 
@@ -767,6 +768,9 @@ Google account verification completed! Successfully published Saberloop to Inter
 | 9.10 | Landing Page | ✅ Complete |
 | 9.8 | Closed Testing (14 testers) | ✅ LIVE |
 | 9.8 | Google Approval | ✅ Complete |
+| 9.8 | Testers Invited | ✅ WhatsApp messages sent |
+| 9.8 | Feedback Tracking | ✅ GitHub Issues + Labels |
+| 9.8 | First Feedback | ✅ Issue #1 created |
 | 9.8 | 14-day Testing Period | 🔄 IN PROGRESS (Dec 17 - Dec 31) |
 | 9.8 | Production Release | ⏳ After 14-day test |
 
@@ -882,12 +886,69 @@ The 14-day closed testing period doubles as Phase 6 (Validation & Iteration):
 - **Week 1:** Unguided testing, collect initial feedback
 - **Week 2:** Address issues, follow up with specific questions if needed
 
+### Follow-up Message (Send after 1-2 days)
+
+To ensure testers experience the full app (not just sample quizzes), send this OpenRouter setup reminder:
+
+```
+Olá! Já conseguiste experimentar a app?
+
+Para criar quizzes sobre qualquer tema, precisas de ligar ao OpenRouter (é grátis):
+1. Abre Definições na app
+2. Clica em "Connect to OpenRouter"
+3. Cria conta ou faz login
+
+Depois podes gerar quizzes sobre qualquer tema que quiseres!
+
+Se tiveres dúvidas, diz-me que eu ajudo. 😊
+```
+
+**Rationale:** Without OpenRouter configured, testers only see sample quizzes and miss the core value (AI-generated questions on any topic).
+
+### Feedback Tracking Setup
+
+**Decided:** Use GitHub Issues to track tester feedback in an actionable way.
+
+**Labels created:**
+| Label | Color | Use for |
+|-------|-------|---------|
+| `bug` | Red | Something broken |
+| `enhancement` | Blue | Feature request |
+| `ux` | Purple | Confusing or unclear |
+| `question` | Yellow | User needs help |
+| `priority-high` | Orange | Fix ASAP |
+| `from-tester` | Green | Came from beta testing |
+
+**Workflow:**
+1. Receive feedback via WhatsApp
+2. Create GitHub Issue with feedback quote
+3. Add appropriate labels
+4. Fix and close when resolved
+
+### First Tester Feedback Received! 🎉
+
+**Issue #1:** Continue button not visible without scrolling
+
+**Feedback (PT-PT):**
+> "Demorei uns 30 segundos a perceber que tinha scroll para ver o botão de continuar"
+
+**Translation:** "It took me about 30 seconds to realize I had to scroll to see the continue button"
+
+**Type:** UX issue - button below the fold after selecting quiz answer
+
+**Possible solutions:**
+1. Auto-scroll to show button after answer selected
+2. Sticky button at bottom of screen
+3. Reduce spacing to keep button visible
+4. Visual indicator for more content below
+
 ### What's Next
 
 | Task | Timeline |
 |------|----------|
-| Testers install and use the app | Dec 17-31 |
-| Collect feedback via WhatsApp | Ongoing |
-| Fix critical bugs if found | As needed |
+| Send invite messages to remaining testers | Dec 17 |
+| Send OpenRouter follow-up message | Dec 18-19 |
+| Collect feedback via WhatsApp → GitHub Issues | Ongoing |
+| Fix UX issue (continue button visibility) | When ready |
 | Apply for Production access | ~Dec 31 |
 | Submit to Production | After approval |
