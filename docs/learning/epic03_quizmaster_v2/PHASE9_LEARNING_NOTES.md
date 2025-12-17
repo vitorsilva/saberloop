@@ -741,10 +741,10 @@ Google account verification completed! Successfully published Saberloop to Inter
 
 ---
 
-**Last Updated:** 2025-12-16
-**Phase Status:** Closed Testing IN REVIEW 🔄
+**Last Updated:** 2025-12-17
+**Phase Status:** Closed Testing LIVE ✅
 **Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6, 9.7, 9.8 (Internal + Closed), 9.10
-**Next Step:** Await Google approval → 14-day testing period → Production release
+**Next Step:** 14-day testing period (ends ~Dec 31) → Apply for Production → Production release
 
 ---
 
@@ -765,9 +765,9 @@ Google account verification completed! Successfully published Saberloop to Inter
 | 9.7 | Play Store Listing Assets | ✅ Complete |
 | 9.8 | Internal Testing | ✅ LIVE |
 | 9.10 | Landing Page | ✅ Complete |
-| 9.8 | Closed Testing (14 testers) | 🔄 IN REVIEW |
-| 9.8 | Google Approval | ⏳ Awaiting |
-| 9.8 | 14-day Testing Period | ⏳ After approval |
+| 9.8 | Closed Testing (14 testers) | ✅ LIVE |
+| 9.8 | Google Approval | ✅ Complete |
+| 9.8 | 14-day Testing Period | 🔄 IN PROGRESS (Dec 17 - Dec 31) |
 | 9.8 | Production Release | ⏳ After 14-day test |
 
 ---
@@ -812,3 +812,82 @@ Successfully set up and submitted Closed Testing to Google for review.
 - **Closed Testing approval:** Within 24-48 hours (usually faster)
 - **14-day testing period:** Starts when first tester opts in
 - **Production eligibility:** ~2 weeks from now (around Dec 30-31)
+
+---
+
+## Session 9 - December 17, 2025
+
+### Google Approved Closed Testing! ✅
+
+Google approved the Closed Testing submission. The app is now available for the 14 testers to install from Google Play.
+
+### Steps Completed
+
+1. **Verified Google approval in Play Console**
+   - Status changed from "IN REVIEW" to "Disponível para testadores no Google Play"
+   - "Implementação completa" (Rollout complete)
+   - 177 countries available
+
+2. **Located tester opt-in link**
+   - Navigation: Testar e lançar → Testar → Testes fechados → Testes fechados - Alpha → Testadores tab
+   - Opt-in link: `https://play.google.com/store/apps/details?id=com.saberloop.app`
+
+3. **Created WhatsApp message for testers**
+   - Written in PT-PT (singular form for individual messages)
+   - Grammar note: PT-PT uses "a app" (feminine) because "a aplicação", while PT-BR uses "o app" (masculine) because "o aplicativo"
+   - Unguided testing approach chosen (no specific test instructions)
+
+### WhatsApp Message Sent to Testers
+
+```
+Olá! 👋
+
+Lembras-te da app que andei a desenvolver? Está pronta para testar!
+
+📱 O que fazer:
+1. Abre este link: https://play.google.com/store/apps/details?id=com.saberloop.app
+2. Aceita o convite de teste
+3. Instala a "Saberloop"
+
+🎯 O que é: Uma app para aprender qualquer tema com quizzes gerados por IA
+
+💬 Peço apenas que uses a app quando tiveres uns minutos livres e me digas o que achaste - dúvidas, confusões, bugs, ou o que gostaste!
+
+Não precisas de testar nada específico, usa como quiseres. Qualquer feedback ajuda!
+
+Obrigado! 🙏
+```
+
+### Key Learnings
+
+#### 1. Guided vs Unguided User Testing
+
+| Approach | When to Use |
+|----------|-------------|
+| **Unguided** (chosen) | First few days - discover real UX issues, see natural user behavior |
+| **Guided** | Later - when specific features need validation |
+
+**Rationale:** If you tell testers "test creating a quiz about Math", you'll never know if they would have figured that out on their own. Unguided testing reveals true usability.
+
+#### 2. PT-PT vs PT-BR Grammar
+
+| Language | Article | Reason |
+|----------|---------|--------|
+| PT-PT (Portugal) | "a app" | Derives from "a aplicação" (feminine) |
+| PT-BR (Brazil) | "o app" | Derives from "o aplicativo" (masculine) |
+
+### Phase 6 Integration
+
+The 14-day closed testing period doubles as Phase 6 (Validation & Iteration):
+- **Week 1:** Unguided testing, collect initial feedback
+- **Week 2:** Address issues, follow up with specific questions if needed
+
+### What's Next
+
+| Task | Timeline |
+|------|----------|
+| Testers install and use the app | Dec 17-31 |
+| Collect feedback via WhatsApp | Ongoing |
+| Fix critical bugs if found | As needed |
+| Apply for Production access | ~Dec 31 |
+| Submit to Production | After approval |
