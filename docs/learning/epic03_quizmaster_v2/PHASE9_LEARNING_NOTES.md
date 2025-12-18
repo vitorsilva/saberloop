@@ -741,11 +741,11 @@ Google account verification completed! Successfully published Saberloop to Inter
 
 ---
 
-**Last Updated:** 2025-12-17
-**Phase Status:** Closed Testing LIVE ✅ | Day 1: 4 issues from tester feedback!
-**Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6, 9.7, 9.8 (Internal + Closed), 9.10
-**Next Step:** Fix priority issues → Send OpenRouter follow-up → Continue collecting feedback
-**Feedback Tracking:** GitHub Issues (#1, #11, #12, #13) with labels (ux, bug, enhancement, priority-high, from-tester)
+**Last Updated:** 2025-12-18
+**Phase Status:** Closed Testing LIVE ✅ | Day 2: Fixed Digital Asset Links (Google signing key)
+**Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6 (updated), 9.7, 9.8 (Internal + Closed), 9.10
+**Next Step:** Fix tester issues (#12, #13, #10) → Send OpenRouter follow-up → Continue collecting feedback
+**Feedback Tracking:** GitHub Issues (#10, #11, #12, #13) with labels (ux, bug, enhancement, priority-high, from-tester)
 
 ---
 
@@ -762,7 +762,7 @@ Google account verification completed! Successfully published Saberloop to Inter
 | 9.4 | PWABuilder Package | ✅ Complete |
 | 9.5 | APK Testing | ✅ Complete |
 | 9.5.5 | Maestro Automated Testing | ✅ Complete |
-| 9.6 | Digital Asset Links | ✅ Complete |
+| 9.6 | Digital Asset Links | ✅ Updated (added Google signing key) |
 | 9.7 | Play Store Listing Assets | ✅ Complete |
 | 9.8 | Internal Testing | ✅ LIVE |
 | 9.10 | Landing Page | ✅ Complete |
@@ -931,12 +931,12 @@ Multiple issues reported on first day of testing:
 
 | Issue | Title | Type | Labels |
 |-------|-------|------|--------|
-| #1 | Continue button not visible without scrolling | UX | `ux`, `from-tester` |
+| #10 | Continue button not visible without scrolling | UX | `ux`, `from-tester` |
 | #11 | Share button misleading + request to share results | UX + Enhancement | `ux`, `enhancement`, `from-tester` |
 | #12 | OpenRouter onboarding confusing | UX | `ux`, `priority-high`, `from-tester` |
 | #13 | Incomplete quiz shows null/5 and 01/01/1970 | Bug | `bug`, `from-tester` |
 
-#### Issue #1: Continue button not visible
+#### Issue #10: Continue button not visible
 > "Demorei uns 30 segundos a perceber que tinha scroll para ver o botão de continuar"
 
 #### Issue #11: Share button confusing
@@ -968,7 +968,7 @@ Two bugs: score shows `null/5` and date shows Unix epoch `01/01/1970` for incomp
 | Collect more feedback via WhatsApp → GitHub Issues | Ongoing |
 | Fix Issue #12 (OpenRouter onboarding) | Priority - blocking users |
 | Fix Issue #13 (null/epoch display bugs) | High - visible bug |
-| Fix Issue #1 (continue button) | Medium - UX improvement |
+| Fix Issue #10 (continue button) | Medium - UX improvement |
 | Consider Issue #11 (share results feature) | Low - enhancement |
 | Apply for Production access | ~Dec 31 |
 | Submit to Production | After approval |
@@ -1029,11 +1029,30 @@ Both fingerprints must be in `assetlinks.json` for TWA verification to work prop
 
 | Step | Action | Status |
 |------|--------|--------|
-| 1 | Create updated `assetlinks.json` locally | ⏳ |
-| 2 | Upload to server via FTP to `/.well-known/` | ⏳ |
-| 3 | Verify file accessible at https://saberloop.com/.well-known/assetlinks.json | ⏳ |
-| 4 | Click "Ativar partilha de credenciais" in Play Console | ⏳ |
-| 5 | Verify Play Console shows green checkmarks | ⏳ |
+| 1 | Create updated `assetlinks.json` locally | ✅ |
+| 2 | Upload to server via FTP to `/.well-known/` | ✅ |
+| 3 | Verify file accessible at https://saberloop.com/.well-known/assetlinks.json | ✅ |
+| 4 | Click "Ativar partilha de credenciais" in Play Console | ✅ |
+| 5 | Verify Play Console shows green checkmarks | ⚠️ Partial |
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `assetlinks.json` | Updated Digital Asset Links with both fingerprints |
+| `scripts/upload-assetlinks.cjs` | FTP upload script for assetlinks.json |
+| `package.json` | Added `upload:assetlinks` npm script |
+
+### Results
+
+**What Passed:**
+- ✅ Domain verification (`saberloop.com` shows "Nenhum problema encontrado")
+- ✅ Credential sharing activated
+- ✅ TWA still works (no address bar in app)
+- ✅ All app features functional
+
+**What's Still Showing Error:**
+- ⚠️ App Links for `/app/` path shows "O link não funciona"
 
 ### Key Learning
 
@@ -1041,3 +1060,19 @@ Both fingerprints must be in `assetlinks.json` for TWA verification to work prop
 - You keep your **upload key** (used to authenticate uploads to Play Console)
 - Google uses their **signing key** (to sign apps delivered to users)
 - Both keys must be declared in Digital Asset Links for TWA verification
+
+### TWA vs App Links - Two Different Features
+
+| Feature | Purpose | How It Works | Status |
+|---------|---------|--------------|--------|
+| **TWA Verification** | Removes address bar in PWA wrapper | Chrome checks `assetlinks.json` at runtime | ✅ Working |
+| **App Links** | Opens app when clicking domain links anywhere on Android | Android verifies at install time | ⚠️ Failing |
+
+**App Links** is a nice-to-have feature that would allow users to click any `saberloop.com/app/` link on their phone and have the app open instead of Chrome. This is NOT required for the TWA to function.
+
+**Possible reasons for App Links failure:**
+1. Propagation delay (Google's verification can take hours/days)
+2. May require new app version upload to Play Store
+3. Play Console known to show false positives occasionally
+
+**Decision:** Monitor for 24-48 hours. If still failing, investigate deeper. Not blocking any critical functionality.

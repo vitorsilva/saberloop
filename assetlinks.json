@@ -1,16 +1,17 @@
 [
-{
-  "relation": [
-	"delegate_permission/common.handle_all_urls",
-	"delegate_permission/common.get_login_creds"
-  ],
-  "target": {
-	"namespace": "android_app",
-	"package_name": "com.saberloop.app",
-	"sha256_cert_fingerprints": [
-	  "ED:1C:B3:DB:23:64:33:E6:CC:FE:0E:F2:56:3C:B1:E0:8E:19:1F:39:5B:0C:CC:EC:12:CA:81:29:1F:10",
-	  "83:4F:8F:2C:EA:97:AE:D0:7C:21:54:AF:9B:44:C0:AB:E0:9A:28:2A:F6:72:D0:53:B9:D5:AD:F3:23:BC"
-	]
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.saberloop.app",
+      "sha256_cert_fingerprints": [
+        "ED:1C:B3:DB:23:64:33:E6:CC:FE:0E:F2:56:3C:B1:E0:8E:19:1F:39:5B:0C:CC:EC:12:CA:81:29:1F:10",
+        "83:4F:8F:2C:EA:97:AE:D0:7C:21:54:AF:9B:44:C0:AB:E0:9A:28:2A:F6:72:D0:53:B9:D5:AD:F3:23:BC",
+        "83:4F:8F:2C:EA:97:AE:D0:7C:21:54:AF:9B:44:C0:AB:E0:9A:28:2A:F6:72:D0:53:B9:D5:AD:F3:23:BC:BE:21"
+      ]
+    }
   }
-}
 ]
