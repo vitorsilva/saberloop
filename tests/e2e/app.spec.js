@@ -668,4 +668,85 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page.locator('text=Question 1 of 5')).toBeVisible();
   });
 
+  test('should keep submit button visible in viewport after selecting answer (issue #10)', async ({ page }) => {
+    // Set up auth state
+    await setupAuthenticatedState(page);
+
+    // Set a small viewport to simulate mobile device where issue occurred
+    await page.setViewportSize({ width: 375, height: 550 });
+
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Science');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Wait for quiz to load
+    await expect(page.locator('h2')).toBeVisible();
+
+    // Scroll to top to simulate user starting at top of page
+    await page.evaluate(() => window.scrollTo(0, 0));
+
+    // Select an answer
+    await page.locator('.option-btn').nth(1).click();
+    await page.waitForTimeout(300);
+
+    // Get viewport height and button position
+    const viewportHeight = 550;
+    const submitBtn = page.locator('#submitBtn');
+    const boundingBox = await submitBtn.boundingBox();
+
+    // Button should be visible in viewport (its top should be within viewport)
+    expect(boundingBox).not.toBeNull();
+    expect(boundingBox.y).toBeLessThan(viewportHeight);
+    expect(boundingBox.y + boundingBox.height).toBeGreaterThan(0);
+
+    // Button should also be visible (not hidden)
+    await expect(submitBtn).toBeVisible();
+  });
+
+  test('should display quiz correctly in dark mode', async ({ page }) => {
+    // Set up auth state
+    await setupAuthenticatedState(page);
+
+    // Enable dark mode via media query emulation
+    await page.emulateMedia({ colorScheme: 'dark' });
+
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Science');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Verify quiz elements are visible in dark mode
+    await expect(page.locator('h1')).toBeVisible(); // Quiz title
+    await expect(page.locator('h2')).toBeVisible(); // Question
+    await expect(page.locator('.option-btn').first()).toBeVisible(); // Options
+    await expect(page.locator('#submitBtn')).toBeVisible(); // Submit button
+
+    // Select an answer and verify button styling in dark mode
+    await page.locator('.option-btn').nth(1).click();
+    const submitBtn = page.locator('#submitBtn');
+    await expect(submitBtn).not.toHaveClass(/opacity-50/);
+
+    // Verify dark mode is applied by checking computed background color
+    // Dark mode should have a dark background (rgb values should be low)
+    const bgColor = await page.evaluate(() => {
+      const body = document.body;
+      return window.getComputedStyle(body).backgroundColor;
+    });
+
+    // Dark background should have low RGB values (not white/light)
+    // Parse rgb(r, g, b) format
+    const rgbMatch = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (rgbMatch) {
+      const [, r, g, b] = rgbMatch.map(Number);
+      // In dark mode, background should be dark (average RGB < 128)
+      const avgBrightness = (r + g + b) / 3;
+      expect(avgBrightness).toBeLessThan(128);
+    }
+  });
+
 });
