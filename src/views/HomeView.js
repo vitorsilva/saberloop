@@ -127,9 +127,13 @@ export default class HomeView extends BaseView {
           }
         }
 
-      // Format the date
-      const date = new Date(session.timestamp);
-      const dateStr = this.formatDate(date);
+      // Format the date - handle unplayed quizzes (timestamp = 0)
+      let dateStr;
+      if (!session.timestamp || session.timestamp === 0) {
+        dateStr = hasScore ? this.formatDate(new Date(session.timestamp)) : 'Not played yet';
+      } else {
+        dateStr = this.formatDate(new Date(session.timestamp));
+      }
 
       return `
         <div class="quiz-item flex items-center gap-4 bg-card-light dark:bg-card-dark
