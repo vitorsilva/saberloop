@@ -742,10 +742,10 @@ Google account verification completed! Successfully published Saberloop to Inter
 ---
 
 **Last Updated:** 2025-12-18
-**Phase Status:** Closed Testing LIVE ✅ | Day 2: Fixed Issue #10 (Continue button visibility)
+**Phase Status:** Closed Testing LIVE ✅ | Day 2: Fixed Issues #10 & #13
 **Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6 (updated), 9.7, 9.8 (Internal + Closed), 9.10
-**Next Step:** Merge PR #14 → Fix tester issues (#12, #13) → Send OpenRouter follow-up → Continue collecting feedback
-**Feedback Tracking:** GitHub Issues (#10 ✅, #11, #12, #13) with labels (ux, bug, enhancement, priority-high, from-tester)
+**Next Step:** Fix remaining issues (#11, #12) → Send OpenRouter follow-up → Continue collecting feedback
+**Feedback Tracking:** GitHub Issues (#10 ✅, #11, #12, #13 ✅) with labels (ux, bug, enhancement, priority-high, from-tester)
 
 ---
 
@@ -772,6 +772,7 @@ Google account verification completed! Successfully published Saberloop to Inter
 | 9.8 | Feedback Tracking | ✅ GitHub Issues + Labels |
 | 9.8 | Feedback Day 1 | ✅ 4 issues created (#10, #11, #12, #13) |
 | 9.8 | Issue #10 Fix | ✅ PR #14 (Continue button visibility) |
+| 9.8 | Issue #13 Fix | ✅ PR #15 (Epoch date bug) |
 | 9.8 | 14-day Testing Period | 🔄 IN PROGRESS (Dec 17 - Dec 31) |
 | 9.8 | Production Release | ⏳ After 14-day test |
 
@@ -1148,3 +1149,73 @@ ab5dd8d docs: add plan for issue #10 (continue button visibility)
 - Fixed positioning: Would require calculating exact position and z-index management
 - JavaScript scroll detection: Overcomplicated for this use case
 - Sticky (chosen): Simple, CSS-only, handles scroll behavior automatically
+
+---
+
+### Issue #13 Fixed: Epoch Date Bug ✅
+
+**Problem:** Incomplete/unplayed quizzes showed "01/01/1970" as date and "null/5" as score.
+
+**User feedback:**
+> "Em topics, qdo n está feito o quizz aparece null onde normalmente aparece o nr de perguntas acertadas"
+> "se ainda n fiz o quizz n devia aparecer a data 01/01/1970"
+
+**Root Cause:** Sample quizzes are created with `timestamp: 0` and `score: null`. When passed to `new Date(0)`, JavaScript returns January 1, 1970 (Unix epoch). The TopicsView also lacked null handling for scores.
+
+**Solution:** Check for timestamp=0 and null scores before rendering.
+
+**Files Changed:**
+| File | Change |
+|------|--------|
+| `src/views/HomeView.js` | Added timestamp check, show "Not played yet" for unplayed quizzes |
+| `src/views/TopicsView.js` | Same timestamp fix + null score handling ("--/5" instead of "null/5") |
+| `docs/issues/13.md` | Full documentation with root cause analysis |
+| `docs/issues/13-*.png` | Before/after screenshots |
+
+**Code Pattern Applied (both views):**
+```javascript
+// Check for valid score
+const hasScore = session.score !== null && session.score !== undefined;
+const scoreDisplay = hasScore ? `${session.score}/${session.totalQuestions}` : `--/${session.totalQuestions}`;
+
+// Check for valid timestamp
+let dateStr;
+if (!session.timestamp || session.timestamp === 0) {
+  dateStr = hasScore ? this.formatDate(new Date(session.timestamp)) : 'Not played yet';
+} else {
+  dateStr = this.formatDate(new Date(session.timestamp));
+}
+
+// Gray color for unplayed quizzes
+let colorClass = 'text-subtext-light bg-gray-500';
+if (hasScore) {
+  // ... color based on percentage
+}
+```
+
+**PR Created:** https://github.com/vitorsilva/saberloop/pull/15
+
+**Test Results:** All 18 E2E tests passing
+
+**Deployment Note:** PWA deployment requires running `npm run build` before uploading `dist/` to server. Initial verification failed because build step was skipped.
+
+### Key Learning: Unix Epoch Date Bug
+
+**Pattern to avoid:**
+```javascript
+new Date(session.timestamp)  // If timestamp is 0 or falsy, returns 1970-01-01
+```
+
+**Safe pattern:**
+```javascript
+if (!session.timestamp || session.timestamp === 0) {
+  // Handle uninitialized/unplayed state
+} else {
+  const date = new Date(session.timestamp);
+}
+```
+
+**When to use this pattern:**
+- Any field that defaults to 0 or null
+- Timestamps for "not yet completed" actions
+- Optional date fields in databases
