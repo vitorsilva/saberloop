@@ -55,7 +55,18 @@
       "Bash(git checkout:*)",
       "Bash(git stash:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(where:*)",
+      "Bash(gh:*)",
+      "Bash(cmd.exe /c \"gh --version\")",
+      "Bash(cmd.exe /c \"where gh 2>nul || echo gh not in PATH\")",
+      "Bash(cmd.exe /c \"dir /s /b C:\\Program Files\\GitHub CLI\\gh.exe 2>nul || dir /s /b C:\\Users\\omeue\\AppData\\Local\\Programs\\GitHub CLI\\gh.exe 2>nul || dir /s /b C:\\Users\\omeue\\AppData\\Local\\Microsoft\\WinGet\\Packages\\*gh* 2>nul\")",
+      "Bash(cmd.exe /c \"dir \"\"C:\\Program Files\\GitHub CLI\"\" 2>nul\")",
+      "Bash(cmd.exe /c \"if exist \"\"C:\\Program Files (x86)\\GitHub CLI\\gh.exe\"\" echo Found in x86\")",
+      "Bash(cmd.exe /c \"dir /b C:\\Users\\omeue\\AppData\\Local\\Programs 2>nul\")",
+      "Bash(powershell.exe:*)",
+      "Bash(cmd.exe /c \"\"\"C:\\Program Files\\GitHub CLI\\gh.exe\"\" auth status\")"
     ],
     "deny": [],
     "ask": []
