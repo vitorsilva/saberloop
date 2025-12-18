@@ -89,16 +89,15 @@ export default class QuizView extends BaseView {
             </div>
           </div>
 
-          <div class="flex-grow"></div> <!-- Spacer to push button to bottom -->
+        </div>
 
-          <!-- Single Button (Submit) -->
-          <div class="px-4 py-6">
-            <button
-              id="submitBtn"
-              class="flex h-14 min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90 ${this.selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : ''}">
-              <span class="text-left">${this.currentQuestionIndex < this.questions.length - 1 ? 'Next Question' : 'Submit Answer'}</span>
-            </button>
-          </div>
+        <!-- Single Button (Submit) - Sticky above bottom nav -->
+        <div class="sticky bottom-20 px-4 py-4 bg-background-light dark:bg-background-dark">
+          <button
+            id="submitBtn"
+            class="flex h-14 min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90 ${this.selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : ''}">
+            <span class="text-left">${this.currentQuestionIndex < this.questions.length - 1 ? 'Next Question' : 'Submit Answer'}</span>
+          </button>
         </div>
 
         <!-- Bottom Navigation Bar -->
