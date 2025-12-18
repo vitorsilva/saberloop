@@ -742,10 +742,10 @@ Google account verification completed! Successfully published Saberloop to Inter
 ---
 
 **Last Updated:** 2025-12-18
-**Phase Status:** Closed Testing LIVE ✅ | Day 2: Fixed Digital Asset Links (Google signing key)
+**Phase Status:** Closed Testing LIVE ✅ | Day 2: Fixed Issue #10 (Continue button visibility)
 **Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6 (updated), 9.7, 9.8 (Internal + Closed), 9.10
-**Next Step:** Fix tester issues (#12, #13, #10) → Send OpenRouter follow-up → Continue collecting feedback
-**Feedback Tracking:** GitHub Issues (#10, #11, #12, #13) with labels (ux, bug, enhancement, priority-high, from-tester)
+**Next Step:** Merge PR #14 → Fix tester issues (#12, #13) → Send OpenRouter follow-up → Continue collecting feedback
+**Feedback Tracking:** GitHub Issues (#10 ✅, #11, #12, #13) with labels (ux, bug, enhancement, priority-high, from-tester)
 
 ---
 
@@ -770,7 +770,8 @@ Google account verification completed! Successfully published Saberloop to Inter
 | 9.8 | Google Approval | ✅ Complete |
 | 9.8 | Testers Invited | ✅ WhatsApp messages sent |
 | 9.8 | Feedback Tracking | ✅ GitHub Issues + Labels |
-| 9.8 | Feedback Day 1 | ✅ 4 issues created (#1, #11, #12, #13) |
+| 9.8 | Feedback Day 1 | ✅ 4 issues created (#10, #11, #12, #13) |
+| 9.8 | Issue #10 Fix | ✅ PR #14 (Continue button visibility) |
 | 9.8 | 14-day Testing Period | 🔄 IN PROGRESS (Dec 17 - Dec 31) |
 | 9.8 | Production Release | ⏳ After 14-day test |
 
@@ -1076,3 +1077,74 @@ Both fingerprints must be in `assetlinks.json` for TWA verification to work prop
 3. Play Console known to show false positives occasionally
 
 **Decision:** Monitor for 24-48 hours. If still failing, investigate deeper. Not blocking any critical functionality.
+
+### Issue #10 Fixed: Continue Button Not Visible ✅
+
+**Problem:** Users couldn't see the "Continue" / "Next Question" button after selecting a quiz answer without scrolling down.
+
+**User feedback:**
+> "Demorei uns 30 segundos a perceber que tinha scroll para ver o botão de continuar"
+> (Translation: "It took me about 30 seconds to realize I needed to scroll to see the continue button")
+
+**Root Cause:** The submit button was inside the scrollable content area with a `flex-grow` spacer pushing it below the viewport on smaller screens.
+
+**Solution:** Make the submit button sticky, positioned above the bottom navigation bar.
+
+**Code Changes (`src/views/QuizView.js`):**
+
+Before:
+```html
+<div class="flex-grow"></div> <!-- Spacer -->
+<div class="px-4 py-6">
+  <button id="submitBtn" ...>
+```
+
+After:
+```html
+<!-- No spacer needed -->
+<div class="sticky bottom-20 px-4 py-4 bg-background-light dark:bg-background-dark">
+  <button id="submitBtn" ...>
+```
+
+**Key CSS properties:**
+- `sticky` - Element sticks to position when scrolling
+- `bottom-20` - 80px from bottom (height of nav bar)
+- Background color prevents content from showing through
+
+**New E2E Tests Added:**
+1. `should keep submit button visible in viewport after selecting answer (issue #10)` - Verifies button stays visible on small viewport (375x550)
+2. `should display quiz correctly in dark mode` - Verifies quiz elements render properly in dark mode
+
+**Test Results:** 18/18 passing (16 original + 2 new)
+
+**PR Created:** https://github.com/vitorsilva/saberloop/pull/14
+
+**Branch:** `fix/issue-10-continue-button-visibility`
+
+**Commits:**
+```
+9338585 test: add e2e tests for issue #10 (button visibility, dark mode)
+6a181d8 fix: update application version and build date
+740c386 docs: add before/after screenshots for issue #10
+a2b39a9 fix: make submit button sticky on quiz screen
+ab5dd8d docs: add plan for issue #10 (continue button visibility)
+```
+
+**Documentation:** Full plan and before/after screenshots in `docs/issues/10.md`
+
+### Key Learning: CSS Sticky Positioning
+
+**When to use `sticky`:**
+- Element should stay visible while user scrolls
+- Element is inside a scrollable container
+- Need element positioned relative to viewport
+
+**Requirements for sticky to work:**
+1. Parent must be scrollable (not `overflow: hidden`)
+2. Must specify at least one of: `top`, `bottom`, `left`, `right`
+3. Element needs background if content scrolls behind it
+
+**Alternative approaches considered:**
+- Fixed positioning: Would require calculating exact position and z-index management
+- JavaScript scroll detection: Overcomplicated for this use case
+- Sticky (chosen): Simple, CSS-only, handles scroll behavior automatically
