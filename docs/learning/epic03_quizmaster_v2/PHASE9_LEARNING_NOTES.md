@@ -972,3 +972,72 @@ Two bugs: score shows `null/5` and date shows Unix epoch `01/01/1970` for incomp
 | Consider Issue #11 (share results feature) | Low - enhancement |
 | Apply for Production access | ~Dec 31 |
 | Submit to Production | After approval |
+
+---
+
+## Session 10 - December 18, 2025
+
+### Issue: Digital Asset Links Verification Failing
+
+**Discovery:** Play Console showing "1 domínio não validado" and "1 link não funciona" errors in the Deep Links section.
+
+**Root Cause:** The `assetlinks.json` file is missing:
+1. **Second permission:** `delegate_permission/common.get_login_creds` (for credential sharing)
+2. **Second SHA256 fingerprint:** Google Play App Signing key
+
+### Why Two Fingerprints?
+
+When you upload an AAB to Google Play:
+1. **Your upload key** signs the AAB you create (from PWABuilder)
+2. **Google's signing key** re-signs the app for distribution to users
+
+Both fingerprints must be in `assetlinks.json` for TWA verification to work properly. The first fingerprint is your upload key, the second is Google's distribution signing key.
+
+### Current vs Required assetlinks.json
+
+**Current (incomplete):**
+```json
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.saberloop.app",
+    "sha256_cert_fingerprints": ["ED:1C:B3:DB:..."]
+  }
+}]
+```
+
+**Required (complete):**
+```json
+[{
+  "relation": [
+    "delegate_permission/common.handle_all_urls",
+    "delegate_permission/common.get_login_creds"
+  ],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.saberloop.app",
+    "sha256_cert_fingerprints": [
+      "ED:1C:B3:DB:23:64:33:E6:CC:FE:0E:F2:56:3C:B1:E0:8E:19:1F:39:5B:0C:CC:EC:12:CA:81:29:1F:10",
+      "83:4F:8F:2C:EA:97:AE:D0:7C:21:54:AF:9B:44:C0:AB:E0:9A:28:2A:F6:72:D0:53:B9:D5:AD:F3:23:BC"
+    ]
+  }
+}]
+```
+
+### Fix Plan
+
+| Step | Action | Status |
+|------|--------|--------|
+| 1 | Create updated `assetlinks.json` locally | ⏳ |
+| 2 | Upload to server via FTP to `/.well-known/` | ⏳ |
+| 3 | Verify file accessible at https://saberloop.com/.well-known/assetlinks.json | ⏳ |
+| 4 | Click "Ativar partilha de credenciais" in Play Console | ⏳ |
+| 5 | Verify Play Console shows green checkmarks | ⏳ |
+
+### Key Learning
+
+**Google Play App Signing:** When using Android App Bundles (AAB), Google manages the final signing key for distribution. This means:
+- You keep your **upload key** (used to authenticate uploads to Play Console)
+- Google uses their **signing key** (to sign apps delivered to users)
+- Both keys must be declared in Digital Asset Links for TWA verification

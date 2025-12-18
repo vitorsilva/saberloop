@@ -24,6 +24,7 @@
     "deploy": "node scripts/deploy-ftp.cjs",
     "deploy:landing": "node scripts/deploy-landing.cjs",
     "build:deploy": "npm run build && npm run deploy",
+    "upload:assetlinks": "node scripts/upload-assetlinks.cjs",
     "preview": "vite preview",
     "test": "vitest",
     "test:php": "docker-compose run --rm php-api vendor/bin/phpunit",
