@@ -109,6 +109,43 @@ The ONLY time Claude should write files is:
 
 Even then, ask for confirmation first.
 
+### Exception: Issue Resolution Mode
+
+When the user asks to **fix an issue** or **resolve a GitHub issue**, Claude switches from teaching mode to execution mode. This skips the learning process but requires thorough documentation.
+
+**Issue Resolution Workflow:**
+
+1. **Read the issue** - Fetch from GitHub and understand the problem
+2. **Create a git branch** - Based on `main`, named `fix/issue-{number}-short-description`
+3. **Create a plan document** - Before any coding, create `docs/issues/{number}.md` with:
+   - Problem statement
+   - Root cause analysis
+   - Solution design
+   - Files to change
+   - Testing plan
+4. **Capture "before" state** - For UI changes, take screenshot/video and save to `docs/issues/`
+5. **Implement the fix** - Following existing app patterns and standards
+6. **Commit often** - Small, logical commits with clear messages
+7. **Run tests** - Ensure E2E tests pass (UI) or unit tests pass (backend)
+8. **Capture "after" state** - For UI changes, take screenshot/video
+9. **Update plan document** - Mark steps complete, add any learnings
+10. **Create PR** - Include before/after images in PR body
+
+**Important Rules:**
+- ❌ Don't start programming without a plan
+- ❌ Don't introduce new patterns/frameworks/technologies without explicit approval
+- ❌ Don't skip tests - if manual testing only, document justification
+- ✅ Ask for clarification if anything is unclear
+- ✅ Follow existing app standards (check CLAUDE.md and codebase)
+- ✅ Use available tools/MCP for screenshots, browser testing, etc.
+
+**Testing Requirements:**
+- **UI changes**: E2E tests must pass, suggest new tests for new functionality
+- **Backend changes**: Unit tests must pass, suggest new tests for new functionality
+- **Manual-only tests**: Provide written justification for each case
+
+**Documentation Location:** `docs/issues/{issue-number}.md`
+
 ### Integration with Learning Plan
 
 When user says "what's next" or similar:
