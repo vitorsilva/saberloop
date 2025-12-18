@@ -165,6 +165,35 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
+### [iOS App Store Publishing](./IOS_APP_STORE.md) ⭐ **Ready to Implement**
+
+**Status:** Planning Complete
+
+**What it is:**
+- Publish Saberloop to Apple App Store
+- Incremental approach: PWABuilder first, native features if rejected
+- Native enhancements: Haptic feedback, Share extensions
+
+**Why it's optional:**
+- ✅ Android version covers majority of mobile users
+- ✅ PWA works on iOS via Safari "Add to Home Screen"
+- ⚠️ $99/year developer fee (vs Google's $25 one-time)
+- ⚠️ Requires Mac for building (limited access)
+- ⚠️ Apple's stricter review process
+
+**Why you might want it:**
+- 📱 **Reach iPhone users** through App Store
+- 🎓 **Learn iOS ecosystem** (Xcode, TestFlight, Capacitor)
+- 💼 **"Available on both stores"** credibility
+- 🔗 **Share TO Saberloop** - create quizzes from any app
+
+**When to revisit:**
+- Ready to expand to iOS users
+- Want to learn iOS development
+- Need App Store credibility
+
+---
+
 ### [Internationalization (i18n)](./I18N_INTERNATIONALIZATION.md) ⭐ **Ready to Implement**
 
 **Status:** Planning Complete
@@ -273,12 +302,12 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 6 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter, PHP VPS, Internationalization)
+**Current count:** 7 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter, PHP VPS, iOS App Store, Internationalization)
 
 **Status:** All documented and ready to implement when desired
 
 ---
 
-**Last Updated:** 2025-12-12
+**Last Updated:** 2025-12-18
 **Location:** `docs/parking_lot/`
 **Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
