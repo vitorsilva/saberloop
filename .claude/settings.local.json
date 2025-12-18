@@ -50,15 +50,20 @@
       "Bash(cmd.exe /c \"dir C:\\Users\\omeue\\.maestro\\tests /b /o-d 2>&1 | head -5\")",
       "Bash(cmd.exe /c \"cd /d C:\\Users\\omeue\\source\\repos\\demo-pwa-app && set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr&& C:\\Users\\omeue\\maestro\\maestro\\bin\\maestro.bat test .maestro\\smoke-test.yaml\")",
       "Bash(git check-ignore:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "mcp__playwright__browser_close",
+      "Bash(git checkout:*)",
+      "Bash(git stash:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "context7",
     "chrome-devtools",
     "playwright"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
