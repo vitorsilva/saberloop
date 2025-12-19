@@ -194,6 +194,36 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
+### [OpenRouter Onboarding UX](./OPENROUTER_ONBOARDING_UX.md) ⭐ **Ready to Implement**
+
+**Status:** Planning Complete
+
+**What it is:**
+- New "OpenRouter Free Account Guide" view with step-by-step visual instructions
+- Multiple entry points (Welcome screen, Settings, Homepage prompts)
+- "Connection Confirmed!" celebration screen after successful OAuth
+- Feature flag system for gradual rollout during closed testing
+
+**Why it's optional:**
+- ✅ Current OAuth flow works (direct redirect to OpenRouter)
+- ✅ Users can already connect successfully
+- ⚠️ Adds UI complexity (new views)
+- ⚠️ May not significantly improve conversion
+
+**Why you might want it:**
+- 🎯 **Reduce user anxiety** about external OAuth process
+- 📚 **Educate about free tier** - users often think they need to pay
+- ⚠️ **Highlight payment skip** - OpenRouter shows credits first, confuses users
+- 🎉 **Celebrate connection** - confirmation screen feels rewarding
+- 🔒 **Safe rollout** - Feature flags protect existing users
+
+**When to revisit:**
+- During closed testing (current phase)
+- If user feedback indicates confusion
+- Before public launch to improve conversion
+
+---
+
 ### [Internationalization (i18n)](./I18N_INTERNATIONALIZATION.md) ⭐ **Ready to Implement**
 
 **Status:** Planning Complete
@@ -302,12 +332,12 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 7 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter, PHP VPS, iOS App Store, Internationalization)
+**Current count:** 8 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX)
 
 **Status:** All documented and ready to implement when desired
 
 ---
 
-**Last Updated:** 2025-12-18
+**Last Updated:** 2025-12-19
 **Location:** `docs/parking_lot/`
 **Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
