@@ -91,18 +91,20 @@ Before starting Epic 4, you should have completed:
 
 Complete the remaining items from Epic03, primarily Play Store production release.
 
-**Status:** In Progress (14-day closed testing: Dec 17-31)
+**Status:** In Progress (14-day closed testing: Dec 17-31) | Day 3 | 9/12 testers
 
 **Tasks:**
 - Complete 14-day closed testing period
 - Apply for production access
 - Submit to production track
 - User validation and feedback collection
+- [x] Investigate Android 15/16 warnings (documented)
 
 **Deliverables:**
-- [ ] Closed testing completed successfully
+- [ ] Closed testing completed successfully (need 3 more testers)
 - [ ] Production release on Google Play Store
 - [ ] User feedback documented
+- [x] Android 15/16 warnings documented (`docs/issues/android-15-16-warnings.md`)
 
 ---
 

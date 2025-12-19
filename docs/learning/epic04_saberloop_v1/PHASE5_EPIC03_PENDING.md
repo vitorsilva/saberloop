@@ -32,6 +32,8 @@ However, the following items remain to be completed:
 
 **Status:** Day 3 of 14-day testing period (Dec 17-31, 2025)
 
+**Tester Progress:** 9 of 12 required testers participating (need 3 more)
+
 **What's Done:**
 - [x] Domain & hosting setup (saberloop.com)
 - [x] Google Play Developer account verified
@@ -43,8 +45,10 @@ However, the following items remain to be completed:
 - [x] Internal testing published and verified
 - [x] Closed testing submitted and approved by Google
 - [x] 14 testers invited via WhatsApp
+- [x] Android 15/16 warnings investigated and documented
 
 **What's Remaining:**
+- [ ] Recruit 3 more testers to meet 12-tester minimum
 - [ ] Monitor tester feedback during 14-day period
 - [ ] Address any critical bugs reported
 - [ ] Collect usage metrics and feedback
@@ -124,6 +128,7 @@ However, the following items remain to be completed:
 - `docs/learning/epic03_quizmaster_v2/PHASE9_PLAYSTORE_PUBLISHING.md`
 - `docs/learning/epic03_quizmaster_v2/PHASE6_VALIDATION.md`
 - `docs/learning/epic03_quizmaster_v2/PHASE9_LEARNING_NOTES.md`
+- `docs/issues/android-15-16-warnings.md` - Android 15/16 compatibility investigation
 
 **Key Links:**
 - [Google Play Console](https://play.google.com/console)
@@ -149,6 +154,38 @@ However, the following items remain to be completed:
 - Use this time to work on other Epic04 phases
 - Keep checking Play Console for tester feedback
 - Document any issues that arise for future reference
+
+---
+
+## Session Log
+
+### 2025-12-19: Android 15/16 Warnings Investigation
+
+**What was done:**
+- Reviewed Play Console warnings for Android 15 (SDK 35) and Android 16 compatibility
+- Investigated three warnings:
+  1. Edge-to-edge display may not work for all users
+  2. Deprecated APIs for edge-to-edge presentation
+  3. Resizing/orientation restrictions for large screens
+- Researched PWABuilder GitHub issues (found #4863 - marked done but still affecting users)
+- Confirmed root cause is PWABuilder/Bubblewrap templates, not our PWA code
+- Documented findings in `docs/issues/android-15-16-warnings.md`
+
+**Key findings:**
+- Warnings are from PWABuilder-generated wrapper, not our code
+- No action needed - warnings don't block production release
+- PWABuilder team aware but fix still pending
+- Will need to regenerate AAB when PWABuilder releases updated templates
+
+**Current status:**
+- 9 of 12 testers participating (need 3 more)
+- Day 3 of 14-day closed testing period
+- No critical bugs reported yet
+
+**Next steps:**
+- Recruit 3 more testers to meet minimum requirement
+- Continue monitoring tester feedback
+- Consider starting Phase 10 (OpenRouter Onboarding) while waiting
 
 ---
 
