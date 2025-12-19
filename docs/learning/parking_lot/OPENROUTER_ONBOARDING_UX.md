@@ -4,6 +4,12 @@
 **Status:** Parking Lot / Ready to Implement
 **Goal:** Improve the AI provider connection experience with guided step-by-step instructions
 
+### Session Log
+
+| Date | Status | Notes |
+|------|--------|-------|
+| 2025-12-19 | **Plan Created** | Full plan drafted with UI mockup reference, feature flags (hand-rolled), branching strategy, and 5-phase implementation. Ready to start Phase 1 when desired. |
+
 ---
 
 ## Executive Summary

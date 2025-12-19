@@ -741,11 +741,11 @@ Google account verification completed! Successfully published Saberloop to Inter
 
 ---
 
-**Last Updated:** 2025-12-18
-**Phase Status:** Closed Testing LIVE ✅ | Day 2: Fixed Issues #10 & #13
+**Last Updated:** 2025-12-19
+**Phase Status:** Closed Testing LIVE ✅ | Day 3: Created plan for Issue #12 (OpenRouter Onboarding UX)
 **Completed Sections:** 9.0.0, 9.0.1, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.5.5, 9.6 (updated), 9.7, 9.8 (Internal + Closed), 9.10
-**Next Step:** Fix remaining issues (#11, #12) → Send OpenRouter follow-up → Continue collecting feedback
-**Feedback Tracking:** GitHub Issues (#10 ✅, #11, #12, #13 ✅, #16) with labels (ux, bug, enhancement, priority-high, from-tester)
+**Next Step:** Implement OpenRouter Onboarding UX enhancement (parking lot plan) → Fix remaining issues (#11) → Continue collecting feedback
+**Feedback Tracking:** GitHub Issues (#10 ✅, #11, #12 📋 Plan Created, #13 ✅, #16) with labels (ux, bug, enhancement, priority-high, from-tester)
 **Backlog:** #16 (sticky nav consistency) - low priority, fix after testing period
 
 ---
@@ -1220,3 +1220,104 @@ if (!session.timestamp || session.timestamp === 0) {
 - Any field that defaults to 0 or null
 - Timestamps for "not yet completed" actions
 - Optional date fields in databases
+
+---
+
+## Session 11 - December 19, 2025
+
+### Issue #12 Plan Created: OpenRouter Onboarding UX Enhancement
+
+**Context:** Tester feedback from Day 1 highlighted confusion about OpenRouter:
+> "Ao clicar em start new quizz pede-me para criar uma conta numa cena openrouter (q n sei o que é...)"
+> "OK!! Já consegui. Mas sim, n tá muito claro"
+
+This was the highest priority UX issue identified. Instead of a quick fix, we created a comprehensive plan for a better onboarding experience.
+
+### Plan Created
+
+**Location:** `docs/learning/parking_lot/OPENROUTER_ONBOARDING_UX.md`
+
+**Key Features Planned:**
+
+1. **New "OpenRouter Free Account Guide" View**
+   - Step-by-step visual instructions matching existing mockup design
+   - Emphasizes "No credit card required" for free tier
+   - Step 3 (Skip Payment Screen) heavily highlighted - this is where users get confused
+   - Fixed bottom CTA button for easy access
+
+2. **Multiple Entry Points**
+   - Welcome screen: "Connect to AI Provider" button
+   - Settings: "Connect with OpenRouter" button
+   - Homepage: Popup when trying to generate without connection
+
+3. **"Connection Confirmed!" Celebration Screen**
+   - Success animation after OAuth completes
+   - Reminds user of free tier benefits
+   - Clear CTA to start first quiz
+
+4. **Feature Flag System for Safe Rollout**
+   - Phase 1: `DISABLED` - Deploy code without activating
+   - Phase 2: `SETTINGS_ONLY` - Test via Settings page only
+   - Phase 3: `ENABLED` - Full rollout everywhere
+
+### Decisions Made
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Feature flag approach | Hand-rolled | Simple app, single flag, zero dependencies |
+| Branch strategy | `feature/openrouter-onboarding-ux` from `main` | Standard feature branch |
+| Commit frequency | Atomic commits (15+ across 5 phases) | Easy rollback, clear history |
+
+### Feature Flag Libraries Researched
+
+Documented alternatives for future reference:
+- [OpenFeature](https://openfeature.dev/) - Vendor-agnostic standard
+- [Flags SDK](https://flags-sdk.dev/) - Lightweight, no backend
+- [FeatBit](https://www.featbit.co/) - 100% free, good JS SDK
+- [Unleash](https://github.com/Unleash/unleash) - Most popular
+- [GrowthBook](https://www.growthbook.io/) - Free self-hosted
+
+### Implementation Phases Planned
+
+| Phase | Sessions | Description |
+|-------|----------|-------------|
+| 1 | 2-3 | Foundation (feature flags, view shells, routes) |
+| 2 | 2-3 | OpenRouter Guide UI (mockup implementation) |
+| 3 | 1-2 | Integration (wire up entry points) |
+| 4 | 1 | Connection Confirmed view |
+| 5 | 1-2 | Gradual rollout and testing |
+
+### Mockup Reference
+
+UI design based on existing mockup: `docs/product-info/mockups/stitch_quiz_generator/`
+- `code.html` - Full HTML/Tailwind implementation
+- `screen.png` - Visual reference
+
+### Parking Lot README Updated
+
+Added new entry to `docs/learning/parking_lot/README.md`:
+- Summary of what the feature is
+- Why it's optional
+- Why you might want it
+- When to revisit
+
+### What's Next (When Resuming)
+
+1. Create branch: `git checkout -b feature/openrouter-onboarding-ux`
+2. Start Phase 1: Create `src/core/features.js` with feature flag system
+3. Create view shells for new views
+4. Add routes (not linked from UI yet)
+5. Commit and verify tests pass
+
+### Key Learning: Planning Before Implementation
+
+**Approach taken:** Created comprehensive plan before writing any code.
+
+**Benefits:**
+- Clear scope and milestones
+- Feature flags allow safe deployment during active testing
+- Mockup reference ensures consistent UI
+- Atomic commits mapped out in advance
+- Can pause/resume at any phase boundary
+
+**This addresses issue #12** by providing a guided, visual onboarding flow instead of an abrupt redirect to OpenRouter's OAuth page
