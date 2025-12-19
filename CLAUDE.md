@@ -8,11 +8,12 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 - **Epic 01: Infrastructure** - PWA fundamentals (service workers, offline, installation)
 - **Epic 02: QuizMaster V1** - Initial AI-powered quiz application with mock API
-- **Epic 03: QuizMaster V2** - Production-ready version with real backend integration ✅ **Current**
+- **Epic 03: QuizMaster V2** - Production-ready version with real backend integration ✅ **Complete**
+- **Epic 04: Saberloop V1** - Maintenance, enhancements, and new functionality ✅ **Current**
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 03 Phase 9 Closed Testing LIVE ✅ | Day 3: Created OpenRouter Onboarding UX plan (Issue #12) | 14-day period (Dec 17-31)
+**Current Status:** Epic 04 | Phase 5 (Play Store Production) in progress | Closed Testing Day 3 of 14 (Dec 17-31)
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
@@ -152,7 +153,8 @@ When user says "what's next" or similar:
 1. Determine which epic/learning plan is active:
    - Epic 01 (Infrastructure): `docs/learning/epic01_infrastructure/LEARNING_PLAN.md` and `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - Epic 02 (QuizMaster V1): `docs/learning/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and phase files
-   - Epic 03 (QuizMaster V2): `docs/learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and `docs/learning/epic03_quizmaster_v2/PHASE*_*.md` files
+   - Epic 03 (QuizMaster V2): `docs/learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and phase files ✅ Complete
+   - Epic 04 (Saberloop V1): `docs/learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md` and `docs/learning/epic04_saberloop_v1/PHASE*_*.md` files ✅ Current
 2. Identify current phase and next step
 3. **Present the next topic and ask if they want to proceed**
 4. Once confirmed, **teach it step-by-step** (don't execute autonomously)
@@ -199,7 +201,8 @@ When the user asks **"what's next"** or similar phrases (e.g., "what should I do
 1. Determine the active epic/learning plan:
    - **Epic 01 (Infrastructure)**: Read `docs/learning/epic01_infrastructure/LEARNING_PLAN.md` and check `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - **Epic 02 (QuizMaster V1)**: Read `docs/learning/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and related phase files
-   - **Epic 03 (QuizMaster V2)**: Read `docs/learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and related phase files
+   - **Epic 03 (QuizMaster V2)**: Read `docs/learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and related phase files ✅ Complete
+   - **Epic 04 (Saberloop V1)**: Read `docs/learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md` and related phase files ✅ Current
 2. Identify the current phase and next steps in the learning progression
 3. Guide the user through the next appropriate task or learning objective
 
@@ -210,7 +213,8 @@ When the user says **"that's a wrap"**, **"let's call it a day"**, **"let's paus
 1. Document the current state in the appropriate learning notes file for the active epic:
    - **Epic 01**: `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - **Epic 02**: Create/update learning notes in `docs/learning/epic02_quizmaster_v1/`
-   - **Epic 03**: Update learning notes in `docs/learning/epic03_quizmaster_v2/PHASE*_LEARNING_NOTES.md`
+   - **Epic 03**: `docs/learning/epic03_quizmaster_v2/PHASE*_LEARNING_NOTES.md` ✅ Complete
+   - **Epic 04**: `docs/learning/epic04_saberloop_v1/PHASE*_LEARNING_NOTES.md` ✅ Current
    - What was just completed in this session
    - Current phase and specific step/task
    - What's next when they resume
@@ -232,6 +236,7 @@ demo-pwa-app/
 │   │   ├── epic01_infrastructure/
 │   │   ├── epic02_quizmaster_v1/
 │   │   ├── epic03_quizmaster_v2/
+│   │   ├── epic04_saberloop_v1/  # Current epic
 │   │   └── parking_lot/       # Optional/deferred phases
 │   └── product-info/          # Product assets (mockups, logos)
 ├── src/
@@ -422,7 +427,7 @@ Located in `docs/learning/epic02_quizmaster_v1/`:
 - **PHASE3_API_INTEGRATION.md**: Anthropic Claude API integration
 - **PHASES_4-10_SUMMARY.md**: Overview of remaining implementation phases
 
-### Epic 03: QuizMaster V2 (Production-Ready Backend) ✅ Current
+### Epic 03: QuizMaster V2 (Production-Ready Backend) ✅ Complete
 Located in `docs/learning/epic03_quizmaster_v2/`:
 - **EPIC3_QUIZMASTER_V2_PLAN.md**: Complete Epic 3 multi-phase plan
 - **PHASE1_BACKEND.md**: Serverless backend integration (✅ Complete)
@@ -430,7 +435,18 @@ Located in `docs/learning/epic03_quizmaster_v2/`:
 - **PHASE3_UI_POLISH.md**: UI refinements (✅ Complete)
 - **PHASE4_OBSERVABILITY.md**: Logging and monitoring (✅ Complete)
 - **PHASE5_PROJECT_STRUCTURE.md**: Repository organization (✅ Complete)
-- **PHASE6_VALIDATION.md**: Comprehensive testing (Next)
+- **PHASE9_PLAYSTORE_PUBLISHING.md**: Play Store publishing (✅ Complete - Closed Testing Live)
+
+### Epic 04: Saberloop V1 (Maintenance & Enhancement) ✅ Current
+Located in `docs/learning/epic04_saberloop_v1/`:
+- **EPIC4_SABERLOOP_V1_PLAN.md**: Complete Epic 4 multi-phase plan
+- **PHASE5_EPIC03_PENDING.md**: Play Store production & validation (In Progress)
+- **PHASE10_OPENROUTER_ONBOARDING_UX.md**: Improved OpenRouter setup flow
+- **PHASE20_ARCH_TESTING.md**: Architecture testing with dependency-cruiser
+- **PHASE30_I18N.md**: Internationalization (multi-language support)
+- **PHASE40_TELEMETRY.md**: Self-hosted observability solution
+- **PHASE50_MAESTRO_TESTING.md**: Expanded mobile UI testing
+- **PHASE60_MONETIZATION.md**: Google AdSense integration
 
 When making changes, respect the learning-focused nature of the project. Keep code simple and well-commented rather than introducing complex patterns or dependencies.
 
