@@ -86,15 +86,15 @@
 
                 ${this.renderStepCard(2, 'Create Account',
                 'Choose to sign up with Google, GitHub, or create an account with your email.',
-                'person_add', false, '/images/onboarding/openrouter_step2_createaccount.png')}
+                'person_add', false, '/app/images/onboarding/openrouter_step2_createaccount.png')}
 
                 ${this.renderStepCard(3, 'Skip Payment',
                 'On the credits page, look for the small "Skip" or "Continue without adding credits" link below the payment options.',
-                'money_off', true, '/images/onboarding/openrouter_step3_freeaccount.png')}
+                'money_off', true, '/app/images/onboarding/openrouter_step3_freeaccount.png')}
 
                 ${this.renderStepCard(4, 'Authorize',
                 'Review the permissions and click "Authorize" to connect Saberloop with your OpenRouter account.',
-                'verified', false, '/images/onboarding/openrouter_step4_authorization.png')}
+                'verified', false, '/app/images/onboarding/openrouter_step4_authorization.png')}
             </div>
 
           </div>
