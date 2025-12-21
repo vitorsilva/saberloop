@@ -91,7 +91,7 @@ Before starting Epic 4, you should have completed:
 
 Complete the remaining items from Epic03, primarily Play Store production release.
 
-**Status:** In Progress (14-day closed testing: Dec 17-31) | Day 3 | 9/12 testers
+**Status:** In Progress (14-day closed testing: Dec 17-31) | Day 5 | 9/12 testers | Issue #16 Fixed
 
 **Tasks:**
 - Complete 14-day closed testing period

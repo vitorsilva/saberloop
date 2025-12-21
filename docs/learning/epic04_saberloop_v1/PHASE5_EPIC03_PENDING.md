@@ -30,7 +30,7 @@ However, the following items remain to be completed:
 
 ### 5.1 Play Store: Complete Closed Testing (In Progress)
 
-**Status:** Day 3 of 14-day testing period (Dec 17-31, 2025)
+**Status:** Day 5 of 14-day testing period (Dec 17-31, 2025)
 
 **Tester Progress:** 9 of 12 required testers participating (need 3 more)
 
@@ -142,7 +142,7 @@ However, the following items remain to be completed:
 
 | Item | Status | Target Date | Notes |
 |------|--------|-------------|-------|
-| Closed Testing Period | In Progress | Dec 31, 2025 | Day 3 of 14 |
+| Closed Testing Period | In Progress | Dec 31, 2025 | Day 5 of 14 |
 | Production Submission | Pending | Jan 1-3, 2025 | After testing |
 | Production Approval | Pending | Jan 3-10, 2025 | 3-7 day review |
 | User Validation | In Progress | Dec 31, 2025 | Parallel with testing |
@@ -338,4 +338,27 @@ npm run deploy:landing   # FTP deploy to saberloop.com
 
 ---
 
-**Last Updated:** 2025-12-19
+### 2025-12-21: Issue #16 - Sticky Navigation Fix
+
+**Issue:** #16 - Bottom navigation should be always visible on all pages
+
+**Problem:** Bottom navigation was disappearing when scrolling on Home and Settings pages due to CSS `position: sticky` not working reliably with varying container structures.
+
+**Solution:** Changed bottom navigation from `sticky` to `fixed` positioning across all 5 views:
+- `HomeView.js` - Removed `h-auto`, `sticky` → `fixed`
+- `SettingsView.js` - Removed `h-auto`, `sticky` → `fixed`
+- `TopicsView.js` - `sticky` → `fixed`
+- `TopicInputView.js` - `sticky` → `fixed`
+- `QuizView.js` - `sticky` → `fixed`
+
+**Testing:**
+- All 26 E2E tests pass
+- Manual verification on all pages
+
+**PR:** https://github.com/vitorsilva/saberloop/pull/20
+**Documentation:** `docs/issues/16.md`
+**Status:** Merged and deployed to production
+
+---
+
+**Last Updated:** 2025-12-21
