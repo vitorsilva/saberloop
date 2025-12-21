@@ -31,7 +31,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lint:dead-code": "knip",
-    "lint:dead-code:fix": "knip --fix"
+    "lint:dead-code:fix": "knip --fix",
+    "arch:test": "depcruise src --config .dependency-cruiser.cjs",
+    "arch:graph": "depcruise src --output-type dot --config .dependency-cruiser.cjs > dependency-graph.dot"    
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
