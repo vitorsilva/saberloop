@@ -15,7 +15,7 @@ export default class HomeView extends BaseView {
     const recentTopicsHTML = this.generateRecentTopicsHTML(sessions);
 
     this.setHTML(`
-      <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+      <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
         <!-- Top App Bar -->
         <div class="flex items-center p-4 pb-2 justify-between bg-background-light dark:bg-background-dark">
           <h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1">Saberloop</h1>
@@ -66,7 +66,7 @@ export default class HomeView extends BaseView {
         <div class="h-24"></div>
 
         <!-- Bottom Navigation Bar -->
-        <div class="sticky bottom-0 left-0 right-0 h-20 bg-background-light dark:bg-background-dark backdrop-blur-md border-t border-border-light dark:border-border-dark">
+        <div class="fixed bottom-0 left-0 right-0 h-20 bg-background-light dark:bg-background-dark backdrop-blur-md border-t border-border-light dark:border-border-dark">
           <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
             <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/">
               <span class="material-symbols-outlined text-2xl fill">home</span>
