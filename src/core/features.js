@@ -9,7 +9,7 @@
 
   export const FEATURE_FLAGS = {
     OPENROUTER_GUIDE: {
-      phase: 'ENABLED',
+      phase: 'SETTINGS_ONLY',
       description: 'New OpenRouter connection guide with step-by-step instructions'
     }
   };
