@@ -11,7 +11,7 @@
 
     async render() {
       this.setHTML(`
-        <div class="relative flex h-auto min-h-screen w-full flex-col
+        <div class="relative flex min-h-screen w-full flex-col
   bg-background-light dark:bg-background-dark overflow-x-hidden">
           <!-- Top App Bar -->
           <div class="flex items-center p-4 pb-2 justify-between
@@ -137,7 +137,7 @@
           <div class="h-24"></div>
 
           <!-- Bottom Navigation Bar -->
-          <div class="sticky bottom-0 left-0 right-0 h-20 bg-background-light       
+          <div class="fixed bottom-0 left-0 right-0 h-20 bg-background-light
   dark:bg-background-dark backdrop-blur-md border-t border-border-light
   dark:border-border-dark">
             <div class="flex justify-around items-center h-full max-w-lg mx-auto    

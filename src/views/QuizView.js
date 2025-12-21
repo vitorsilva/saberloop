@@ -101,7 +101,7 @@ export default class QuizView extends BaseView {
         </div>
 
         <!-- Bottom Navigation Bar -->
-        <div class="sticky bottom-0 left-0 right-0 h-20 bg-background-light dark:bg-background-dark backdrop-blur-md border-t border-border-light dark:border-border-dark">
+        <div class="fixed bottom-0 left-0 right-0 h-20 bg-background-light dark:bg-background-dark backdrop-blur-md border-t border-border-light dark:border-border-dark">
           <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
             <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
               <span class="material-symbols-outlined text-2xl">home</span>
