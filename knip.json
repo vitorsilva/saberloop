@@ -1,0 +1,20 @@
+{
+"$schema": "https://unpkg.com/knip@latest/schema.json",
+"entry": [
+    "src/main.js"
+],
+"project": [
+    "src/**/*.js"
+],
+"ignore": [
+    "**/*.test.js",
+    "**/*.spec.js",
+    "src/api/api.mock.js",
+    "src/api/api.real.js"
+],
+"ignoreBinaries": [
+    "docker-compose"
+],
+"ignoreExportsUsedInFile": true,
+"vite": true
+}

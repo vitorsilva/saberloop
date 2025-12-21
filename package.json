@@ -13,7 +13,6 @@
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "app.js",
   "scripts": {
     "version": "node scripts/generate-version.js",
     "predev": "npm run version",
@@ -30,18 +29,20 @@
     "test:php": "docker-compose run --rm php-api vendor/bin/phpunit",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "lint:dead-code": "knip",
+    "lint:dead-code:fix": "knip --fix"    
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
     "@vitest/coverage-v8": "^4.0.1",
     "autoprefixer": "^10.4.22",
-    "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
     "fake-indexeddb": "^6.2.4",
     "ftp-deploy": "^2.4.7",
     "idb": "^8.0.3",
     "jsdom": "^27.0.1",
+    "knip": "^5.76.1",
     "netlify-cli": "^23.11.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18",

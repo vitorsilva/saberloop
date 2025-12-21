@@ -157,7 +157,7 @@ Improve the OpenRouter connection experience with guided step-by-step instructio
 
 Implement dead code detection using Knip to identify and remove unused code from learning phases.
 
-**Status:** Ready to Implement
+**Status:** ✅ Complete (December 21, 2025)
 
 **Key Features:**
 - Automated detection of unused files, exports, and dependencies
@@ -172,17 +172,18 @@ Implement dead code detection using Knip to identify and remove unused code from
 - Gradual rollout (warning → blocking)
 
 **Deliverables:**
-- [ ] `knip.json` - Configuration file
-- [ ] `npm run lint:dead-code` - npm script
-- [ ] GitHub Actions integration
-- [ ] Cleaned up unused code
-- [ ] Documentation updated
+- [x] `knip.json` - Configuration file
+- [x] `npm run lint:dead-code` - npm script
+- [x] GitHub Actions integration (warning mode)
+- [x] Cleaned up unused code (TestView.js, cross-env, main field)
+- [x] Documentation updated
 
 **Success Criteria:**
-- Knip installed and configured
-- Unused code cleaned up
-- CI integration working (warning mode, then blocking)
-- No false positives in regular development
+- ✅ Knip installed and configured
+- ✅ Unused code cleaned up
+- ✅ CI integration working (warning mode)
+- ✅ No false positives in regular development
+- [ ] Promote to blocking mode after 1-2 weeks monitoring
 
 ---
 
@@ -398,7 +399,7 @@ While phases can be worked on in any order, here's a suggested priority:
 ### Technical Milestones
 - [ ] Production release on Google Play Store
 - [x] OpenRouter onboarding improved ✅
-- [ ] Dead code detected and cleaned up
+- [x] Dead code detected and cleaned up ✅
 - [ ] Architecture rules enforced in CI
 - [ ] 5+ languages supported
 - [ ] Self-hosted telemetry operational
