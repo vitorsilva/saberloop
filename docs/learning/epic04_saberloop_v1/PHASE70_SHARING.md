@@ -1,7 +1,7 @@
 # Phase 70: Sharing Feature
 
 **Epic:** 4 - Saberloop V1
-**Status:** Planning
+**Status:** Ready for Implementation
 **Priority:** High (iOS App Store preparation + User request)
 **Related Issues:** [#11](https://github.com/vitorsilva/saberloop/issues/11)
 
@@ -389,19 +389,30 @@ https://saberloop.com/app/quiz/abc123
 
 ---
 
-## Questions to Resolve
+## Decisions Made
 
-1. **Social buttons**: Should we include direct Twitter/Facebook buttons, or just rely on native share sheet?
-   - Recommendation: Start with native share sheet only (simpler, less maintenance)
+1. **Scope**: Option B - Full mockup implementation
+   - Share modal with achievement card preview
+   - Generated image for sharing
+   - ~5-6 sessions
 
-2. **Achievement levels**: Implement for V1 or defer?
-   - Recommendation: Defer to keep V1 scope manageable
+2. **Social buttons**: ✅ Include direct Twitter/Facebook/Stories buttons
+   - Plus native share sheet via "More Options"
 
-3. **Image sharing**: Required for V1 or just text+link?
-   - Recommendation: Start with text+link, add image if time permits
+3. **Achievement levels**: ❌ Defer to future phase
+   - Will show topic name and score only (no "Level X" badge)
 
-4. **Analytics**: Track share events?
-   - Recommendation: Add if Phase 40 (Telemetry) is complete
+4. **Image sharing**: ✅ Required for V1
+   - Canvas-generated achievement card
+
+5. **Message format**: ✅ Approved as proposed
+   ```
+   🏆 {Topic} Quiz Master!
+   I scored {score}/{total} ({percentage}%) on Saberloop!
+   Can you beat my score?
+
+   Try it: https://saberloop.com/app/?topic={encoded_topic}
+   ```
 
 ---
 
