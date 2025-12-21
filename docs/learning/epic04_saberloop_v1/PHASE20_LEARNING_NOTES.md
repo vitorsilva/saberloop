@@ -96,11 +96,89 @@ The generated config includes sensible defaults:
 - [x] Examine the generated `.dependency-cruiser.cjs` file
 - [x] Run first architecture scan
 - [x] Fix violations found
-- [ ] Add custom rules for layer boundaries
+- [x] Add custom rules for layer boundaries
 - [ ] Integrate with CI
 - [ ] Document architecture rules
 
 ---
 
+### Session 2 - Architecture Analysis & Rules
+
+**Architecture Review:**
+
+Reviewed existing documentation:
+- `docs/architecture/SYSTEM_OVERVIEW.md` - High-level architecture
+- `PHASE20_ARCH_TESTING.md` - Current vs target state analysis
+
+**Current State (High Coupling):**
+
+| From | Currently Imports | Issue |
+|------|-------------------|-------|
+| `views/` | api, db, state, utils, components | Views know too much (5 dependencies!) |
+| `components/` | api | Should be presentational only |
+| `api/` | db (for keys) | Should receive credentials as params |
+
+**Target State (Low Coupling):**
+
+Introduce a `services/` layer:
+- Views only import from: `services/`, `components/`, `utils/`
+- Services coordinate: `api/`, `db/`, `state/`
+- Components are pure: only `utils/`
+
+**Actual Import Patterns Found:**
+
+Ran: `npx depcruise src/views --output-type text --config .dependency-cruiser.cjs`
+
+| Pattern | Files Affected |
+|---------|----------------|
+| Views → db | HomeView, ResultsView, SettingsView, TopicsView (4 files) |
+| Views → api | LoadingView, QuizView, OpenRouterGuideView (3 files) |
+| Views → state | HomeView, LoadingView, QuizView, ResultsView, TopicInputView, TopicsView (6 files) |
+| Components → api | ConnectModal (1 file) |
+| API → db | api.real.js (1 file) |
+| Views → BaseView | All views (OK - inheritance) |
+
+**Custom Rules Added:**
+
+| Rule Name | Severity | Purpose |
+|-----------|----------|---------|
+| `no-view-to-view` | error | Views shouldn't import other views (except BaseView) |
+| `views-should-not-import-db` | warn | Transition: use services layer |
+| `views-should-not-import-api` | warn | Transition: use services layer |
+| `components-should-not-import-api` | warn | Components should be presentational |
+| `api-should-not-import-db` | warn | API should receive credentials as params |
+
+**Final Scan Results:**
+
+```
+x 9 dependency violations (0 errors, 9 warnings). 49 modules, 102 dependencies cruised.
+```
+
+| Rule | Violations |
+|------|------------|
+| `views-should-not-import-db` | 4 (TopicsView, SettingsView, ResultsView, HomeView) |
+| `views-should-not-import-api` | 3 (QuizView, OpenRouterGuideView, LoadingView) |
+| `components-should-not-import-api` | 1 (ConnectModal) |
+| `api-should-not-import-db` | 1 (api.real.js) |
+| `no-view-to-view` | 0 (good!) |
+
+**What We Achieved:**
+
+Architecture-as-code - architectural decisions documented in executable rules that:
+1. Run on every `npm run arch:test`
+2. Will be visible in CI
+3. Guide future refactoring to services layer
+
+---
+
+## Files Changed (Updated)
+
+| File | Change |
+|------|--------|
+| `.dependency-cruiser.cjs` | Added 5 custom Saberloop architecture rules |
+| `package.json` | Moved `idb` to dependencies, added `arch:test` and `arch:graph` scripts |
+
+---
+
 **Last Updated:** 2025-12-21
-**Status:** In Progress
+**Status:** In Progress (Session 2 complete, CI integration next)

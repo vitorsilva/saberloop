@@ -195,6 +195,52 @@ module.exports = {
           'npm-peer'
         ]
       }
+    },
+
+    /* ============================================
+     * CUSTOM ARCHITECTURE RULES - Saberloop
+     * ============================================ */
+
+    /* --- IMMEDIATE ENFORCEMENT (errors) --- */
+    {
+      name: 'no-view-to-view',
+      severity: 'error',
+      comment: 'Views should not import other views (except BaseView)',
+      from: { path: '^src/views/.*View\\.js$' },
+      to: {
+        path: '^src/views/.*View\\.js$',
+        pathNot: 'BaseView\\.js$'
+      }
+    },
+
+    /* --- TRANSITION RULES (warnings - fix later) --- */
+    {
+      name: 'views-should-not-import-db',
+      severity: 'warn',
+      comment: 'TRANSITION: Views should use a services layer instead of direct db access',
+      from: { path: '^src/views/' },
+      to: { path: '^src/core/db\\.js$' }
+    },
+    {
+      name: 'views-should-not-import-api',
+      severity: 'warn',
+      comment: 'TRANSITION: Views should use a services layer instead of direct api access',
+      from: { path: '^src/views/' },
+      to: { path: '^src/api/' }
+    },
+    {
+      name: 'components-should-not-import-api',
+      severity: 'warn',
+      comment: 'TRANSITION: Components should be presentational, receiving callbacks as props',
+      from: { path: '^src/components/' },
+      to: { path: '^src/api/' }
+    },
+    {
+      name: 'api-should-not-import-db',
+      severity: 'warn',
+      comment: 'TRANSITION: API layer should receive credentials as parameters',
+      from: { path: '^src/api/' },
+      to: { path: '^src/core/db\\.js$' }
     }
   ],
   options: {
