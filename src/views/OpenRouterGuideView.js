@@ -80,21 +80,21 @@
 
             <!-- Step Cards -->
             <div class="space-y-4">
-              ${this.renderStepCard(1, 'Sign Up',
+                ${this.renderStepCard(1, 'Sign Up',
                 'Visit OpenRouter.ai and click the "Sign Up" button in the top right corner.',
-                'how_to_reg')}
+                'how_to_reg', false, null)}
 
-              ${this.renderStepCard(2, 'Create Account',
+                ${this.renderStepCard(2, 'Create Account',
                 'Choose to sign up with Google, GitHub, or create an account with your email.',
-                'person_add')}
+                'person_add', false, '/images/onboarding/openrouter_step2_createaccount.png')}
 
-              ${this.renderStepCard(3, 'Skip Payment',
-                'On the credits page, look for the small "Skip" or "Continue without adding credits" link below the payment options.',       
-                'money_off', true)}
+                ${this.renderStepCard(3, 'Skip Payment',
+                'On the credits page, look for the small "Skip" or "Continue without adding credits" link below the payment options.',
+                'money_off', true, '/images/onboarding/openrouter_step3_freeaccount.png')}
 
-              ${this.renderStepCard(4, 'Authorize',
+                ${this.renderStepCard(4, 'Authorize',
                 'Review the permissions and click "Authorize" to connect Saberloop with your OpenRouter account.',
-                'verified')}
+                'verified', false, '/images/onboarding/openrouter_step4_authorization.png')}
             </div>
 
           </div>
@@ -123,7 +123,7 @@
     /**
      * Render a step card
      */
-    renderStepCard(number, title, description, icon, highlighted = false) {
+    renderStepCard(number, title, description, icon, highlighted = false, imageSrc = null) {
       const highlightClass = highlighted
         ? 'border-2 border-primary ring-4 ring-primary/10'
         : 'border border-border-light dark:border-border-dark';
@@ -141,6 +141,11 @@
         </div>
       ` : '';
 
+      // Image block (only if image provided)
+      const imageBlock = imageSrc
+        ? `<img src="${imageSrc}" alt="Step ${number}" class="mt-4 w-full rounded-lg border border-border-light dark:border-border-dark" />` 
+        : '';
+
       return `
         <div class="p-4 rounded-xl bg-card-light dark:bg-card-dark ${highlightClass}">
           <div class="flex items-start gap-4">
@@ -157,6 +162,7 @@
                 ${description}
               </p>
               ${warningBox}
+              ${imageBlock}
             </div>
           </div>
         </div>
