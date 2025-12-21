@@ -5,9 +5,10 @@ import { logger } from '../utils/logger.js';
    * Mock question generation - returns fake but realistic questions
    * @param {string} topic - The topic to generate questions about
    * @param {string} gradeLevel - The grade level for the questions
+   * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
    * @returns {Promise<Array>} Array of 5 question objects
    */
-  export async function generateQuestions(topic, gradeLevel = 'middle school') {
+  export async function generateQuestions(topic, gradeLevel = 'middle school', _apiKey) {
     // Simulate network delay (real APIs take time)
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -86,10 +87,11 @@ import { logger } from '../utils/logger.js';
    * @param {string} userAnswer - The user's answer
    * @param {string} correctAnswer - The correct answer
    * @param {string} gradeLevel - The grade level
+   * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
    * @returns {Promise<string>} The explanation text
    */
   export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel =
-  'middle school') {
+  'middle school', _apiKey) {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
