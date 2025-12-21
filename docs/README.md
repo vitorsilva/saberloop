@@ -127,9 +127,9 @@ docs/
 
 - [Phase 7: Azure Functions Migration](./parking_lot/PHASE7_AZURE_MIGRATION.md) ⭐ **Optional**
   - Azure Functions deployment
-  - Dual backend support (Netlify + Azure)
+  - Alternative backend approach
   - Application Insights monitoring
-  - Platform comparison and migration
+  - Platform comparison
   - *Nice to have: Azure experience*
 
 - [Phase 8: OAuth Integration](./parking_lot/PHASE8_OAUTH.md) ⭐ **Optional/Experimental**

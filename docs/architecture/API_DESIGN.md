@@ -2,40 +2,61 @@
 
 ## Overview
 
-Saberloop uses serverless functions (Netlify Functions) to proxy requests to the Anthropic Claude API. This keeps API keys secure on the server side.
+Saberloop uses OpenRouter for AI-powered question generation. Users authenticate with their own OpenRouter account via OAuth, and API calls are made directly from the browser to OpenRouter.
 
-## Base URL
+## Architecture
 
-| Environment | Base URL |
-|-------------|----------|
-| Production | `https://your-site.netlify.app/.netlify/functions` |
-| Development | `http://localhost:8888/.netlify/functions` |
+| Component | Description |
+|-----------|-------------|
+| OpenRouter OAuth | User authenticates and stores API key in browser |
+| Client-side API | Direct calls from browser to OpenRouter |
+| IndexedDB | Stores API key securely in user's browser |
 
-## Endpoints
+## OpenRouter Integration
 
-### POST `/generate-questions`
+### Base URL
+
+```
+https://openrouter.ai/api/v1/chat/completions
+```
+
+### Authentication
+
+API key is obtained via OAuth and stored in IndexedDB:
+
+```javascript
+// src/api/openrouter-client.js
+const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${apiKey}`,
+    'Content-Type': 'application/json',
+    'HTTP-Referer': window.location.origin,
+    'X-Title': 'Saberloop'
+  },
+  body: JSON.stringify({
+    model: 'anthropic/claude-3.5-sonnet',
+    messages: [{ role: 'user', content: prompt }]
+  })
+});
+```
+
+---
+
+## API Functions
+
+### Generate Questions
 
 Generate quiz questions for a given topic.
 
-**Request:**
-```http
-POST /.netlify/functions/generate-questions
-Content-Type: application/json
-
-{
-  "topic": "The Solar System",
-  "gradeLevel": "middle school"
-}
-```
-
-**Request Parameters:**
+**Parameters:**
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `topic` | string | Yes | Quiz topic (2-200 characters) |
 | `gradeLevel` | string | No | Target audience level (default: "middle school") |
 
-**Response (Success - 200):**
+**Response:**
 ```json
 {
   "language": "EN-US",
@@ -66,34 +87,13 @@ Content-Type: application/json
 | `questions[].correct` | number | Index of correct answer (0-3) |
 | `questions[].difficulty` | string | "easy", "medium", or "hard" |
 
-**Error Responses:**
-
-| Status | Description |
-|--------|-------------|
-| 400 | Invalid request (missing topic, invalid JSON) |
-| 405 | Method not allowed (use POST) |
-| 500 | Server error (API key missing, Claude API error) |
-
 ---
 
-### POST `/generate-explanation`
+### Generate Explanation
 
 Generate an explanation for why an answer was incorrect.
 
-**Request:**
-```http
-POST /.netlify/functions/generate-explanation
-Content-Type: application/json
-
-{
-  "question": "Which planet is closest to the Sun?",
-  "userAnswer": "Venus",
-  "correctAnswer": "Mercury",
-  "topic": "The Solar System"
-}
-```
-
-**Request Parameters:**
+**Parameters:**
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -102,90 +102,33 @@ Content-Type: application/json
 | `correctAnswer` | string | Yes | The correct answer |
 | `topic` | string | No | Original topic for context |
 
-**Response (Success - 200):**
+**Response:**
 ```json
 {
-  "explanation": "Venus is actually the second planet from the Sun. Mercury is the closest planet to the Sun, orbiting at an average distance of about 58 million kilometers. While Venus is often called Earth's 'sister planet' due to its similar size, it's further from the Sun than Mercury."
+  "explanation": "Venus is actually the second planet from the Sun. Mercury is the closest planet to the Sun, orbiting at an average distance of about 58 million kilometers."
 }
 ```
 
-**Error Responses:**
-
-| Status | Description |
-|--------|-------------|
-| 400 | Invalid request (missing required fields) |
-| 405 | Method not allowed (use POST) |
-| 500 | Server error |
-
 ---
 
-### GET `/health-check`
-
-Check backend health and configuration status.
-
-**Request:**
-```http
-GET /.netlify/functions/health-check
-```
-
-**Response (Success - 200):**
-```json
-{
-  "status": "healthy",
-  "timestamp": "2025-12-10T10:30:00.000Z",
-  "config": {
-    "apiKeyConfigured": true,
-    "environment": "production"
-  }
-}
-```
-
-**Response Fields:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `status` | string | "healthy" or "unhealthy" |
-| `timestamp` | string | ISO timestamp of check |
-| `config.apiKeyConfigured` | boolean | Whether API key is set |
-| `config.environment` | string | Current environment |
-
----
-
-## CORS Configuration
-
-All endpoints include CORS headers:
-
-```javascript
-{
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
-  'Access-Control-Allow-Headers': 'Content-Type'
-}
-```
-
-Preflight requests (OPTIONS) are handled automatically.
-
----
-
-## Error Format
+## Error Handling
 
 All errors follow a consistent format:
 
 ```json
 {
   "error": "Error description",
-  "details": ["Specific error 1", "Specific error 2"],
   "message": "Additional context"
 }
 ```
 
----
+**Common Errors:**
 
-## Rate Limiting
-
-Rate limiting is handled by:
-1. **Anthropic API** - Has its own rate limits based on your plan
-2. **Netlify Functions** - Free tier: 125K requests/month
+| Error | Cause | Solution |
+|-------|-------|----------|
+| "Not connected to OpenRouter" | No API key stored | Connect via Settings |
+| "Invalid API key" | Key expired or invalid | Reconnect to OpenRouter |
+| "Rate limited" | Too many requests | Wait and retry |
 
 ---
 
@@ -211,26 +154,9 @@ export const generateQuestions = useRealApi ? realGenerate : mockGenerate;
 
 ---
 
-## OpenRouter Integration
+## Rate Limiting
 
-For users with their own OpenRouter API keys, the frontend can call OpenRouter directly:
-
-```javascript
-// src/api/openrouter-client.js
-const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${apiKey}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    model: 'anthropic/claude-3.5-sonnet',
-    messages: [{ role: 'user', content: prompt }]
-  })
-});
-```
-
-This bypasses the Netlify Functions when user has their own key configured.
+Rate limiting is handled by OpenRouter based on the user's account tier.
 
 ---
 

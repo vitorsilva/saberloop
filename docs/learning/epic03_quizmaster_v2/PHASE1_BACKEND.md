@@ -1,7 +1,9 @@
 # Phase 1: Backend Integration
 
+> **Note (December 2024):** This phase documents the original Netlify Functions backend approach. The project has since migrated to a client-side architecture using OpenRouter with user-provided API keys. See CLAUDE.md for current architecture.
+
 **Epic:** 3 - QuizMaster V2
-**Status:** ✅ Complete
+**Status:** ✅ Complete (Superseded by OpenRouter integration)
 **Completed:** November 22-24, 2025
 **Time Spent:** 4 sessions (~6.5 hours)
 **Prerequisites:** Epic 02 Phases 1-9 complete

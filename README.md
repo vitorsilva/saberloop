@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PWA](https://img.shields.io/badge/PWA-enabled-blue.svg)](https://web.dev/progressive-web-apps/)
 
-[Live Demo](https://saberloop.netlify.app/) | [Documentation](./docs/) | [Contributing](./CONTRIBUTING.md)
+[Live Demo](https://saberloop.com/app/) | [Documentation](./docs/) | [Contributing](./CONTRIBUTING.md)
 
 ## Features
 
@@ -108,7 +108,7 @@ Built with:
 - [Claude Code](https://claude.ai/code) - AI pair programming assistant
 - [OpenRouter](https://openrouter.ai/) - AI API gateway
 - [Vite](https://vitejs.dev/) - Build tool and dev server
-- [Netlify](https://www.netlify.com/) - Serverless functions and hosting
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 
 ## About This Project
 

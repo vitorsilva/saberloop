@@ -75,22 +75,10 @@ npx playwright install
 ### Development Mode
 
 ```bash
-npm run dev
+npm run dev:php
 ```
 
-Opens at `http://localhost:3000`
-
-**With Netlify Functions:**
-
-```bash
-# Install Netlify CLI if not installed
-npm install -g netlify-cli
-
-# Run with functions
-netlify dev
-```
-
-Opens at `http://localhost:8888` (includes serverless functions)
+Opens at `http://localhost:8888`
 
 ### Production Build
 

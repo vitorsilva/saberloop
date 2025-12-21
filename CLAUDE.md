@@ -254,10 +254,11 @@ demo-pwa-app/
 │   ├── utils/                 # Utilities (logger, network, etc.)
 │   ├── styles/                # CSS (Tailwind)
 │   └── main.js                # Entry point
-├── netlify/functions/         # Serverless backend
+├── php-api/                   # PHP backend (alternative to client-side)
+├── scripts/                   # Build and deploy scripts
 ├── tests/e2e/                 # E2E tests (Playwright)
 ├── public/                    # Static assets
-└── [config files]             # vite.config.js, netlify.toml, etc.
+└── [config files]             # vite.config.js, tailwind.config.js, etc.
 ```
 
 ### Core PWA Structure
@@ -275,12 +276,12 @@ demo-pwa-app/
 - **public/**: Static assets and PWA manifest
 - **Build tools**: Vite for bundling and development
 
-**Backend** - Serverless architecture (Epic 03+):
-- **netlify/functions/generate-questions.js**: AI question generation via Claude API
-- **netlify/functions/generate-explanation.js**: AI explanations for wrong answers
-- **netlify/functions/health-check.js**: Backend health monitoring
-- **Deployment**: Netlify Functions (serverless)
-- **API Key**: Securely stored server-side only
+**Backend** - Client-side API architecture (Epic 03+):
+- **OpenRouter OAuth**: User authenticates and stores their own API key
+- **src/api/openrouter-client.js**: Direct calls to OpenRouter from browser
+- **src/api/api.real.js**: Quiz generation and explanation using OpenRouter
+- **php-api/** (optional): PHP backend for server-side API key scenarios
+- **API Key**: Stored client-side via OAuth (user's own key)
 
 ### Service Worker Pattern
 
@@ -305,36 +306,22 @@ The app implements custom PWA installation using the `beforeinstallprompt` event
 
 ### Local Development Server
 
-**Current setup (Epic 03+)**: Use Netlify CLI for full-stack development:
+**Current setup (Epic 04+)**: Vite development server:
 
 ```bash
-# Start development server (runs Vite + Netlify Functions)
-npm run dev
+# Start development server
+npm run dev:php
 
-# Netlify CLI will:
-# - Start Vite dev server on port 3000
-# - Start Netlify Functions runtime
-# - Proxy everything through port 8888
+# Vite will:
+# - Start dev server on port 8888
+# - Enable hot module replacement
 # - Access at: http://localhost:8888
-```
-
-**Legacy setup (Epic 01-02)**: Simple static file serving:
-
-```bash
-# Using Python 3
-python -m http.server 8080
-
-# Using Node's http-server (if installed)
-npx http-server -p 8080
-
-# Using VS Code Live Server extension
-# Right-click index.html → "Open with Live Server"
 ```
 
 **Environment configuration**:
 - Edit `.env` file to switch between mock and real API
 - `VITE_USE_REAL_API=false` - Use mock API (no API costs)
-- `VITE_USE_REAL_API=true` - Use real Netlify Functions (requires API key)
+- `VITE_USE_REAL_API=true` - Use OpenRouter client-side (requires OAuth connection)
 - Restart dev server after changing `.env`
 
 **Note**: PWA features like `beforeinstallprompt` require HTTPS. For local HTTPS testing, see `docs/epic01_infrastructure/PHASE4.1_LOCAL_HTTPS.md`.
@@ -376,7 +363,7 @@ npm run preview       # Preview production build locally
 **CI Pipeline**:
 - GitHub Actions automatically runs all tests on every push
 - See `.github/workflows/test.yml` for CI configuration
-- Tests must pass before Netlify deploys
+- Run tests locally before deploying
 
 ## Key Implementation Details
 
@@ -452,48 +439,42 @@ When making changes, respect the learning-focused nature of the project. Keep co
 
 ## Deployment
 
-**Current deployment**: Netlify (auto-deploy from GitHub)
+**Current deployment**: FTP to saberloop.com
 
-**Deployment URL**: Check Netlify dashboard for your site URL
+**Deployment URL**: https://saberloop.com/app/
 
 **Deployment process**:
 ```bash
-git add .
-git commit -m "Description of changes"
-git push origin main
-
-# Automatically triggers:
-# 1. GitHub Actions (runs tests)
-# 2. Netlify (builds and deploys if tests pass)
+npm run build        # Build for production
+npm run deploy       # FTP deploy to saberloop.com/app/
 ```
 
 **Deployment architecture**:
-- **CI (Continuous Integration)**: GitHub Actions runs unit tests, E2E tests, and build verification
-- **CD (Continuous Deployment)**: Netlify watches GitHub repo and auto-deploys on push to main
-- **Functions**: Netlify Functions deployed to `/.netlify/functions/` endpoint
-- **Frontend**: Vite builds to `dist/` and Netlify serves from CDN
+- **CI**: GitHub Actions runs unit tests, E2E tests, and build verification
+- **Build**: Vite builds to `dist/`
+- **Deploy**: FTP upload via `scripts/deploy-ftp.cjs`
+- **Hosting**: Traditional web hosting at saberloop.com
 
 **Configuration files**:
 - `.github/workflows/test.yml` - CI pipeline (testing)
-- `netlify.toml` - Build settings and function configuration
-- `.env` - Local environment variables (not committed)
-- Netlify Dashboard → Environment Variables - Production secrets
+- `.env` - Local environment variables (FTP credentials, etc.)
+- `scripts/deploy-ftp.cjs` - FTP deployment script
 
 **Important**: When deploying, ensure:
-1. Tests pass in GitHub Actions before merge
-2. Environment variables set in Netlify dashboard (e.g., `ANTHROPIC_API_KEY`)
+1. Tests pass locally or in GitHub Actions
+2. `.env` has FTP credentials configured (FTP_HOST, FTP_USER, FTP_PASSWORD)
 3. Service worker cache version incremented if cached files changed
 
 ## Testing on Mobile Devices
 
 **On Android (Chrome)**:
-1. Deploy to GitHub Pages or use local network IP
+1. Deploy to saberloop.com or use local network IP
 2. Open site in Chrome
 3. Look for install prompt or "Add to Home Screen" in menu
 4. Test offline functionality after installation
 
 **On iOS (Safari)**:
-1. Deploy to GitHub Pages (requires HTTPS)
+1. Deploy to saberloop.com (requires HTTPS)
 2. Open site in Safari
 3. Tap Share button → "Add to Home Screen"
 4. Test offline functionality after installation

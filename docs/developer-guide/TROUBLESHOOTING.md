@@ -35,16 +35,17 @@ npm run dev -- --port 3001
 
 ### API Issues
 
-#### "Server configuration error"
+#### "Not connected to OpenRouter"
 
-**Symptom:** API returns 500 with "Server configuration error"
+**Symptom:** API returns error about OpenRouter connection
 
-**Cause:** `ANTHROPIC_API_KEY` not set
+**Cause:** User hasn't connected their OpenRouter account
 
 **Solution:**
-1. Check `.env` file exists with key
-2. For Netlify: Check Environment Variables in dashboard
-3. Restart `netlify dev` after changing env vars
+1. Go to Settings in the app
+2. Click "Connect with OpenRouter"
+3. Complete the OAuth flow
+4. Retry the operation
 
 #### "Invalid API key"
 
@@ -60,9 +61,9 @@ npm run dev -- --port 3001
 **Symptom:** Browser console shows CORS errors
 
 **Solutions:**
-1. Use `netlify dev` instead of `npm run dev` for API calls
-2. Check Netlify Functions have CORS headers
-3. Ensure frontend calls correct URL
+1. OpenRouter API should handle CORS automatically
+2. Check you're using the correct OpenRouter endpoint
+3. Verify your API key is valid
 
 #### Rate Limiting
 
@@ -85,7 +86,7 @@ npm run dev -- --port 3001
 
 | Cause | Solution |
 |-------|----------|
-| Not HTTPS | Use localhost or deploy to Netlify |
+| Not HTTPS | Use localhost or deploy to saberloop.com |
 | Invalid manifest | Check DevTools → Application → Manifest |
 | Service worker not registered | Check DevTools → Application → Service Workers |
 | Already installed | Check if already in app drawer |
@@ -267,14 +268,18 @@ navigator.serviceWorker.getRegistrations()
 localStorage.getItem('loglevel')
 ```
 
-### Netlify CLI Debugging
+### OpenRouter API Debugging
 
-```bash
-# View function logs
-netlify functions:serve
-
-# Test specific function
-netlify functions:invoke generate-questions --payload '{"topic":"Math"}'
+```javascript
+// Check stored API key in browser console
+const dbRequest = indexedDB.open('quizmaster', 1);
+dbRequest.onsuccess = () => {
+  const db = dbRequest.result;
+  const tx = db.transaction('settings', 'readonly');
+  tx.objectStore('settings').get('openrouter_api_key').onsuccess = (e) => {
+    console.log('Key exists:', !!e.target.result);
+  };
+};
 ```
 
 ---

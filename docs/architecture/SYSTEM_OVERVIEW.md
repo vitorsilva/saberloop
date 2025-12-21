@@ -96,17 +96,17 @@ User enters topic
        │
        ▼
 ┌──────────────┐
-│ API Client   │ ──── POST /generate-questions
+│ API Client   │ ──── Call OpenRouter from browser
 └──────┬───────┘
        │
        ▼
 ┌──────────────┐
-│ Netlify Fn   │ ──── Call Claude API
+│ OpenRouter   │ ──── Route to Claude/GPT/etc.
 └──────┬───────┘
        │
        ▼
 ┌──────────────┐
-│ Claude API   │ ──── Generate questions JSON
+│ AI Model     │ ──── Generate questions JSON
 └──────┬───────┘
        │
        ▼
@@ -131,9 +131,10 @@ User enters topic
 
 ### API Key Management
 
-- API keys stored server-side only (Netlify environment variables)
-- Frontend never sees the actual API key
-- OpenRouter user keys stored in browser localStorage (user's responsibility)
+- User authenticates via OpenRouter OAuth
+- API key stored securely in browser's IndexedDB
+- Keys never sent to our servers - calls go directly to OpenRouter
+- User controls their own API usage and billing
 
 ### Input Validation
 

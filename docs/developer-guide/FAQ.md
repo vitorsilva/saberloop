@@ -36,17 +36,10 @@ See [Installation Guide](./INSTALLATION.md) for details.
 
 ### How do I test with real API?
 
-1. Get an API key from [Anthropic](https://console.anthropic.com/)
-2. Create `.env` file with `ANTHROPIC_API_KEY=your-key`
-3. Set `VITE_USE_REAL_API=true`
-4. Run `netlify dev` (not `npm run dev`)
-
-### Why use `netlify dev` instead of `npm run dev`?
-
-- `npm run dev` - Frontend only, no serverless functions
-- `netlify dev` - Frontend + Netlify Functions (full stack)
-
-For API testing, you need `netlify dev`.
+1. Set `VITE_USE_REAL_API=true` in `.env`
+2. Run `npm run dev:php`
+3. Go to Settings in the app and connect to OpenRouter
+4. Your OpenRouter account provides the API access
 
 ### How do I add a new feature?
 
@@ -69,14 +62,13 @@ This project started as a learning exercise for PWA fundamentals. Vanilla JS:
 - Smaller bundle size
 - Better for understanding fundamentals
 
-### Why Netlify Functions (not a traditional backend)?
+### Why client-side API calls (not a traditional backend)?
 
-Serverless benefits:
-- No server management
-- Auto-scaling
-- Pay per use (free tier generous)
-- Easy deployment with frontend
-- Keeps API keys secure
+Client-side OpenRouter benefits:
+- User provides their own API key via OAuth
+- No server-side API key management needed
+- Simpler deployment (static files + FTP)
+- User controls their own usage/costs
 
 ### Why IndexedDB (not localStorage)?
 
@@ -191,8 +183,8 @@ Or in Settings → Clear Data (if implemented)
 
 ### Is my API key secure?
 
-- **Server-side key:** Stored in Netlify environment, never exposed to frontend
-- **OpenRouter key:** Stored in your browser's IndexedDB
+- **OpenRouter key:** Stored locally in your browser's IndexedDB
+- **Never sent to our servers:** API calls go directly from your browser to OpenRouter
 
 ---
 

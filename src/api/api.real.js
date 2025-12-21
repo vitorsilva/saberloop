@@ -16,7 +16,7 @@
       throw new Error('Not connected to OpenRouter. Please connect in Settings.');
     }
 
-    // Build the prompt (same as Netlify function)
+    // Build the prompt for question generation
     const prompt = `You are an expert educational content creator. Generate exactly 5
   multiple-choice questions about "${topic}" appropriate for ${gradeLevel} students.
 

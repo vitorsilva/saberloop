@@ -36,31 +36,26 @@ Variables prefixed with `VITE_` are exposed to the frontend:
 const useRealApi = import.meta.env.VITE_USE_REAL_API === 'true';
 ```
 
-Variables without `VITE_` prefix are only available in Netlify Functions (server-side).
+Variables without `VITE_` prefix are only available server-side (e.g., in PHP backend).
 
-## Production (Netlify)
+## Production
 
 ### Setting Environment Variables
 
-1. Go to Netlify Dashboard
-2. Select your site
-3. Navigate to: Site Settings → Environment Variables
-4. Add variables:
+For FTP deployment, configure in `.env`:
 
 | Variable | Value |
 |----------|-------|
-| `ANTHROPIC_API_KEY` | Your actual API key |
-| `VITE_USE_REAL_API` | `true` |
+| `FTP_HOST` | Your FTP server hostname |
+| `FTP_USER` | FTP username |
+| `FTP_PASSWORD` | FTP password |
 
-### Deploy Contexts
+### Deployment
 
-Netlify supports different values per deploy context:
-
-| Context | Description |
-|---------|-------------|
-| Production | Live site |
-| Deploy Previews | Pull request previews |
-| Branch deploys | Non-main branch deploys |
+```bash
+npm run build    # Build for production
+npm run deploy   # FTP deploy to saberloop.com/app/
+```
 
 ## API Configuration
 
@@ -72,14 +67,14 @@ When `VITE_USE_REAL_API=false`:
 - Instant responses
 - Good for UI development
 
-### Real API (Anthropic via Netlify Functions)
+### Real API (OpenRouter)
 
-When `VITE_USE_REAL_API=true` and `ANTHROPIC_API_KEY` is set:
-- Calls Claude API via Netlify Functions
-- Real AI-generated content
-- API key stays server-side
+When `VITE_USE_REAL_API=true`:
+- Uses OpenRouter for AI calls
+- User authenticates with their own OpenRouter account
+- API key stored client-side via OAuth
 
-### OpenRouter (User's Own Key)
+### OpenRouter Connection
 
 Users can connect their own OpenRouter API key:
 1. Go to Settings in the app
@@ -104,18 +99,16 @@ export default defineConfig({
 });
 ```
 
-### `netlify.toml`
+### `tailwind.config.js`
 
-```toml
-[build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
+Tailwind CSS configuration for styling:
 
-[dev]
-  command = "npm run dev"
-  targetPort = 3000
-  port = 8888
+```javascript
+module.exports = {
+  content: ['./index.html', './src/**/*.{js,ts}'],
+  darkMode: 'class',
+  theme: { extend: {...} }
+}
 ```
 
 ## PWA Configuration
@@ -181,23 +174,22 @@ IndexedDB settings in `src/core/db.js`:
 
 ## Switching Configurations
 
-### Development → Production
-
-1. Set `VITE_USE_REAL_API=true` in `.env`
-2. Ensure `ANTHROPIC_API_KEY` is set
-3. Test with `netlify dev`
-
-### Testing Mock API
+### Development with Mock API
 
 1. Set `VITE_USE_REAL_API=false` in `.env`
-2. Run `npm run dev`
-3. No API key needed
+2. Run `npm run dev:php`
+3. No API key needed - uses mock responses
 
-### Testing Real API Locally
+### Development with Real API
 
 1. Set `VITE_USE_REAL_API=true` in `.env`
-2. Set `ANTHROPIC_API_KEY` in `.env`
-3. Run `netlify dev` (not `npm run dev`)
+2. Run `npm run dev:php`
+3. Connect to OpenRouter via Settings page in the app
+
+### Production Build
+
+1. Run `npm run build`
+2. Run `npm run deploy` (requires FTP credentials in `.env`)
 
 ## Related Documentation
 
