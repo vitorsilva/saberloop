@@ -361,4 +361,30 @@ npm run deploy:landing   # FTP deploy to saberloop.com
 
 ---
 
+---
+
+## Session Wrap-up: 2025-12-21
+
+### What Was Accomplished
+- Fixed Issue #16: Bottom navigation now stays visible on all pages
+- Changed CSS positioning from `sticky` to `fixed` across 5 views
+- All 26 E2E tests pass
+- PR #20 merged and deployed to production
+- Documentation updated (`docs/issues/16.md`)
+
+### Current Status
+- **Closed Testing:** Day 5 of 14 (Dec 17-31)
+- **Testers:** 9 of 12 (need 3 more)
+- **Phase 10:** ✅ Complete (OpenRouter Onboarding)
+- **Issues Fixed:** #10 ✅, #13 ✅, #16 ✅
+- **Issues Open:** #11 (offline mode UX)
+
+### Next Session Options
+1. Work on Issue #11 (offline mode UX improvements)
+2. Start Phase 20 (Architecture Testing with dependency-cruiser)
+3. Recruit more testers for closed testing
+4. Monitor tester feedback
+
+---
+
 **Last Updated:** 2025-12-21
