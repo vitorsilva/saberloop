@@ -104,7 +104,8 @@ module.exports = {
       severity: 'error',
       from: {},
       to: {
-        couldNotResolve: true
+        couldNotResolve: true,
+        pathNot: "^virtual:"
       }
     },
     {
