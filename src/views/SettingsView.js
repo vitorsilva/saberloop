@@ -2,6 +2,7 @@
   import { getSettings, saveSetting } from '../core/settings.js';
   import { APP_VERSION, BUILD_DATE } from '../version.js';
   import { isOpenRouterConnected, removeOpenRouterKey } from '../core/db.js';
+  import { isFeatureEnabled } from '../core/features.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -227,8 +228,8 @@
                 </div>
               </div>
             </div>
-            <a href="#/welcome" class="bg-primary hover:bg-primary/90 text-white rounded-xl p-4     
-  flex items-center justify-center gap-2 transition-colors">
+            <a href="#${isFeatureEnabled('OPENROUTER_GUIDE', 'settings') ? '/setup-openrouter' : '/welcome'}"
+              class="bg-primary hover:bg-primary/90 text-white rounded-xl p-4 flex items-center justify-center gap-2 transition-colors">
               <span class="material-symbols-outlined">link</span>
               <span class="font-medium">Connect with OpenRouter</span>
             </a>

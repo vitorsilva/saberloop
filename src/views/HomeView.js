@@ -4,6 +4,8 @@ import { getRecentSessions, getSession } from '../core/db.js';
 import state from '../core/state.js';
 import { isOpenRouterConnected } from '../core/db.js';
 import { showConnectModal } from '../components/ConnectModal.js';
+import { isFeatureEnabled } from '../core/features.js';
+
 export default class HomeView extends BaseView {
   async render() {
     // Fetch recent sessions from IndexedDB
@@ -195,9 +197,12 @@ export default class HomeView extends BaseView {
       const isConnected = await isOpenRouterConnected();
 
       if (!isConnected) {
-        // Show modal - if user cancels, don't proceed
-        await showConnectModal();
-        return; // Auth will redirect, or user cancelled
+        if (isFeatureEnabled('OPENROUTER_GUIDE', 'home')) {
+          this.navigateTo('/setup-openrouter');
+        } else {
+          await showConnectModal();
+        }
+        return;
       }
 
       this.navigateTo('/topic-input');

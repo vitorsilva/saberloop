@@ -20,6 +20,7 @@ import { shouldShowWelcome, markWelcomeSeen } from './features/onboarding.js';
 import { logger } from './utils/logger.js';
 import { initErrorHandling } from './utils/errorHandler.js';
 import { initPerformanceMonitoring } from './utils/performance.js'
+import { isFeatureEnabled } from './core/features.js';
 
 logger.info('Saberloop initializing');
 initErrorHandling();
@@ -106,8 +107,12 @@ async function init() {
 
       logger.info('OpenRouter connected successfully');
 
-      // Redirect to home (removes ?code from URL)
-      window.location.href = window.location.origin + '/app/#/';
+      // Redirect based on feature flag
+      if (isFeatureEnabled('OPENROUTER_GUIDE', 'welcome')) {
+        window.location.href = window.location.origin + '/app/#/connection-confirmed';
+      } else {
+        window.location.href = window.location.origin + '/app/#/';
+      }
 
     } catch (error) {
       logger.error('OAuth callback failed', { error: error.message });
