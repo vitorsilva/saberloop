@@ -1,19 +1,19 @@
   // api.real.js - Uses OpenRouter for LLM calls (client-side)
 
   import { callOpenRouter } from './openrouter-client.js';
-  import { getOpenRouterKey } from '../core/db.js';
   import { logger } from '../utils/logger.js';
 
   /**
    * Generate quiz questions using OpenRouter
+   * @param {string} topic - The topic to generate questions about
+   * @param {string} gradeLevel - The grade level for the questions
+   * @param {string} apiKey - The OpenRouter API key
    */
-  export async function generateQuestions(topic, gradeLevel = 'middle school') {
+  export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey) {
     logger.debug('Generating questions', { topic, gradeLevel });
 
-    // Get stored API key
-    const apiKey = await getOpenRouterKey();
     if (!apiKey) {
-      throw new Error('Not connected to OpenRouter. Please connect in Settings.');
+      throw new Error('API key is required');
     }
 
     // Build the prompt for question generation
@@ -109,15 +109,18 @@
 
   /**
    * Generate explanation for wrong answer using OpenRouter
+   * @param {string} question - The question text
+   * @param {string} userAnswer - The user's answer
+   * @param {string} correctAnswer - The correct answer
+   * @param {string} gradeLevel - The grade level
+   * @param {string} apiKey - The OpenRouter API key
    */
   export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel =
-  'middle school') {
+  'middle school', apiKey) {
     logger.debug('Generating explanation for incorrect answer');
 
-    // Get stored API key
-    const apiKey = await getOpenRouterKey();
     if (!apiKey) {
-      throw new Error('Not connected to OpenRouter. Please connect in Settings.');
+      throw new Error('API key is required');
     }
 
     const prompt = `A ${gradeLevel} student answered a quiz question incorrectly. Please provide

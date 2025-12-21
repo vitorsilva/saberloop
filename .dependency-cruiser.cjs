@@ -237,8 +237,8 @@ module.exports = {
     },
     {
       name: 'api-should-not-import-db',
-      severity: 'warn',
-      comment: 'TRANSITION: API layer should receive credentials as parameters',
+      severity: 'error',
+      comment: 'API layer should receive credentials as parameters (enforced)',
       from: { path: '^src/api/' },
       to: { path: '^src/core/db\\.js$' }
     }

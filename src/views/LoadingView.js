@@ -1,6 +1,7 @@
 import BaseView from './BaseView.js';
 import state from '../core/state.js';
 import { generateQuestions } from '../api/index.js';
+import { getOpenRouterKey } from '../core/db.js';
 import { logger } from '../utils/logger.js';
 
 export default class LoadingView extends BaseView {
@@ -110,7 +111,13 @@ export default class LoadingView extends BaseView {
 
   async startQuizGeneration(topic, gradeLevel) {
     try {
-      const result = await generateQuestions(topic, gradeLevel);
+      // Get API key from storage
+      const apiKey = await getOpenRouterKey();
+      if (!apiKey) {
+        throw new Error('Not connected to OpenRouter. Please connect in Settings.');
+      }
+
+      const result = await generateQuestions(topic, gradeLevel, apiKey);
 
       // Store questions and language in state for QuizView
       state.set('generatedQuestions', result.questions);
