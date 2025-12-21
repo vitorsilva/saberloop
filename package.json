@@ -29,7 +29,9 @@
     "test:php": "docker-compose run --rm php-api vendor/bin/phpunit",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "lint:dead-code": "knip",
+    "lint:dead-code:fix": "knip --fix"    
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
