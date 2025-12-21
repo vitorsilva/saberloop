@@ -1,0 +1,14 @@
+{
+"$schema": "https://unpkg.com/knip@latest/schema.json",
+"entry": [
+    "src/main.js"
+],
+"project": [
+    "src/**/*.js"
+],
+"ignore": [
+    "src/**/*.test.js",
+    "**/*.spec.js"
+],
+"vite": true
+}
