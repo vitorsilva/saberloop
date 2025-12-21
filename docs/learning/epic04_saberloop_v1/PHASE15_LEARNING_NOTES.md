@@ -5,9 +5,37 @@
 ### Session 1 - December 21, 2025
 
 **What we accomplished:**
-- Installed Knip (`npm install --save-dev knip`)
-- Created `knip.json` configuration
-- Ran first discovery scan
+
+1. **Setup**
+   - Created feature branch `feat/dead-code-detection`
+   - Installed Knip (`npm install --save-dev knip`)
+   - Created `knip.json` configuration with entry point `src/main.js`
+
+2. **Discovery & Triage**
+   - Ran first Knip scan, found 5 categories of issues
+   - Triaged each finding: DELETE, IGNORE, or KEEP
+   - Learned to use `git log --follow` to check file history before deleting
+
+3. **Cleanup**
+   - Deleted `src/views/TestView.js` (unused since Nov 7, 2025)
+   - Removed `cross-env` dependency (installed but never used)
+   - Removed `"main": "app.js"` from package.json (not needed for standalone app)
+   - Added ignores for false positives (dynamic imports, system binaries)
+   - Used `/** @public */` JSDoc tag for planned feature export
+
+4. **CI Integration**
+   - Added npm scripts: `lint:dead-code`, `lint:dead-code:fix`
+   - Added CI step in warning mode (`|| true` - reports but doesn't fail build)
+
+**Commits made:**
+1. `feat: add knip for dead code detection`
+2. `chore: remove unused file`
+3. `chore: initial knip configuration`
+4. `chore: remove unused dependency and main`
+5. `chore: set knip ignore for generate explanations`
+6. `docs: update learning notes and version number`
+7. `feat: add knip to scripts`
+8. `feat: add to ci pipeline`
 
 ---
 
@@ -65,18 +93,77 @@
 
 ## Key Learnings
 
-1. **Knip uses entry points to trace dependencies** - It starts from `main.js` and follows imports to find what's actually used.
+### Questions I Asked
 
-2. **Dynamic imports are invisible to Knip** - Code like `await import('./api.real.js')` can't be statically analyzed, so those files should be ignored.
+1. **"Why --save-dev instead of regular install?"**
+   - Dev dependencies are only used during development/CI, not shipped to production
+   - Keeps the production bundle smaller
 
-3. **Use `git log --follow <file>` to understand history** - Before deleting code, check when/why it was added.
+2. **"Should I create a branch first?"**
+   - Yes! Feature branches keep work separated from main until tested
+   - Naming convention: `feat/` for features, `fix/` for bugs
 
-4. **System binaries vs npm packages** - Tools like `docker-compose` are system-level, not npm packages. Use `ignoreBinaries` to exclude them.
+3. **"Is the entry point main.js or app.js?"**
+   - Vite uses `index.html` as entry, which references the JS file
+   - Check the `<script>` tag in index.html to find the real entry point
+   - vite-plugin-pwa auto-generates the service worker (no manual sw.js needed)
 
-5. **JSDoc `@public` tag for planned features** - Use `/** @public */` to keep exports that aren't used yet but will be. Must use `/** */` not `//`.
+4. **"How do I see when a file was added in git?"**
+   - `git log --follow <file>` shows commit history for that file
+   - Always check history before deleting - understand WHY code exists
 
-6. **The `main` field in package.json** - Only needed for npm libraries, not standalone apps.
+5. **"How do I check if a dependency is used?"**
+   - Search the `scripts` section in package.json for the package name
+   - If not referenced anywhere, it's safe to remove
+
+### Concepts Discovered
+
+6. **Dynamic imports are invisible to static analysis**
+   - `await import('./api.real.js')` can't be traced by Knip
+   - Solution: add dynamically imported files to ignore list
+
+7. **System binaries vs npm packages**
+   - `docker-compose` is a system tool, not an npm package
+   - Use `ignoreBinaries` in knip.json for these
+
+8. **JSDoc syntax for Knip, not // comments**
+   - Must use `/** @public */` format
+   - Regular `// knip-ignore` comments don't work
+   - Always check tool documentation instead of guessing!
+
+9. **The `main` field in package.json**
+   - Only needed for npm libraries that others import
+   - Standalone apps don't need it
+
+10. **CI pipeline ordering matters**
+    - Dead code check goes BEFORE tests
+    - Fast feedback first - no point running 10 min of E2E if there's dead code
+
+11. **Warning mode with `|| true`**
+    - `npm run lint:dead-code || true` reports issues but doesn't fail build
+    - Good for gradual rollout - monitor first, enforce later
+
+---
+
+## Next Steps
+
+- [ ] Create PR to merge `feat/dead-code-detection` to main
+- [ ] After 1-2 weeks of CI monitoring, promote to blocking mode (remove `|| true`)
+- [ ] Update CLAUDE.md with dead code policy (optional)
+
+---
+
+## Files Changed
+
+| File | Change |
+|------|--------|
+| `knip.json` | New - Knip configuration |
+| `package.json` | Added knip, removed cross-env, removed main field, added scripts |
+| `src/views/TestView.js` | Deleted - unused file |
+| `src/api/index.js` | Added `@public` JSDoc tag |
+| `.github/workflows/test.yml` | Added dead code check step |
 
 ---
 
 **Last Updated:** 2025-12-21
+**Status:** Complete (pending PR merge)
