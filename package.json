@@ -41,7 +41,6 @@
     "dotenv": "^17.2.3",
     "fake-indexeddb": "^6.2.4",
     "ftp-deploy": "^2.4.7",
-    "idb": "^8.0.3",
     "jsdom": "^27.0.1",
     "knip": "^5.76.1",
     "netlify-cli": "^23.11.1",
@@ -53,6 +52,7 @@
     "workbox-window": "^7.4.0"
   },
   "dependencies": {
+    "idb": "^8.0.3",
     "loglevel": "^1.9.2",
     "web-vitals": "^5.1.0"
   }
