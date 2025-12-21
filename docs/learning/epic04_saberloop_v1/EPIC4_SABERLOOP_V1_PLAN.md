@@ -108,37 +108,40 @@ Complete the remaining items from Epic03, primarily Play Store production releas
 
 ---
 
-### **Phase 10: OpenRouter Onboarding UX** (2-3 sessions)
+### **Phase 10: OpenRouter Onboarding UX** (2-3 sessions) ✅ Complete
 
 Improve the OpenRouter connection experience with guided step-by-step instructions.
 
-**Status:** Ready to Implement
+**Status:** ✅ Complete (December 21, 2024)
 
 **Key Features:**
 - New "OpenRouter Free Account Guide" view
-- Step-by-step visual instructions
+- Step-by-step visual instructions with screenshots
 - Multiple entry points (Welcome, Settings, Homepage)
 - "Connection Confirmed!" celebration screen
-- Feature flags for gradual rollout
+- Feature flags for gradual rollout (now ENABLED)
 
 **Learning Objectives:**
 - Feature flag implementation (hand-rolled)
 - Multi-step onboarding UX patterns
 - OAuth flow enhancement
 - Gradual feature rollout
+- Subdirectory deployment asset paths
+- CI vs local test timing differences
 
 **Deliverables:**
-- [ ] `src/core/features.js` - Feature flag system
-- [ ] `src/views/OpenRouterGuideView.js` - Guide with step cards
-- [ ] `src/views/ConnectionConfirmedView.js` - Success screen
-- [ ] Integration with existing Welcome and Settings views
-- [ ] E2E tests for new flows
+- [x] `src/core/features.js` - Feature flag system
+- [x] `src/views/OpenRouterGuideView.js` - Guide with step cards
+- [x] `src/views/ConnectionConfirmedView.js` - Success screen
+- [x] Integration with existing Welcome, Settings, and Home views
+- [x] E2E tests for new flows (8 tests)
+- [x] Screenshots for steps 2, 3, 4 (`public/images/onboarding/`)
 
 **Success Criteria:**
-- Users guided through OpenRouter signup without confusion
-- "Skip payment" step clearly highlighted
-- Feature can be toggled via flags
-- All existing tests pass
+- ✅ Users guided through OpenRouter signup without confusion
+- ✅ "Skip payment" step clearly highlighted
+- ✅ Feature can be toggled via flags
+- ✅ All 26 E2E tests pass
 
 ---
 
@@ -321,7 +324,7 @@ Implement Google AdSense integration for passive revenue.
 | Phase | Sessions | Focus | Status |
 |-------|----------|-------|--------|
 | Phase 5 | Ongoing | Epic03 Pending | In Progress |
-| Phase 10 | 2-3 | OpenRouter Onboarding | Ready |
+| Phase 10 | 2-3 | OpenRouter Onboarding | ✅ Complete |
 | Phase 20 | 3-4 | Architecture Testing | Ready |
 | Phase 30 | 8-11 | Internationalization | Ready |
 | Phase 40 | 4-6 | Telemetry Enhancement | Ready |
@@ -351,7 +354,7 @@ While phases can be worked on in any order, here's a suggested priority:
 
 ### Technical Milestones
 - [ ] Production release on Google Play Store
-- [ ] OpenRouter onboarding improved
+- [x] OpenRouter onboarding improved ✅
 - [ ] Architecture rules enforced in CI
 - [ ] 5+ languages supported
 - [ ] Self-hosted telemetry operational
@@ -359,10 +362,10 @@ While phases can be worked on in any order, here's a suggested priority:
 - [ ] Monetization ready (if desired)
 
 ### User-Facing Milestones
-- [ ] Easier OpenRouter setup
+- [x] Easier OpenRouter setup ✅
 - [ ] App available in user's language
 - [ ] Stable, bug-free experience
-- [ ] Clear onboarding flow
+- [x] Clear onboarding flow ✅
 
 ### Business Milestones
 - [ ] App on Play Store (production)
