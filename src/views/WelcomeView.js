@@ -3,6 +3,7 @@
   import BaseView from './BaseView.js';
   import { markWelcomeSeen } from '../features/onboarding.js';
   import { showConnectModal } from '../components/ConnectModal.js';
+  import { isFeatureEnabled } from '../core/features.js';
 
   export default class WelcomeView extends BaseView {
     async render() {
@@ -105,7 +106,11 @@
 
       const connectBtn = this.querySelector('#connectBtn');
       this.addEventListener(connectBtn, 'click', async () => {
-        await showConnectModal();
+        if (isFeatureEnabled('OPENROUTER_GUIDE', 'welcome')) {
+          this.navigateTo('/setup-openrouter');
+        } else {
+          await showConnectModal();
+        }
       });
     }
   }

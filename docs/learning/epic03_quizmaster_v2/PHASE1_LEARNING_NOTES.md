@@ -1,8 +1,10 @@
 # Phase 1 Learning Notes: Backend Integration
 
+> **Note (December 2024):** This phase documents the original Netlify Functions backend approach. The project has since migrated to a client-side architecture using OpenRouter with user-provided API keys. The learnings here are still valuable for understanding serverless concepts.
+
 **Epic:** 3 - QuizMaster V2
 **Phase:** 1 - Backend Integration
-**Status:** Completed
+**Status:** Completed (Superseded by OpenRouter integration)
 **Date:** November 22-23, 2025
 **Duration:** 1 session
 

@@ -1,5 +1,7 @@
 # Epic 3 - Testing and Deployment Guide
 
+> **Note (December 2024):** This guide documents the original Netlify deployment workflow. The project has since migrated to FTP deployment to saberloop.com and client-side OpenRouter for AI calls. For current deployment, see CLAUDE.md and use `npm run build && npm run deploy`.
+
 **Purpose:** This guide applies to ALL phases of Epic 3. Every time you make code changes, follow this guide to ensure tests are updated and deployment works.
 
 ---

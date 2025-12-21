@@ -38,11 +38,10 @@ git checkout -b fix/bug-description
 ### Running Locally
 
 ```bash
-# Start development server (frontend only)
-npm run dev
+# Start development server
+npm run dev:php
 
-# Start with Netlify functions (full stack)
-netlify dev
+# Access at http://localhost:8888
 ```
 
 ### Testing
@@ -140,7 +139,7 @@ git push origin feature/your-feature-name
 
 ```
 src/
-├── api/          # API clients (mock and real)
+├── api/          # API clients (mock, real, OpenRouter)
 ├── core/         # Core infrastructure (db, router, state, settings)
 ├── features/     # Feature-specific modules (onboarding, samples)
 ├── views/        # UI views (SPA pages)
@@ -149,8 +148,9 @@ src/
 ├── styles/       # CSS files
 └── main.js       # Entry point
 
-netlify/
-└── functions/    # Serverless backend
+php-api/          # PHP backend (optional)
+
+scripts/          # Build and deploy scripts
 
 tests/
 └── e2e/          # E2E tests

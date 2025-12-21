@@ -7,6 +7,8 @@
 
 > **Note:** Remaining items (Play Store production release, user validation) have been moved to Epic 04 Phase 5.
 
+> **Architecture Note (December 2024):** This epic originally used Netlify Functions for the backend. The project has since migrated to a client-side architecture using OpenRouter with user-provided API keys, and FTP deployment to saberloop.com. The serverless concepts learned here remain valuable.
+
 ---
 
 ## Overview
