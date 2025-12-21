@@ -387,4 +387,25 @@ npm run deploy:landing   # FTP deploy to saberloop.com
 
 ---
 
+### 2025-12-21: Phase 15 Completed & Branch Cleanup (Session 2)
+
+**What was done:**
+- Completed Phase 15 (Dead Code Detection with Knip) in learning mode
+- PR #22 merged: dead code detection with CI integration (warning mode)
+- Cleaned up stale branch `fix/issue-16-sticky-nav` (rebased, found identical to main, deleted)
+
+**Key learnings from Phase 15:**
+- Knip for static analysis of unused code
+- JSDoc `@public` tag to keep planned exports
+- Dynamic imports are invisible to static analysis
+- CI warning mode with `|| true` for gradual rollout
+
+**Current status:**
+- Closed Testing: Day 5 of 14 (Dec 17-31)
+- Phase 10: ✅ Complete
+- Phase 15: ✅ Complete
+- Next: Phase 20 (Architecture Testing)
+
+---
+
 **Last Updated:** 2025-12-21

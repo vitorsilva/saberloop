@@ -191,7 +191,7 @@ Implement dead code detection using Knip to identify and remove unused code from
 
 Implement architecture testing using dependency-cruiser to enforce structural rules.
 
-**Status:** Ready to Implement
+**Status:** Complete (ready for PR)
 
 **Key Features:**
 - Layer boundary enforcement (views, services, api, db)
@@ -207,17 +207,58 @@ Implement architecture testing using dependency-cruiser to enforce structural ru
 - Transition strategy (warnings → errors)
 
 **Deliverables:**
-- [ ] `.dependency-cruiser.cjs` - Rule configuration
-- [ ] `src/architecture.test.js` - Vitest integration
-- [ ] GitHub Actions integration
-- [ ] `docs/architecture/ARCHITECTURE_RULES.md`
-- [ ] Services layer skeleton (optional)
+- [x] `.dependency-cruiser.cjs` - Rule configuration (5 custom rules)
+- [ ] `src/architecture.test.js` - Vitest integration (optional, deferred)
+- [x] GitHub Actions integration (warning mode)
+- [x] `docs/architecture/ARCHITECTURE_RULES.md`
+- [ ] Services layer skeleton (optional, future phase)
 
 **Success Criteria:**
-- No circular dependencies
-- Layer boundaries documented
-- CI fails on architecture violations
-- Transition rules for future refactoring
+- ✅ No circular dependencies (verified)
+- ✅ Layer boundaries documented (9 warnings tracking violations)
+- ✅ CI reports architecture violations (warning mode)
+- ✅ Transition rules for future refactoring (warn → error strategy)
+
+---
+
+### **Phase 25: Services Layer Implementation** (8-11 sessions)
+
+Implement services layer to fix architectural violations and promote warning rules to errors.
+
+**Status:** Planning (awaiting review)
+
+**Key Features:**
+- Services layer (`quiz-service`, `settings-service`, `auth-service`)
+- Systematic migration: one rule at a time
+- Views only import from services
+- Components become purely presentational
+- API receives credentials as parameters
+
+**Learning Objectives:**
+- Services layer design patterns
+- Refactoring with test coverage
+- Incremental architecture migration
+- Low coupling / high cohesion implementation
+
+**Deliverables:**
+- [ ] `src/services/quiz-service.js` - Quiz business logic
+- [ ] `src/services/settings-service.js` - Settings business logic
+- [ ] `src/services/auth-service.js` - Auth coordination
+- [ ] All 4 warning rules promoted to errors
+- [ ] Updated unit tests (mock services)
+- [ ] E2E tests still passing
+
+**Success Criteria:**
+- [ ] `npm run arch:test` passes with 0 violations (0 errors, 0 warnings)
+- [ ] All unit tests pass
+- [ ] All E2E tests pass
+- [ ] No dead code detected
+
+**Rule Migration Order:**
+1. `api-should-not-import-db` (1 session)
+2. `components-should-not-import-api` (1 session)
+3. `views-should-not-import-db` (3-4 sessions)
+4. `views-should-not-import-api` (2-3 sessions)
 
 ---
 

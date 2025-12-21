@@ -161,4 +161,5 @@ User enters topic
 
 - [Database Schema](./DATABASE_SCHEMA.md)
 - [API Design](./API_DESIGN.md)
+- [Architecture Rules](./ARCHITECTURE_RULES.md)
 - [Deployment](./DEPLOYMENT.md)

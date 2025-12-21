@@ -83,7 +83,8 @@
       "Bash(move \".playwright-mcp\\\\docs\\\\issues\\\\16-topics-before.png\" \"docs\\\\issues\\\\16-topics-before.png\")",
       "Bash(cmd.exe /c \"if not exist docs\\\\issues mkdir docs\\\\issues && copy .playwright-mcp\\\\docs\\\\issues\\\\*.png docs\\\\issues\"\")",
       "Bash(cmd.exe /c \"\"\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\"\" pr create --title \"\"fix: make bottom navigation always visible on all pages\"\" --body-file pr-body-16.md\")",
-      "WebFetch(domain:knip.dev)"
+      "WebFetch(domain:knip.dev)",
+      "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" issue view 11 --repo vitorsilva/saberloop)"
     ],
     "deny": [],
     "ask": []

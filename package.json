@@ -31,16 +31,18 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lint:dead-code": "knip",
-    "lint:dead-code:fix": "knip --fix"    
+    "lint:dead-code:fix": "knip --fix",
+    "arch:test": "depcruise src --config .dependency-cruiser.cjs",
+    "arch:graph": "depcruise src --output-type dot --config .dependency-cruiser.cjs > dependency-graph.dot"    
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
     "@vitest/coverage-v8": "^4.0.1",
     "autoprefixer": "^10.4.22",
+    "dependency-cruiser": "^17.3.5",
     "dotenv": "^17.2.3",
     "fake-indexeddb": "^6.2.4",
     "ftp-deploy": "^2.4.7",
-    "idb": "^8.0.3",
     "jsdom": "^27.0.1",
     "knip": "^5.76.1",
     "netlify-cli": "^23.11.1",
@@ -52,6 +54,7 @@
     "workbox-window": "^7.4.0"
   },
   "dependencies": {
+    "idb": "^8.0.3",
     "loglevel": "^1.9.2",
     "web-vitals": "^5.1.0"
   }
