@@ -180,5 +180,66 @@ Architecture-as-code - architectural decisions documented in executable rules th
 
 ---
 
+### Session 3 - CI Integration
+
+**What we accomplished:**
+
+1. Added `dependency-cruiser@^17.3.5` to CI install step
+2. Added "Check architecture rules (warning)" step to workflow
+3. Uses `|| true` so warnings don't fail the build (matches dead code pattern)
+
+**Files Changed:**
+
+| File | Change |
+|------|--------|
+| `.github/workflows/test.yml` | Added dependency-cruiser install and arch check step |
+
+**CI Pipeline Order (after changes):**
+
+1. Checkout code
+2. Setup Node.js
+3. Install dependencies (now includes dependency-cruiser)
+4. Check for dead code (warning)
+5. **Check architecture rules (warning)** ← New!
+6. Run unit tests
+7. Install Playwright browsers
+8. Run E2E tests
+9. Build production bundle
+
+---
+
+## Next Steps
+
+- [x] Examine the generated `.dependency-cruiser.cjs` file
+- [x] Run first architecture scan
+- [x] Fix violations found
+- [x] Add custom rules for layer boundaries
+- [x] Integrate with CI
+- [x] Document architecture rules (`docs/architecture/ARCHITECTURE_RULES.md`)
+- [ ] Create PR and merge to main
+
+---
+
+### Session 4 - Documentation
+
+**What we accomplished:**
+
+1. Created `docs/architecture/ARCHITECTURE_RULES.md` with:
+   - Current vs target architecture diagrams
+   - All rules documented with descriptions
+   - How to fix each type of violation
+   - CI integration details
+   - Transition plan
+
+2. Updated `docs/architecture/SYSTEM_OVERVIEW.md` to link to new doc
+
+**Documentation style matched:**
+- Same format as existing architecture docs
+- ASCII diagrams for architecture
+- Tables for structured information
+- Related Documentation section
+
+---
+
 **Last Updated:** 2025-12-21
-**Status:** In Progress (Session 2 complete, CI integration next)
+**Status:** Complete (ready for PR)
