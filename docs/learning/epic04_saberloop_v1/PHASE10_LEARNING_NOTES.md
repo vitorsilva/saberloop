@@ -165,14 +165,100 @@
 
 ---
 
+### Session 3 - December 21, 2024 (PR & Deployment)
+
+**What we accomplished:**
+
+1. **Documentation Audit & Cleanup**
+   - Discovered 54 files still referencing Netlify (outdated architecture)
+   - Updated critical files: CLAUDE.md, README.md, CONTRIBUTING.md
+   - Updated architecture docs: API_DESIGN.md, SYSTEM_OVERVIEW.md
+   - Added deprecation notes to historical learning docs
+   - Current architecture: FTP to saberloop.com + client-side OpenRouter (no Netlify)
+
+2. **PR Creation & CI Debugging**
+   - Created PR #18 for OpenRouter Onboarding UX feature
+   - CI failed: 2 E2E tests failing in GitHub Actions but passing locally
+   - Root cause #1: Feature flag was `SETTINGS_ONLY`, tests expected navigation from Home/Welcome
+   - Root cause #2: IndexedDB state timing - CI environment needed `page.reload()` after state setup
+   - Fix: Changed feature flag to `ENABLED` + added reload after IndexedDB modifications
+
+3. **Production Deployment Fix**
+   - Images returning 404 on production (saberloop.com/app/)
+   - Root cause: Image paths used `/images/onboarding/` but app deploys to `/app/` subdirectory
+   - Fix: Changed paths to `/app/images/onboarding/` in OpenRouterGuideView.js
+
+**Key learnings:**
+
+11. **Subdirectory deployment affects asset paths**
+    - When app deploys to `domain.com/app/`, all absolute paths need `/app/` prefix
+    - Compare: `/app/icons/icon-192x192.png` (WelcomeView - correct)
+    - vs: `/images/onboarding/...` (OpenRouterGuideView - was broken)
+    - Easy to miss when developing locally (Vite serves from root)
+    - Lesson: Check how existing assets are referenced before adding new ones
+
+12. **CI vs Local test timing differences**
+    - Tests pass locally, fail in CI = usually timing/race conditions
+    - IndexedDB state changes may not be visible to app immediately
+    - Solution: Add `page.reload()` after modifying IndexedDB state
+    ```javascript
+    await setupUnauthenticatedState(page);
+    await page.reload();  // Forces app to re-read IndexedDB
+    await page.waitForLoadState('networkidle');
+    ```
+    - CI environments are often slower/more variable than local
+
+13. **Feature flag phase affects test behavior**
+    - `SETTINGS_ONLY` phase: feature works in Settings but NOT Home/Welcome
+    - Tests clicking "Generate Quiz" on Home showed modal, not guide
+    - Lesson: When E2E tests fail with wrong navigation, check feature flags first
+    - Feature phase should match intended behavior for all tested contexts
+
+14. **Documentation debt accumulates silently**
+    - Project migrated from Netlify months ago, but 54 files still referenced it
+    - Documentation and code can drift apart without breaking anything
+    - Periodic audits help catch this: `grep -r "netlify" --include="*.md"`
+    - Critical files (CLAUDE.md, README) should be accurate; learning notes can be historical
+
+15. **Git branch awareness during hotfixes**
+    - After PR merge, working directory returns to `main`
+    - Easy to accidentally commit fixes to `main` instead of feature branch
+    - Not wrong if PR is already merged, but be aware of current branch
+    - `git branch --show-current` before committing
+
+**Files created/modified:**
+
+| File | Type | Purpose |
+|------|------|---------|
+| `src/core/features.js` | Modified | Changed phase to ENABLED |
+| `src/views/OpenRouterGuideView.js` | Modified | Fixed image paths (/app/ prefix) |
+| `tests/e2e/openrouter-guide.spec.js` | Modified | Added reload + better timeouts |
+| `CLAUDE.md` | Modified | Updated architecture (no more Netlify) |
+| `README.md` | Modified | Updated live demo URL |
+| `docs/architecture/API_DESIGN.md` | Modified | Rewritten for OpenRouter |
+| Multiple learning docs | Modified | Added deprecation notices |
+
+**Commits made:**
+1. `docs: update architecture docs to reflect current deployment` (PR #18)
+2. `fix(e2e): resolve CI timing issues in OpenRouter guide tests`
+3. `feat: enable OPENROUTER_GUIDE feature flag for all contexts`
+4. `fix: correct image paths for OpenRouter guide screenshots`
+
+---
+
 ## Summary
 
-Phase 10 (OpenRouter Onboarding UX) is complete. The new onboarding flow provides:
+Phase 10 (OpenRouter Onboarding UX) is **complete and deployed**. The new onboarding flow provides:
 
-1. **Feature flag system** - Safe gradual rollout capability
+1. **Feature flag system** - Safe gradual rollout capability (now ENABLED)
 2. **Step-by-step guide** - Clear instructions with screenshots
 3. **Multiple entry points** - Settings, Welcome, and Home all route to guide
 4. **Success celebration** - ConnectionConfirmed screen after OAuth
 5. **Full test coverage** - 8 E2E tests for all navigation paths
 
 **Total test count:** 26 E2E tests (up from 18)
+
+**Deployment notes:**
+- Images must use `/app/` prefix for production (subdirectory deployment)
+- Feature flag must be `ENABLED` for full functionality
+- After build, deploy with `npm run build && npm run deploy`
