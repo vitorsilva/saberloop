@@ -13,6 +13,8 @@ import TopicsView from './views/TopicsView.js';
 import { isAuthCallback, handleCallback } from './api/openrouter-auth.js';
 import WelcomeView from './views/WelcomeView.js';
 import HelpView from './views/HelpView.js';
+import OpenRouterGuideView from './views/OpenRouterGuideView.js';
+import ConnectionConfirmedView from './views/ConnectionConfirmedView.js';
 import { loadSamplesIfNeeded } from './features/sample-loader.js';
 import { shouldShowWelcome, markWelcomeSeen } from './features/onboarding.js';
 import { logger } from './utils/logger.js';
@@ -49,7 +51,9 @@ async function init() {
     router.addRoute('/history', TopicsView);
     router.addRoute('/welcome', WelcomeView);
     router.addRoute('/help', HelpView);
-    
+    router.addRoute('/setup-openrouter', OpenRouterGuideView);
+    router.addRoute('/connection-confirmed', ConnectionConfirmedView);
+
     // Start the router
     router.init();
     logger.info('Router initialized');
