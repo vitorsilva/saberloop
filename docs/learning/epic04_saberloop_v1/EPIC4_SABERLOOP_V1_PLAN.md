@@ -21,11 +21,12 @@ Epic 4 focuses on **maintaining** the production Saberloop app and **enhancing**
 ### New Technologies & Concepts
 
 1. **Feature Flags** - Gradual rollout of new features
-2. **i18next** - Internationalization for multi-language support
-3. **dependency-cruiser** - Architecture testing and enforcement
-4. **Maestro** - Comprehensive mobile UI testing
-5. **Google AdSense** - Non-intrusive monetization
-6. **Self-hosted Telemetry** - VPS-based observability without paid services
+2. **Knip** - Dead code detection and cleanup
+3. **i18next** - Internationalization for multi-language support
+4. **dependency-cruiser** - Architecture testing and enforcement
+5. **Maestro** - Comprehensive mobile UI testing
+6. **Google AdSense** - Non-intrusive monetization
+7. **Self-hosted Telemetry** - VPS-based observability without paid services
 
 ---
 
@@ -57,22 +58,29 @@ Before starting Epic 4, you should have completed:
 │  ┌──────────────────┐  ┌──────────────────┐                │
 │  │ OpenRouter       │  │ i18n             │                │
 │  │ Onboarding UX    │  │ Multi-language   │                │
-│  │ (Phase 10)       │  │ (Phase 30)       │                │
+│  │ (Phase 10) ✅    │  │ (Phase 30)       │                │
 │  └──────────────────┘  └──────────────────┘                │
 │                                                             │
-│  Developer Experience                                       │
+│  Code Quality                                               │
 │  ┌──────────────────┐  ┌──────────────────┐                │
-│  │ Architecture     │  │ Maestro Testing  │                │
-│  │ Testing          │  │ Expansion        │                │
-│  │ (Phase 20)       │  │ (Phase 50)       │                │
+│  │ Dead Code        │  │ Architecture     │                │
+│  │ Detection        │  │ Testing          │                │
+│  │ (Phase 15)       │  │ (Phase 20)       │                │
 │  └──────────────────┘  └──────────────────┘                │
 │                                                             │
-│  Infrastructure                                             │
+│  Testing & Observability                                    │
 │  ┌──────────────────┐  ┌──────────────────┐                │
-│  │ Telemetry        │  │ Monetization     │                │
-│  │ Enhancement      │  │ Strategy         │                │
-│  │ (Phase 40)       │  │ (Phase 60)       │                │
+│  │ Maestro Testing  │  │ Telemetry        │                │
+│  │ Expansion        │  │ Enhancement      │                │
+│  │ (Phase 50)       │  │ (Phase 40)       │                │
 │  └──────────────────┘  └──────────────────┘                │
+│                                                             │
+│  Business                                                   │
+│  ┌──────────────────┐                                      │
+│  │ Monetization     │                                      │
+│  │ Strategy         │                                      │
+│  │ (Phase 60)       │                                      │
+│  └──────────────────┘                                      │
 │                                                             │
 │  Ongoing                                                    │
 │  ┌──────────────────────────────────────────────────────┐  │
@@ -142,6 +150,39 @@ Improve the OpenRouter connection experience with guided step-by-step instructio
 - ✅ "Skip payment" step clearly highlighted
 - ✅ Feature can be toggled via flags
 - ✅ All 26 E2E tests pass
+
+---
+
+### **Phase 15: Dead Code Detection** (2-3 sessions)
+
+Implement dead code detection using Knip to identify and remove unused code from learning phases.
+
+**Status:** Ready to Implement
+
+**Key Features:**
+- Automated detection of unused files, exports, and dependencies
+- Gradual rollout: warnings first, then blocking in CI
+- Ignore list for intentionally kept educational/utility code
+- Integration with existing GitHub Actions CI pipeline
+
+**Learning Objectives:**
+- Static analysis for dead code detection
+- Knip configuration for Vite/vanilla JS
+- Meaningful ignore patterns
+- Gradual rollout (warning → blocking)
+
+**Deliverables:**
+- [ ] `knip.json` - Configuration file
+- [ ] `npm run lint:dead-code` - npm script
+- [ ] GitHub Actions integration
+- [ ] Cleaned up unused code
+- [ ] Documentation updated
+
+**Success Criteria:**
+- Knip installed and configured
+- Unused code cleaned up
+- CI integration working (warning mode, then blocking)
+- No false positives in regular development
 
 ---
 
@@ -325,12 +366,13 @@ Implement Google AdSense integration for passive revenue.
 |-------|----------|-------|--------|
 | Phase 5 | Ongoing | Epic03 Pending | In Progress |
 | Phase 10 | 2-3 | OpenRouter Onboarding | ✅ Complete |
+| Phase 15 | 2-3 | Dead Code Detection | Ready |
 | Phase 20 | 3-4 | Architecture Testing | Ready |
 | Phase 30 | 8-11 | Internationalization | Ready |
 | Phase 40 | 4-6 | Telemetry Enhancement | Ready |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
-| **Total** | **~25-35** | **Full Epic** | |
+| **Total** | **~27-38** | **Full Epic** | |
 
 **Note:** Phase numbers use intervals of 10 to allow for inserting new phases if needed.
 
@@ -341,12 +383,13 @@ Implement Google AdSense integration for passive revenue.
 While phases can be worked on in any order, here's a suggested priority:
 
 1. **Phase 5** - Complete Play Store release (ongoing, mostly waiting)
-2. **Phase 10** - OpenRouter Onboarding (high user impact, quick win)
-3. **Phase 20** - Architecture Testing (foundation for code quality)
-4. **Phase 50** - Maestro Testing (builds on Phase 20)
-5. **Phase 30** - i18n (larger effort, high user impact)
-6. **Phase 40** - Telemetry (nice to have for debugging)
-7. **Phase 60** - Monetization (after user base grows)
+2. **Phase 10** - OpenRouter Onboarding (high user impact, quick win) ✅ Complete
+3. **Phase 15** - Dead Code Detection (cleanup before architecture rules)
+4. **Phase 20** - Architecture Testing (foundation for code quality)
+5. **Phase 50** - Maestro Testing (builds on Phase 20)
+6. **Phase 30** - i18n (larger effort, high user impact)
+7. **Phase 40** - Telemetry (nice to have for debugging)
+8. **Phase 60** - Monetization (after user base grows)
 
 ---
 
@@ -355,6 +398,7 @@ While phases can be worked on in any order, here's a suggested priority:
 ### Technical Milestones
 - [ ] Production release on Google Play Store
 - [x] OpenRouter onboarding improved ✅
+- [ ] Dead code detected and cleaned up
 - [ ] Architecture rules enforced in CI
 - [ ] 5+ languages supported
 - [ ] Self-hosted telemetry operational
@@ -424,6 +468,7 @@ When you're ready to begin Epic 4, say:
 **Epic 4 Phase Documents:**
 - `PHASE5_EPIC03_PENDING.md`
 - `PHASE10_OPENROUTER_ONBOARDING_UX.md`
+- `PHASE15_DEAD_CODE_DETECTION.md`
 - `PHASE20_ARCH_TESTING.md`
 - `PHASE30_I18N.md`
 - `PHASE40_TELEMETRY.md`
