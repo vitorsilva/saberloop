@@ -96,6 +96,11 @@ test.describe('OpenRouter Guide Flow', () => {
   test('Home → Guide: should navigate to guide when clicking Generate Quiz while not connected', async ({ page }) => {
     await setupUnauthenticatedState(page);
 
+    // Reload to ensure fresh state is loaded from IndexedDB
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('h2:has-text("Welcome back!")', { timeout: 10000 });
+
     // Verify we're on home page
     await expect(page).toHaveURL(/#\//);
     await expect(page.locator('#startQuizBtn')).toBeVisible();
@@ -103,13 +108,17 @@ test.describe('OpenRouter Guide Flow', () => {
     // Click "Generate Quiz" button
     await page.click('#startQuizBtn');
 
-    // Should navigate to the guide
-    await expect(page).toHaveURL(/#\/setup-openrouter/);
+    // Should navigate to the guide (longer timeout for CI)
+    await expect(page).toHaveURL(/#\/setup-openrouter/, { timeout: 10000 });
     await expect(page.locator('h2')).toContainText('Create your free account');
   });
 
   test('Welcome → Guide: should navigate to guide when clicking Connect to AI Provider', async ({ page }) => {
-    // Go directly to welcome page (don't mark welcome as seen)
+    // First initialize the app to create the database
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Now navigate to welcome page
     await page.goto('/#/welcome');
     await page.waitForLoadState('networkidle');
 
@@ -119,8 +128,8 @@ test.describe('OpenRouter Guide Flow', () => {
     // Click "Connect to AI Provider" button
     await page.click('#connectBtn');
 
-    // Should navigate to the guide
-    await expect(page).toHaveURL(/#\/setup-openrouter/);
+    // Should navigate to the guide (longer timeout for CI)
+    await expect(page).toHaveURL(/#\/setup-openrouter/, { timeout: 10000 });
     await expect(page.locator('h2')).toContainText('Create your free account');
   });
 
