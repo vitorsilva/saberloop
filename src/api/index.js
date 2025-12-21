@@ -15,4 +15,6 @@ const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'false'
     logger.info('Using mock API (development mode)');
   }
 
-  export const { generateQuestions, generateExplanation } = api;
+  export const { generateQuestions } = api;
+  /** @public */
+  export const { generateExplanation } = api;
