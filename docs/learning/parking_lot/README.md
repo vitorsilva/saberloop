@@ -255,6 +255,36 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
+### [Dead Code Detection](./DEAD_CODE_DETECTION.md) ⭐ **Ready to Implement**
+
+**Status:** Planning Complete
+
+**What it is:**
+- Static analysis using Knip to detect unused code
+- Finds unused files, exports, and dependencies
+- Gradual CI integration (warning → blocking)
+- Configurable ignore list for intentional code
+
+**Why it's optional:**
+- ✅ App works fine without it
+- ⚠️ Requires initial cleanup effort
+- ⚠️ May flag false positives initially
+
+**Why you might want it:**
+- 🧹 **Cleaner codebase** - Remove clutter from learning phases
+- 📦 **Smaller bundles** - Unused code may end up in builds
+- 🔍 **Easier navigation** - Less noise when exploring code
+- 🛡️ **Prevent regression** - CI catches new dead code
+- 🎓 **Learn static analysis** - Industry-standard tooling
+
+**When to revisit:**
+- Before major refactoring
+- When codebase feels cluttered
+- Before onboarding contributors
+- Want to establish code quality gates
+
+---
+
 ## How to Use This Folder
 
 ### If You're Planning Epic 3
@@ -332,12 +362,12 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 8 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX)
+**Current count:** 9 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection)
 
 **Status:** All documented and ready to implement when desired
 
 ---
 
-**Last Updated:** 2025-12-19
+**Last Updated:** 2025-12-21
 **Location:** `docs/parking_lot/`
 **Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
