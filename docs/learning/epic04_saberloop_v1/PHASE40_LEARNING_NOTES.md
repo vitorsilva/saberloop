@@ -17,18 +17,35 @@
 3. Implementation scope: All phases (T1-T4)
 4. Docker approach: Reuse existing containers (Prometheus, Jaeger, OTEL), add only Grafana + Loki
 
-**Implementation Plan:**
-- [ ] T1.1: Add TELEMETRY feature flag to `features.js`
-- [ ] T1.2: Add environment variables to `.env` and `.env.example`
-- [ ] T1.3: Create `src/utils/telemetry.js` (TelemetryClient class)
-- [ ] T1.4: Create unit tests `src/utils/telemetry.test.js`
-- [ ] T2: VPS PHP endpoint (ingest.php, config.php, .htaccess, rotate-logs.php)
-- [ ] T3: Integration (hook into logger, errorHandler, performance)
-- [ ] T4: Docker analysis stack (Grafana + Loki)
+**What We Accomplished:**
+
+| Phase | Status | Commits |
+|-------|--------|---------|
+| T1: Frontend TelemetryClient | ✅ Complete | 4 commits |
+| T2: VPS PHP Endpoint | ✅ Complete | 5 commits |
+| T3: Integration | ✅ Complete | 3 commits |
+| T4: Docker Analysis Stack | ✅ Complete | 3 commits |
+
+**All 15 Commits:**
+1. `feat(telemetry): add TELEMETRY feature flag`
+2. `feat(telemetry): add environment variables`
+3. `feat(telemetry): create TelemetryClient`
+4. `test(telemetry): add unit tests for TelemetryClient`
+5. `feat(telemetry): add PHP config for VPS endpoint`
+6. `feat(telemetry): add PHP ingestion endpoint`
+7. `feat(telemetry): add .htaccess security rules`
+8. `feat(telemetry): add log rotation script`
+9. `feat(telemetry): add deploy script and npm command`
+10. `feat(telemetry): integrate telemetry into logger`
+11. `feat(telemetry): integrate telemetry into errorHandler`
+12. `feat(telemetry): integrate telemetry into performance monitoring`
+13. `feat(telemetry): add Docker stack for Grafana + Loki`
+14. `feat(telemetry): add scripts to download and import logs`
+15. `feat(telemetry): add npm scripts for telemetry analysis`
 
 ---
 
-## Key Concepts
+## Key Concepts Learned
 
 ### What is Telemetry?
 
@@ -53,13 +70,132 @@ We use a feature flag so we can:
 2. **Roll out gradually** to test on subset of users
 3. **Turn off in development** to avoid noise
 
+### Why Both `beforeunload` AND `visibilitychange`?
+
+| Scenario | beforeunload | visibilitychange |
+|----------|--------------|------------------|
+| User closes tab (desktop) | Fires | May not fire |
+| User navigates away | Fires | Fires |
+| User switches apps (mobile) | Doesn't fire | Fires |
+| User locks phone | Doesn't fire | Fires |
+
+Mobile browsers don't reliably fire `beforeunload` - they just freeze tabs. Using both maximizes our chances of capturing telemetry.
+
+### Offline Queue with localStorage
+
+When the OS kills a tab (no warning events), saved events in localStorage survive. Next time the user opens the app, `_loadOfflineQueue()` restores them.
+
+### JSONL Format (Append-Friendly)
+
+**Problem:** Multiple users sending telemetry simultaneously could cause race conditions with regular JSON files.
+
+**Solution:** JSONL (JSON Lines) - one JSON object per line:
+```
+{"type":"error","data":{"message":"Failed"}}
+{"type":"log","data":{"level":"info"}}
+```
+
+Benefits:
+- Append-only (no need to read/parse/rewrite)
+- Filesystem handles concurrent appends safely
+- `LOCK_EX` flag adds extra safety
+
+### Grafana + Loki Stack
+
+- **Loki** - Log aggregation (like Prometheus but for logs)
+- **Grafana** - Visualization dashboards
+- Logs are labeled by `app` and `type` for easy filtering
+
 ---
 
-## Session Progress
+## Files Created/Modified
 
-**Current Step:** Starting T1.1 (Feature Flag)
+### New Files
+| File | Purpose |
+|------|---------|
+| `src/utils/telemetry.js` | TelemetryClient class (224 lines) |
+| `src/utils/telemetry.test.js` | Unit tests (20 tests) |
+| `php-api/telemetry/config.php` | VPS configuration |
+| `php-api/telemetry/ingest.php` | VPS ingestion endpoint |
+| `php-api/telemetry/.htaccess` | Security rules |
+| `php-api/telemetry/rotate-logs.php` | Log cleanup script |
+| `scripts/deploy-telemetry.cjs` | FTP deploy script |
+| `docker-compose.telemetry.yml` | Grafana + Loki stack |
+| `docker/loki-config.yml` | Loki configuration |
+| `docker/grafana-datasources.yml` | Grafana datasource config |
+| `scripts/telemetry/download.ps1` | Download logs from VPS |
+| `scripts/telemetry/import-to-loki.ps1` | Import to Loki (PowerShell) |
+| `scripts/telemetry/import-to-loki.cjs` | Import to Loki (Node.js) |
+
+### Modified Files
+| File | Change |
+|------|--------|
+| `src/core/features.js` | Added TELEMETRY flag |
+| `src/utils/logger.js` | Integrated telemetry (warn, error, perf, action) |
+| `src/utils/errorHandler.js` | Integrated telemetry (uncaught errors) |
+| `src/utils/performance.js` | Integrated telemetry (Web Vitals) |
+| `.env.example` | Added telemetry variables |
+| `package.json` | Added telemetry npm scripts |
+
+---
+
+## Telemetry Event Types
+
+| Type | Source | When Captured |
+|------|--------|---------------|
+| `log` | logger.warn() | Warnings in the app |
+| `error` | logger.error(), window.error | Errors and exceptions |
+| `metric` | logger.perf() | Custom performance metrics |
+| `event` | logger.action() | User actions |
+| `vital` | Web Vitals | LCP, INP, CLS |
+
+---
+
+## New npm Commands
+
+| Command | Purpose |
+|---------|---------|
+| `npm run deploy:telemetry` | Deploy PHP endpoint to VPS |
+| `npm run telemetry:start` | Start Grafana + Loki locally |
+| `npm run telemetry:stop` | Stop Grafana + Loki |
+| `npm run telemetry:import` | Import logs to Loki |
+
+---
+
+## Workflow to Analyze Telemetry
+
+```
+1. Deploy endpoint:     npm run deploy:telemetry
+2. Enable feature flag: Set TELEMETRY phase to 'ENABLED' in features.js
+3. Deploy app:          npm run build:deploy
+4. Wait for data...     (users generate telemetry)
+5. Download logs:       PowerShell script or FTP client
+6. Start stack:         npm run telemetry:start
+7. Import logs:         npm run telemetry:import
+8. View in Grafana:     http://localhost:3000 (admin/admin)
+```
+
+---
+
+## Verification Results
+
+- ✅ Unit tests: 126 passed (including 20 new telemetry tests)
+- ✅ Architecture: 0 violations (53 modules, 113 dependencies)
+- ✅ Dead code: 0 warnings
+
+---
+
+## Next Steps (Post-Phase 40)
+
+- [ ] Deploy telemetry endpoint to VPS (`npm run deploy:telemetry`)
+- [ ] Set secure TELEMETRY_TOKEN in `.env` and on VPS
+- [ ] Enable feature flag (change phase to 'ENABLED')
+- [ ] Deploy app with telemetry enabled
+- [ ] Set up cron job for log rotation on VPS
+- [ ] Test end-to-end flow
+- [ ] Create PR and merge to main
 
 ---
 
 **Last Updated:** 2025-12-22
-**Status:** In Progress
+**Status:** ✅ Complete (T1-T4 all done, ready for deployment)
