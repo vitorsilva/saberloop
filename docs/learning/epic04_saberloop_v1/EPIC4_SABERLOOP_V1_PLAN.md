@@ -406,13 +406,14 @@ Implement Google AdSense integration for passive revenue.
 |-------|----------|-------|--------|
 | Phase 5 | Ongoing | Epic03 Pending | In Progress |
 | Phase 10 | 2-3 | OpenRouter Onboarding | ✅ Complete |
-| Phase 15 | 2-3 | Dead Code Detection | Ready |
-| Phase 20 | 3-4 | Architecture Testing | Ready |
+| Phase 15 | 2-3 | Dead Code Detection | ✅ Complete |
+| Phase 20 | 3-4 | Architecture Testing | ✅ Complete |
+| Phase 25 | 2-3 | Services Layer | ✅ Complete |
 | Phase 30 | 8-11 | Internationalization | Ready |
-| Phase 40 | 4-6 | Telemetry Enhancement | Ready |
+| Phase 40 | 5-8 | Telemetry Enhancement | In Progress |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
-| **Total** | **~27-38** | **Full Epic** | |
+| **Total** | **~30-42** | **Full Epic** | |
 
 **Note:** Phase numbers use intervals of 10 to allow for inserting new phases if needed.
 
