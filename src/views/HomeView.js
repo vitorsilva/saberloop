@@ -1,10 +1,9 @@
 import BaseView from './BaseView.js';
 import { updateNetworkIndicator, isOnline } from '../utils/network.js';
 import { getQuizHistory, getQuizSession } from '../services/quiz-service.js';
-import { isConnected } from '../services/auth-service.js';
+import { isConnected, startAuth } from '../services/auth-service.js';
 import state from '../core/state.js';
 import { showConnectModal } from '../components/ConnectModal.js';
-import { startAuth } from '../api/openrouter-auth.js';
 import { isFeatureEnabled } from '../core/features.js';
 
 export default class HomeView extends BaseView {
