@@ -1,7 +1,7 @@
 # Phase 22: Landing Page Analytics & Marketing - Learning Notes
 
 **Date:** December 22, 2025
-**Status:** In Progress (implementation complete, pending deployment & verification)
+**Status:** Complete (deployed & verified)
 
 ---
 
@@ -10,7 +10,8 @@
 ### 1. Google Search Console Setup
 - Created verification file: `landing/googledbd4faa8bc6bf4bb.html`
 - Chose HTML file verification method (simpler than DNS TXT record)
-- **Pending:** Deploy and click "VALIDAR" in Search Console to complete verification
+- **Verified:** Property ownership confirmed
+- **Sitemap:** Submitted and processed successfully (3 pages discovered)
 
 ### 2. Google Analytics 4 Integration
 - **Measurement ID:** `G-M96NMT6FS8`
@@ -173,16 +174,31 @@ Using `data-track` attributes is cleaner than inline onclick handlers:
 
 ---
 
-## Pending Tasks
+## Completed Tasks
 
-- [ ] Deploy landing page (`npm run deploy:landing`)
-- [ ] Complete Search Console verification
-- [ ] Submit sitemap to Search Console
+- [x] Deploy landing page (`npm run deploy:landing`)
+- [x] Complete Search Console verification
+- [x] Submit sitemap to Search Console (3 pages discovered)
 - [ ] Create og-image.png (1200x630px) for social sharing
-- [ ] Verify events in GA4 DebugView
+- [ ] Verify events in GA4 DebugView (waiting for data, up to 48h)
 - [ ] Test with Facebook/Twitter debuggers
 - [ ] Run PageSpeed Insights and document score
 - [ ] Set up conversions in GA4 for key events
+
+---
+
+## Issues Encountered & Resolved
+
+### 1. Sitemap "Não foi possível obter" Error
+- **Problem:** Search Console showed "Could not fetch" error for sitemap
+- **Cause:** Google needs a few minutes to fetch newly deployed sitemaps
+- **Solution:** Waited and resubmitted - processed successfully on retry
+- **Learning:** First-time sitemap submissions may show errors temporarily
+
+### 2. GA4 "Data collection not active" Warning
+- **Problem:** GA4 showed warning that data collection wasn't active
+- **Cause:** Normal behavior - GA4 can take up to 48 hours to confirm data flow
+- **Solution:** Wait for data to populate; check Real-time reports for immediate feedback
 
 ---
 
