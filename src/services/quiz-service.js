@@ -1,8 +1,9 @@
 /**
  * Quiz Service - Business logic for quiz operations
- * Views should use this instead of importing db directly
+ * Views should use this instead of importing db or api directly
  */
 import { getRecentSessions, getSession, saveSession, updateSession } from '../core/db.js';
+import { generateQuestions as apiGenerateQuestions } from '../api/index.js';
 
 /**
  * Get quiz history (recent sessions)
@@ -39,4 +40,15 @@ export async function saveQuizSession(sessionData) {
  */
 export async function updateQuizSession(id, updates) {
   return updateSession(id, updates);
+}
+
+/**
+ * Generate quiz questions using AI
+ * @param {string} topic - Quiz topic
+ * @param {string} gradeLevel - Education level
+ * @param {string} apiKey - OpenRouter API key
+ * @returns {Promise<{questions: Array, language: string}>}
+ */
+export async function generateQuestions(topic, gradeLevel, apiKey) {
+  return apiGenerateQuestions(topic, gradeLevel, apiKey);
 }

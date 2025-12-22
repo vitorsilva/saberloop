@@ -13,7 +13,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 04 | Phase 5 (Play Store Production) in progress | Phase 10 ✅ | Phase 15 ✅ | Phase 20 ✅ | Phase 25 (Services Layer) planned | Closed Testing Day 5 of 14 (Dec 17-31)
+**Current Status:** Epic 04 | Phase 5 (Play Store Production) in progress | Phase 10 ✅ | Phase 15 ✅ | Phase 20 ✅ | Phase 25 ✅ | Closed Testing Day 5 of 14 (Dec 17-31)
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
@@ -246,6 +246,9 @@ demo-pwa-app/
 │   │   ├── router.js          # SPA router
 │   │   ├── state.js           # Global state
 │   │   └── settings.js        # User settings
+│   ├── services/              # Business logic layer
+│   │   ├── quiz-service.js    # Quiz operations
+│   │   └── auth-service.js    # Auth operations
 │   ├── features/              # Feature-specific modules
 │   │   ├── onboarding.js      # Welcome flow
 │   │   └── sample-loader.js   # Sample quiz loading
@@ -268,6 +271,7 @@ demo-pwa-app/
 - **src/main.js**: Application entry point, router initialization
 - **src/core/router.js**: SPA routing system
 - **src/views/**: View components (QuizView, ResultsView, etc.)
+- **src/services/**: Business logic layer (quiz-service, auth-service)
 - **src/core/state.js**: Global state management
 - **src/api/**: API clients (mock and real)
 - **src/core/db.js**: IndexedDB wrapper for offline storage

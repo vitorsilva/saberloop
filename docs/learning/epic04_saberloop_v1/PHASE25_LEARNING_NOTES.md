@@ -128,27 +128,66 @@ services/ ──→ api/
 
 ## Current Status
 
-**Architecture violations:** 0 errors, 5 warnings
+**Architecture violations:** 0 errors, 0 warnings ✅
 
 | Rule | Status |
 |------|--------|
 | `api-should-not-import-db` | ✅ Enforced (error) |
 | `components-should-not-import-api` | ✅ Enforced (error) |
 | `views-should-not-import-db` | ✅ Enforced (error) |
-| `views-should-not-import-api` | ⏳ Pending (5 warnings) |
+| `views-should-not-import-api` | ✅ Enforced (error) |
 
 ---
 
-## Next Steps
+## Session 2 - December 22, 2025 (continued)
 
-- [ ] Merge PR #26
-- [ ] Rule 4: `views-should-not-import-api`
-  - Extend quiz-service with API operations
-  - Create or extend services for auth API calls
-  - Migrate remaining views
-  - Promote rule to error
+**What we accomplished:**
+
+Implemented Rule 4 `views-should-not-import-api`:
+
+| Commit | What we did |
+|--------|-------------|
+| 1 | Removed unused `generateQuestions` import from QuizView |
+| 2 | Extended `auth-service` with `startAuth` function |
+| 3 | Migrated HomeView to use auth-service for startAuth |
+| 4 | Migrated WelcomeView to use auth-service for startAuth |
+| 5 | Migrated OpenRouterGuideView to use auth-service for startAuth |
+| 6 | Extended `quiz-service` with `generateQuestions` function |
+| 7 | Migrated LoadingView to use quiz-service for generateQuestions |
+| 8 | Promoted `views-should-not-import-api` rule to error |
+
+**PR #27** created and ready for review.
+
+---
+
+## Phase 25 Complete! 🎉
+
+### Final Architecture
+
+```
+views/ ─────→ services/ (only)
+services/ ──→ api/
+          ──→ db/
+components/ → (no api, no db)
+api/ ────────→ (no db)
+```
+
+### Summary of All Changes
+
+| PR | Rule | Files Changed |
+|----|------|---------------|
+| #24 | `api-should-not-import-db` | api.real.js, api.mock.js, LoadingView |
+| #25 | `components-should-not-import-api` | ConnectModal, HomeView, WelcomeView |
+| #26 | `views-should-not-import-db` | quiz-service (new), auth-service (new), 5 views |
+| #27 | `views-should-not-import-api` | quiz-service, auth-service, 5 views |
+
+### Key Learnings
+
+1. **Dead code discovery**: QuizView had an unused import - removing it counted as a violation fix
+2. **Consistent patterns**: Both services use the same wrapper pattern for API functions
+3. **Atomic commits**: 8 commits for Rule 4 alone, making the PR easy to review
 
 ---
 
 **Last Updated:** 2025-12-22
-**Status:** In Progress (Rules 1-3 complete)
+**Status:** ✅ Complete

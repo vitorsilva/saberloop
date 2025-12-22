@@ -1,5 +1,5 @@
   import BaseView from './BaseView.js';
-  import { startAuth } from '../api/openrouter-auth.js';
+  import { startAuth } from '../services/auth-service.js';
 
   export default class OpenRouterGuideView extends BaseView {
     constructor() {

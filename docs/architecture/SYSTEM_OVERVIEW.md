@@ -58,6 +58,17 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 | Styling | Tailwind CSS (PostCSS) | Utility-first CSS |
 | PWA | Vite PWA Plugin + Workbox | Offline support, installability |
 
+### Application Layers
+
+| Layer | Directory | Purpose |
+|-------|-----------|---------|
+| Views | `src/views/` | UI presentation, user interaction |
+| Services | `src/services/` | Business logic, coordinates api/db |
+| API | `src/api/` | External API calls (OpenRouter) |
+| Core | `src/core/` | Database, state, router, settings |
+| Components | `src/components/` | Reusable presentational UI |
+| Utils | `src/utils/` | Shared utilities (logger, network) |
+
 ### AI Integration (Client-Side)
 
 | Component | Technology | Purpose |
@@ -66,9 +77,9 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 | Key Storage | IndexedDB | Secure local storage |
 | Default Model | Claude 3 Haiku | Fast, cost-effective |
 
-**Client-Side Functions:**
-- `generateQuestions()` - Call OpenRouter to generate quiz questions
-- `generateExplanation()` - Call OpenRouter for wrong answer explanations
+**Services Layer:**
+- `quiz-service.js` - Quiz operations (history, sessions, generation)
+- `auth-service.js` - Authentication (connection status, OAuth flow)
 
 **No Server Backend Required:**
 - Users provide their own OpenRouter API key
