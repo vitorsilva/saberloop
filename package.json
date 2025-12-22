@@ -34,7 +34,10 @@
     "lint:dead-code": "knip",
     "lint:dead-code:fix": "knip --fix",
     "arch:test": "depcruise src --config .dependency-cruiser.cjs",
-    "arch:graph": "depcruise src --output-type dot --config .dependency-cruiser.cjs > dependency-graph.dot"    
+    "arch:graph": "depcruise src --output-type dot --config .dependency-cruiser.cjs > dependency-graph.dot",
+    "telemetry:start": "docker-compose -f docker-compose.telemetry.yml up -d",
+    "telemetry:stop": "docker-compose -f docker-compose.telemetry.yml down",
+    "telemetry:import": "node scripts/telemetry/import-to-loki.cjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
