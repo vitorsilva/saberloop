@@ -216,8 +216,8 @@ module.exports = {
     /* --- TRANSITION RULES (warnings - fix later) --- */
     {
       name: 'views-should-not-import-db',
-      severity: 'warn',
-      comment: 'TRANSITION: Views should use a services layer instead of direct db access',
+      severity: 'error',
+      comment: 'Views must use services layer instead of direct db access (enforced)',
       from: { path: '^src/views/' },
       to: { path: '^src/core/db\\.js$' }
     },
