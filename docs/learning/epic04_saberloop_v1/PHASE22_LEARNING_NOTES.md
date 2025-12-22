@@ -183,7 +183,7 @@ Using `data-track` attributes is cleaner than inline onclick handlers:
 - [x] Run PageSpeed Insights and document score
 - [ ] Verify events in GA4 DebugView (waiting for data, up to 48h)
 - [ ] Test with Facebook/Twitter debuggers
-- [ ] Set up conversions in GA4 for key events
+- [ ] Set up conversions in GA4 for key events (waiting for account validation)
 
 ---
 
