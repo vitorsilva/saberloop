@@ -1,11 +1,11 @@
-  import { startAuth } from '../api/openrouter-auth.js';
   import { logger } from '../utils/logger.js';
 
   /**
    * Show a modal prompting user to connect to OpenRouter
+   * @param {Function} onConnect - Callback to execute when user clicks Connect
    * @returns {Promise<boolean>} true if user connected, false if cancelled
    */
-  export function showConnectModal() {
+  export function showConnectModal(onConnect) {
     return new Promise((resolve) => {
       // Create modal backdrop
       const backdrop = document.createElement('div');
@@ -63,8 +63,8 @@
         `;
 
         try {
-          await startAuth();
-          // Auth redirects, so we won't reach here
+          await onConnect();
+          // Auth typically redirects, so we may not reach here
         } catch (error) {
           logger.error('Auth failed in ConnectModal', { error: error.message });
           connectBtn.disabled = false;

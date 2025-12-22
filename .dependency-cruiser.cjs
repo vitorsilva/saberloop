@@ -230,8 +230,8 @@ module.exports = {
     },
     {
       name: 'components-should-not-import-api',
-      severity: 'warn',
-      comment: 'TRANSITION: Components should be presentational, receiving callbacks as props',
+      severity: 'error',
+      comment: 'Components should be presentational, receiving callbacks as props (enforced)',
       from: { path: '^src/components/' },
       to: { path: '^src/api/' }
     },
