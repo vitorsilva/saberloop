@@ -225,7 +225,7 @@ Implement architecture testing using dependency-cruiser to enforce structural ru
 
 Implement services layer to fix architectural violations and promote warning rules to errors.
 
-**Status:** In Progress (Rules 1-3 complete, Rule 4 pending)
+**Status:** ✅ Complete (All 4 rules enforced)
 
 **Key Features:**
 - Services layer (`quiz-service`, `auth-service`)
@@ -243,11 +243,11 @@ Implement services layer to fix architectural violations and promote warning rul
 **Deliverables:**
 - [x] `src/services/quiz-service.js` - Quiz business logic ✅
 - [x] `src/services/auth-service.js` - Auth coordination ✅
-- [ ] All 4 warning rules promoted to errors (3/4 done)
+- [x] All 4 warning rules promoted to errors ✅
 - [x] E2E tests still passing ✅
 
 **Success Criteria:**
-- [ ] `npm run arch:test` passes with 0 violations (currently 0 errors, 5 warnings)
+- [x] `npm run arch:test` passes with 0 violations ✅
 - [x] All unit tests pass ✅
 - [x] All E2E tests pass ✅
 - [x] No dead code detected ✅
@@ -256,7 +256,7 @@ Implement services layer to fix architectural violations and promote warning rul
 1. `api-should-not-import-db` (1 session) ✅ PR #24
 2. `components-should-not-import-api` (1 session) ✅ PR #25
 3. `views-should-not-import-db` (1 session) ✅ PR #26
-4. `views-should-not-import-api` (pending)
+4. `views-should-not-import-api` (1 session) ✅ PR #27
 
 ---
 
@@ -439,7 +439,7 @@ While phases can be worked on in any order, here's a suggested priority:
 - [ ] Production release on Google Play Store
 - [x] OpenRouter onboarding improved ✅
 - [x] Dead code detected and cleaned up ✅
-- [ ] Architecture rules enforced in CI
+- [x] Architecture rules enforced in CI ✅
 - [ ] 5+ languages supported
 - [ ] Self-hosted telemetry operational
 - [ ] Maestro tests in CI
