@@ -3,7 +3,7 @@
   import BaseView from './BaseView.js';
   import { markWelcomeSeen } from '../features/onboarding.js';
   import { showConnectModal } from '../components/ConnectModal.js';
-  import { startAuth } from '../api/openrouter-auth.js';
+  import { startAuth } from '../services/auth-service.js';
   import { isFeatureEnabled } from '../core/features.js';
 
   export default class WelcomeView extends BaseView {
