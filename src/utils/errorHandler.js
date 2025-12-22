@@ -1,4 +1,5 @@
   import { logger } from './logger.js';
+  import { telemetry } from './telemetry.js';
 
   /**
    * Initialize global error handling
@@ -6,11 +7,19 @@
   export function initErrorHandling() {
     // Catch uncaught JavaScript errors
     window.addEventListener('error', (event) => {
-      logger.error('Uncaught error', {
+      const errorData = {
         message: event.message,
         filename: event.filename,
         line: event.lineno,
         column: event.colno
+      };
+
+      logger.error('Uncaught error', errorData);
+
+      // Direct telemetry call for critical errors (backup if logger fails)
+      telemetry.track('error', {
+        type: 'uncaught',
+        ...errorData
       });
 
       showErrorNotification('An unexpected error occurred.');
@@ -19,8 +28,14 @@
 
     // Catch unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
-      logger.error('Unhandled promise rejection', {
-        reason: event.reason?.message || String(event.reason)
+      const reason = event.reason?.message || String(event.reason);
+
+      logger.error('Unhandled promise rejection', { reason });
+
+      // Direct telemetry call for critical errors (backup if logger fails)
+      telemetry.track('error', {
+        type: 'unhandledrejection',
+        reason
       });
 
       showErrorNotification('Something went wrong. Please try again.');
