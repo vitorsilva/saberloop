@@ -1,6 +1,6 @@
 import BaseView from './BaseView.js';
 import state from '../core/state.js';
-import { generateQuestions } from '../api/index.js';
+import { generateQuestions } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
 
