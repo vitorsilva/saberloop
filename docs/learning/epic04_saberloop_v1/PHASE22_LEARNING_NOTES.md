@@ -179,7 +179,7 @@ Using `data-track` attributes is cleaner than inline onclick handlers:
 - [x] Deploy landing page (`npm run deploy:landing`)
 - [x] Complete Search Console verification
 - [x] Submit sitemap to Search Console (3 pages discovered)
-- [ ] Create og-image.png (1200x630px) for social sharing
+- [x] Create og-image.png (1200x630px) for social sharing
 - [ ] Verify events in GA4 DebugView (waiting for data, up to 48h)
 - [ ] Test with Facebook/Twitter debuggers
 - [ ] Run PageSpeed Insights and document score
