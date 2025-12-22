@@ -180,10 +180,62 @@ Using `data-track` attributes is cleaner than inline onclick handlers:
 - [x] Complete Search Console verification
 - [x] Submit sitemap to Search Console (3 pages discovered)
 - [x] Create og-image.png (1200x630px) for social sharing
+- [x] Run PageSpeed Insights and document score
 - [ ] Verify events in GA4 DebugView (waiting for data, up to 48h)
 - [ ] Test with Facebook/Twitter debuggers
-- [ ] Run PageSpeed Insights and document score
 - [ ] Set up conversions in GA4 for key events
+
+---
+
+## PageSpeed Insights Results (December 22, 2025)
+
+### Desktop Scores (Excellent)
+
+| Metric | Score |
+|--------|-------|
+| Performance | 97 🟢 |
+| Accessibility | 82 🟡 |
+| Best Practices | 96 🟢 |
+| SEO | 100 🟢 |
+
+**Core Web Vitals (Desktop):**
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| FCP | 0.8s | 🟢 |
+| LCP | 1.1s | 🟢 |
+| TBT | 10ms | 🟢 |
+| CLS | 0.01 | 🟢 |
+
+### Mobile Scores (Good)
+
+| Metric | Score |
+|--------|-------|
+| Performance | 82 🟡 |
+| Accessibility | 82 🟡 |
+| Best Practices | 96 🟢 |
+| SEO | 100 🟢 |
+
+**Core Web Vitals (Mobile):**
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| FCP | 2.8s | 🟡 |
+| LCP | 4.0s | 🔴 |
+| TBT | 60ms | 🟢 |
+| CLS | 0.001 | 🟢 |
+
+### Opportunities for Improvement (Future)
+
+**Performance (Mobile LCP):**
+- Reduce render-blocking resources (~1750ms savings)
+- Optimize images (~16 KiB savings)
+- Reduce unused JavaScript (~55 KiB savings)
+
+**Accessibility:**
+- Improve text contrast ratio
+- Add `<main>` landmark element
+- Links should not depend solely on color
 
 ---
 
