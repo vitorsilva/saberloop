@@ -1,6 +1,6 @@
 import BaseView from './BaseView.js';
 import { updateNetworkIndicator, isOnline } from '../utils/network.js';
-import { getRecentSessions, getSession } from '../core/db.js';
+import { getQuizHistory, getQuizSession } from '../services/quiz-service.js';
 import state from '../core/state.js';
 import { isOpenRouterConnected } from '../core/db.js';
 import { showConnectModal } from '../components/ConnectModal.js';
@@ -9,8 +9,8 @@ import { isFeatureEnabled } from '../core/features.js';
 
 export default class HomeView extends BaseView {
   async render() {
-    // Fetch recent sessions from IndexedDB
-    const sessions = await getRecentSessions(10);
+    // Fetch recent sessions via quiz service
+    const sessions = await getQuizHistory(10);
 
     // Generate the recent topics HTML
     const recentTopicsHTML = this.generateRecentTopicsHTML(sessions);
@@ -173,7 +173,7 @@ export default class HomeView extends BaseView {
   }  
 
   async replayQuiz(sessionId) {
-    const session = await getSession(sessionId);
+    const session = await getQuizSession(sessionId);
 
     if (!session || !session.questions) {
       alert('This quiz cannot be replayed. The questions were not saved.');
