@@ -1,0 +1,43 @@
+version: '3.8'
+
+# Telemetry Analysis Stack
+# Usage: docker-compose -f docker-compose.telemetry.yml up -d
+#
+# This stack provides local analysis of telemetry data downloaded from VPS.
+# Ports:
+#   - Grafana: http://localhost:3000 (admin/admin)
+#   - Loki: http://localhost:3100
+
+services:
+  # Loki - Log aggregation system (like Prometheus but for logs)
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: saberloop-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
+      - ./docker/loki-config.yml:/etc/loki/local-config.yaml:ro
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+
+  # Grafana - Visualization and dashboards
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: saberloop-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+    depends_on:
+      - loki
+    restart: unless-stopped
+
+volumes:
+  loki-data:
+  grafana-data:
