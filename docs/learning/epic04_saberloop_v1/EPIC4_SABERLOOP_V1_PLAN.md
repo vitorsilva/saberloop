@@ -410,7 +410,7 @@ Implement Google AdSense integration for passive revenue.
 | Phase 20 | 3-4 | Architecture Testing | ✅ Complete |
 | Phase 25 | 2-3 | Services Layer | ✅ Complete |
 | Phase 30 | 8-11 | Internationalization | Ready |
-| Phase 40 | 5-8 | Telemetry Enhancement | ✅ Complete |
+| Phase 40 | 5-8 | Telemetry Enhancement | Code Complete (pending deploy) |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
 | **Total** | **~30-42** | **Full Epic** | |
@@ -442,7 +442,7 @@ While phases can be worked on in any order, here's a suggested priority:
 - [x] Dead code detected and cleaned up ✅
 - [x] Architecture rules enforced in CI ✅
 - [ ] 5+ languages supported
-- [x] Self-hosted telemetry operational ✅
+- [ ] Self-hosted telemetry operational (code complete, pending deploy)
 - [ ] Maestro tests in CI
 - [ ] Monetization ready (if desired)
 
