@@ -1,6 +1,6 @@
 import BaseView from './BaseView.js';
 import state from '../core/state.js';
-import { saveSession, updateSession } from '../core/db.js';
+import { saveQuizSession, updateQuizSession } from '../services/quiz-service.js';
 import { logger } from '../utils/logger.js';
 
 export default class ResultsView extends BaseView {
@@ -165,7 +165,7 @@ export default class ResultsView extends BaseView {
     // If replay, update existing session
     if (replaySessionId) {
       try {
-        await updateSession(replaySessionId, {
+        await updateQuizSession(replaySessionId, {
           score: correctCount,
           answers,
           timestamp: Date.now()  // Update timestamp to show when last played
@@ -192,7 +192,7 @@ export default class ResultsView extends BaseView {
     };
 
     try {
-      await saveSession(session);
+      await saveQuizSession(session);
       logger.debug('Quiz session saved', { topic: session.topic });
     } catch (error) {
       logger.error('Failed to save session', { error: error.message });

@@ -225,10 +225,10 @@ Implement architecture testing using dependency-cruiser to enforce structural ru
 
 Implement services layer to fix architectural violations and promote warning rules to errors.
 
-**Status:** Planning (awaiting review)
+**Status:** In Progress (Rules 1-3 complete, Rule 4 pending)
 
 **Key Features:**
-- Services layer (`quiz-service`, `settings-service`, `auth-service`)
+- Services layer (`quiz-service`, `auth-service`)
 - Systematic migration: one rule at a time
 - Views only import from services
 - Components become purely presentational
@@ -241,24 +241,22 @@ Implement services layer to fix architectural violations and promote warning rul
 - Low coupling / high cohesion implementation
 
 **Deliverables:**
-- [ ] `src/services/quiz-service.js` - Quiz business logic
-- [ ] `src/services/settings-service.js` - Settings business logic
-- [ ] `src/services/auth-service.js` - Auth coordination
-- [ ] All 4 warning rules promoted to errors
-- [ ] Updated unit tests (mock services)
-- [ ] E2E tests still passing
+- [x] `src/services/quiz-service.js` - Quiz business logic ✅
+- [x] `src/services/auth-service.js` - Auth coordination ✅
+- [ ] All 4 warning rules promoted to errors (3/4 done)
+- [x] E2E tests still passing ✅
 
 **Success Criteria:**
-- [ ] `npm run arch:test` passes with 0 violations (0 errors, 0 warnings)
-- [ ] All unit tests pass
-- [ ] All E2E tests pass
-- [ ] No dead code detected
+- [ ] `npm run arch:test` passes with 0 violations (currently 0 errors, 5 warnings)
+- [x] All unit tests pass ✅
+- [x] All E2E tests pass ✅
+- [x] No dead code detected ✅
 
 **Rule Migration Order:**
-1. `api-should-not-import-db` (1 session)
-2. `components-should-not-import-api` (1 session)
-3. `views-should-not-import-db` (3-4 sessions)
-4. `views-should-not-import-api` (2-3 sessions)
+1. `api-should-not-import-db` (1 session) ✅ PR #24
+2. `components-should-not-import-api` (1 session) ✅ PR #25
+3. `views-should-not-import-db` (1 session) ✅ PR #26
+4. `views-should-not-import-api` (pending)
 
 ---
 
