@@ -64,6 +64,14 @@ class TelemetryClient {
   }
 
   /**
+   * Public method to check if telemetry is enabled
+   * @returns {boolean}
+   */
+  isEnabled() {
+    return this._isEnabled();
+  }
+
+  /**
    * Generate a unique session ID for correlating events
    * @returns {string}
    */
