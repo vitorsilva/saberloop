@@ -324,8 +324,9 @@ Self-hosted observability solution using VPS + local Docker analysis.
 - [x] VPS: `/telemetry/ingest.php` - Ingest endpoint
 - [x] `docker-compose.telemetry.yml` - Analysis stack
 - [x] `scripts/telemetry/` - Download and import scripts
+- [x] Cron job for log rotation (daily at midnight)
 - [ ] Grafana dashboards (deferred - can use raw JSONL for now)
-- [ ] Cron job for log rotation
+- [ ] Test local analysis workflow (deferred)
 
 **Success Criteria:**
 - [x] Telemetry data persisted on VPS

@@ -194,8 +194,9 @@ Benefits:
 - [x] Enable feature flag (change phase to 'ENABLED')
 - [x] Deploy app with telemetry ENABLED
 - [x] Test end-to-end telemetry flow
-- [ ] Set up cron job for log rotation on VPS
+- [x] Set up cron job for log rotation on VPS
 - [ ] Create PR and merge to main
+- [ ] Test local analysis workflow (deferred - use FTP + raw JSONL for now)
 
 ---
 
@@ -320,7 +321,27 @@ JSONL file on VPS contains detailed error info
 - Log file created: `/telemetry/logs/telemetry-2025-12-23.jsonl`
 - Data captured: Web Vitals (CLS, LCP), errors, metrics
 
+**Cron Job Configured:**
+
+| Setting | Value |
+|---------|-------|
+| Schedule | `0 0 * * *` (daily at midnight) |
+| Command | `/usr/local/bin/php /home/mdemaria/saberloop.com/telemetry/rotate-logs.php >> /home/mdemaria/logs/telemetry-rotation.log 2>&1` |
+| Purpose | Delete log files older than 30 days |
+| Output log | `/home/mdemaria/logs/telemetry-rotation.log` |
+
+**Local Analysis Workflow (Deferred):**
+
+Scripts exist but haven't been tested yet:
+- `scripts/telemetry/download.ps1` - Download JSONL from VPS
+- `scripts/telemetry/import-to-loki.ps1` - Import to Loki
+- `docker-compose.telemetry.yml` - Grafana + Loki stack
+
+**For now:** Download JSONL files via FTP and read directly (they're human-readable JSON lines).
+
+**When needed:** Run `npm run telemetry:start` to spin up Grafana/Loki for visualization.
+
 ---
 
 **Last Updated:** 2025-12-23
-**Status:** Telemetry live in production. Remaining: cron job setup, PR creation.
+**Status:** Telemetry live in production. PR pending.
