@@ -216,8 +216,8 @@ module.exports = {
     /* --- TRANSITION RULES (warnings - fix later) --- */
     {
       name: 'views-should-not-import-db',
-      severity: 'warn',
-      comment: 'TRANSITION: Views should use a services layer instead of direct db access',
+      severity: 'error',
+      comment: 'Views must use services layer instead of direct db access (enforced)',
       from: { path: '^src/views/' },
       to: { path: '^src/core/db\\.js$' }
     },
@@ -230,8 +230,8 @@ module.exports = {
     },
     {
       name: 'components-should-not-import-api',
-      severity: 'warn',
-      comment: 'TRANSITION: Components should be presentational, receiving callbacks as props',
+      severity: 'error',
+      comment: 'Components should be presentational, receiving callbacks as props (enforced)',
       from: { path: '^src/components/' },
       to: { path: '^src/api/' }
     },

@@ -1,11 +1,11 @@
  import BaseView from './BaseView.js';
-  import { getRecentSessions, getSession } from '../core/db.js';
+  import { getQuizHistory, getQuizSession } from '../services/quiz-service.js';
   import state from '../core/state.js';
 
   export default class TopicsView extends BaseView {
     async render() {
-      // Get ALL sessions (pass a large number or modify db function)        
-      const sessions = await getRecentSessions(100);
+      // Get ALL sessions (pass a large number or modify db function)
+      const sessions = await getQuizHistory(100);
 
       this.setHTML(`
         <div class="relative flex min-h-screen w-full flex-col
@@ -171,7 +171,7 @@
     }
 
     async replayQuiz(sessionId) {
-      const session = await getSession(sessionId);
+      const session = await getQuizSession(sessionId);
 
       if (!session || !session.questions) {
         alert('This quiz cannot be replayed. The questions were not saved.');

@@ -1,7 +1,7 @@
   import BaseView from './BaseView.js';
   import { getSettings, saveSetting } from '../core/settings.js';
   import { APP_VERSION, BUILD_DATE } from '../version.js';
-  import { isOpenRouterConnected, removeOpenRouterKey } from '../core/db.js';
+  import { isConnected, disconnect } from '../services/auth-service.js';
   import { isFeatureEnabled } from '../core/features.js';
 
   export default class SettingsView extends BaseView {
@@ -188,9 +188,9 @@
 
       async loadAccountStatus() {
         const accountSection = this.querySelector('#accountSection');
-        const isConnected = await isOpenRouterConnected();
+        const connected = await isConnected();
 
-        if (isConnected) {
+        if (connected) {
           accountSection.innerHTML = `
             <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
               <div class="flex items-center justify-between">
@@ -239,7 +239,7 @@
 
       async handleDisconnect() {
         if (confirm('Are you sure you want to disconnect? You will need to reconnect to generate new quizzes.')) {
-          await removeOpenRouterKey();
+          await disconnect();
           // Reload the app to show WelcomeView
           window.location.href = window.location.origin + '/#/';
           window.location.reload();

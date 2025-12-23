@@ -3,6 +3,7 @@
   import BaseView from './BaseView.js';
   import { markWelcomeSeen } from '../features/onboarding.js';
   import { showConnectModal } from '../components/ConnectModal.js';
+  import { startAuth } from '../api/openrouter-auth.js';
   import { isFeatureEnabled } from '../core/features.js';
 
   export default class WelcomeView extends BaseView {
@@ -109,7 +110,7 @@
         if (isFeatureEnabled('OPENROUTER_GUIDE', 'welcome')) {
           this.navigateTo('/setup-openrouter');
         } else {
-          await showConnectModal();
+          await showConnectModal(() => startAuth());
         }
       });
     }
