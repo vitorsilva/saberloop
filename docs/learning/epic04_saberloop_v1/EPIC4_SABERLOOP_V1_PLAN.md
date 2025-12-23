@@ -325,8 +325,9 @@ Self-hosted observability solution using VPS + local Docker analysis.
 - [x] `docker-compose.telemetry.yml` - Analysis stack
 - [x] `scripts/telemetry/` - Download and import scripts
 - [x] Cron job for log rotation (daily at midnight)
-- [ ] Grafana dashboards (deferred - can use raw JSONL for now)
-- [ ] Test local analysis workflow (deferred)
+- [x] Quiz generation timing metric
+- [ ] Test local analysis workflow (in progress)
+- [ ] Grafana dashboards (deferred - can query via Explore)
 
 **Success Criteria:**
 - [x] Telemetry data persisted on VPS

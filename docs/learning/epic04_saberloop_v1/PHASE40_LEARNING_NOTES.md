@@ -200,8 +200,9 @@ Benefits:
 - [x] Test end-to-end telemetry flow
 - [x] Set up cron job for log rotation on VPS
 - [x] Add quiz generation timing metric
-- [ ] Create PR and merge to main
-- [ ] Test local analysis workflow (deferred - use FTP + raw JSONL for now)
+- [x] Create PR #28
+- [ ] Test local analysis workflow (in progress)
+- [ ] Merge PR to main
 
 ---
 
@@ -335,16 +336,46 @@ JSONL file on VPS contains detailed error info
 | Purpose | Delete log files older than 30 days |
 | Output log | `/home/mdemaria/logs/telemetry-rotation.log` |
 
-**Local Analysis Workflow (Deferred):**
+**Local Analysis Workflow:**
 
-Scripts exist but haven't been tested yet:
-- `scripts/telemetry/download.ps1` - Download JSONL from VPS
-- `scripts/telemetry/import-to-loki.ps1` - Import to Loki
+**Prerequisites:**
+- WinSCP CLI installed: `winget install WinSCP.WinSCP`
+- WinSCP location: `$env:LOCALAPPDATA\Programs\WinSCP\WinSCP.com`
+- Docker Desktop running
+
+**Workflow Steps:**
+
+```powershell
+# 1. Create local logs directory (in project root)
+New-Item -ItemType Directory -Force -Path ".\telemetry-logs"
+
+# 2. Download logs from VPS using WinSCP
+& "$env:LOCALAPPDATA\Programs\WinSCP\WinSCP.com" /command `
+    "open ftp://$($env:FTP_USER):$($env:FTP_PASSWORD)@$($env:FTP_HOST)/" `
+    "cd /saberloop.com/telemetry/logs" `
+    "lcd telemetry-logs" `
+    "get *.jsonl" `
+    "exit"
+
+# 3. Start Docker stack (Grafana + Loki)
+npm run telemetry:start
+
+# 4. Import logs to Loki
+npm run telemetry:import
+
+# 5. View in Grafana
+#    Open: http://localhost:3000
+#    Login: admin / admin
+#    Go to: Explore > Select Loki > Query logs
+
+# 6. Stop when done
+npm run telemetry:stop
+```
+
+**Files:**
+- `telemetry-logs/` - Local download directory (gitignored)
 - `docker-compose.telemetry.yml` - Grafana + Loki stack
-
-**For now:** Download JSONL files via FTP and read directly (they're human-readable JSON lines).
-
-**When needed:** Run `npm run telemetry:start` to spin up Grafana/Loki for visualization.
+- `scripts/telemetry/import-to-loki.cjs` - Import script
 
 ---
 
@@ -391,4 +422,4 @@ Scripts exist but haven't been tested yet:
 ---
 
 **Last Updated:** 2025-12-23
-**Status:** Telemetry live in production. PR pending.
+**Status:** Telemetry live in production. PR #28 created. Testing local analysis workflow.
