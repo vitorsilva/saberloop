@@ -133,8 +133,8 @@ export default class LoadingView extends BaseView {
       logger.error('Failed to generate questions', { error: error.message });
       this.cleanup();
 
-      // Show error and go back
-      alert('Failed to generate questions. Please check your connection and try again.');
+      // Show specific error message to help user diagnose the issue
+      alert(error.message || 'Failed to generate questions. Please try again.');
       this.navigateTo('/topic-input');
     }
   }

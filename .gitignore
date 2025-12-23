@@ -21,3 +21,4 @@ docs/nul
 php-api/vendor/
 nul
 package/
+telemetry-logs/

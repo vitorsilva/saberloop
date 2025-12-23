@@ -302,7 +302,7 @@ Transform Saberloop to support multiple languages.
 
 Self-hosted observability solution using VPS + local Docker analysis.
 
-**Status:** Ready to Implement
+**Status:** Live in Production (cron job + PR pending)
 
 **Key Features:**
 - Browser telemetry batching and shipping
@@ -317,19 +317,23 @@ Self-hosted observability solution using VPS + local Docker analysis.
 - JSONL data format
 - Docker Compose for analysis tools
 - Retrospective debugging
+- Feature flag deployment process
 
 **Deliverables:**
-- [ ] `src/utils/telemetry.js` - Browser telemetry client
-- [ ] VPS: `/telemetry/ingest.php` - Ingest endpoint
-- [ ] `docker-compose.telemetry.yml` - Analysis stack
-- [ ] `scripts/telemetry/` - Download and import scripts
-- [ ] Grafana dashboards
+- [x] `src/utils/telemetry.js` - Browser telemetry client
+- [x] VPS: `/telemetry/ingest.php` - Ingest endpoint
+- [x] `docker-compose.telemetry.yml` - Analysis stack
+- [x] `scripts/telemetry/` - Download and import scripts
+- [x] Cron job for log rotation (daily at midnight)
+- [x] Quiz generation timing metric
+- [ ] Test local analysis workflow (in progress)
+- [ ] Grafana dashboards (deferred - can query via Explore)
 
 **Success Criteria:**
-- Telemetry data persisted on VPS
-- Can analyze logs/traces/metrics locally
-- Zero additional monthly cost
-- Sensitive data still redacted
+- [x] Telemetry data persisted on VPS
+- [x] Can analyze logs locally (JSONL files)
+- [x] Zero additional monthly cost
+- [x] Sensitive data still redacted
 
 ---
 
@@ -410,7 +414,7 @@ Implement Google AdSense integration for passive revenue.
 | Phase 20 | 3-4 | Architecture Testing | ✅ Complete |
 | Phase 25 | 2-3 | Services Layer | ✅ Complete |
 | Phase 30 | 8-11 | Internationalization | Ready |
-| Phase 40 | 5-8 | Telemetry Enhancement | In Progress |
+| Phase 40 | 5-8 | Telemetry Enhancement | Live in Production (PR pending) |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
 | **Total** | **~30-42** | **Full Epic** | |
@@ -442,7 +446,7 @@ While phases can be worked on in any order, here's a suggested priority:
 - [x] Dead code detected and cleaned up ✅
 - [x] Architecture rules enforced in CI ✅
 - [ ] 5+ languages supported
-- [ ] Self-hosted telemetry operational
+- [ ] Self-hosted telemetry operational (code complete, pending deploy)
 - [ ] Maestro tests in CI
 - [ ] Monetization ready (if desired)
 

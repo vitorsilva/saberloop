@@ -1,5 +1,6 @@
   // src/utils/logger.js
   import log from 'loglevel';
+  import { telemetry } from './telemetry.js';
 
   /**
    * Set log level based on environment
@@ -68,11 +69,15 @@
     warn(message, context = {}) {
       const formatted = formatContext(context);
       formatted ? log.warn(`[WARN] ${message}`, formatted) : log.warn(`[WARN] ${message}`);
+      // Send to telemetry (warnings are important)
+      telemetry.track('log', { level: 'warn', message, context: formatted || {} });
     },
 
     error(message, context = {}) {
       const formatted = formatContext(context);
       formatted ? log.error(`[ERROR] ${message}`, formatted) : log.error(`[ERROR] ${message}`);
+      // Send to telemetry (errors are critical)
+      telemetry.track('error', { message, context: formatted || {} });
     },
 
     /**
@@ -80,6 +85,8 @@
      */
     perf(metric, data = {}) {
       this.info(`[PERF] ${metric}`, data);
+      // Send to telemetry (performance metrics are important)
+      telemetry.track('metric', { name: metric, ...data });
     },
 
     /**
@@ -87,6 +94,8 @@
      */
     action(action, data = {}) {
       this.debug(`[ACTION] ${action}`, data);
+      // Send to telemetry (user actions help debug flows)
+      telemetry.track('event', { action, ...data });
     },
 
     /**

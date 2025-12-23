@@ -21,10 +21,18 @@ import { logger } from './utils/logger.js';
 import { initErrorHandling } from './utils/errorHandler.js';
 import { initPerformanceMonitoring } from './utils/performance.js'
 import { isFeatureEnabled } from './core/features.js';
+import { telemetry } from './utils/telemetry.js';
 
 logger.info('Saberloop initializing');
 initErrorHandling();
 initPerformanceMonitoring();
+
+// Log telemetry status
+if (telemetry.isEnabled()) {
+  logger.info('Telemetry initialized');
+} else {
+  logger.debug('Telemetry disabled');
+}
 
 // Initialize database
 async function init() {
