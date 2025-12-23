@@ -13,7 +13,7 @@
       description: 'New OpenRouter connection guide with step-by-step instructions'
     },
     TELEMETRY: {
-      phase: 'DISABLED',  // Start disabled until VPS endpoint is ready
+      phase: 'ENABLED',  // Start disabled until VPS endpoint is ready
       description: 'Send telemetry (logs, errors, metrics) to VPS for debugging'
     }
   };
