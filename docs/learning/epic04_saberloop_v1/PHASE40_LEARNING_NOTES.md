@@ -190,10 +190,10 @@ Benefits:
 - [x] Deploy telemetry endpoint to VPS (`npm run deploy:telemetry`)
 - [x] Set secure TELEMETRY_TOKEN in `.env` and on VPS
 - [x] Create logs directory on VPS with write permissions
-- [ ] Deploy app with feature flag DISABLED (verify nothing breaks)
-- [ ] Enable feature flag (change phase to 'ENABLED')
-- [ ] Deploy app with telemetry ENABLED
-- [ ] Test end-to-end telemetry flow
+- [x] Deploy app with feature flag DISABLED (verify nothing breaks)
+- [x] Enable feature flag (change phase to 'ENABLED')
+- [x] Deploy app with telemetry ENABLED
+- [x] Test end-to-end telemetry flow
 - [ ] Set up cron job for log rotation on VPS
 - [ ] Create PR and merge to main
 
@@ -255,15 +255,72 @@ By deploying DISABLED first, we verify that:
 
 **Deployment Checklist:**
 
-- [ ] Run tests locally (`npm test -- --run && npm run test:e2e`)
-- [ ] Build and deploy with DISABLED flag (`npm run build:deploy`)
-- [ ] Verify app works in production (manual test)
-- [ ] Change flag to ENABLED in `features.js`
-- [ ] Build and deploy again
-- [ ] Test telemetry endpoint receives data
-- [ ] Verify logs appear in `/telemetry/logs/` on VPS
+- [x] Run tests locally (`npm test -- --run && npm run test:e2e`)
+- [x] Build and deploy with DISABLED flag (`npm run build:deploy`)
+- [x] Verify app works in production (manual test)
+- [x] Change flag to ENABLED in `features.js`
+- [x] Build and deploy again
+- [x] Test telemetry endpoint receives data
+- [x] Verify logs appear in `/telemetry/logs/` on VPS
+
+**Debugging Telemetry Not Working:**
+
+Issue encountered: Telemetry wasn't sending requests even after enabling feature flag.
+
+Root cause: Double-check in `telemetry.js`:
+```javascript
+_isEnabled() {
+  return CONFIG.enabled && isFeatureEnabled('TELEMETRY');
+}
+```
+
+Both conditions required:
+1. Feature flag `TELEMETRY` = `ENABLED`
+2. Environment variable `VITE_TELEMETRY_ENABLED` = `'true'`
+
+**Lesson:** Having both a feature flag AND an env variable creates redundancy. Consider simplifying to just the feature flag in the future.
+
+**Additional Improvements Made:**
+
+1. **Telemetry initialization log** - Added `[INFO] Telemetry initialized` to console output (matches other services like Database, Router, Network)
+   - Added `isEnabled()` public method to `TelemetryClient`
+   - Added log in `main.js` after initialization
+
+2. **Specific error messages for users** - Changed generic error alert to show actual error message
+   - Before: "Failed to generate questions. Please check your connection and try again."
+   - After: Shows actual error (e.g., "Rate limit exceeded. Free tier allows 50 requests/day.")
+   - Location: `src/views/LoadingView.js:137`
+
+**Error Capture Flow (for debugging user issues):**
+
+```
+LoadingView.js → generateQuestions()
+       ↓
+quiz-service.js → apiGenerateQuestions()
+       ↓
+api.real.js → callOpenRouter()
+       ↓
+openrouter-client.js → fetch() → handleApiError()
+       ↓
+Error messages created:
+  • 401 → "Invalid API key. Please reconnect with OpenRouter."
+  • 429 → "Rate limit exceeded. Free tier allows 50 requests/day."
+  • 402 → "Insufficient credits. Add credits at openrouter.ai"
+       ↓
+api.real.js:105 → logger.error() → telemetry.track('error')
+       ↓
+LoadingView.js:133 → logger.error() → telemetry.track('error')
+       ↓
+JSONL file on VPS contains detailed error info
+```
+
+**Telemetry Verified Working:**
+
+- Endpoint: `https://saberloop.com/telemetry/ingest.php`
+- Log file created: `/telemetry/logs/telemetry-2025-12-23.jsonl`
+- Data captured: Web Vitals (CLS, LCP), errors, metrics
 
 ---
 
 **Last Updated:** 2025-12-23
-**Status:** Deploying to production (feature flag disabled → verify → enable)
+**Status:** Telemetry live in production. Remaining: cron job setup, PR creation.
