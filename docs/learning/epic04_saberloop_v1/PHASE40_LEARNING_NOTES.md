@@ -187,15 +187,83 @@ Benefits:
 
 ## Next Steps (Post-Phase 40)
 
-- [ ] Deploy telemetry endpoint to VPS (`npm run deploy:telemetry`)
-- [ ] Set secure TELEMETRY_TOKEN in `.env` and on VPS
+- [x] Deploy telemetry endpoint to VPS (`npm run deploy:telemetry`)
+- [x] Set secure TELEMETRY_TOKEN in `.env` and on VPS
+- [x] Create logs directory on VPS with write permissions
+- [ ] Deploy app with feature flag DISABLED (verify nothing breaks)
 - [ ] Enable feature flag (change phase to 'ENABLED')
-- [ ] Deploy app with telemetry enabled
+- [ ] Deploy app with telemetry ENABLED
+- [ ] Test end-to-end telemetry flow
 - [ ] Set up cron job for log rotation on VPS
-- [ ] Test end-to-end flow
 - [ ] Create PR and merge to main
 
 ---
 
-**Last Updated:** 2025-12-22
-**Status:** Code Complete (T1-T4 all done, pending deployment and end-to-end testing)
+### Session 2 - December 23, 2025
+
+**Goal:** Deploy telemetry to production
+
+**Key Learning: Feature Flag Deployment Process**
+
+The correct process for deploying with feature flags:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  FEATURE FLAG DEPLOYMENT FLOW                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. DEPLOY CODE (flag DISABLED)                                │
+│     └─► Code is in production but feature is OFF               │
+│                                                                 │
+│  2. VERIFY (monitor)                                           │
+│     └─► App works normally, no regressions                     │
+│                                                                 │
+│  3. ENABLE FLAG                                                │
+│     └─► Change DISABLED → ENABLED in features.js               │
+│                                                                 │
+│  4. DEPLOY AGAIN                                               │
+│     └─► Now feature is live for users                          │
+│                                                                 │
+│  5. MONITOR                                                    │
+│     └─► Watch for issues, ready to roll back                   │
+│                                                                 │
+│  ⚠️  IF PROBLEMS: Just change ENABLED → DISABLED and redeploy  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Why This Order Matters:**
+
+| Approach | Risk | Recovery Time |
+|----------|------|---------------|
+| Deploy disabled first | Low - feature is off | N/A |
+| Deploy enabled directly | High - users hit bugs | Minutes to hours |
+
+By deploying DISABLED first, we verify that:
+- The new code doesn't break existing functionality
+- The build process works correctly
+- Any integration issues are caught before users see the feature
+
+**VPS Configuration Completed:**
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Deploy PHP files | ✅ | `npm run deploy:telemetry` |
+| Create logs directory | ✅ | `/telemetry/logs/` with write permissions |
+| Set TELEMETRY_TOKEN | ✅ | Edited config.php directly on VPS |
+| Token in local .env | ✅ | `VITE_TELEMETRY_TOKEN` set |
+
+**Deployment Checklist:**
+
+- [ ] Run tests locally (`npm test -- --run && npm run test:e2e`)
+- [ ] Build and deploy with DISABLED flag (`npm run build:deploy`)
+- [ ] Verify app works in production (manual test)
+- [ ] Change flag to ENABLED in `features.js`
+- [ ] Build and deploy again
+- [ ] Test telemetry endpoint receives data
+- [ ] Verify logs appear in `/telemetry/logs/` on VPS
+
+---
+
+**Last Updated:** 2025-12-23
+**Status:** Deploying to production (feature flag disabled → verify → enable)
