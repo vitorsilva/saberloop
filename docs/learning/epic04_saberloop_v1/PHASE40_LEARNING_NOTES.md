@@ -201,7 +201,7 @@ Benefits:
 - [x] Set up cron job for log rotation on VPS
 - [x] Add quiz generation timing metric
 - [x] Create PR #28
-- [ ] Test local analysis workflow (in progress)
+- [x] Test local analysis workflow ✅
 - [ ] Merge PR to main
 
 ---
@@ -349,26 +349,33 @@ JSONL file on VPS contains detailed error info
 # 1. Create local logs directory (in project root)
 New-Item -ItemType Directory -Force -Path ".\telemetry-logs"
 
-# 2. Download logs from VPS using WinSCP
+# 2. Load .env variables (PowerShell doesn't auto-load them)
+Get-Content .env | ForEach-Object {
+    if ($_ -match "^([^#][^=]+)=(.*)$") {
+        [Environment]::SetEnvironmentVariable($matches[1], $matches[2], "Process")
+    }
+}
+
+# 3. Download logs from VPS using WinSCP
 & "$env:LOCALAPPDATA\Programs\WinSCP\WinSCP.com" /command `
     "open ftp://$($env:FTP_USER):$($env:FTP_PASSWORD)@$($env:FTP_HOST)/" `
-    "cd /saberloop.com/telemetry/logs" `
+    "cd /telemetry/logs" `
     "lcd telemetry-logs" `
     "get *.jsonl" `
     "exit"
 
-# 3. Start Docker stack (Grafana + Loki)
+# 4. Start Docker stack (Grafana + Loki)
 npm run telemetry:start
 
-# 4. Import logs to Loki
+# 5. Import logs to Loki
 npm run telemetry:import
 
-# 5. View in Grafana
+# 6. View in Grafana
 #    Open: http://localhost:3000
 #    Login: admin / admin
 #    Go to: Explore > Select Loki > Query logs
 
-# 6. Stop when done
+# 7. Stop when done
 npm run telemetry:stop
 ```
 
@@ -421,5 +428,59 @@ npm run telemetry:stop
 
 ---
 
+### Grafana/Loki Query Examples
+
+**Basic Queries:**
+
+| Query | Purpose |
+|-------|---------|
+| `{app="saberloop"}` | All telemetry events |
+| `{app="saberloop", type="error"}` | Errors only |
+| `{app="saberloop", type="vital"}` | Web Vitals (CLS, LCP, INP) |
+| `{app="saberloop", type="metric"}` | Performance metrics |
+
+**Filter for Quiz Generation Timing:**
+
+```
+{app="saberloop", type="metric"} |= "quiz_generation"
+```
+
+**Calculate Average Quiz Generation Time:**
+
+Loki is primarily a log system, not a metrics database. To calculate averages:
+
+```logql
+# Extract the value field and calculate average over time
+avg_over_time(
+  {app="saberloop", type="metric"}
+  |= "quiz_generation"
+  | json
+  | unwrap data_value [1h]
+)
+```
+
+Note: The `unwrap` function extracts a numeric field for aggregation. The `[1h]` is the time window.
+
+**Alternative: Export to CSV for Analysis**
+
+For more complex analysis, use the **Download** button in Grafana to export logs as CSV, then analyze in Excel/Python:
+
+```python
+import json
+import statistics
+
+times = []
+with open('logs.csv') as f:
+    for line in f:
+        if 'quiz_generation' in line:
+            data = json.loads(line)
+            times.append(data['data']['value'])
+
+print(f"Average: {statistics.mean(times)}ms")
+print(f"Min: {min(times)}ms, Max: {max(times)}ms")
+```
+
+---
+
 **Last Updated:** 2025-12-23
-**Status:** Telemetry live in production. PR #28 created. Testing local analysis workflow.
+**Status:** Phase 40 complete. Telemetry live in production. PR #28 ready to merge.
