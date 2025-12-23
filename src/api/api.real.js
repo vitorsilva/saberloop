@@ -10,6 +10,7 @@
    * @param {string} apiKey - The OpenRouter API key
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey) {
+    const startTime = performance.now();
     logger.debug('Generating questions', { topic, gradeLevel });
 
     if (!apiKey) {
@@ -94,7 +95,9 @@
         throw new Error('AI returned invalid question format');
       }
 
+      const duration = Math.round(performance.now() - startTime);
       logger.debug('Questions generated successfully', { language: data.language, count: data.questions.length });
+      logger.perf('quiz_generation', { value: duration, status: 'success', topic });
 
       return {
         language: data.language || 'EN-US',
@@ -102,7 +105,9 @@
       };
 
     } catch (error) {
+      const duration = Math.round(performance.now() - startTime);
       logger.error('Question generation failed', { error: error.message });
+      logger.perf('quiz_generation', { value: duration, status: 'error', topic, error: error.message });
       throw error;
     }
   }

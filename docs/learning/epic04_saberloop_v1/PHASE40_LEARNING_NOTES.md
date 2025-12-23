@@ -134,6 +134,9 @@ Benefits:
 | `src/utils/logger.js` | Integrated telemetry (warn, error, perf, action) |
 | `src/utils/errorHandler.js` | Integrated telemetry (uncaught errors) |
 | `src/utils/performance.js` | Integrated telemetry (Web Vitals) |
+| `src/api/api.real.js` | Added quiz generation timing metric |
+| `src/views/LoadingView.js` | Show specific error messages to users |
+| `src/main.js` | Added telemetry initialization log |
 | `.env.example` | Added telemetry variables |
 | `package.json` | Added telemetry npm scripts |
 
@@ -148,6 +151,7 @@ Benefits:
 | `metric` | logger.perf() | Custom performance metrics |
 | `event` | logger.action() | User actions |
 | `vital` | Web Vitals | LCP, INP, CLS |
+| `metric` | quiz_generation | API call duration (success/error) |
 
 ---
 
@@ -195,6 +199,7 @@ Benefits:
 - [x] Deploy app with telemetry ENABLED
 - [x] Test end-to-end telemetry flow
 - [x] Set up cron job for log rotation on VPS
+- [x] Add quiz generation timing metric
 - [ ] Create PR and merge to main
 - [ ] Test local analysis workflow (deferred - use FTP + raw JSONL for now)
 
@@ -340,6 +345,48 @@ Scripts exist but haven't been tested yet:
 **For now:** Download JSONL files via FTP and read directly (they're human-readable JSON lines).
 
 **When needed:** Run `npm run telemetry:start` to spin up Grafana/Loki for visualization.
+
+---
+
+### Quiz Generation Timing Metric
+
+**Problem:** Users report slow or failing quiz generation, but we don't know how long requests take.
+
+**Solution:** Add `performance.now()` timing around the OpenRouter API call.
+
+**Implementation Plan:**
+
+1. Add `startTime = performance.now()` at the start of `generateQuestions()`
+2. Calculate `duration = performance.now() - startTime` on success
+3. Calculate duration on error (before throwing)
+4. Log via `logger.perf('quiz_generation', { value, status, topic })`
+
+**Files Changed:**
+
+| File | Change |
+|------|--------|
+| `src/api/api.real.js` | Added timing around `generateQuestions()` |
+
+**Telemetry Data Captured:**
+
+```json
+// Success case
+{"type":"metric","data":{"name":"quiz_generation","value":3450,"status":"success","topic":"Solar System"}}
+
+// Error case
+{"type":"metric","data":{"name":"quiz_generation","value":15200,"status":"error","topic":"Math","error":"Rate limit exceeded..."}}
+```
+
+**Why `performance.now()`?**
+- Higher precision than `Date.now()` (microsecond vs millisecond)
+- Monotonic clock (not affected by system time changes)
+- Standard for measuring durations in web apps
+
+**What This Enables:**
+- See average quiz generation time
+- Identify slow requests (>10s might timeout)
+- Correlate errors with duration (timeouts vs immediate failures)
+- Track performance over time
 
 ---
 
