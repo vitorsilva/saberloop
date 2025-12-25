@@ -706,6 +706,61 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(submitBtn).toBeVisible();
   });
 
+  test('should show all answer options when answers are long (issue #29)', async ({ page }) => {
+    // Set up auth state
+    await setupAuthenticatedState(page);
+
+    // Set a small mobile viewport to trigger the overlap issue
+    // iPhone SE size where the bug was reported
+    await page.setViewportSize({ width: 375, height: 667 });
+
+    // Go through normal flow to generate quiz
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Science');
+    await page.click('#generateBtn');
+
+    // Wait for quiz to load
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Wait for quiz to render
+    await expect(page.locator('h2')).toBeVisible();
+
+    // Get all 4 option buttons
+    const options = page.locator('.option-btn');
+    await expect(options).toHaveCount(4);
+
+    // The key test: verify the 4th option (D) is visible and NOT overlapped
+    const optionD = options.nth(3);
+
+    // Check option D is visible
+    await expect(optionD).toBeVisible();
+
+    // Get the bounding box of option D and the submit button
+    const optionDBox = await optionD.boundingBox();
+    const submitBtn = page.locator('#submitBtn');
+    const submitBtnBox = await submitBtn.boundingBox();
+
+    // Option D should NOT be overlapped by the submit button
+    expect(optionDBox).not.toBeNull();
+    expect(submitBtnBox).not.toBeNull();
+
+    // The option's bottom edge should be ABOVE the submit button's top edge
+    // If they overlap, optionD.bottom > submitBtn.top
+    const optionDBottom = optionDBox.y + optionDBox.height;
+    const submitBtnTop = submitBtnBox.y;
+
+    // This assertion will FAIL if option D overlaps with submit button
+    // Allow 8px tolerance for visual spacing
+    expect(optionDBottom).toBeLessThanOrEqual(submitBtnTop + 8);
+
+    // Also verify option D is fully clickable (not obscured by overlay)
+    await optionD.click();
+
+    // After clicking, button should be enabled (answer selected)
+    await expect(submitBtn).not.toHaveClass(/opacity-50/);
+  });
+
   test('should display quiz correctly in dark mode', async ({ page }) => {
     // Set up auth state
     await setupAuthenticatedState(page);
