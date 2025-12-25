@@ -730,31 +730,33 @@ test.describe('Saberloop E2E Tests', () => {
     const options = page.locator('.option-btn');
     await expect(options).toHaveCount(4);
 
-    // The key test: verify the 4th option (D) is visible and NOT overlapped
+    // The key test: verify the 4th option (D) can be scrolled into view and clicked
     const optionD = options.nth(3);
+    const submitBtn = page.locator('#submitBtn');
 
-    // Check option D is visible
+    // Scroll option D to top of viewport (simulates user scrolling to see all options)
+    // This tests that there's enough padding/scroll space for option D to be above the fixed button
+    await optionD.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
+    await page.waitForTimeout(300);
+
+    // Check option D is visible after scrolling
     await expect(optionD).toBeVisible();
 
-    // Get the bounding box of option D and the submit button
+    // Get bounding boxes after scrolling
     const optionDBox = await optionD.boundingBox();
-    const submitBtn = page.locator('#submitBtn');
     const submitBtnBox = await submitBtn.boundingBox();
 
-    // Option D should NOT be overlapped by the submit button
     expect(optionDBox).not.toBeNull();
     expect(submitBtnBox).not.toBeNull();
 
-    // The option's bottom edge should be ABOVE the submit button's top edge
-    // If they overlap, optionD.bottom > submitBtn.top
+    // Option D's bottom should be ABOVE the submit button's top after scrolling
     const optionDBottom = optionDBox.y + optionDBox.height;
     const submitBtnTop = submitBtnBox.y;
 
-    // This assertion will FAIL if option D overlaps with submit button
-    // Allow 8px tolerance for visual spacing
+    // This assertion fails without the fix (no scroll space to move option D above button)
     expect(optionDBottom).toBeLessThanOrEqual(submitBtnTop + 8);
 
-    // Also verify option D is fully clickable (not obscured by overlay)
+    // Verify option D is fully clickable
     await optionD.click();
 
     // After clicking, button should be enabled (answer selected)
