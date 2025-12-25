@@ -86,7 +86,8 @@
       "WebFetch(domain:knip.dev)",
       "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" issue view 11 --repo vitorsilva/saberloop)",
       "Bash(npm run lint:dead-code:*)",
-      "Bash(npm run arch:test:*)"
+      "Bash(npm run arch:test:*)",
+      "Bash(gh issue create:*)"
     ],
     "deny": [],
     "ask": []
