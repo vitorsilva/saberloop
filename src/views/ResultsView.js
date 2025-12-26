@@ -244,10 +244,18 @@ export default class ResultsView extends BaseView {
     const questions = state.get('currentQuestions');
     const answers = state.get('currentAnswers');
     const gradeLevel = state.get('currentGradeLevel') || 'middle school';
+    const topic = state.get('currentTopic') || 'Unknown';
 
     const question = questions[questionIndex];
     const userAnswer = question.options[Number(answers[questionIndex])];
     const correctAnswer = question.options[Number(question.correct)];
+
+    // Track telemetry event
+    logger.action('explanation_opened', {
+      topic,
+      questionIndex,
+      gradeLevel
+    });
 
     await showExplanationModal({
       question: question.question,
