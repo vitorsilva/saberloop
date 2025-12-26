@@ -14,7 +14,7 @@
 - **Sitemap:** Submitted and processed successfully (3 pages discovered)
 
 ### 2. Google Analytics 4 Integration
-- **Measurement ID:** `G-M96NMT6FS8`
+- **Measurement ID:** `G-ZP1TLMYBFM` (updated Dec 26, 2025)
 - Added GA4 tracking script to both `index.html` and `privacy.html`
 - Tracking code placed in `<head>` for early loading
 
@@ -254,6 +254,13 @@ Using `data-track` attributes is cleaner than inline onclick handlers:
 - **Problem:** GA4 showed warning that data collection wasn't active
 - **Cause:** Normal behavior - GA4 can take up to 48 hours to confirm data flow
 - **Solution:** Wait for data to populate; check Real-time reports for immediate feedback
+
+### 3. GA4 Property Ownership (December 26, 2025)
+- **Problem:** Original measurement ID `G-M96NMT6FS8` wasn't visible in user's GA4 account
+- **Cause:** Property may have been created in different account or session
+- **Solution:** Created new GA4 property in user's Google account
+- **New Measurement ID:** `G-ZP1TLMYBFM`
+- **Updated files:** `landing/index.html`, `landing/privacy.html`
 
 ---
 
