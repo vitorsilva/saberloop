@@ -30,7 +30,7 @@ However, the following items remain to be completed:
 
 ### 5.1 Play Store: Complete Closed Testing (In Progress)
 
-**Status:** Day 5 of 14-day testing period (Dec 17-31, 2025)
+**Status:** Day 9 of 14-day testing period (Dec 17-31, 2025)
 
 **Tester Progress:** 9 of 12 required testers participating (need 3 more)
 
@@ -408,4 +408,60 @@ npm run deploy:landing   # FTP deploy to saberloop.com
 
 ---
 
-**Last Updated:** 2025-12-21
+### 2025-12-26: Issue #29 - Quiz Button Overlap Fix
+
+**Issue:** #29 - Quiz option D hidden behind "Next Question" button
+
+**Problem:** On small mobile screens (375x667), when quiz options are displayed, option D gets hidden behind the fixed "Next Question" button. This was a regression from issue #16 where we changed navigation to fixed positioning.
+
+**Root Cause:**
+- Submit button changed from `sticky` to `fixed` positioning
+- Content container had no bottom padding to create scroll space
+- Option D couldn't be scrolled above the fixed button
+
+**Solution:**
+1. Changed submit button from `sticky bottom-20` to `fixed bottom-20 left-0 right-0`
+2. Added 180px inline bottom padding to content container: `style="padding-bottom: 180px;"`
+3. Creates enough scroll space for option D to be visible above the fixed button
+
+**Testing:**
+- E2E test added that verifies option D can be scrolled above button
+- All 27 E2E tests pass
+- Manual testing on 4 viewport sizes:
+  - ✅ Mobile 375x667 (iPhone SE)
+  - ✅ Small mobile 320x568 (iPhone 5)
+  - ✅ Tablet 768x1024 (iPad)
+  - ✅ Desktop 1280x720
+
+**Key Learning:** Tailwind padding classes on nested flex containers don't always create scrollable space. Inline `style` attribute worked when Tailwind classes didn't.
+
+**PR:** https://github.com/vitorsilva/saberloop/pull/30
+**Documentation:** `docs/issues/29.md`
+**Status:** Merged and deployed to production
+
+---
+
+## Session Wrap-up: 2025-12-26
+
+### What Was Accomplished
+- Fixed Issue #29: Quiz option D now visible after scrolling
+- Added TDD step to issue resolution workflow in CLAUDE.md
+- Merged Phase 40 (Telemetry) PR
+- Updated Epic 4 status (Phase 40 ✅ Complete)
+
+### Current Status
+- **Closed Testing:** Day 9 of 14 (Dec 17-31)
+- **Phase 5:** In Progress (Play Store closed testing)
+- **Phase 40:** ✅ Complete (Telemetry)
+- **Issues Fixed:** #10 ✅, #13 ✅, #16 ✅, #29 ✅
+- **Issues Open:** #11 (offline mode UX)
+
+### Next Session Options
+1. Work on Issue #11 (offline mode UX improvements)
+2. Start Phase 30 (i18n - Internationalization)
+3. Start Phase 50 (Maestro Testing)
+4. Monitor remaining 5 days of closed testing
+
+---
+
+**Last Updated:** 2025-12-26
