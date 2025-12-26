@@ -40,6 +40,12 @@
   - Avoid ambiguous phrasing
   - No trick questions
 
+  CRITICAL - Answer Option Quality:
+  - Each answer option must represent a DISTINCT claim
+  - Wrong answers must be factually incorrect, not alternative phrasings of the correct answer
+  - NEVER generate logical inverse pairs (e.g., "X increases Y" and "not-X decreases Y" are the same fact)
+  - Each wrong answer (distractor) should test a different misconception
+
   Return your response as a JSON object with this exact structure:
   {
     "language": "XX-XX",
