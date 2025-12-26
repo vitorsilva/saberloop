@@ -97,7 +97,12 @@
       "Bash(copy \".playwright-mcp\\\\docs\\\\product-info\\\\screenshots\\\\phase28_results_after.png\" \"docs\\\\product-info\\\\screenshots\\\\phase28_results_after.png\")",
       "Bash(gh pr merge:*)",
       "Bash(npm run deploy:landing:*)",
-      "mcp__playwright__browser_network_requests"
+      "mcp__playwright__browser_network_requests",
+      "Bash(gh issue edit:*)",
+      "mcp__playwright__browser_handle_dialog",
+      "mcp__playwright__browser_evaluate",
+      "Bash(dir \"C:\\\\Users\\\\omeue\\\\source\\\\repos\\\\demo-pwa-app\\\\test-results\" /s /b)",
+      "Bash(npm run deploy:*)"
     ],
     "deny": [],
     "ask": []
