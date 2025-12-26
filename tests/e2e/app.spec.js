@@ -706,6 +706,63 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(submitBtn).toBeVisible();
   });
 
+  test('should show all answer options when answers are long (issue #29)', async ({ page }) => {
+    // Set up auth state
+    await setupAuthenticatedState(page);
+
+    // Set a small mobile viewport to trigger the overlap issue
+    // iPhone SE size where the bug was reported
+    await page.setViewportSize({ width: 375, height: 667 });
+
+    // Go through normal flow to generate quiz
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Science');
+    await page.click('#generateBtn');
+
+    // Wait for quiz to load
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Wait for quiz to render
+    await expect(page.locator('h2')).toBeVisible();
+
+    // Get all 4 option buttons
+    const options = page.locator('.option-btn');
+    await expect(options).toHaveCount(4);
+
+    // The key test: verify the 4th option (D) can be scrolled into view and clicked
+    const optionD = options.nth(3);
+    const submitBtn = page.locator('#submitBtn');
+
+    // Scroll option D to top of viewport (simulates user scrolling to see all options)
+    // This tests that there's enough padding/scroll space for option D to be above the fixed button
+    await optionD.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
+    await page.waitForTimeout(300);
+
+    // Check option D is visible after scrolling
+    await expect(optionD).toBeVisible();
+
+    // Get bounding boxes after scrolling
+    const optionDBox = await optionD.boundingBox();
+    const submitBtnBox = await submitBtn.boundingBox();
+
+    expect(optionDBox).not.toBeNull();
+    expect(submitBtnBox).not.toBeNull();
+
+    // Option D's bottom should be ABOVE the submit button's top after scrolling
+    const optionDBottom = optionDBox.y + optionDBox.height;
+    const submitBtnTop = submitBtnBox.y;
+
+    // This assertion fails without the fix (no scroll space to move option D above button)
+    expect(optionDBottom).toBeLessThanOrEqual(submitBtnTop + 8);
+
+    // Verify option D is fully clickable
+    await optionD.click();
+
+    // After clicking, button should be enabled (answer selected)
+    await expect(submitBtn).not.toHaveClass(/opacity-50/);
+  });
+
   test('should display quiz correctly in dark mode', async ({ page }) => {
     // Set up auth state
     await setupAuthenticatedState(page);
