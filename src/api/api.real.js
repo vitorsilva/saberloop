@@ -8,18 +8,37 @@
    * @param {string} topic - The topic to generate questions about
    * @param {string} gradeLevel - The grade level for the questions
    * @param {string} apiKey - The OpenRouter API key
+   * @param {Object} options - Optional settings
+   * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
    */
-  export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey) {
+  export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey, options = {}) {
     const startTime = performance.now();
-    logger.debug('Generating questions', { topic, gradeLevel });
+    const { previousQuestions = [] } = options;
+    logger.debug('Generating questions', { topic, gradeLevel, previousQuestionsCount: previousQuestions.length });
 
     if (!apiKey) {
       throw new Error('API key is required');
     }
 
+    // Build exclusion section if there are previous questions
+    const exclusionSection = previousQuestions.length > 0
+      ? `
+IMPORTANT - AVOID DUPLICATE QUESTIONS:
+The following questions have already been asked. Generate NEW questions
+that cover DIFFERENT aspects of the topic:
+
+Previously asked questions:
+${previousQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
+
+If you cannot generate 5 completely new questions, generate as many new
+ones as possible and note any that might overlap.
+`
+      : '';
+
     // Build the prompt for question generation
     const prompt = `You are an expert educational content creator. Generate exactly 5
   multiple-choice questions about "${topic}" appropriate for ${gradeLevel} students.
+${exclusionSection}
 
   LANGUAGE REQUIREMENT (CRITICAL):
   - Detect the language of the topic "${topic}"

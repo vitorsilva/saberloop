@@ -47,10 +47,12 @@ export async function updateQuizSession(id, updates) {
  * @param {string} topic - Quiz topic
  * @param {string} gradeLevel - Education level
  * @param {string} apiKey - OpenRouter API key
+ * @param {Object} options - Optional settings
+ * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
  * @returns {Promise<{questions: Array, language: string}>}
  */
-export async function generateQuestions(topic, gradeLevel, apiKey) {
-  return apiGenerateQuestions(topic, gradeLevel, apiKey);
+export async function generateQuestions(topic, gradeLevel, apiKey, options = {}) {
+  return apiGenerateQuestions(topic, gradeLevel, apiKey, options);
 }
 
 /**

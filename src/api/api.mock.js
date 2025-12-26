@@ -6,13 +6,16 @@ import { logger } from '../utils/logger.js';
    * @param {string} topic - The topic to generate questions about
    * @param {string} gradeLevel - The grade level for the questions
    * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
+   * @param {Object} options - Optional settings
+   * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
    * @returns {Promise<Array>} Array of 5 question objects
    */
-  export async function generateQuestions(topic, gradeLevel = 'middle school', _apiKey) {
+  export async function generateQuestions(topic, gradeLevel = 'middle school', _apiKey, options = {}) {
     // Simulate network delay (real APIs take time)
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    logger.debug('Mock API generating questions', { topic, gradeLevel });
+    const { previousQuestions = [] } = options;
+    logger.debug('Mock API generating questions', { topic, gradeLevel, previousQuestionsCount: previousQuestions.length });
 
     // Return realistic mock data
     const mockQuestions = [
