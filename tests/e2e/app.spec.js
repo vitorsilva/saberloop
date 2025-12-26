@@ -1079,4 +1079,94 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page.locator('h1')).toContainText('Geology Quiz');
   });
 
+  test('should show countdown timer after delay during quiz generation (issue #37)', async ({ page }) => {
+    // Override timing constants and add API delay BEFORE any navigation
+    await page.addInitScript(() => {
+      window.LOADING_VIEW_CONFIG = {
+        ESTIMATED_DURATION_SECONDS: 10,      // Shortened for test
+        SHOW_COUNTDOWN_AFTER_SECONDS: 2      // Show countdown after 2s instead of 20s
+      };
+      // Add delay to mock API for testing the loading view
+      window.MOCK_API_DELAY_MS = 15000; // 15 second delay
+    });
+
+    // Set up auth (will use the init script on subsequent navigations)
+    await setupAuthenticatedState(page);
+
+    // Navigate to topic input and start generation
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'World History');
+    await page.click('#generateBtn');
+
+    // Should be on loading page
+    await expect(page).toHaveURL(/#\/loading/);
+
+    // Initially, no countdown should be visible (within first 2 seconds)
+    const countdown = page.locator('#countdownText');
+    await expect(countdown).not.toBeVisible();
+
+    // Wait for countdown to appear (after SHOW_COUNTDOWN_AFTER_SECONDS)
+    await page.waitForTimeout(2500);
+
+    // Now countdown should be visible
+    await expect(countdown).toBeVisible();
+
+    // Should show remaining time text
+    await expect(countdown).toContainText(/About \d+ seconds remaining|Almost done/);
+
+    // Wait a bit more and verify countdown decrements
+    const initialText = await countdown.textContent();
+    await page.waitForTimeout(1500);
+    const updatedText = await countdown.textContent();
+
+    // Text should have changed (either decremented or switched to "Almost done")
+    expect(updatedText).not.toBe(initialText);
+  });
+
+  test('should show extended messages after estimated duration exceeded (issue #37)', async ({ page }) => {
+    // Override timing constants and add API delay BEFORE any navigation
+    await page.addInitScript(() => {
+      window.LOADING_VIEW_CONFIG = {
+        ESTIMATED_DURATION_SECONDS: 3,       // Very short for test
+        SHOW_COUNTDOWN_AFTER_SECONDS: 1      // Show countdown after 1s
+      };
+      // Add delay to mock API for testing the loading view
+      window.MOCK_API_DELAY_MS = 15000; // 15 second delay
+    });
+
+    // Set up auth (will use the init script on subsequent navigations)
+    await setupAuthenticatedState(page);
+
+    // Navigate to topic input and start generation
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Science');
+    await page.click('#generateBtn');
+
+    // Should be on loading page
+    await expect(page).toHaveURL(/#\/loading/);
+
+    // Wait for estimated duration to be exceeded
+    await page.waitForTimeout(4000);
+
+    // Should show "Almost done..." in countdown
+    const countdown = page.locator('#countdownText');
+    await expect(countdown).toContainText('Almost done');
+
+    // Extended messages should be in rotation - wait and check for one of them
+    const loadingMessage = page.locator('#loadingMessage');
+
+    // Wait up to 6 seconds for extended message to appear in rotation
+    let foundExtendedMessage = false;
+    for (let i = 0; i < 6; i++) {
+      const text = await loadingMessage.textContent();
+      if (text.includes("Teaching an AI isn't easy") || text.includes("AI is thinking extra hard")) {
+        foundExtendedMessage = true;
+        break;
+      }
+      await page.waitForTimeout(1000);
+    }
+
+    expect(foundExtendedMessage).toBe(true);
+  });
+
 });
