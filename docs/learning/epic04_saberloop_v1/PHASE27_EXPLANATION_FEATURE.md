@@ -1,5 +1,10 @@
 # Phase 27: Explanation Feature for Incorrect Answers
 
+## Status: ✅ COMPLETE (Dec 26, 2025)
+
+**PR**: #31 (merged)
+**Deployed**: Live on saberloop.com
+
 ## Overview
 
 Add the ability for users to learn more about questions they got wrong by requesting an AI-generated explanation. This feature connects the existing `generateExplanation` API to the Results view.
