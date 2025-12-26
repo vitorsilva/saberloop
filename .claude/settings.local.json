@@ -92,7 +92,10 @@
       "Bash(file:*)",
       "Bash(gh issue view:*)",
       "Bash(gh pr create:*)",
-      "Bash(gh pr comment:*)"
+      "Bash(gh pr comment:*)",
+      "Bash(ping:*)",
+      "Bash(copy \".playwright-mcp\\\\docs\\\\product-info\\\\screenshots\\\\phase28_results_after.png\" \"docs\\\\product-info\\\\screenshots\\\\phase28_results_after.png\")",
+      "Bash(gh pr merge:*)"
     ],
     "deny": [],
     "ask": []
