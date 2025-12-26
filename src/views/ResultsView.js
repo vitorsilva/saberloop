@@ -2,6 +2,7 @@ import BaseView from './BaseView.js';
 import state from '../core/state.js';
 import { saveQuizSession, updateQuizSession } from '../services/quiz-service.js';
 import { logger } from '../utils/logger.js';
+import { isFeatureEnabled } from '../core/features.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -41,6 +42,9 @@ export default class ResultsView extends BaseView {
       message = 'Keep Practicing!';
     }
 
+    // Check if explanation feature is enabled
+    const showExplanationButton = isFeatureEnabled('EXPLANATION_FEATURE');
+
     // Generate question review HTML
     const questionReviewHTML = questions.map((question, index) => {
       const isCorrect = Number(answers[index]) === Number(question.correct);
@@ -67,6 +71,18 @@ export default class ResultsView extends BaseView {
           </div>
         `;
       } else {
+        // Incorrect answer - show info button if feature enabled
+        const rightSideContent = showExplanationButton
+          ? `<button
+              aria-label="Explain answer"
+              data-question-index="${index}"
+              class="explain-btn flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-all hover:bg-primary/20 active:scale-95 animate-pulse shadow-[0_0_10px_rgba(74,144,226,0.5)]">
+              <span class="material-symbols-outlined text-[20px]">info</span>
+            </button>`
+          : `<div class="flex size-7 items-center justify-center">
+              <div class="size-3 rounded-full bg-error"></div>
+            </div>`;
+
         return `
           <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-lg min-h-[72px] justify-between">
             <div class="flex items-center gap-4">
@@ -80,9 +96,7 @@ export default class ResultsView extends BaseView {
               </div>
             </div>
             <div class="shrink-0">
-              <div class="flex size-7 items-center justify-center">
-                <div class="size-3 rounded-full bg-error"></div>
-              </div>
+              ${rightSideContent}
             </div>
           </div>
         `;
