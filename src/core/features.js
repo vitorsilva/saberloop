@@ -19,6 +19,10 @@
     EXPLANATION_FEATURE: {
       phase: 'ENABLED',  // Enabled for testing
       description: 'AI-generated explanations for incorrect answers'
+    },
+    CONTINUE_TOPIC: {
+      phase: 'DISABLED',  // Enable after testing
+      description: 'Continue quiz on same topic with new questions'
     }
   };
 
