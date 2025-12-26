@@ -88,7 +88,8 @@
       "Bash(npm run lint:dead-code:*)",
       "Bash(npm run arch:test:*)",
       "Bash(gh issue create:*)",
-      "Bash(CI=true npm run test:e2e -- --grep \"issue #29\" --retries=0)"
+      "Bash(CI=true npm run test:e2e -- --grep \"issue #29\" --retries=0)",
+      "Bash(file:*)"
     ],
     "deny": [],
     "ask": []
