@@ -925,4 +925,158 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page.locator('#explanationModal')).not.toBeVisible();
   });
 
+  test('should display Continue button alongside Try Another Topic on results page', async ({ page }) => {
+    // Set up auth and complete a quiz
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Biology');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Answer all questions correctly
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    // On results page
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Both buttons should be visible side by side
+    const continueBtn = page.locator('#continueTopicBtn');
+    const tryAnotherBtn = page.locator('#tryAnotherBtn');
+
+    await expect(continueBtn).toBeVisible();
+    await expect(tryAnotherBtn).toBeVisible();
+
+    // Continue button should have arrow icon
+    await expect(continueBtn.locator('span:has-text("arrow_forward")')).toBeVisible();
+
+    // Continue button should have correct text
+    await expect(continueBtn).toContainText('Continue on this topic');
+  });
+
+  test('should generate new quiz when Continue on topic is clicked', async ({ page }) => {
+    // Set up auth and complete a quiz
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Physics');
+    await page.selectOption('#gradeLevelSelect', 'middle school');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Answer all questions
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    // On results page
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Click Continue on this topic
+    await page.click('#continueTopicBtn');
+
+    // Should navigate to loading page (generating new questions)
+    await expect(page).toHaveURL(/#\/loading/);
+
+    // Wait for new quiz to load
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Quiz should still be for Physics
+    await expect(page.locator('h1')).toContainText('Physics Quiz');
+
+    // Should show Question 1 of 5 (new quiz)
+    await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+  });
+
+  test('should allow multiple continues on same topic', async ({ page }) => {
+    // Set up auth and complete first quiz
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Chemistry');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Complete first quiz
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // First continue
+    await page.click('#continueTopicBtn');
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Complete second quiz
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Second continue
+    await page.click('#continueTopicBtn');
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Quiz should still be Chemistry
+    await expect(page.locator('h1')).toContainText('Chemistry Quiz');
+  });
+
+  test('should clear continue chain when Try Another Topic is clicked', async ({ page }) => {
+    // Set up auth and complete a quiz
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Astronomy');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Complete quiz
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Click Try Another Topic (not Continue)
+    await page.click('#tryAnotherBtn');
+
+    // Should navigate to topic input
+    await expect(page).toHaveURL(/#\/topic-input/);
+
+    // Start new topic
+    await page.fill('#topicInput', 'Geology');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Quiz should be for Geology (new topic)
+    await expect(page.locator('h1')).toContainText('Geology Quiz');
+  });
+
 });
