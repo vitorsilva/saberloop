@@ -258,12 +258,14 @@ Architecture-as-code - architectural decisions documented in executable rules th
 - `docs/architecture/SYSTEM_OVERVIEW.md` (link added)
 
 **What's next:**
-- Create PR for Phase 20 changes
-- Phase 25: Services Layer Implementation (8-11 sessions)
-  - Fix 9 violations by introducing services layer
-  - Promote warning rules to error rules
+- Create PR for Phase 20 changes ✅ (PR #23 merged)
+- Phase 25: Services Layer Implementation ✅ (PR #24, #25, #26, #27)
+  - Fixed all 9 violations with services layer
+  - All 4 warning rules promoted to error
 
 ---
 
-**Last Updated:** 2025-12-21
-**Status:** Complete (ready for PR)
+**Last Updated:** 2025-12-22
+**Status:** Complete
+
+**Follow-up:** Phase 25 completed all architecture migration. See `PHASE25_LEARNING_NOTES.md` for details.

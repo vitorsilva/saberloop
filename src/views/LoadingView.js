@@ -1,6 +1,6 @@
 import BaseView from './BaseView.js';
 import state from '../core/state.js';
-import { generateQuestions } from '../api/index.js';
+import { generateQuestions } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
 
@@ -117,7 +117,16 @@ export default class LoadingView extends BaseView {
         throw new Error('Not connected to OpenRouter. Please connect in Settings.');
       }
 
-      const result = await generateQuestions(topic, gradeLevel, apiKey);
+      // Build options for question generation
+      const options = {};
+
+      // If continuing on topic, pass previous questions to exclude
+      const continueChain = state.getContinueChain();
+      if (continueChain && continueChain.topic === topic) {
+        options.previousQuestions = continueChain.previousQuestions;
+      }
+
+      const result = await generateQuestions(topic, gradeLevel, apiKey, options);
 
       // Store questions and language in state for QuizView
       state.set('generatedQuestions', result.questions);
@@ -133,8 +142,8 @@ export default class LoadingView extends BaseView {
       logger.error('Failed to generate questions', { error: error.message });
       this.cleanup();
 
-      // Show error and go back
-      alert('Failed to generate questions. Please check your connection and try again.');
+      // Show specific error message to help user diagnose the issue
+      alert(error.message || 'Failed to generate questions. Please try again.');
       this.navigateTo('/topic-input');
     }
   }

@@ -11,6 +11,18 @@
     OPENROUTER_GUIDE: {
       phase: 'ENABLED',
       description: 'New OpenRouter connection guide with step-by-step instructions'
+    },
+    TELEMETRY: {
+      phase: 'ENABLED',  // Start disabled until VPS endpoint is ready
+      description: 'Send telemetry (logs, errors, metrics) to VPS for debugging'
+    },
+    EXPLANATION_FEATURE: {
+      phase: 'ENABLED',  // Enabled for testing
+      description: 'AI-generated explanations for incorrect answers'
+    },
+    CONTINUE_TOPIC: {
+      phase: 'ENABLED',  // Enabled for E2E testing
+      description: 'Continue quiz on same topic with new questions'
     }
   };
 

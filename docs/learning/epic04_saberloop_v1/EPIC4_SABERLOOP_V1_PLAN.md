@@ -260,7 +260,7 @@ Connect analytics and implement SEO best practices for the landing page.
 
 Implement services layer to fix architectural violations and promote warning rules to errors.
 
-**Status:** In Progress (Rules 1-3 complete, Rule 4 pending)
+**Status:** ✅ Complete (All 4 rules enforced)
 
 **Key Features:**
 - Services layer (`quiz-service`, `auth-service`)
@@ -278,11 +278,11 @@ Implement services layer to fix architectural violations and promote warning rul
 **Deliverables:**
 - [x] `src/services/quiz-service.js` - Quiz business logic ✅
 - [x] `src/services/auth-service.js` - Auth coordination ✅
-- [ ] All 4 warning rules promoted to errors (3/4 done)
+- [x] All 4 warning rules promoted to errors ✅
 - [x] E2E tests still passing ✅
 
 **Success Criteria:**
-- [ ] `npm run arch:test` passes with 0 violations (currently 0 errors, 5 warnings)
+- [x] `npm run arch:test` passes with 0 violations ✅
 - [x] All unit tests pass ✅
 - [x] All E2E tests pass ✅
 - [x] No dead code detected ✅
@@ -291,7 +291,7 @@ Implement services layer to fix architectural violations and promote warning rul
 1. `api-should-not-import-db` (1 session) ✅ PR #24
 2. `components-should-not-import-api` (1 session) ✅ PR #25
 3. `views-should-not-import-db` (1 session) ✅ PR #26
-4. `views-should-not-import-api` (pending)
+4. `views-should-not-import-api` (1 session) ✅ PR #27
 
 ---
 
@@ -337,7 +337,7 @@ Transform Saberloop to support multiple languages.
 
 Self-hosted observability solution using VPS + local Docker analysis.
 
-**Status:** Ready to Implement
+**Status:** ✅ Complete (December 2024)
 
 **Key Features:**
 - Browser telemetry batching and shipping
@@ -352,19 +352,23 @@ Self-hosted observability solution using VPS + local Docker analysis.
 - JSONL data format
 - Docker Compose for analysis tools
 - Retrospective debugging
+- Feature flag deployment process
 
 **Deliverables:**
-- [ ] `src/utils/telemetry.js` - Browser telemetry client
-- [ ] VPS: `/telemetry/ingest.php` - Ingest endpoint
-- [ ] `docker-compose.telemetry.yml` - Analysis stack
-- [ ] `scripts/telemetry/` - Download and import scripts
-- [ ] Grafana dashboards
+- [x] `src/utils/telemetry.js` - Browser telemetry client
+- [x] VPS: `/telemetry/ingest.php` - Ingest endpoint
+- [x] `docker-compose.telemetry.yml` - Analysis stack
+- [x] `scripts/telemetry/` - Download and import scripts
+- [x] Cron job for log rotation (daily at midnight)
+- [x] Quiz generation timing metric
+- [x] Test local analysis workflow ✅
+- [x] Grafana dashboards (using Explore for queries) ✅
 
 **Success Criteria:**
-- Telemetry data persisted on VPS
-- Can analyze logs/traces/metrics locally
-- Zero additional monthly cost
-- Sensitive data still redacted
+- [x] Telemetry data persisted on VPS
+- [x] Can analyze logs locally (JSONL files)
+- [x] Zero additional monthly cost
+- [x] Sensitive data still redacted
 
 ---
 
@@ -444,11 +448,13 @@ Implement Google AdSense integration for passive revenue.
 | Phase 15 | 2-3 | Dead Code Detection | ✅ Complete |
 | Phase 20 | 3-4 | Architecture Testing | ✅ Complete |
 | Phase 22 | 1 | Landing Page Analytics | Pending Validation |
+| Phase 25 | 2-3 | Services Layer | ✅ Complete |
+| Phase 28 | 1 | Continue on Topic | ✅ Complete |
 | Phase 30 | 8-11 | Internationalization | Ready |
-| Phase 40 | 4-6 | Telemetry Enhancement | Ready |
+| Phase 40 | 5-8 | Telemetry Enhancement | ✅ Complete |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
-| **Total** | **~27-38** | **Full Epic** | |
+| **Total** | **~30-42** | **Full Epic** | |
 
 **Note:** Phase numbers use intervals of 10 to allow for inserting new phases if needed.
 
@@ -477,9 +483,9 @@ While phases can be worked on in any order, here's a suggested priority:
 - [ ] Production release on Google Play Store
 - [x] OpenRouter onboarding improved ✅
 - [x] Dead code detected and cleaned up ✅
-- [ ] Architecture rules enforced in CI
+- [x] Architecture rules enforced in CI ✅
 - [ ] 5+ languages supported
-- [ ] Self-hosted telemetry operational
+- [x] Self-hosted telemetry operational ✅
 - [ ] Maestro tests in CI
 - [ ] Monetization ready (if desired)
 

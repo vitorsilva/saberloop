@@ -706,6 +706,63 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(submitBtn).toBeVisible();
   });
 
+  test('should show all answer options when answers are long (issue #29)', async ({ page }) => {
+    // Set up auth state
+    await setupAuthenticatedState(page);
+
+    // Set a small mobile viewport to trigger the overlap issue
+    // iPhone SE size where the bug was reported
+    await page.setViewportSize({ width: 375, height: 667 });
+
+    // Go through normal flow to generate quiz
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Science');
+    await page.click('#generateBtn');
+
+    // Wait for quiz to load
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Wait for quiz to render
+    await expect(page.locator('h2')).toBeVisible();
+
+    // Get all 4 option buttons
+    const options = page.locator('.option-btn');
+    await expect(options).toHaveCount(4);
+
+    // The key test: verify the 4th option (D) can be scrolled into view and clicked
+    const optionD = options.nth(3);
+    const submitBtn = page.locator('#submitBtn');
+
+    // Scroll option D to top of viewport (simulates user scrolling to see all options)
+    // This tests that there's enough padding/scroll space for option D to be above the fixed button
+    await optionD.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
+    await page.waitForTimeout(300);
+
+    // Check option D is visible after scrolling
+    await expect(optionD).toBeVisible();
+
+    // Get bounding boxes after scrolling
+    const optionDBox = await optionD.boundingBox();
+    const submitBtnBox = await submitBtn.boundingBox();
+
+    expect(optionDBox).not.toBeNull();
+    expect(submitBtnBox).not.toBeNull();
+
+    // Option D's bottom should be ABOVE the submit button's top after scrolling
+    const optionDBottom = optionDBox.y + optionDBox.height;
+    const submitBtnTop = submitBtnBox.y;
+
+    // This assertion fails without the fix (no scroll space to move option D above button)
+    expect(optionDBottom).toBeLessThanOrEqual(submitBtnTop + 8);
+
+    // Verify option D is fully clickable
+    await optionD.click();
+
+    // After clicking, button should be enabled (answer selected)
+    await expect(submitBtn).not.toHaveClass(/opacity-50/);
+  });
+
   test('should display quiz correctly in dark mode', async ({ page }) => {
     // Set up auth state
     await setupAuthenticatedState(page);
@@ -747,6 +804,279 @@ test.describe('Saberloop E2E Tests', () => {
       const avgBrightness = (r + g + b) / 3;
       expect(avgBrightness).toBeLessThan(128);
     }
+  });
+
+  test('should display info button on incorrect answers only', async ({ page }) => {
+    // Set up auth and complete a quiz with at least one wrong answer
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Science');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Answer questions - get one wrong (option 0), rest correct (option 1)
+    // Question 1: incorrect
+    await page.locator('.option-btn').nth(0).click();
+    await page.click('#submitBtn');
+
+    // Questions 2-5: correct
+    for (let i = 1; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    // On results page
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Should have exactly 1 info button (for the incorrect answer)
+    const infoButtons = page.locator('.explain-btn');
+    await expect(infoButtons).toHaveCount(1);
+
+    // Should have 4 green dots (for correct answers)
+    const successDots = page.locator('.bg-success.rounded-full.size-3');
+    await expect(successDots).toHaveCount(4);
+  });
+
+  test('should open explanation modal when info button clicked', async ({ page }) => {
+    // Set up auth and complete a quiz with wrong answer
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Geography');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Get first question wrong
+    await page.locator('.option-btn').nth(0).click();
+    await page.click('#submitBtn');
+
+    // Rest correct
+    for (let i = 1; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Click the info button
+    const infoButton = page.locator('.explain-btn');
+    await infoButton.click();
+
+    // Modal should appear
+    const modal = page.locator('#explanationModal');
+    await expect(modal).toBeVisible();
+
+    // Should show INCORRECT badge
+    await expect(page.locator('text=INCORRECT')).toBeVisible();
+
+    // Should show "YOU SELECTED" and "CORRECT ANSWER" labels in modal
+    await expect(modal.locator('text=YOU SELECTED')).toBeVisible();
+    await expect(modal.locator('text=CORRECT ANSWER').first()).toBeVisible();
+
+    // Should show loading or explanation (mock API returns quickly)
+    const explanationSection = page.locator('#explanationContent');
+    await expect(explanationSection).toBeVisible();
+
+    // Should have "Got it!" button
+    const gotItBtn = page.locator('#gotItBtn');
+    await expect(gotItBtn).toBeVisible();
+  });
+
+  test('should close explanation modal when Got it button clicked', async ({ page }) => {
+    // Set up auth and complete a quiz with wrong answer
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'History');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Get first question wrong
+    await page.locator('.option-btn').nth(0).click();
+    await page.click('#submitBtn');
+
+    // Rest correct
+    for (let i = 1; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Click the info button to open modal
+    await page.locator('.explain-btn').click();
+    await expect(page.locator('#explanationModal')).toBeVisible();
+
+    // Click "Got it!" button
+    await page.locator('#gotItBtn').click();
+
+    // Modal should be closed (with animation delay)
+    await page.waitForTimeout(400);
+    await expect(page.locator('#explanationModal')).not.toBeVisible();
+  });
+
+  test('should display Continue button alongside Try Another Topic on results page', async ({ page }) => {
+    // Set up auth and complete a quiz
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Biology');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Answer all questions correctly
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    // On results page
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Both buttons should be visible side by side
+    const continueBtn = page.locator('#continueTopicBtn');
+    const tryAnotherBtn = page.locator('#tryAnotherBtn');
+
+    await expect(continueBtn).toBeVisible();
+    await expect(tryAnotherBtn).toBeVisible();
+
+    // Continue button should have arrow icon
+    await expect(continueBtn.locator('span:has-text("arrow_forward")')).toBeVisible();
+
+    // Continue button should have correct text
+    await expect(continueBtn).toContainText('Continue on this topic');
+  });
+
+  test('should generate new quiz when Continue on topic is clicked', async ({ page }) => {
+    // Set up auth and complete a quiz
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Physics');
+    await page.selectOption('#gradeLevelSelect', 'middle school');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Answer all questions
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    // On results page
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Click Continue on this topic
+    await page.click('#continueTopicBtn');
+
+    // Should navigate to loading page (generating new questions)
+    await expect(page).toHaveURL(/#\/loading/);
+
+    // Wait for new quiz to load
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Quiz should still be for Physics
+    await expect(page.locator('h1')).toContainText('Physics Quiz');
+
+    // Should show Question 1 of 5 (new quiz)
+    await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+  });
+
+  test('should allow multiple continues on same topic', async ({ page }) => {
+    // Set up auth and complete first quiz
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Chemistry');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Complete first quiz
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // First continue
+    await page.click('#continueTopicBtn');
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Complete second quiz
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Second continue
+    await page.click('#continueTopicBtn');
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Quiz should still be Chemistry
+    await expect(page.locator('h1')).toContainText('Chemistry Quiz');
+  });
+
+  test('should clear continue chain when Try Another Topic is clicked', async ({ page }) => {
+    // Set up auth and complete a quiz
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Astronomy');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Complete quiz
+    for (let i = 0; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Click Try Another Topic (not Continue)
+    await page.click('#tryAnotherBtn');
+
+    // Should navigate to topic input
+    await expect(page).toHaveURL(/#\/topic-input/);
+
+    // Start new topic
+    await page.fill('#topicInput', 'Geology');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Quiz should be for Geology (new topic)
+    await expect(page.locator('h1')).toContainText('Geology Quiz');
   });
 
 });

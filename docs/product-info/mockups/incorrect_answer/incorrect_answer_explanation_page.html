@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Incorrect Answer Explanation</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4a8fe3",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#121820",
+                        "surface-dark": "#1A222C",
+                        "surface-light": "#FFFFFF"
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gray-900 font-display antialiased flex justify-center items-center min-h-screen">
+<!-- Mobile Frame Simulation -->
+<div class="relative w-full max-w-md h-[844px] bg-gray-800 overflow-hidden shadow-2xl sm:rounded-[3rem] border border-gray-700/50">
+<!-- Background Image/Content of the Quiz App underneath (simulated) -->
+<div aria-hidden="true" class="absolute inset-0 w-full h-full bg-background-dark p-6 flex flex-col items-center justify-start opacity-40 select-none pointer-events-none">
+<div class="w-full flex justify-between items-center mb-10">
+<span class="material-symbols-outlined text-gray-500">close</span>
+<div class="w-2/3 h-2 bg-gray-700 rounded-full">
+<div class="w-3/4 h-full bg-primary rounded-full"></div>
+</div>
+<span class="material-symbols-outlined text-gray-500">more_horiz</span>
+</div>
+<div class="h-40 w-full bg-gray-700 rounded-2xl mb-6"></div>
+<div class="space-y-4 w-full">
+<div class="h-14 w-full bg-gray-700 rounded-xl"></div>
+<div class="h-14 w-full bg-gray-700 rounded-xl"></div>
+<div class="h-14 w-full bg-red-500/30 border border-red-500 rounded-xl"></div>
+<div class="h-14 w-full bg-gray-700 rounded-xl"></div>
+</div>
+</div>
+<!-- Overlay Backdrop -->
+<div class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-10"></div>
+<!-- Bottom Sheet Modal -->
+<div class="absolute bottom-0 left-0 w-full z-20 flex flex-col max-h-[90%] transition-transform duration-300 ease-out">
+<!-- Sheet Container -->
+<div class="bg-background-light dark:bg-background-dark w-full rounded-t-[32px] shadow-[0_-8px_30px_rgba(0,0,0,0.4)] flex flex-col relative overflow-hidden">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center pt-4 pb-2 cursor-grab active:cursor-grabbing flex-shrink-0">
+<div class="h-1.5 w-12 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+</div>
+<!-- Scrollable Content -->
+<div class="px-6 pt-2 pb-28 overflow-y-auto no-scrollbar">
+<!-- Question Header -->
+<div class="mb-6 text-center">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-semibold uppercase tracking-wide mb-3">
+<span class="material-symbols-outlined text-[16px]">error</span>
+                            Incorrect
+                        </span>
+<h1 class="text-gray-900 dark:text-white text-2xl font-bold leading-tight tracking-tight">
+                            What is the capital of Australia?
+                        </h1>
+</div>
+<!-- Answer Comparison Cards -->
+<div class="grid grid-cols-2 gap-3 mb-8">
+<!-- User Answer (Incorrect) -->
+<div class="flex flex-col gap-2 p-4 rounded-2xl bg-surface-light dark:bg-surface-dark border border-red-200 dark:border-red-500/20 relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-2 opacity-10">
+<span class="material-symbols-outlined text-4xl text-red-500">cancel</span>
+</div>
+<div class="flex items-center gap-2 text-red-600 dark:text-red-400">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<span class="text-xs font-bold uppercase tracking-wide">You Selected</span>
+</div>
+<p class="text-gray-900 dark:text-white font-medium text-lg leading-tight">Sydney</p>
+</div>
+<!-- Correct Answer -->
+<div class="flex flex-col gap-2 p-4 rounded-2xl bg-surface-light dark:bg-surface-dark border border-green-200 dark:border-green-500/20 relative overflow-hidden">
+<div class="absolute right-0 top-0 p-2 opacity-10">
+<span class="material-symbols-outlined text-4xl text-green-500">check_circle</span>
+</div>
+<div class="flex items-center gap-2 text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span class="text-xs font-bold uppercase tracking-wide">Correct Answer</span>
+</div>
+<p class="text-gray-900 dark:text-white font-medium text-lg leading-tight">Canberra</p>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-px w-full bg-gray-200 dark:bg-gray-800 mb-6"></div>
+<!-- Explanation Section -->
+<div class="space-y-3">
+<div class="flex items-center gap-2 mb-1">
+<div class="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">lightbulb</span>
+</div>
+<h3 class="text-gray-900 dark:text-white text-lg font-bold">Why it's Canberra</h3>
+</div>
+<p class="text-gray-600 dark:text-gray-300 text-base font-normal leading-relaxed">
+                            While Sydney is the most populous city, <span class="text-gray-900 dark:text-white font-medium">Canberra</span> was chosen as the capital in 1908 as a compromise between rivals Sydney and Melbourne.
+                        </p>
+<p class="text-gray-600 dark:text-gray-300 text-base font-normal leading-relaxed">
+                            It is an entirely planned city, designed specifically to serve as the seat of government, following an international design contest won by American architects Walter Burley Griffin and Marion Mahony Griffin.
+                        </p>
+<!-- Map Visual Placeholder -->
+<div class="mt-4 w-full h-32 rounded-xl bg-gray-100 dark:bg-surface-dark overflow-hidden relative">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20"></div>
+<!-- Map Graphic lines simulation -->
+<div class="absolute top-1/2 left-1/3 w-20 h-[1px] bg-primary/30 rotate-45"></div>
+<div class="absolute top-1/3 right-1/4 w-32 h-[1px] bg-primary/30 -rotate-12"></div>
+<div class="absolute bottom-1/4 left-1/4 w-10 h-10 rounded-full border border-primary/20"></div>
+<div class="absolute bottom-3 left-3 flex items-center gap-1 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-2 py-1 rounded-md border border-gray-200 dark:border-gray-700">
+<span class="material-symbols-outlined text-[14px] text-primary">location_on</span>
+<span class="text-[10px] font-medium text-gray-900 dark:text-white">ACT, Australia</span>
+</div>
+<img alt="Map of Canberra" class="absolute inset-0 w-full h-full object-cover opacity-0" data-alt="Abstract map illustration representing the location of Canberra, Australia" data-location="Canberra" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjNMPwlGvg_2MmO13YWSBXxUMl50YU_259dVtHq1tef3gLOtTY7W7esTn5DBNgNcPn4Zs-wR27f8bgETzwkhcO1GOkghzNRxxR8F_Dh3DaYZkTy9CmllLt1HIKTIgvFiuDK7jV3SKMGyEaDzs4cqgOsT1ShIua4148jxlj0kk9D05lHsHYJkt1x8d6DxpFIJZ5ToQWZXMcUpRUSJwokHo_I_NN-djUf0oJrhU_uv7_8ztRmeGlcjUsXvu1tW1qx6zB1asnNZZh1BA"/>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Action -->
+<div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark dark:to-transparent pt-10 pb-8 px-6">
+<button class="w-full bg-primary hover:bg-blue-500 active:scale-[0.98] transition-all text-white font-bold text-lg py-3.5 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2 group/btn">
+<span>Got it!</span>
+<span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

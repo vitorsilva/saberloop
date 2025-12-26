@@ -86,7 +86,16 @@
       "WebFetch(domain:knip.dev)",
       "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" issue view 11 --repo vitorsilva/saberloop)",
       "Bash(npm run lint:dead-code:*)",
-      "Bash(npm run arch:test:*)"
+      "Bash(npm run arch:test:*)",
+      "Bash(gh issue create:*)",
+      "Bash(CI=true npm run test:e2e -- --grep \"issue #29\" --retries=0)",
+      "Bash(file:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr comment:*)",
+      "Bash(ping:*)",
+      "Bash(copy \".playwright-mcp\\\\docs\\\\product-info\\\\screenshots\\\\phase28_results_after.png\" \"docs\\\\product-info\\\\screenshots\\\\phase28_results_after.png\")",
+      "Bash(gh pr merge:*)"
     ],
     "deny": [],
     "ask": []

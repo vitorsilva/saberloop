@@ -213,7 +213,7 @@ module.exports = {
       }
     },
 
-    /* --- TRANSITION RULES (warnings - fix later) --- */
+    /* --- LAYER BOUNDARY RULES (enforced) --- */
     {
       name: 'views-should-not-import-db',
       severity: 'error',
@@ -223,8 +223,8 @@ module.exports = {
     },
     {
       name: 'views-should-not-import-api',
-      severity: 'warn',
-      comment: 'TRANSITION: Views should use a services layer instead of direct api access',
+      severity: 'error',
+      comment: 'Views must use services layer instead of direct api access (enforced)',
       from: { path: '^src/views/' },
       to: { path: '^src/api/' }
     },

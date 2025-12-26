@@ -13,7 +13,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 04 | Phase 5 (Play Store Production) in progress | Phase 10 ✅ | Phase 15 ✅ | Phase 20 ✅ | Phase 25 (Services Layer) planned | Closed Testing Day 5 of 14 (Dec 17-31)
+**Current Status:** Epic 04 | Phase 5 (Play Store Production) in progress | Phase 10 ✅ | Phase 15 ✅ | Phase 20 ✅ | Phase 25 ✅ | Phase 40 ✅ | Closed Testing Day 9 of 14 (Dec 17-31)
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
@@ -125,15 +125,20 @@ When the user asks to **fix an issue** or **resolve a GitHub issue**, Claude swi
    - Files to change
    - Testing plan
 4. **Capture "before" state** - For UI changes, take screenshot/video and save to `docs/issues/`
-5. **Implement the fix** - Following existing app patterns and standards
-6. **Commit often** - Small, logical commits with clear messages
-7. **Run tests** - Ensure E2E tests pass (UI) or unit tests pass (backend)
-8. **Capture "after" state** - For UI changes, take screenshot/video
-9. **Update plan document** - Mark steps complete, add any learnings
-10. **Create PR** - Include before/after images in PR body
+5. **Write a failing test** - Create E2E or unit test that reproduces the bug:
+   - Run test → confirm it fails (proves the bug exists)
+   - Commit the test (documents the expected behavior)
+   - This test becomes regression protection after the fix
+6. **Implement the fix** - Following existing app patterns and standards
+7. **Commit often** - Small, logical commits with clear messages
+8. **Run tests** - The new test (and all others) must pass
+9. **Capture "after" state** - For UI changes, take screenshot/video
+10. **Update plan document** - Mark steps complete, add any learnings
+11. **Create PR** - Include before/after images in PR body
 
 **Important Rules:**
 - ❌ Don't start programming without a plan
+- ❌ Don't start fixing without a failing test that reproduces the bug
 - ❌ Don't introduce new patterns/frameworks/technologies without explicit approval
 - ❌ Don't skip tests - if manual testing only, document justification
 - ✅ Ask for clarification if anything is unclear
@@ -141,6 +146,7 @@ When the user asks to **fix an issue** or **resolve a GitHub issue**, Claude swi
 - ✅ Use available tools/MCP for screenshots, browser testing, etc.
 
 **Testing Requirements:**
+- **Bug fixes**: Write a failing test first that reproduces the bug
 - **UI changes**: E2E tests must pass, suggest new tests for new functionality
 - **Backend changes**: Unit tests must pass, suggest new tests for new functionality
 - **Manual-only tests**: Provide written justification for each case
@@ -246,6 +252,9 @@ demo-pwa-app/
 │   │   ├── router.js          # SPA router
 │   │   ├── state.js           # Global state
 │   │   └── settings.js        # User settings
+│   ├── services/              # Business logic layer
+│   │   ├── quiz-service.js    # Quiz operations
+│   │   └── auth-service.js    # Auth operations
 │   ├── features/              # Feature-specific modules
 │   │   ├── onboarding.js      # Welcome flow
 │   │   └── sample-loader.js   # Sample quiz loading
@@ -268,6 +277,7 @@ demo-pwa-app/
 - **src/main.js**: Application entry point, router initialization
 - **src/core/router.js**: SPA routing system
 - **src/views/**: View components (QuizView, ResultsView, etc.)
+- **src/services/**: Business logic layer (quiz-service, auth-service)
 - **src/core/state.js**: Global state management
 - **src/api/**: API clients (mock and real)
 - **src/core/db.js**: IndexedDB wrapper for offline storage

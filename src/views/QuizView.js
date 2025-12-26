@@ -1,6 +1,5 @@
 import BaseView from './BaseView.js';
 import state from '../core/state.js';
-import { generateQuestions } from '../api/index.js';
 
 export default class QuizView extends BaseView {
   constructor() {
@@ -48,8 +47,8 @@ export default class QuizView extends BaseView {
     const progress = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
 
     this.setHTML(`
-      <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
-        <div class="flex-grow flex flex-col">
+      <div class="relative min-h-screen w-full bg-background-light dark:bg-background-dark">
+        <div class="flex flex-col" style="padding-bottom: 180px;">
           <!-- Top App Bar -->
           <header class="flex items-center p-4 bg-background-light dark:bg-background-dark">
             <div id="backBtn" class="flex size-12 shrink-0 items-center justify-start text-text-light dark:text-text-dark cursor-pointer">
@@ -91,8 +90,8 @@ export default class QuizView extends BaseView {
 
         </div>
 
-        <!-- Single Button (Submit) - Sticky above bottom nav -->
-        <div class="sticky bottom-20 px-4 py-4 bg-background-light dark:bg-background-dark">
+        <!-- Single Button (Submit) - Fixed above bottom nav -->
+        <div class="fixed bottom-20 left-0 right-0 px-4 py-4 bg-background-light dark:bg-background-dark">
           <button
             id="submitBtn"
             class="flex h-14 min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90 ${this.selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : ''}">

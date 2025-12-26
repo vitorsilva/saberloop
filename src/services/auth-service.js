@@ -1,8 +1,9 @@
 /**
  * Auth Service - OpenRouter authentication operations
- * Views should use this instead of importing db directly
+ * Views should use this instead of importing db or api directly
  */
 import { isOpenRouterConnected, getOpenRouterKey, removeOpenRouterKey } from '../core/db.js';
+import { startAuth as startOAuthFlow } from '../api/openrouter-auth.js';
 
 /**
  * Check if user is connected to OpenRouter
@@ -26,4 +27,13 @@ export async function getApiKey() {
  */
 export async function disconnect() {
   return removeOpenRouterKey();
+}
+
+/**
+ * Start OAuth flow to connect to OpenRouter
+ * Redirects user to OpenRouter for authentication
+ * @returns {Promise<void>}
+ */
+export async function startAuth() {
+  return startOAuthFlow();
 }

@@ -8,17 +8,37 @@
    * @param {string} topic - The topic to generate questions about
    * @param {string} gradeLevel - The grade level for the questions
    * @param {string} apiKey - The OpenRouter API key
+   * @param {Object} options - Optional settings
+   * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
    */
-  export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey) {
-    logger.debug('Generating questions', { topic, gradeLevel });
+  export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey, options = {}) {
+    const startTime = performance.now();
+    const { previousQuestions = [] } = options;
+    logger.debug('Generating questions', { topic, gradeLevel, previousQuestionsCount: previousQuestions.length });
 
     if (!apiKey) {
       throw new Error('API key is required');
     }
 
+    // Build exclusion section if there are previous questions
+    const exclusionSection = previousQuestions.length > 0
+      ? `
+IMPORTANT - AVOID DUPLICATE QUESTIONS:
+The following questions have already been asked. Generate NEW questions
+that cover DIFFERENT aspects of the topic:
+
+Previously asked questions:
+${previousQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
+
+If you cannot generate 5 completely new questions, generate as many new
+ones as possible and note any that might overlap.
+`
+      : '';
+
     // Build the prompt for question generation
     const prompt = `You are an expert educational content creator. Generate exactly 5
   multiple-choice questions about "${topic}" appropriate for ${gradeLevel} students.
+${exclusionSection}
 
   LANGUAGE REQUIREMENT (CRITICAL):
   - Detect the language of the topic "${topic}"
@@ -38,6 +58,12 @@
   - Use clear, concise language appropriate for ${gradeLevel}
   - Avoid ambiguous phrasing
   - No trick questions
+
+  CRITICAL - Answer Option Quality:
+  - Each answer option must represent a DISTINCT claim
+  - Wrong answers must be factually incorrect, not alternative phrasings of the correct answer
+  - NEVER generate logical inverse pairs (e.g., "X increases Y" and "not-X decreases Y" are the same fact)
+  - Each wrong answer (distractor) should test a different misconception
 
   Return your response as a JSON object with this exact structure:
   {
@@ -94,7 +120,9 @@
         throw new Error('AI returned invalid question format');
       }
 
+      const duration = Math.round(performance.now() - startTime);
       logger.debug('Questions generated successfully', { language: data.language, count: data.questions.length });
+      logger.perf('quiz_generation', { value: duration, status: 'success', topic });
 
       return {
         language: data.language || 'EN-US',
@@ -102,7 +130,9 @@
       };
 
     } catch (error) {
+      const duration = Math.round(performance.now() - startTime);
       logger.error('Question generation failed', { error: error.message });
+      logger.perf('quiz_generation', { value: duration, status: 'error', topic, error: error.message });
       throw error;
     }
   }

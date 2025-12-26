@@ -1,8 +1,9 @@
 /**
  * Quiz Service - Business logic for quiz operations
- * Views should use this instead of importing db directly
+ * Views should use this instead of importing db or api directly
  */
 import { getRecentSessions, getSession, saveSession, updateSession } from '../core/db.js';
+import { generateQuestions as apiGenerateQuestions, generateExplanation as apiGenerateExplanation } from '../api/index.js';
 
 /**
  * Get quiz history (recent sessions)
@@ -39,4 +40,30 @@ export async function saveQuizSession(sessionData) {
  */
 export async function updateQuizSession(id, updates) {
   return updateSession(id, updates);
+}
+
+/**
+ * Generate quiz questions using AI
+ * @param {string} topic - Quiz topic
+ * @param {string} gradeLevel - Education level
+ * @param {string} apiKey - OpenRouter API key
+ * @param {Object} options - Optional settings
+ * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
+ * @returns {Promise<{questions: Array, language: string}>}
+ */
+export async function generateQuestions(topic, gradeLevel, apiKey, options = {}) {
+  return apiGenerateQuestions(topic, gradeLevel, apiKey, options);
+}
+
+/**
+ * Generate an explanation for an incorrect answer
+ * @param {string} question - The question text
+ * @param {string} userAnswer - User's incorrect answer
+ * @param {string} correctAnswer - The correct answer
+ * @param {string} gradeLevel - Education level
+ * @param {string} apiKey - OpenRouter API key
+ * @returns {Promise<string>} Explanation text
+ */
+export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey) {
+  return apiGenerateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey);
 }

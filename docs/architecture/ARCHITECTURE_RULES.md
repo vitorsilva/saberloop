@@ -2,7 +2,7 @@
 
 ## Overview
 
-Saberloop uses **dependency-cruiser** to enforce architectural rules and prevent violations. This document describes the current architecture, target architecture, and the rules that enforce them.
+Saberloop uses **dependency-cruiser** to enforce architectural rules and prevent violations. This document describes the current architecture and the rules that enforce layer boundaries.
 
 ## Running Architecture Checks
 
@@ -16,45 +16,7 @@ npm run arch:graph
 
 ## Current Architecture
 
-The current architecture has **high coupling** - views directly access multiple layers:
-
-```
-                    main.js (entry point)
-                        │
-            ┌───────────┼───────────┐
-            │           │           │
-            ▼           ▼           ▼
-        views/      router/     components/
-            │                       │
-            ├──→ core/state.js      │
-            ├──→ core/db.js  ←──────┤
-            ├──→ api/        ←──────┘
-            ├──→ utils/
-            └──→ components/
-```
-
-### Current Import Patterns
-
-| From | Imports | Issue |
-|------|---------|-------|
-| `views/` | api, db, state, utils, components | Views know too much (5 dependencies) |
-| `components/` | api | Should be presentational only |
-| `api/` | db (for keys) | Should receive credentials as params |
-
-### Current Violations (Tracked as Warnings)
-
-| Rule | Count | Files |
-|------|-------|-------|
-| `views-should-not-import-db` | 4 | TopicsView, SettingsView, ResultsView, HomeView |
-| `views-should-not-import-api` | 3 | QuizView, OpenRouterGuideView, LoadingView |
-| `components-should-not-import-api` | 1 | ConnectModal |
-| `api-should-not-import-db` | 1 | api.real.js |
-
----
-
-## Target Architecture
-
-The target architecture introduces a **services layer** for low coupling:
+The architecture uses a **services layer** to achieve low coupling:
 
 ```
                     main.js (entry point)
@@ -82,12 +44,21 @@ The target architecture introduces a **services layer** for low coupling:
     (external)    state.js     db.js
 ```
 
-### Target Allowed Dependencies
+### Services Layer
+
+The services layer (`src/services/`) provides a clean abstraction between UI and data:
+
+| Service | Purpose | Wraps |
+|---------|---------|-------|
+| `quiz-service.js` | Quiz business logic | db.js, api/index.js |
+| `auth-service.js` | Authentication operations | db.js, openrouter-auth.js |
+
+### Allowed Dependencies
 
 | From | Can Import | Reasoning |
 |------|------------|-----------|
 | `main.js` | All layers | Entry point orchestration |
-| `views/` | services, components, utils | UI only knows about services |
+| `views/` | services, components, utils, state | UI only knows about services |
 | `components/` | utils only | Pure presentational, no side effects |
 | `services/` | api, db, state, utils | Coordinates all business logic |
 | `api/` | utils only | Receives credentials as params |
@@ -98,9 +69,9 @@ The target architecture introduces a **services layer** for low coupling:
 
 ## Rule Definitions
 
-### Immediate Enforcement (Errors)
+### All Rules (Enforced as Errors)
 
-These rules fail the build immediately:
+All architecture rules are enforced and will fail the build if violated:
 
 | Rule | Description |
 |------|-------------|
@@ -108,89 +79,77 @@ These rules fail the build immediately:
 | `no-view-to-view` | Views cannot import other views (except BaseView) |
 | `not-to-dev-dep` | Production code cannot import devDependencies |
 | `not-to-unresolvable` | Cannot import non-existent modules |
-
-### Transition Rules (Warnings)
-
-These rules flag violations but don't fail the build. They will become errors after the services layer is implemented:
-
-| Rule | Description | Fix |
-|------|-------------|-----|
-| `views-should-not-import-db` | Views should use services layer | Move db calls to services |
-| `views-should-not-import-api` | Views should use services layer | Move API calls to services |
-| `components-should-not-import-api` | Components should be presentational | Pass callbacks as props |
-| `api-should-not-import-db` | API should receive credentials as params | Pass API key to functions |
+| `views-should-not-import-db` | Views must use services layer, not direct db access |
+| `views-should-not-import-api` | Views must use services layer, not direct api access |
+| `components-should-not-import-api` | Components must be presentational (callbacks as props) |
+| `api-should-not-import-db` | API must receive credentials as params, not fetch them |
 
 ---
 
-## Fixing Violations
+## Common Patterns
 
-### Views Importing from db/api
+### Views Using Services
 
-**Before:**
+Views import from the services layer, not directly from db or api:
+
 ```javascript
 // src/views/HomeView.js
-import { getRecentSessions } from '../core/db.js';
-import { generateQuestions } from '../api/index.js';
-
-// In the view
-const sessions = await getRecentSessions();
-const questions = await generateQuestions(topic);
-```
-
-**After (with services layer):**
-```javascript
-// src/views/HomeView.js
-import { getQuizHistory, generateQuiz } from '../services/quiz-service.js';
+import { getQuizHistory } from '../services/quiz-service.js';
+import { isConnected, startAuth } from '../services/auth-service.js';
 
 // In the view
 const sessions = await getQuizHistory();
-const questions = await generateQuiz(topic);
+const connected = await isConnected();
 ```
 
-### Components Importing from api
+### Presentational Components
 
-**Before:**
+Components receive behavior via callbacks, no direct API access:
+
 ```javascript
 // src/components/ConnectModal.js
-import { startAuth } from '../api/openrouter-auth.js';
+export function showConnectModal(onConnect) {
+  // ...
+  button.onclick = () => onConnect();  // Callback from parent
+}
 
-// In the component
-button.onclick = () => startAuth();
+// Parent view provides the callback
+import { startAuth } from '../services/auth-service.js';
+showConnectModal(() => startAuth());
 ```
 
-**After:**
+### Stateless API Layer
+
+API functions receive credentials as parameters:
+
 ```javascript
-// src/components/ConnectModal.js
-// Receives onConnect as a callback prop
-
-// In the component
-button.onclick = () => this.props.onConnect();
-
-// Parent view handles the auth
+// src/api/api.real.js
+export async function generateQuestions(topic, gradeLevel, apiKey) {
+  // apiKey passed in, not fetched from db
+}
 ```
 
 ---
 
 ## Configuration
 
-Architecture rules are defined in `.dependency-cruiser.cjs`. Key sections:
+Architecture rules are defined in `.dependency-cruiser.cjs`. Example:
 
 ```javascript
-// Custom Saberloop rules
-{
-  name: 'no-view-to-view',
-  severity: 'error',
-  from: { path: '^src/views/.*View\\.js$' },
-  to: {
-    path: '^src/views/.*View\\.js$',
-    pathNot: 'BaseView\\.js$'
-  }
-},
+// Layer boundary rules (all enforced as errors)
 {
   name: 'views-should-not-import-db',
-  severity: 'warn',  // Will become 'error' after services layer
+  severity: 'error',
+  comment: 'Views must use services layer instead of direct db access',
   from: { path: '^src/views/' },
   to: { path: '^src/core/db\\.js$' }
+},
+{
+  name: 'views-should-not-import-api',
+  severity: 'error',
+  comment: 'Views must use services layer instead of direct api access',
+  from: { path: '^src/views/' },
+  to: { path: '^src/api/' }
 }
 ```
 
@@ -198,8 +157,8 @@ Architecture rules are defined in `.dependency-cruiser.cjs`. Key sections:
 
 | Level | Behavior | Use For |
 |-------|----------|---------|
-| `error` | Fails the check | Hard rules, must fix |
-| `warn` | Reports but passes | Transition rules |
+| `error` | Fails the check | All enforced rules |
+| `warn` | Reports but passes | Transition (not currently used) |
 | `info` | Informational | Documentation only |
 
 ---
@@ -209,20 +168,11 @@ Architecture rules are defined in `.dependency-cruiser.cjs`. Key sections:
 Architecture checks run in GitHub Actions as part of the test workflow:
 
 ```yaml
-- name: Check architecture rules (warning)
-  run: npm run arch:test || true
+- name: Check architecture rules
+  run: npm run arch:test
 ```
 
-The `|| true` allows warnings without failing the build. Remove it to enforce strictly.
-
----
-
-## Transition Plan
-
-1. **Current State** - Rules as warnings, violations documented
-2. **Add Services Layer** - Create `src/services/` with business logic
-3. **Migrate Views** - Update views to use services instead of direct access
-4. **Enforce Rules** - Change transition rules from `warn` to `error`
+All violations will fail the build.
 
 ---
 
