@@ -1,0 +1,9 @@
+# Saberloop robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://saberloop.com/sitemap.xml
+
+# Disallow admin/internal paths (if any)
+Disallow: /downloads/*.apk

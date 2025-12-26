@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>OG Image Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #333;
+        }
+        .og-image {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #252542 100%);
+            font-family: 'Inter', sans-serif;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 60px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .content {
+            flex: 1;
+            z-index: 1;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .logo img {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+        }
+        .logo-text {
+            font-size: 32px;
+            font-weight: 800;
+        }
+        h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        h1 span {
+            color: #FF6B35;
+        }
+        .tagline {
+            font-size: 24px;
+            color: #a0a0b0;
+            margin-bottom: 30px;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #FF6B35;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .screenshot-container {
+            position: relative;
+            z-index: 1;
+        }
+        .screenshot {
+            height: 520px;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.3) 0%, transparent 70%);
+            right: 100px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="og-image">
+        <div class="glow"></div>
+        <div class="content">
+            <div class="logo">
+                <img src="public/icons/icon-192x192.png" alt="Saberloop">
+                <span class="logo-text">Saberloop</span>
+            </div>
+            <h1>Learn <span>Anything</span><br>with AI Quizzes</h1>
+            <p class="tagline">Free, offline-capable, privacy-first</p>
+            <div class="badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+                Free on Google Play
+            </div>
+        </div>
+        <div class="screenshot-container">
+            <img src="public/icons/screenshot-mobile-1.png" alt="App Screenshot" class="screenshot">
+        </div>
+    </div>
+</body>
+</html>

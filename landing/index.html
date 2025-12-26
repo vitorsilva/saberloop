@@ -5,9 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Saberloop - Learn any topic with AI-powered quizzes. Free, offline-capable, and privacy-first.">
     <meta name="theme-color" content="#FF6B35">
+    <meta name="robots" content="index, follow">
     <title>Saberloop - Learn Anything, Practice Anything</title>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://saberloop.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://saberloop.com/">
+    <meta property="og:title" content="Saberloop - Learn Anything with AI Quizzes">
+    <meta property="og:description" content="AI-powered quizzes on any topic. Free, offline-capable, and privacy-first.">
+    <meta property="og:image" content="https://saberloop.com/app/icons/og-image.png">
+    <meta property="og:site_name" content="Saberloop">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Saberloop - Learn Anything with AI Quizzes">
+    <meta name="twitter:description" content="AI-powered quizzes on any topic. Free, offline-capable, and privacy-first.">
+    <meta name="twitter:image" content="https://saberloop.com/app/icons/og-image.png">
+
+    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="192x192" href="/app/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/app/icons/icon-192x192.png">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M96NMT6FS8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-M96NMT6FS8');
+    </script>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Saberloop",
+        "operatingSystem": "Android",
+        "applicationCategory": "EducationalApplication",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "description": "AI-powered quiz app for learning any topic. Generate unlimited quizzes on any subject with AI.",
+        "screenshot": "https://saberloop.com/app/icons/screenshot-mobile-1.png",
+        "author": {
+            "@type": "Person",
+            "name": "Vitor Silva"
+        }
+    }
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -394,10 +451,10 @@
     <header>
         <div class="container">
             <a href="/" class="logo">
-                <img src="/app/icons/icon-192x192.png" alt="Saberloop">
+                <img src="/app/icons/icon-192x192.png" alt="Saberloop" width="40" height="40">
                 Saberloop
             </a>
-            <a href="/app/" class="header-cta">Try Free</a>
+            <a href="/app/" class="header-cta" data-track="header_cta">Try Free</a>
         </div>
     </header>
 
@@ -409,21 +466,20 @@
                 <p>AI-powered quizzes on any topic you want to master. Free, works offline, and your data stays private.</p>
 
                 <div class="hero-buttons">
-                    <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-primary" target="_blank">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+                    <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-primary" target="_blank" rel="noopener" data-track="play_store_hero">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
                         Get on Google Play
                     </a>
-                    <a href="/downloads/saberloop-v1.0.0.apk" class="btn btn-secondary" download>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-6 2h12v2H6v-2z"/></svg>
+                    <a href="/downloads/saberloop-v1.0.0.apk" class="btn btn-secondary" download data-track="apk_download_hero">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-6 2h12v2H6v-2z"/></svg>
                         Download APK
                     </a>
                 </div>
-                <p class="web-link">Or <a href="/app/">try in your browser</a> — no install needed</p>
-               
+                <p class="web-link">Or <a href="/app/" data-track="web_app_hero">try in your browser</a> — no install needed</p>
 
             </div>
             <div class="hero-image">
-                <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App Screenshot">
+                <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App Screenshot showing the quiz interface" width="300" height="600" loading="eager">
             </div>
         </div>
     </section>
@@ -486,8 +542,8 @@
         <div class="container">
             <h2 class="section-title">See It In Action</h2>
             <div class="screenshots-grid">
-                <img src="/app/icons/screenshot-mobile-1.png" alt="Welcome Screen">
-                <img src="/app/icons/screenshot-mobile-2.png" alt="Home Screen">
+                <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop Welcome Screen" width="280" height="560" loading="lazy">
+                <img src="/app/icons/screenshot-mobile-2.png" alt="Saberloop Home Screen with quiz topics" width="280" height="560" loading="lazy">
             </div>
         </div>
     </section>
@@ -498,16 +554,16 @@
             <h2>Ready to Start Learning?</h2>
             <p>No sign-up required. Get the app now.</p>
             <div class="hero-buttons" style="justify-content: center;">
-                <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-secondary" target="_blank">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+                <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-secondary" target="_blank" rel="noopener" data-track="play_store_cta">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
                     Get on Google Play
                 </a>
-                <a href="/downloads/saberloop-v1.0.0.apk" class="btn btn-secondary" download>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-6 2h12v2H6v-2z"/></svg>
+                <a href="/downloads/saberloop-v1.0.0.apk" class="btn btn-secondary" download data-track="apk_download_cta">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-6 2h12v2H6v-2z"/></svg>
                     Download APK
                 </a>
             </div>
-            <p class="web-link">Or <a href="/app/">try in your browser</a> — no install needed</p>
+            <p class="web-link">Or <a href="/app/" data-track="web_app_cta">try in your browser</a> — no install needed</p>
         </div>
     </section>
 
@@ -515,12 +571,55 @@
     <footer>
         <div class="container">
             <div class="footer-links">
-                <a href="https://github.com/vitorsilva/saberloop" target="_blank">GitHub</a>
-                <a href="https://github.com/vitorsilva/saberloop/issues" target="_blank">Report Issue</a>
+                <a href="https://github.com/vitorsilva/saberloop" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://github.com/vitorsilva/saberloop/issues" target="_blank" rel="noopener">Report Issue</a>
                 <a href="/privacy.html">Privacy Policy</a>
             </div>
             <p>&copy; 2025 Saberloop. Built with Claude AI.</p>
         </div>
     </footer>
+
+    <!-- Event Tracking Script -->
+    <script>
+        // Track button clicks
+        document.addEventListener('click', function(e) {
+            const trackable = e.target.closest('[data-track]');
+            if (trackable && typeof gtag === 'function') {
+                const eventName = trackable.dataset.track;
+                gtag('event', eventName, {
+                    'event_category': 'engagement',
+                    'event_label': eventName
+                });
+            }
+        });
+
+        // Track scroll depth
+        (function() {
+            const milestones = [25, 50, 75, 100];
+            const triggered = new Set();
+
+            function getScrollPercent() {
+                const h = document.documentElement;
+                const b = document.body;
+                const st = 'scrollTop';
+                const sh = 'scrollHeight';
+                return Math.round((h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100);
+            }
+
+            window.addEventListener('scroll', function() {
+                const percent = getScrollPercent();
+                milestones.forEach(function(milestone) {
+                    if (percent >= milestone && !triggered.has(milestone) && typeof gtag === 'function') {
+                        triggered.add(milestone);
+                        gtag('event', 'scroll_depth', {
+                            'event_category': 'engagement',
+                            'event_label': milestone + '%',
+                            'value': milestone
+                        });
+                    }
+                });
+            }, { passive: true });
+        })();
+    </script>
 </body>
 </html>
