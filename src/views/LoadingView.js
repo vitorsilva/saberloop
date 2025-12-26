@@ -117,7 +117,16 @@ export default class LoadingView extends BaseView {
         throw new Error('Not connected to OpenRouter. Please connect in Settings.');
       }
 
-      const result = await generateQuestions(topic, gradeLevel, apiKey);
+      // Build options for question generation
+      const options = {};
+
+      // If continuing on topic, pass previous questions to exclude
+      const continueChain = state.getContinueChain();
+      if (continueChain && continueChain.topic === topic) {
+        options.previousQuestions = continueChain.previousQuestions;
+      }
+
+      const result = await generateQuestions(topic, gradeLevel, apiKey, options);
 
       // Store questions and language in state for QuizView
       state.set('generatedQuestions', result.questions);
