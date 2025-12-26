@@ -806,4 +806,123 @@ test.describe('Saberloop E2E Tests', () => {
     }
   });
 
+  test('should display info button on incorrect answers only', async ({ page }) => {
+    // Set up auth and complete a quiz with at least one wrong answer
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Science');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Answer questions - get one wrong (option 0), rest correct (option 1)
+    // Question 1: incorrect
+    await page.locator('.option-btn').nth(0).click();
+    await page.click('#submitBtn');
+
+    // Questions 2-5: correct
+    for (let i = 1; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    // On results page
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Should have exactly 1 info button (for the incorrect answer)
+    const infoButtons = page.locator('.explain-btn');
+    await expect(infoButtons).toHaveCount(1);
+
+    // Should have 4 green dots (for correct answers)
+    const successDots = page.locator('.bg-success.rounded-full.size-3');
+    await expect(successDots).toHaveCount(4);
+  });
+
+  test('should open explanation modal when info button clicked', async ({ page }) => {
+    // Set up auth and complete a quiz with wrong answer
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Geography');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Get first question wrong
+    await page.locator('.option-btn').nth(0).click();
+    await page.click('#submitBtn');
+
+    // Rest correct
+    for (let i = 1; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Click the info button
+    const infoButton = page.locator('.explain-btn');
+    await infoButton.click();
+
+    // Modal should appear
+    const modal = page.locator('#explanationModal');
+    await expect(modal).toBeVisible();
+
+    // Should show INCORRECT badge
+    await expect(page.locator('text=INCORRECT')).toBeVisible();
+
+    // Should show "YOU SELECTED" and "CORRECT ANSWER" labels
+    await expect(page.locator('text=YOU SELECTED')).toBeVisible();
+    await expect(page.locator('text=CORRECT ANSWER')).toBeVisible();
+
+    // Should show loading or explanation (mock API returns quickly)
+    const explanationSection = page.locator('#explanationContent');
+    await expect(explanationSection).toBeVisible();
+
+    // Should have "Got it!" button
+    const gotItBtn = page.locator('#gotItBtn');
+    await expect(gotItBtn).toBeVisible();
+  });
+
+  test('should close explanation modal when Got it button clicked', async ({ page }) => {
+    // Set up auth and complete a quiz with wrong answer
+    await setupAuthenticatedState(page);
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'History');
+    await page.click('#generateBtn');
+
+    await expect(page).toHaveURL(/#\/loading/);
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
+
+    // Get first question wrong
+    await page.locator('.option-btn').nth(0).click();
+    await page.click('#submitBtn');
+
+    // Rest correct
+    for (let i = 1; i < 5; i++) {
+      await page.locator('.option-btn').nth(1).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Click the info button to open modal
+    await page.locator('.explain-btn').click();
+    await expect(page.locator('#explanationModal')).toBeVisible();
+
+    // Click "Got it!" button
+    await page.locator('#gotItBtn').click();
+
+    // Modal should be closed (with animation delay)
+    await page.waitForTimeout(400);
+    await expect(page.locator('#explanationModal')).not.toBeVisible();
+  });
+
 });
