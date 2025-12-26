@@ -95,7 +95,9 @@
       "Bash(gh pr comment:*)",
       "Bash(ping:*)",
       "Bash(copy \".playwright-mcp\\\\docs\\\\product-info\\\\screenshots\\\\phase28_results_after.png\" \"docs\\\\product-info\\\\screenshots\\\\phase28_results_after.png\")",
-      "Bash(gh pr merge:*)"
+      "Bash(gh pr merge:*)",
+      "Bash(npm run deploy:landing:*)",
+      "mcp__playwright__browser_network_requests"
     ],
     "deny": [],
     "ask": []
