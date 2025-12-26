@@ -3,7 +3,7 @@
  * Views should use this instead of importing db or api directly
  */
 import { getRecentSessions, getSession, saveSession, updateSession } from '../core/db.js';
-import { generateQuestions as apiGenerateQuestions } from '../api/index.js';
+import { generateQuestions as apiGenerateQuestions, generateExplanation as apiGenerateExplanation } from '../api/index.js';
 
 /**
  * Get quiz history (recent sessions)
@@ -51,4 +51,17 @@ export async function updateQuizSession(id, updates) {
  */
 export async function generateQuestions(topic, gradeLevel, apiKey) {
   return apiGenerateQuestions(topic, gradeLevel, apiKey);
+}
+
+/**
+ * Generate an explanation for an incorrect answer
+ * @param {string} question - The question text
+ * @param {string} userAnswer - User's incorrect answer
+ * @param {string} correctAnswer - The correct answer
+ * @param {string} gradeLevel - Education level
+ * @param {string} apiKey - OpenRouter API key
+ * @returns {Promise<string>} Explanation text
+ */
+export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey) {
+  return apiGenerateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey);
 }
