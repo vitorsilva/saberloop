@@ -230,7 +230,7 @@ export default class ResultsView extends BaseView {
 
     // Explanation buttons (only if feature is enabled)
     if (isFeatureEnabled('EXPLANATION_FEATURE')) {
-      const explainBtns = this.querySelectorAll('.explain-btn');
+      const explainBtns = this.appContainer.querySelectorAll('.explain-btn');
       explainBtns.forEach(btn => {
         this.addEventListener(btn, 'click', async () => {
           const questionIndex = parseInt(btn.dataset.questionIndex, 10);

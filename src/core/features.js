@@ -17,7 +17,7 @@
       description: 'Send telemetry (logs, errors, metrics) to VPS for debugging'
     },
     EXPLANATION_FEATURE: {
-      phase: 'DISABLED',  // Start disabled, enable after testing
+      phase: 'ENABLED',  // Enabled for testing
       description: 'AI-generated explanations for incorrect answers'
     }
   };

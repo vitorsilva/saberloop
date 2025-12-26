@@ -876,9 +876,9 @@ test.describe('Saberloop E2E Tests', () => {
     // Should show INCORRECT badge
     await expect(page.locator('text=INCORRECT')).toBeVisible();
 
-    // Should show "YOU SELECTED" and "CORRECT ANSWER" labels
-    await expect(page.locator('text=YOU SELECTED')).toBeVisible();
-    await expect(page.locator('text=CORRECT ANSWER')).toBeVisible();
+    // Should show "YOU SELECTED" and "CORRECT ANSWER" labels in modal
+    await expect(modal.locator('text=YOU SELECTED')).toBeVisible();
+    await expect(modal.locator('text=CORRECT ANSWER').first()).toBeVisible();
 
     // Should show loading or explanation (mock API returns quickly)
     const explanationSection = page.locator('#explanationContent');
