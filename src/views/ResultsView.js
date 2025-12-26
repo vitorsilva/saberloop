@@ -5,6 +5,7 @@ import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
 import { isFeatureEnabled } from '../core/features.js';
 import { showExplanationModal } from '../components/ExplanationModal.js';
+import { calculateNextGradeLevel } from '../utils/gradeProgression.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -44,8 +45,9 @@ export default class ResultsView extends BaseView {
       message = 'Keep Practicing!';
     }
 
-    // Check if explanation feature is enabled
+    // Check if features are enabled
     const showExplanationButton = isFeatureEnabled('EXPLANATION_FEATURE');
+    const showContinueButton = isFeatureEnabled('CONTINUE_TOPIC');
 
     // Generate question review HTML
     const questionReviewHTML = questions.map((question, index) => {
@@ -142,11 +144,23 @@ export default class ResultsView extends BaseView {
 
         <!-- Bottom Actions & Navigation -->
         <div class="fixed bottom-0 left-0 w-full bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark">
-          <!-- CTA Button -->
+          <!-- CTA Buttons -->
           <div class="p-4 pb-0">
+            ${showContinueButton ? `
+            <div class="flex gap-3">
+              <button id="continueTopicBtn" class="flex-1 rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
+                Continue on this topic
+                <span class="material-symbols-outlined text-xl">arrow_forward</span>
+              </button>
+              <button id="tryAnotherBtn" class="flex-1 rounded-xl border-2 border-border-light dark:border-border-dark h-14 text-center text-base font-bold text-text-light dark:text-text-dark hover:bg-card-light dark:hover:bg-card-dark">
+                Try Another Topic
+              </button>
+            </div>
+            ` : `
             <button id="tryAnotherBtn" class="w-full rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30">
               Try Another Topic
             </button>
+            `}
           </div>
 
           <!-- Bottom Navigation Bar -->
@@ -225,8 +239,20 @@ export default class ResultsView extends BaseView {
     // Try another topic button
     const tryAnotherBtn = this.querySelector('#tryAnotherBtn');
     this.addEventListener(tryAnotherBtn, 'click', () => {
+      // Clear continue chain when starting new topic
+      state.clearContinueChain();
       this.navigateTo('/topic-input');
     });
+
+    // Continue on topic button (only if feature is enabled)
+    if (isFeatureEnabled('CONTINUE_TOPIC')) {
+      const continueTopicBtn = this.querySelector('#continueTopicBtn');
+      if (continueTopicBtn) {
+        this.addEventListener(continueTopicBtn, 'click', () => {
+          this.handleContinueTopic();
+        });
+      }
+    }
 
     // Explanation buttons (only if feature is enabled)
     if (isFeatureEnabled('EXPLANATION_FEATURE')) {
@@ -238,6 +264,42 @@ export default class ResultsView extends BaseView {
         });
       });
     }
+  }
+
+  handleContinueTopic() {
+    const topic = state.get('currentTopic');
+    const gradeLevel = state.get('currentGradeLevel');
+    const questions = state.get('currentQuestions');
+
+    // Get or initialize continue chain
+    let chain = state.getContinueChain();
+
+    if (!chain || chain.topic !== topic) {
+      // First continue on this topic - initialize chain
+      state.initContinueChain(topic, gradeLevel, questions);
+      chain = state.getContinueChain();
+    } else {
+      // Add current questions to chain
+      state.addToContinueChain(questions);
+    }
+
+    // Calculate next grade level
+    const nextGradeLevel = calculateNextGradeLevel(chain.continueCount + 1, chain.startingGradeLevel);
+
+    // Track telemetry
+    logger.action('continue_topic_clicked', {
+      topic,
+      continueCount: chain.continueCount + 1,
+      currentGradeLevel: gradeLevel,
+      nextGradeLevel,
+      previousQuestionCount: chain.previousQuestions.length
+    });
+
+    // Update grade level for next quiz
+    state.set('currentGradeLevel', nextGradeLevel);
+
+    // Navigate to loading to generate new questions
+    this.navigateTo('/loading');
   }
 
   async handleExplanationClick(questionIndex) {
