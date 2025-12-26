@@ -8,7 +8,9 @@
         currentQuestions: null,
         currentAnswers: [],
         currentScore: null,
-        lastSessionId: null
+        lastSessionId: null,
+        // Continue chain - tracks questions across continues on same topic
+        continueChain: null  // { topic, continueCount, previousQuestions, startingGradeLevel }
       };
 
       this.listeners = [];  // Functions to call when state changes
@@ -66,9 +68,52 @@
         currentQuestions: null,
         currentAnswers: [],
         currentScore: null,
-        lastSessionId: null
+        lastSessionId: null,
+        continueChain: null
       };
       this.notify('*', this.data);
+    }
+
+    /**
+     * Initialize a continue chain for a topic
+     * @param {string} topic - Topic being continued
+     * @param {string} gradeLevel - Starting grade level
+     * @param {Array} questions - Initial questions
+     */
+    initContinueChain(topic, gradeLevel, questions) {
+      this.data.continueChain = {
+        topic,
+        continueCount: 0,
+        previousQuestions: questions.map(q => q.question),
+        startingGradeLevel: gradeLevel
+      };
+    }
+
+    /**
+     * Add questions to the continue chain
+     * @param {Array} questions - New questions to add
+     */
+    addToContinueChain(questions) {
+      if (this.data.continueChain) {
+        this.data.continueChain.continueCount++;
+        this.data.continueChain.previousQuestions.push(
+          ...questions.map(q => q.question)
+        );
+      }
+    }
+
+    /**
+     * Clear the continue chain
+     */
+    clearContinueChain() {
+      this.data.continueChain = null;
+    }
+
+    /**
+     * Get the continue chain data
+     */
+    getContinueChain() {
+      return this.data.continueChain;
     }
   }
 
