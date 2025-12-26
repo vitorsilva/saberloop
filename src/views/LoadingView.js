@@ -4,6 +4,15 @@ import { generateQuestions } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
 
+// Default timing constants (can be overridden via window.LOADING_VIEW_CONFIG for testing)
+const getConfig = () => {
+  const defaults = {
+    ESTIMATED_DURATION_SECONDS: 60,
+    SHOW_COUNTDOWN_AFTER_SECONDS: 20
+  };
+  return window.LOADING_VIEW_CONFIG || defaults;
+};
+
 export default class LoadingView extends BaseView {
   constructor() {
     super();
@@ -13,8 +22,15 @@ export default class LoadingView extends BaseView {
       'Crafting the perfect quiz...',
       'Almost ready...'
     ];
+    this.extendedMessages = [
+      "Teaching an AI isn't easy...",
+      'Our AI is thinking extra hard...'
+    ];
     this.currentMessageIndex = 0;
     this.messageInterval = null;
+    this.countdownInterval = null;
+    this.elapsedSeconds = 0;
+    this.extendedMessagesAdded = false;
   }
 
   async render() {
@@ -58,6 +74,10 @@ export default class LoadingView extends BaseView {
             ${isOffline ? 'You appear to be offline...' : this.loadingMessages[0]}
           </p>
 
+          <!-- Countdown Timer (hidden initially, shown after delay) -->
+          <p id="countdownText" class="text-sm text-subtext-light dark:text-subtext-dark hidden">
+          </p>
+
           <!-- Progress Dots -->
           <div class="flex gap-2 mt-4">
             <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 0ms"></span>
@@ -89,6 +109,7 @@ export default class LoadingView extends BaseView {
 
     if (!isOffline) {
       this.startMessageRotation();
+      this.startCountdownTimer();
       this.startQuizGeneration(topic, gradeLevel);
     }
   }
@@ -107,6 +128,48 @@ export default class LoadingView extends BaseView {
         messageEl.textContent = this.loadingMessages[this.currentMessageIndex];
       }
     }, 2000);
+  }
+
+  startCountdownTimer() {
+    const config = getConfig();
+    this.elapsedSeconds = 0;
+    this.extendedMessagesAdded = false;
+
+    this.countdownInterval = setInterval(() => {
+      this.elapsedSeconds++;
+      this.updateCountdown();
+    }, 1000);
+  }
+
+  updateCountdown() {
+    const config = getConfig();
+    const countdownEl = this.querySelector('#countdownText');
+    if (!countdownEl) return;
+
+    const { ESTIMATED_DURATION_SECONDS, SHOW_COUNTDOWN_AFTER_SECONDS } = config;
+
+    // Don't show countdown until after the initial delay
+    if (this.elapsedSeconds < SHOW_COUNTDOWN_AFTER_SECONDS) {
+      return;
+    }
+
+    // Show the countdown element
+    countdownEl.classList.remove('hidden');
+
+    // Calculate remaining time
+    const remaining = ESTIMATED_DURATION_SECONDS - this.elapsedSeconds;
+
+    if (remaining > 0) {
+      countdownEl.textContent = `About ${remaining} seconds remaining...`;
+    } else {
+      countdownEl.textContent = 'Almost done...';
+
+      // Add extended messages to rotation (only once)
+      if (!this.extendedMessagesAdded) {
+        this.extendedMessagesAdded = true;
+        this.loadingMessages = [...this.loadingMessages, ...this.extendedMessages];
+      }
+    }
   }
 
   async startQuizGeneration(topic, gradeLevel) {
@@ -164,6 +227,10 @@ export default class LoadingView extends BaseView {
     if (this.messageInterval) {
       clearInterval(this.messageInterval);
       this.messageInterval = null;
+    }
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = null;
     }
   }
 

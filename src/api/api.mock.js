@@ -12,7 +12,9 @@ import { logger } from '../utils/logger.js';
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', _apiKey, options = {}) {
     // Simulate network delay (real APIs take time)
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Can be overridden via window.MOCK_API_DELAY_MS for testing
+    const delay = (typeof window !== 'undefined' && window.MOCK_API_DELAY_MS) || 1000;
+    await new Promise(resolve => setTimeout(resolve, delay));
 
     const { previousQuestions = [] } = options;
     logger.debug('Mock API generating questions', { topic, gradeLevel, previousQuestionsCount: previousQuestions.length });

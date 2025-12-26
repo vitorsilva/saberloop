@@ -1080,21 +1080,18 @@ test.describe('Saberloop E2E Tests', () => {
   });
 
   test('should show countdown timer after delay during quiz generation (issue #37)', async ({ page }) => {
-    // Set up auth
-    await setupAuthenticatedState(page);
-
-    // Override timing constants for faster testing (will be read by LoadingView)
-    await page.evaluate(() => {
+    // Override timing constants and add API delay BEFORE any navigation
+    await page.addInitScript(() => {
       window.LOADING_VIEW_CONFIG = {
         ESTIMATED_DURATION_SECONDS: 10,      // Shortened for test
         SHOW_COUNTDOWN_AFTER_SECONDS: 2      // Show countdown after 2s instead of 20s
       };
+      // Add delay to mock API for testing the loading view
+      window.MOCK_API_DELAY_MS = 15000; // 15 second delay
     });
 
-    // Mock the API to hang indefinitely (so loading view stays visible)
-    await page.route('**/api.openrouter.ai/**', route => {
-      // Don't respond - let it hang so we can observe the loading view
-    });
+    // Set up auth (will use the init script on subsequent navigations)
+    await setupAuthenticatedState(page);
 
     // Navigate to topic input and start generation
     await page.goto('/#/topic-input');
@@ -1127,21 +1124,18 @@ test.describe('Saberloop E2E Tests', () => {
   });
 
   test('should show extended messages after estimated duration exceeded (issue #37)', async ({ page }) => {
-    // Set up auth
-    await setupAuthenticatedState(page);
-
-    // Override timing constants - very short for testing
-    await page.evaluate(() => {
+    // Override timing constants and add API delay BEFORE any navigation
+    await page.addInitScript(() => {
       window.LOADING_VIEW_CONFIG = {
         ESTIMATED_DURATION_SECONDS: 3,       // Very short for test
         SHOW_COUNTDOWN_AFTER_SECONDS: 1      // Show countdown after 1s
       };
+      // Add delay to mock API for testing the loading view
+      window.MOCK_API_DELAY_MS = 15000; // 15 second delay
     });
 
-    // Mock the API to hang indefinitely
-    await page.route('**/api.openrouter.ai/**', route => {
-      // Don't respond
-    });
+    // Set up auth (will use the init script on subsequent navigations)
+    await setupAuthenticatedState(page);
 
     // Navigate to topic input and start generation
     await page.goto('/#/topic-input');
