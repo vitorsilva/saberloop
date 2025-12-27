@@ -439,6 +439,44 @@ Enable the "Default Questions Per Quiz" setting to control quiz length.
 
 ---
 
+### **Phase 47: AI Model Selection** (1 session)
+
+Enable users to see and change the AI model used for quiz generation.
+
+**Status:** ✅ Complete (December 27, 2025)
+
+**Key Features:**
+- Current model displayed in Settings (under Connection section)
+- Expandable model selector with available free models
+- Model selection persists across sessions
+- Model included in telemetry for analytics
+
+**Learning Objectives:**
+- OpenRouter /models API integration
+- Model caching strategy (24-hour cache)
+- Dynamic UI components (expandable selector)
+- Telemetry enhancement
+
+**Deliverables:**
+- [x] `src/core/settings.js` - Add selectedModel setting
+- [x] `src/services/model-service.js` - Fetch/manage models (18 tests)
+- [x] `src/api/openrouter-client.js` - Use selected model
+- [x] `src/api/api.real.js` - Include model in telemetry
+- [x] `src/views/SettingsView.js` - Model display & selector
+- [x] `public/locales/*.json` - i18n translations
+- [x] 5 new E2E tests
+- [x] `PHASE47_MODEL_SELECTION.md` - Documentation
+
+**Success Criteria:**
+- [x] User can see current model in Settings
+- [x] User can change to any available free model
+- [x] Model selection persists after page refresh
+- [x] All 257 unit tests pass
+- [x] All 42 E2E tests pass (5 new)
+- [x] Architecture tests pass (67 modules)
+
+---
+
 ### **Phase 50: Maestro Testing Expansion** (3-4 sessions)
 
 Expand Maestro test coverage to match Playwright E2E tests.
@@ -650,6 +688,7 @@ Experimental research phase to assess feasibility of E2E mutation testing.
 | Phase 40 | 5-8 | Telemetry Enhancement | ✅ Complete |
 | Phase 45 | 1 | Answer Randomization | ✅ Complete |
 | Phase 46 | 1 | Configurable Question Count | ✅ Complete |
+| Phase 47 | 1 | AI Model Selection | ✅ Complete |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
 | Phase 80 | 1 | Test Coverage | ✅ Complete |
@@ -677,8 +716,9 @@ While phases can be worked on in any order, here's a suggested priority:
 9. **Phase 40** - Telemetry ✅
 10. **Phase 45** - Answer Randomization ✅
 11. **Phase 46** - Configurable Question Count ✅
-12. **Phase 50** - Maestro Testing
-13. **Phase 60** - Monetization (after user base grows)
+12. **Phase 47** - AI Model Selection ✅
+13. **Phase 50** - Maestro Testing
+14. **Phase 60** - Monetization (after user base grows)
 
 ---
 
