@@ -42,6 +42,34 @@ Before starting this plan, you should have:
 
 ---
 
+## Pre-Phase: Staging Environment (Complete)
+
+**Status:** ✅ Complete (December 27, 2024) - PR #39
+
+Before implementing i18n, we set up a staging environment for safe testing of large changes.
+
+**Deliverables:**
+- [x] Staging URL: https://saberloop.com/app-staging/
+- [x] `npm run build:staging` - Build with staging base path
+- [x] `npm run deploy:staging` - Deploy to staging
+- [x] `npm run build:deploy:staging` - Combined build and deploy
+- [x] Manifest validation to prevent build/deploy mismatches
+- [x] Documentation: `docs/developer-guide/STAGING_DEPLOYMENT.md`
+
+**Key Decisions:**
+- Portuguese variant: **pt-PT** (European Portuguese)
+- Settings storage: **localStorage** (keep current pattern, i18next default)
+- FAQ translation: **Skip for now** (English-only initially)
+
+**Workflow for Phase 30:**
+1. Complete each sub-phase
+2. Deploy to staging: `npm run build:deploy:staging`
+3. Test at https://saberloop.com/app-staging/
+4. When all sub-phases complete, merge to main
+5. Deploy to production: `npm run build:deploy`
+
+---
+
 ## Current State Analysis
 
 ### Architecture Overview
