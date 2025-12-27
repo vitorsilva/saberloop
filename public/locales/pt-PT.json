@@ -24,6 +24,13 @@
     "yesterday": "Ontem",
     "daysAgo": "Há {{count}} dias"
   },
+  "topics": {
+    "title": "Histórico de Quizzes",
+    "quizCount": "{{count}} quizzes",
+    "completeFirst": "Completa o teu primeiro quiz para o veres aqui!",
+    "startQuiz": "Iniciar um Quiz",
+    "cannotReplay": "Não pode ser repetido"
+  },
   "topicInput": {
     "title": "Novo Quiz",
     "whatToPractice": "O que queres praticar?",
@@ -109,5 +116,17 @@
     "enterTopic": "Por favor, introduz um tópico para praticar!",
     "notConnected": "Não ligado ao OpenRouter. Por favor, liga nas Definições.",
     "failedToGenerate": "Falha ao gerar perguntas. Por favor, tenta novamente."
+  },
+  "welcome": {
+    "title": "Bem-vindo ao Saberloop",
+    "tagline": "Aprende Tudo, Pratica Tudo",
+    "personalizedQuizzes": "Quizzes Personalizados",
+    "anyTopic": "Sobre qualquer tema à tua escolha",
+    "trackProgress": "Acompanha o Progresso",
+    "seeImprovement": "Vê a tua melhoria ao longo do tempo",
+    "worksOffline": "Funciona Offline",
+    "reviewAnytime": "Revê quizzes passados a qualquer momento",
+    "connectToAI": "Ligar ao Fornecedor de IA",
+    "tryFreeQuizzes": "Experimentar Quizzes Gratuitos"
   }
 }

@@ -24,6 +24,13 @@
     "yesterday": "Yesterday",
     "daysAgo": "{{count}} days ago"
   },
+  "topics": {
+    "title": "Quiz History",
+    "quizCount": "{{count}} quizzes",
+    "completeFirst": "Complete your first quiz to see it here!",
+    "startQuiz": "Start a Quiz",
+    "cannotReplay": "Cannot replay"
+  },
   "topicInput": {
     "title": "New Quiz",
     "whatToPractice": "What do you want to practice?",
@@ -109,5 +116,17 @@
     "enterTopic": "Please enter a topic to practice!",
     "notConnected": "Not connected to OpenRouter. Please connect in Settings.",
     "failedToGenerate": "Failed to generate questions. Please try again."
+  },
+  "welcome": {
+    "title": "Welcome to Saberloop",
+    "tagline": "Learn Anything, Practice Anything",
+    "personalizedQuizzes": "Personalized Quizzes",
+    "anyTopic": "On any topic you choose",
+    "trackProgress": "Track Progress",
+    "seeImprovement": "See your improvement over time",
+    "worksOffline": "Works Offline",
+    "reviewAnytime": "Review past quizzes anytime",
+    "connectToAI": "Connect to AI Provider",
+    "tryFreeQuizzes": "Try Free Quizzes"
   }
 }

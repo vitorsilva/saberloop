@@ -5,6 +5,7 @@
   import { showConnectModal } from '../components/ConnectModal.js';
   import { startAuth } from '../services/auth-service.js';
   import { isFeatureEnabled } from '../core/features.js';
+  import { t } from '../core/i18n.js';
 
   export default class WelcomeView extends BaseView {
     async render() {
@@ -17,55 +18,54 @@
             <div class="mb-8 flex flex-col items-center">
               <img src="/app/icons/icon-192x192.png" alt="Saberloop logo" class="mb-6 h-24 w-24 rounded-3xl">
               <h1 data-testid="welcome-title" class="text-3xl font-bold text-text-light dark:text-text-dark">
-                Welcome to Saberloop
+                ${t('welcome.title')}
               </h1>
               <p class="mt-2 text-center text-subtext-light
   dark:text-subtext-dark">
-                Learn Anything, Practice Anything
+                ${t('welcome.tagline')}
               </p>
             </div>
 
             <!-- Features List -->
             <div class="mb-10 w-full max-w-sm space-y-4">
               <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl    
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl
    bg-card-light dark:bg-card-dark">
                   <span class="material-symbols-outlined text-xl
   text-primary">target</span>
                 </div>
                 <div>
                   <p class="font-medium text-text-light
-  dark:text-text-dark">Personalized Quizzes</p>
-                  <p class="text-sm text-subtext-light dark:text-subtext-dark">On    
-   any topic you choose</p>
+  dark:text-text-dark">${t('welcome.personalizedQuizzes')}</p>
+                  <p class="text-sm text-subtext-light dark:text-subtext-dark">${t('welcome.anyTopic')}</p>
                 </div>
               </div>
 
               <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl    
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl
    bg-card-light dark:bg-card-dark">
                   <span class="material-symbols-outlined text-xl
   text-primary">trending_up</span>
                 </div>
                 <div>
                   <p class="font-medium text-text-light
-  dark:text-text-dark">Track Progress</p>
+  dark:text-text-dark">${t('welcome.trackProgress')}</p>
                   <p class="text-sm text-subtext-light
-  dark:text-subtext-dark">See your improvement over time</p>
+  dark:text-subtext-dark">${t('welcome.seeImprovement')}</p>
                 </div>
               </div>
 
               <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl    
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl
    bg-card-light dark:bg-card-dark">
                   <span class="material-symbols-outlined text-xl
   text-primary">offline_bolt</span>
                 </div>
                 <div>
                   <p class="font-medium text-text-light
-  dark:text-text-dark">Works Offline</p>
+  dark:text-text-dark">${t('welcome.worksOffline')}</p>
                   <p class="text-sm text-subtext-light
-  dark:text-subtext-dark">Review past quizzes anytime</p>
+  dark:text-subtext-dark">${t('welcome.reviewAnytime')}</p>
                 </div>
               </div>
             </div>
@@ -79,7 +79,7 @@
   bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary/90
    transition-colors"
               >
-                Connect to AI Provider
+                ${t('welcome.connectToAI')}
               </button>
 
               <button
@@ -89,7 +89,7 @@
   bg-card-light dark:bg-card-dark font-bold text-text-light dark:text-text-dark
   mt-3 hover:bg-border-light dark:hover:bg-border-dark transition-colors"
               >
-                Try Free Quizzes
+                ${t('welcome.tryFreeQuizzes')}
               </button>
             </div>
             
