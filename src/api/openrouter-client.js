@@ -4,11 +4,9 @@
    */
 
   import { logger } from '../utils/logger.js';
+  import { getSelectedModel } from '../services/model-service.js';
 
   const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-
-  // Default free model - good for structured JSON output
-  const DEFAULT_MODEL = 'tngtech/deepseek-r1t2-chimera:free';
 
   /**
    * Call OpenRouter Chat API
@@ -19,7 +17,7 @@
    */
   export async function callOpenRouter(apiKey, prompt, options = {}) {
     const {
-      model = DEFAULT_MODEL,
+      model = getSelectedModel(),
       maxTokens = 2048,
       temperature = 0.7
     } = options;
