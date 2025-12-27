@@ -154,7 +154,7 @@
   document.querySelectorAll('.quiz-item:not([data-no-replay])');
       quizItems.forEach(item => {
         this.addEventListener(item, 'click', async () => {
-          const sessionId = parseInt(item.dataset.sessionId);
+          const sessionId = parseInt(/** @type {HTMLElement} */ (item).dataset.sessionId);
           await this.replayQuiz(sessionId);
         });
       });

@@ -142,7 +142,7 @@ export default class QuizView extends BaseView {
     const optionBtns = this.appContainer.querySelectorAll('.option-btn');
     optionBtns.forEach(btn => {
       this.addEventListener(btn, 'click', () => {
-        this.selectedAnswer = parseInt(btn.dataset.index);
+        this.selectedAnswer = parseInt(/** @type {HTMLElement} */ (btn).dataset.index);
         this.renderQuestion();
       });
     });

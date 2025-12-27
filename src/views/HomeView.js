@@ -196,7 +196,7 @@ export default class HomeView extends BaseView {
     const quizItems = document.querySelectorAll('.quiz-item');
     quizItems.forEach(item => {
       this.addEventListener(item, 'click', async () => {
-        const sessionId = parseInt(item.dataset.sessionId);
+        const sessionId = parseInt(/** @type {HTMLElement} */ (item).dataset.sessionId);
         await this.replayQuiz(sessionId);
       });
     });

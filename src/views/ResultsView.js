@@ -260,7 +260,7 @@ export default class ResultsView extends BaseView {
       const explainBtns = this.appContainer.querySelectorAll('.explain-btn');
       explainBtns.forEach(btn => {
         this.addEventListener(btn, 'click', async () => {
-          const questionIndex = parseInt(btn.dataset.questionIndex, 10);
+          const questionIndex = parseInt(/** @type {HTMLElement} */ (btn).dataset.questionIndex, 10);
           await this.handleExplanationClick(questionIndex);
         });
       });

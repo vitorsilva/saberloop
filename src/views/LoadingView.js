@@ -12,7 +12,7 @@ const getConfig = () => {
     ESTIMATED_DURATION_SECONDS: 60,
     SHOW_COUNTDOWN_AFTER_SECONDS: 20
   };
-  return window.LOADING_VIEW_CONFIG || defaults;
+  return /** @type {*} */ (window).LOADING_VIEW_CONFIG || defaults;
 };
 
 export default class LoadingView extends BaseView {

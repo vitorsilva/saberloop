@@ -109,7 +109,7 @@ leading-relaxed">${faq.answer}</p>
 
     toggles.forEach(toggle => {
       this.addEventListener(toggle, 'click', (e) => {
-        const index = toggle.dataset.index;
+        const index = /** @type {HTMLElement} */ (toggle).dataset.index;
         const answer = this.querySelector(`.faq-answer[data-index="${index}"]`);
         const icon = this.querySelector(`.faq-icon[data-index="${index}"]`);
 
