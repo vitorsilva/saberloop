@@ -539,6 +539,102 @@ Improve unit test coverage for critical utility and API modules.
 
 ---
 
+### **Phase 85: Mutation Testing Setup** (2-3 sessions)
+
+Configure mutation testing with Stryker to assess test quality beyond code coverage.
+
+**Status:** Ready to Implement
+
+**Key Features:**
+- Stryker + Vitest integration
+- Wave 1 scope: Pure algorithmic logic (gradeProgression, shuffle, formatters)
+- HTML mutation report generation
+- Per-test coverage analysis for performance
+
+**Learning Objectives:**
+- Mutation testing concepts (mutants, killing, mutation score)
+- Stryker configuration and mutators
+- Test quality assessment beyond code coverage
+- Identifying and fixing test gaps
+
+**Deliverables:**
+- [ ] `stryker.config.json` - Stryker configuration
+- [ ] `npm run test:mutation` - npm script
+- [ ] HTML report generation
+- [ ] Wave 1 mutation score >80%
+- [ ] `PHASE85_LEARNING_NOTES.md` - Documentation
+
+**Success Criteria:**
+- [ ] Stryker runs successfully with Vitest
+- [ ] Wave 1 files achieve >80% mutation score
+- [ ] Can interpret mutation testing report
+- [ ] Understand difference between code coverage and mutation score
+
+---
+
+### **Phase 86: Mutation Testing Expansion** (3-4 sessions)
+
+Expand mutation testing to core infrastructure and API modules.
+
+**Status:** Ready (after Phase 85)
+
+**Key Features:**
+- Wave 2: Core infrastructure (state, db, settings, features)
+- Wave 3: API layer (openrouter-auth, api.real)
+- Performance optimization with incremental mode
+- ~960 lines of additional coverage
+
+**Learning Objectives:**
+- Testing core infrastructure patterns
+- API module mutation testing
+- Managing larger mutation sets
+- Behavior vs implementation testing
+
+**Deliverables:**
+- [ ] Wave 2 and Wave 3 files in Stryker config
+- [ ] Combined mutation score >75%
+- [ ] Performance optimizations applied
+- [ ] `PHASE86_LEARNING_NOTES.md` - Documentation
+
+**Success Criteria:**
+- [ ] All 9 target files included in mutation testing
+- [ ] Combined mutation score >75%
+- [ ] Runtime <20 min for full scope
+- [ ] 10-20 new tests added to kill mutants
+
+---
+
+### **Phase 87: E2E Mutation Testing Exploration** (1-2 sessions)
+
+Experimental research phase to assess feasibility of E2E mutation testing.
+
+**Status:** Experimental / Research (after Phase 86)
+
+**Key Features:**
+- Manual mutation testing against Playwright E2E tests
+- Feasibility and value assessment
+- Custom Stryker runner exploration (optional)
+- Decision framework for future investment
+
+**Learning Objectives:**
+- Mutation testing limitations
+- E2E testing value assessment
+- Research methodology
+- Evidence-based decision making
+
+**Deliverables:**
+- [ ] 9 mutations manually tested against E2E
+- [ ] Analysis document with findings
+- [ ] Recommendation: pursue further or stop
+- [ ] `PHASE87_LEARNING_NOTES.md` - Documentation
+
+**Success Criteria:**
+- [ ] Can answer: Do E2E tests catch mutations unit tests miss?
+- [ ] Can answer: Is automated E2E mutation testing feasible?
+- [ ] Clear recommendation for ongoing strategy
+
+---
+
 ## Estimated Timeline
 
 | Phase | Sessions | Focus | Status |
@@ -557,7 +653,10 @@ Improve unit test coverage for critical utility and API modules.
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
 | Phase 80 | 1 | Test Coverage | ✅ Complete |
-| **Total** | **~32-44** | **Full Epic** | |
+| Phase 85 | 2-3 | Mutation Testing Setup | Ready |
+| Phase 86 | 3-4 | Mutation Testing Expansion | Ready (after 85) |
+| Phase 87 | 1-2 | E2E Mutation Exploration | Experimental |
+| **Total** | **~38-53** | **Full Epic** | |
 
 **Note:** Phase numbers use intervals of 10 to allow for inserting new phases if needed.
 
@@ -669,6 +768,9 @@ When you're ready to begin Epic 4, say:
 - `PHASE50_MAESTRO_TESTING.md`
 - `PHASE60_MONETIZATION.md`
 - `PHASE80_TEST_COVERAGE.md`
+- `PHASE85_MUTATION_TESTING.md`
+- `PHASE86_MUTATION_TESTING_EXPANSION.md`
+- `PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md`
 
 ---
 
