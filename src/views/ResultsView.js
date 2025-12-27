@@ -5,6 +5,7 @@ import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
 import { isFeatureEnabled } from '../core/features.js';
 import { showExplanationModal } from '../components/ExplanationModal.js';
+import { showShareModal } from '../components/ShareModal.js';
 import { calculateNextGradeLevel } from '../utils/gradeProgression.js';
 import { t, getCurrentLanguage } from '../core/i18n.js';
 
@@ -49,6 +50,7 @@ export default class ResultsView extends BaseView {
     // Check if features are enabled
     const showExplanationButton = isFeatureEnabled('EXPLANATION_FEATURE');
     const showContinueButton = isFeatureEnabled('CONTINUE_TOPIC');
+    const showShareButton = isFeatureEnabled('SHARE_FEATURE');
 
     // Generate question review HTML
     const questionReviewHTML = questions.map((question, index) => {
@@ -133,6 +135,16 @@ export default class ResultsView extends BaseView {
             <p data-testid="result-message" class="text-text-light dark:text-text-dark text-xl font-bold mt-4">${message}</p>
             <p data-testid="score-summary" class="text-subtext-light dark:text-subtext-dark mt-1">${t('results.scoreSummary', { correct: correctCount, total: totalQuestions })}</p>
           </div>
+
+          <!-- Share Button -->
+          ${showShareButton ? `
+          <div class="flex justify-center mt-4">
+            <button id="shareBtn" data-testid="share-results-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
+              <span class="material-symbols-outlined text-xl">share</span>
+              ${t('share.button')}
+            </button>
+          </div>
+          ` : ''}
 
           <!-- Section Header -->
           <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pt-8 pb-3">${t('results.reviewAnswers')}</h2>
@@ -265,6 +277,47 @@ export default class ResultsView extends BaseView {
         });
       });
     }
+
+    // Share button (only if feature is enabled)
+    if (isFeatureEnabled('SHARE_FEATURE')) {
+      const shareBtn = this.querySelector('#shareBtn');
+      if (shareBtn) {
+        this.addEventListener(shareBtn, 'click', () => {
+          this.handleShareClick();
+        });
+      }
+    }
+  }
+
+  handleShareClick() {
+    const topic = state.get('currentTopic') || 'Quiz';
+    const questions = state.get('currentQuestions');
+    const answers = state.get('currentAnswers');
+
+    // Calculate score
+    let correctCount = 0;
+    questions.forEach((question, index) => {
+      if (Number(answers[index]) === Number(question.correct)) {
+        correctCount++;
+      }
+    });
+
+    const totalQuestions = questions.length;
+    const percentage = Math.round((correctCount / totalQuestions) * 100);
+
+    logger.action('share_initiated', {
+      topic,
+      score: correctCount,
+      total: totalQuestions,
+      percentage
+    });
+
+    showShareModal({
+      topic,
+      score: correctCount,
+      total: totalQuestions,
+      percentage
+    });
   }
 
   handleContinueTopic() {
