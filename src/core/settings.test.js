@@ -13,7 +13,7 @@
         const settings = getSettings();
 
         expect(settings.defaultGradeLevel).toBe('middle school');
-        expect(settings.questionsPerQuiz).toBe('10');
+        expect(settings.questionsPerQuiz).toBe('5');
         expect(settings.difficulty).toBe('mixed');
       });
 
@@ -28,7 +28,7 @@
 
         // Assert: Should have stored value + defaults
         expect(settings.defaultGradeLevel).toBe('college');
-        expect(settings.questionsPerQuiz).toBe('10'); // default
+        expect(settings.questionsPerQuiz).toBe('5'); // default
         expect(settings.difficulty).toBe('mixed'); // default
       });
 

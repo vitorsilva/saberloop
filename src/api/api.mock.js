@@ -38,11 +38,11 @@ import { logger } from '../utils/logger.js';
         question: `How would you apply ${topic} in a real-world scenario?`,
         options: [
           "A) By ignoring the basic principles",
-          "B) By using only memorized facts",
-          "C) By understanding and applying the underlying concepts",
+          "B) By understanding and applying the underlying concepts",
+          "C) By using only memorized facts",
           "D) By guessing randomly"
         ],
-        correct: 2,
+        correct: 1,
         difficulty: "medium"
       },
       {
