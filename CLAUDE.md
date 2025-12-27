@@ -13,7 +13,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 04 | Phase 30 (i18n) in progress (30.1 ✅, 30.2 ✅) | Phase 5 ⏳ | Phase 10 ✅ | Phase 15 ✅ | Phase 20 ✅ | Phase 25 ✅ | Phase 40 ✅ | Phase 80 ✅ | Staging: https://saberloop.com/app-staging/
+**Current Status:** Epic 04 | Phase 5 ⏳ | Phase 10 ✅ | Phase 15 ✅ | Phase 20 ✅ | Phase 25 ✅ | Phase 30 ✅ | Phase 40 ✅ | Phase 80 ✅
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
