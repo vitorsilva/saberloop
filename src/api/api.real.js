@@ -73,6 +73,11 @@ ${exclusionSection}
   - NEVER generate logical inverse pairs (e.g., "X increases Y" and "not-X decreases Y" are the same fact)
   - Each wrong answer (distractor) should test a different misconception
 
+  CORRECT ANSWER DISTRIBUTION:
+  - Distribute correct answers across positions A, B, C, D
+  - For 5 questions: vary which position has the correct answer
+  - Do NOT cluster all correct answers in the same position
+
   Return your response as a JSON object with this exact structure:
   {
     "language": "XX-XX",
