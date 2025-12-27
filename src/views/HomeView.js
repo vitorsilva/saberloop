@@ -5,6 +5,7 @@ import { isConnected, startAuth } from '../services/auth-service.js';
 import state from '../core/state.js';
 import { showConnectModal } from '../components/ConnectModal.js';
 import { isFeatureEnabled } from '../core/features.js';
+import { t } from '../core/i18n.js';
 
 export default class HomeView extends BaseView {
   async render() {
@@ -28,15 +29,14 @@ export default class HomeView extends BaseView {
 
         <div class="flex-grow px-4">
           <!-- Headline Text -->
-          <h2 data-testid="welcome-heading" class="text-text-light dark:text-text-dark tracking-light text-[32px] font-bold leading-tight text-left pb-3 pt-6">Welcome back!</h2>
+          <h2 data-testid="welcome-heading" class="text-text-light dark:text-text-dark tracking-light text-[32px] font-bold leading-tight text-left pb-3 pt-6">${t('home.welcome')}</h2>
 
         <!-- Offline Banner -->
         <div id="offlineBanner" class="bg-orange-500/20 border
         border-orange-500 rounded-xl p-4 mb-3 ${isOnline() ? 'hidden' : ''}">      
           <div class="flex items-center gap-2 text-orange-500">
             <span class="material-symbols-outlined">wifi_off</span>
-            <span class="text-sm font-medium">You're offline. You can replay       
-        saved quizzes below.</span>
+            <span class="text-sm font-medium">${t('offline.banner')}</span>
           </div>
         </div>
 
@@ -49,12 +49,12 @@ export default class HomeView extends BaseView {
         font-bold leading-normal tracking-[0.015em] w-full shadow-lg
         shadow-primary/30 hover:bg-primary/90 disabled:bg-gray-400
         disabled:cursor-not-allowed disabled:shadow-none">
-            <span class="truncate">Start New Quiz</span>
+            <span class="truncate">${t('home.startQuiz')}</span>
           </button>
         </div>
 
           <!-- Section Header -->
-          <h3 data-testid="recent-topics-heading" class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3 pt-8">Recent Topics</h3>
+          <h3 data-testid="recent-topics-heading" class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3 pt-8">${t('home.recentTopics')}</h3>
 
           <!-- List Items Container -->
           <div id="recentTopicsList" class="flex flex-col gap-3">
@@ -71,15 +71,15 @@ export default class HomeView extends BaseView {
             <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/">
               <span class="material-symbols-outlined text-2xl fill">home</span>
               <span id="networkStatusDot" class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background-light dark:border-background-dark"></span>
-              <span class="text-xs font-bold">Home</span>
+              <span class="text-xs font-bold">${t('common.home')}</span>
             </a>
             <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/history">
               <span class="material-symbols-outlined text-2xl">category</span>
-              <span class="text-xs font-medium">Topics</span>
+              <span class="text-xs font-medium">${t('common.topics')}</span>
             </a>
             <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
               <span class="material-symbols-outlined text-2xl">settings</span>
-              <span class="text-xs font-medium">Settings</span>
+              <span class="text-xs font-medium">${t('common.settings')}</span>
             </a>
           </div>
         </div>
@@ -99,10 +99,8 @@ export default class HomeView extends BaseView {
         <div data-testid="no-quizzes-message" class="flex flex-col items-center justify-center py-8 text-center">
           <span class="material-symbols-outlined text-5xl text-subtext-light
   dark:text-subtext-dark mb-3">quiz</span>
-          <p class="text-subtext-light dark:text-subtext-dark text-base">No
-  quizzes yet</p>
-          <p class="text-subtext-light dark:text-subtext-dark text-sm">Start
-  your first quiz to see it here!</p>
+          <p class="text-subtext-light dark:text-subtext-dark text-base">${t('home.noQuizzes')}</p>
+          <p class="text-subtext-light dark:text-subtext-dark text-sm">${t('home.startFirst')}</p>
         </div>
       `;
     }
@@ -132,7 +130,7 @@ export default class HomeView extends BaseView {
       // Format the date - handle unplayed quizzes (timestamp = 0)
       let dateStr;
       if (!session.timestamp || session.timestamp === 0) {
-        dateStr = hasScore ? this.formatDate(new Date(session.timestamp)) : 'Not played yet';
+        dateStr = hasScore ? this.formatDate(new Date(session.timestamp)) : t('home.notPlayedYet');
       } else {
         dateStr = this.formatDate(new Date(session.timestamp));
       }
@@ -161,9 +159,9 @@ export default class HomeView extends BaseView {
     const diffMs = now - date;
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays === 0) return t('dates.today');
+    if (diffDays === 1) return t('dates.yesterday');
+    if (diffDays < 7) return t('dates.daysAgo', { count: diffDays });
 
     return date.toLocaleDateString();
   }  
@@ -172,7 +170,7 @@ export default class HomeView extends BaseView {
     const session = await getQuizSession(sessionId);
 
     if (!session || !session.questions) {
-      alert('This quiz cannot be replayed. The questions were not saved.');
+      alert(t('errors.cannotReplay'));
       return;
     }
 

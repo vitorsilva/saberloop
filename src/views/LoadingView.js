@@ -3,6 +3,7 @@ import state from '../core/state.js';
 import { generateQuestions } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
+import { t } from '../core/i18n.js';
 
 // Default timing constants (can be overridden via window.LOADING_VIEW_CONFIG for testing)
 const getConfig = () => {
@@ -17,14 +18,14 @@ export default class LoadingView extends BaseView {
   constructor() {
     super();
     this.loadingMessages = [
-      'Preparing your questions...',
-      'Consulting our AI teacher...',
-      'Crafting the perfect quiz...',
-      'Almost ready...'
+      t('loading.preparing'),
+      t('loading.consulting'),
+      t('loading.crafting'),
+      t('loading.almostReady')
     ];
     this.extendedMessages = [
-      "Teaching an AI isn't easy...",
-      'Our AI is thinking extra hard...'
+      t('loading.teachingNotEasy'),
+      t('loading.thinkingHard')
     ];
     this.currentMessageIndex = 0;
     this.messageInterval = null;
@@ -59,19 +60,19 @@ export default class LoadingView extends BaseView {
           <!-- Topic Display -->
           <div class="mt-4">
             <p class="text-sm text-subtext-light dark:text-subtext-darkuppercase tracking-wider">
-              Generating quiz for
+              ${t('loading.generatingFor')}
             </p>
             <h1 data-testid="loading-topic" class="text-2xl font-bold text-text-light dark:text-text-dark mt-2">
               ${this.escapeHtml(topic)}
             </h1>
-            <p class="text-sm text-subtext-light dark:text-subtext-dark mt-1">    
-              ${gradeLevel || 'Middle School'} Level
+            <p class="text-sm text-subtext-light dark:text-subtext-dark mt-1">
+              ${t('loading.level', { level: gradeLevel || t('topicInput.middleSchool') })}
             </p>
           </div>
 
           <!-- Dynamic Message -->
           <p id="loadingMessage" data-testid="loading-message" class="text-base text-primary font-medium animate-pulse">
-            ${isOffline ? 'You appear to be offline...' : this.loadingMessages[0]}
+            ${isOffline ? t('loading.offlineAppear') : this.loadingMessages[0]}
           </p>
 
           <!-- Countdown Timer (hidden initially, shown after delay) -->
@@ -89,7 +90,7 @@ export default class LoadingView extends BaseView {
           ${isOffline ? `
             <div class="mt-4 p-4 bg-warning/10 border border-warning rounded-lg max-w-sm">
               <p class="text-sm text-warning">
-                You're offline. Quiz generation requires an internet connection.
+                ${t('loading.offlineWarning')}
               </p>
             </div>
           ` : ''}
@@ -97,9 +98,9 @@ export default class LoadingView extends BaseView {
         </div>
 
         <!-- Cancel Button -->
-        <div class="absolute bottom-8 left-0 right-0 flex justify-center">        
+        <div class="absolute bottom-8 left-0 right-0 flex justify-center">
           <button id="cancelBtn" class="px-6 py-2 text-sm text-subtext-light dark:text-subtext-dark hover:text-error transition-colors">
-            Cancel
+            ${t('common.cancel')}
           </button>
         </div>
       </div>
@@ -160,9 +161,9 @@ export default class LoadingView extends BaseView {
     const remaining = ESTIMATED_DURATION_SECONDS - this.elapsedSeconds;
 
     if (remaining > 0) {
-      countdownEl.textContent = `About ${remaining} seconds remaining...`;
+      countdownEl.textContent = t('loading.secondsRemaining', { count: remaining });
     } else {
-      countdownEl.textContent = 'Almost done...';
+      countdownEl.textContent = t('loading.almostDone');
 
       // Add extended messages to rotation (only once)
       if (!this.extendedMessagesAdded) {
@@ -177,7 +178,7 @@ export default class LoadingView extends BaseView {
       // Get API key via auth service
       const apiKey = await getApiKey();
       if (!apiKey) {
-        throw new Error('Not connected to OpenRouter. Please connect in Settings.');
+        throw new Error(t('errors.notConnected'));
       }
 
       // Build options for question generation
@@ -206,7 +207,7 @@ export default class LoadingView extends BaseView {
       this.cleanup();
 
       // Show specific error message to help user diagnose the issue
-      alert(error.message || 'Failed to generate questions. Please try again.');
+      alert(error.message || t('errors.failedToGenerate'));
       this.navigateTo('/topic-input');
     }
   }
@@ -215,7 +216,7 @@ export default class LoadingView extends BaseView {
     const cancelBtn = this.querySelector('#cancelBtn');
     if (cancelBtn) {
       this.addEventListener(cancelBtn, 'click', () => {
-        if (confirm('Are you sure you want to cancel?')) {
+        if (confirm(t('loading.confirmCancel'))) {
           this.cleanup();
           this.navigateTo('/topic-input');
         }

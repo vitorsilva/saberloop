@@ -1,5 +1,6 @@
   import BaseView from './BaseView.js';
   import { startAuth } from '../services/auth-service.js';
+  import { t } from '../core/i18n.js';
 
   export default class OpenRouterGuideView extends BaseView {
     constructor() {
@@ -23,7 +24,7 @@
               </svg>
             </button>
             <h1 data-testid="openrouter-guide-title" class="text-text-light dark:text-text-dark text-lg font-bold
-              leading-tight tracking-[-0.015em]">Set up OpenRouter</h1>
+              leading-tight tracking-[-0.015em]">${t('openrouter.setupTitle')}</h1>
           </div>
 
           <!-- Main content -->
@@ -32,12 +33,12 @@
             <!-- Hero Section -->
             <div class="py-6">
               <h2 class="text-text-light dark:text-text-dark text-3xl font-bold mb-3">
-                Create your free account
+                ${t('openrouter.createFreeAccount')}
               </h2>
               <p class="text-subtext-light dark:text-subtext-dark text-base leading-relaxed">
-                Follow these steps to connect with OpenRouter.
-                <span class="font-semibold text-text-light dark:text-text-dark">No credit card required</span>
-                for the free tier.
+                ${t('openrouter.followSteps')}
+                <span class="font-semibold text-text-light dark:text-text-dark">${t('openrouter.noCreditCardRequired')}</span>
+                ${t('openrouter.forFreeTier')}
               </p>
             </div>
 
@@ -46,9 +47,9 @@
               <div class="flex items-start gap-3">
                 <span class="material-symbols-outlined text-primary text-2xl">verified_user</span>
                 <div>
-                  <p class="font-semibold text-text-light dark:text-text-dark mb-1">Free Access</p>
+                  <p class="font-semibold text-text-light dark:text-text-dark mb-1">${t('openrouter.freeAccess')}</p>
                   <p class="text-sm text-subtext-light dark:text-subtext-dark">
-                    You do not need to add credits initially. Several AI models are completely free to use.
+                    ${t('openrouter.noCreditsNeeded')}
                   </p>
                 </div>
               </div>
@@ -58,7 +59,7 @@
             <button id="cta-top" class="w-full py-3.5 px-6 rounded-xl font-medium
               bg-primary hover:bg-primary-dark text-white transition-colors
               flex items-center justify-center gap-2">
-              Continue to OpenRouter
+              ${t('openrouter.continueToOpenRouter')}
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -69,31 +70,31 @@
             <p class="text-center mt-4 mb-8">
               <button id="skip-btn" class="text-subtext-light dark:text-subtext-dark
                 hover:text-text-light dark:hover:text-text-dark transition-colors text-sm">
-                I'll do it later
+                ${t('openrouter.doItLater')}
               </button>
             </p>
 
             <!-- Instructions header -->
             <p class="text-subtext-light dark:text-subtext-dark text-sm mb-4">
-              See instructions for free account creation:
+              ${t('openrouter.seeInstructions')}
             </p>
 
             <!-- Step Cards -->
             <div class="space-y-4">
-                ${this.renderStepCard(1, 'Sign Up',
-                'Visit OpenRouter.ai and click the "Sign Up" button in the top right corner.',
+                ${this.renderStepCard(1, t('openrouter.step1Title'),
+                t('openrouter.step1Desc'),
                 'how_to_reg', false, null)}
 
-                ${this.renderStepCard(2, 'Create Account',
-                'Choose to sign up with Google, GitHub, or create an account with your email.',
+                ${this.renderStepCard(2, t('openrouter.step2Title'),
+                t('openrouter.step2Desc'),
                 'person_add', false, '/app/images/onboarding/openrouter_step2_createaccount.png')}
 
-                ${this.renderStepCard(3, 'Skip Payment',
-                'On the credits page, look for the small "Skip" or "Continue without adding credits" link below the payment options.',
+                ${this.renderStepCard(3, t('openrouter.step3Title'),
+                t('openrouter.step3Desc'),
                 'money_off', true, '/app/images/onboarding/openrouter_step3_freeaccount.png')}
 
-                ${this.renderStepCard(4, 'Authorize',
-                'Review the permissions and click "Authorize" to connect Saberloop with your OpenRouter account.',
+                ${this.renderStepCard(4, t('openrouter.step4Title'),
+                t('openrouter.step4Desc'),
                 'verified', false, '/app/images/onboarding/openrouter_step4_authorization.png')}
             </div>
 
@@ -106,7 +107,7 @@
             <button id="cta-bottom" class="w-full py-3.5 px-6 rounded-xl font-medium
               bg-primary hover:bg-primary-dark text-white transition-colors
               flex items-center justify-center gap-2">
-              Continue to OpenRouter
+              ${t('openrouter.continueToOpenRouter')}
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -136,7 +137,7 @@
         <div class="mt-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20
           border-l-4 border-amber-500">
           <p class="text-sm text-amber-800 dark:text-amber-200 font-medium">
-            Important: Do not add payment. The free tier is enough to get started!
+            ${t('openrouter.importantNoPayment')}
           </p>
         </div>
       ` : '';

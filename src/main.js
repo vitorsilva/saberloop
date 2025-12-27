@@ -22,6 +22,7 @@ import { initErrorHandling } from './utils/errorHandler.js';
 import { initPerformanceMonitoring } from './utils/performance.js'
 import { isFeatureEnabled } from './core/features.js';
 import { telemetry } from './utils/telemetry.js';
+import { initI18n } from './core/i18n.js';
 
 logger.info('Saberloop initializing');
 initErrorHandling();
@@ -37,6 +38,10 @@ if (telemetry.isEnabled()) {
 // Initialize database
 async function init() {
   try {
+    // Initialize i18n first (translations needed for UI)
+    await initI18n();
+    logger.info('i18n initialized');
+
     await initDatabase();
     logger.info('Database initialized');
 
