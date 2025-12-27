@@ -3,7 +3,7 @@ import state from '../core/state.js';
 import { generateQuestions } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
-import { t } from '../core/i18n.js';
+import { t, getCurrentLanguage } from '../core/i18n.js';
 
 // Default timing constants (can be overridden via window.LOADING_VIEW_CONFIG for testing)
 const getConfig = () => {
@@ -182,7 +182,9 @@ export default class LoadingView extends BaseView {
       }
 
       // Build options for question generation
-      const options = {};
+      const options = {
+        language: getCurrentLanguage()
+      };
 
       // If continuing on topic, pass previous questions to exclude
       const continueChain = state.getContinueChain();

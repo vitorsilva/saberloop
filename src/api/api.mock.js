@@ -8,6 +8,7 @@ import { logger } from '../utils/logger.js';
    * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
    * @param {Object} options - Optional settings
    * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
+   * @param {string} options.language - Language code (unused in mock, accepted for interface consistency)
    * @returns {Promise<Array>} Array of 5 question objects
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', _apiKey, options = {}) {
@@ -93,10 +94,11 @@ import { logger } from '../utils/logger.js';
    * @param {string} correctAnswer - The correct answer
    * @param {string} gradeLevel - The grade level
    * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
+   * @param {string} _language - Language code (unused in mock, accepted for interface consistency)
    * @returns {Promise<string>} The explanation text
    */
   export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel =
-  'middle school', _apiKey) {
+  'middle school', _apiKey, _language = 'en') {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
 

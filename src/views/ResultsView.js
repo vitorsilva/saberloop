@@ -6,7 +6,7 @@ import { logger } from '../utils/logger.js';
 import { isFeatureEnabled } from '../core/features.js';
 import { showExplanationModal } from '../components/ExplanationModal.js';
 import { calculateNextGradeLevel } from '../utils/gradeProgression.js';
-import { t } from '../core/i18n.js';
+import { t, getCurrentLanguage } from '../core/i18n.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -334,7 +334,8 @@ export default class ResultsView extends BaseView {
           userAnswer,
           correctAnswer,
           gradeLevel,
-          apiKey
+          apiKey,
+          getCurrentLanguage()
         );
       }
     });
