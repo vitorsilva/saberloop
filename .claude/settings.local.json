@@ -110,7 +110,10 @@
       "Bash(echo:*)",
       "Bash(npm install:*)",
       "Bash(npm run build:deploy:staging:*)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(gh pr view:*)",
+      "Bash(npm run translate:*)",
+      "Bash(npm run build:deploy:*)"
     ],
     "deny": [],
     "ask": []
