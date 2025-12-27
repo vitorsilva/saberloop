@@ -196,5 +196,19 @@
     "failed": "Failed to generate explanation.",
     "tryAgain": "Try again",
     "gotIt": "Got it!"
+  },
+  "share": {
+    "button": "Share Results",
+    "title": "Share Your Score",
+    "preview": "Preview",
+    "shareVia": "Share via...",
+    "copyLink": "Copy Link",
+    "moreOptions": "More Options",
+    "copied": "Copied to clipboard!",
+    "quizMaster": "{{topic}} Quiz Master!",
+    "scoreMessage": "I scored {{score}}/{{total}} ({{percentage}}%) on Saberloop!",
+    "challengeText": "Can you beat my score?",
+    "shareSuccess": "Shared successfully!",
+    "shareFailed": "Could not share. Try copying the link instead."
   }
 }
