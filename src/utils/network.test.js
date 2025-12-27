@@ -1,5 +1,16 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { isOnline, onOnline, onOffline, updateNetworkIndicator, updateOfflineUI } from './network.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
+// Mock the logger module
+vi.mock('./logger.js', () => ({
+  logger: {
+    info: vi.fn(),
+    debug: vi.fn(),
+    error: vi.fn()
+  }
+}));
+
+import { isOnline, onOnline, onOffline, updateNetworkIndicator, updateOfflineUI, initNetworkMonitoring } from './network.js';
+import { logger } from './logger.js';
 
 describe('Network Utilities', () => {
   describe('isOnline function', () => {
@@ -185,5 +196,112 @@ describe('Network Utilities', () => {
     });
 
   });
-    
+
+  describe('initNetworkMonitoring', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      // Setup: Create DOM elements needed for network monitoring
+      document.body.innerHTML = `
+        <span id="networkStatusDot" class=""></span>
+        <div id="offlineBanner" class="hidden"></div>
+        <button id="startQuizBtn"></button>
+      `;
+      vi.stubGlobal('navigator', { onLine: true });
+    });
+
+    it('should update network indicator on initialization', () => {
+      initNetworkMonitoring();
+
+      const indicator = document.getElementById('networkStatusDot');
+      expect(indicator.className).toContain('bg-green-500');
+    });
+
+    it('should update offline UI on initialization', () => {
+      vi.stubGlobal('navigator', { onLine: false });
+
+      initNetworkMonitoring();
+
+      const banner = document.getElementById('offlineBanner');
+      const button = document.getElementById('startQuizBtn');
+      expect(banner.classList.contains('hidden')).toBe(false);
+      expect(button.disabled).toBe(true);
+    });
+
+    it('should log initialization message', () => {
+      initNetworkMonitoring();
+
+      expect(logger.info).toHaveBeenCalledWith('Network monitoring initialized');
+    });
+
+    it('should update UI when going online', () => {
+      vi.stubGlobal('navigator', { onLine: false });
+      initNetworkMonitoring();
+
+      // Verify offline state
+      const banner = document.getElementById('offlineBanner');
+      expect(banner.classList.contains('hidden')).toBe(false);
+
+      // Simulate going online
+      vi.stubGlobal('navigator', { onLine: true });
+      window.dispatchEvent(new Event('online'));
+
+      // Verify online state
+      expect(banner.classList.contains('hidden')).toBe(true);
+    });
+
+    it('should update UI when going offline', () => {
+      vi.stubGlobal('navigator', { onLine: true });
+      initNetworkMonitoring();
+
+      // Verify online state
+      const banner = document.getElementById('offlineBanner');
+      expect(banner.classList.contains('hidden')).toBe(true);
+
+      // Simulate going offline
+      vi.stubGlobal('navigator', { onLine: false });
+      window.dispatchEvent(new Event('offline'));
+
+      // Verify offline state
+      expect(banner.classList.contains('hidden')).toBe(false);
+    });
+
+    it('should update network indicator dot when going offline', () => {
+      vi.stubGlobal('navigator', { onLine: true });
+      initNetworkMonitoring();
+
+      const indicator = document.getElementById('networkStatusDot');
+      expect(indicator.className).toContain('bg-green-500');
+
+      // Simulate going offline
+      vi.stubGlobal('navigator', { onLine: false });
+      window.dispatchEvent(new Event('offline'));
+
+      expect(indicator.className).toContain('bg-orange-500');
+    });
+
+    it('should update network indicator dot when going online', () => {
+      vi.stubGlobal('navigator', { onLine: false });
+      initNetworkMonitoring();
+
+      const indicator = document.getElementById('networkStatusDot');
+      expect(indicator.className).toContain('bg-orange-500');
+
+      // Simulate going online
+      vi.stubGlobal('navigator', { onLine: true });
+      window.dispatchEvent(new Event('online'));
+
+      expect(indicator.className).toContain('bg-green-500');
+    });
+
+    it('should not crash if DOM elements are missing', () => {
+      document.body.innerHTML = '';
+
+      expect(() => {
+        initNetworkMonitoring();
+      }).not.toThrow();
+
+      expect(logger.info).toHaveBeenCalledWith('Network monitoring initialized');
+    });
+  });
+
 });
