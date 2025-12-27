@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Início",
+    "settings": "Definições",
+    "topics": "Tópicos",
+    "help": "Ajuda",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "back": "Voltar",
+    "next": "Seguinte",
+    "loading": "A carregar..."
+  },
+  "home": {
+    "welcome": "Bem-vindo de volta!",
+    "startQuiz": "Iniciar Novo Quiz",
+    "recentTopics": "Tópicos Recentes",
+    "noQuizzes": "Ainda sem quizzes",
+    "startFirst": "Inicia o teu primeiro quiz para o veres aqui!",
+    "notPlayedYet": "Ainda não jogado"
+  },
+  "quiz": {
+    "title": "Quiz de {{topic}}",
+    "questionOf": "Pergunta {{current}} de {{total}}",
+    "nextQuestion": "Próxima Pergunta",
+    "submitAnswer": "Submeter Resposta",
+    "confirmLeave": "Tens a certeza que queres sair? O teu progresso será perdido."
+  },
+  "results": {
+    "title": "Resultados",
+    "reviewAnswers": "Rever as Tuas Respostas",
+    "perfectScore": "Pontuação Perfeita!",
+    "greatJob": "Excelente Trabalho!",
+    "keepPracticing": "Continua a Praticar!",
+    "tryAnother": "Tentar Outro Tópico",
+    "score": "Pontuação",
+    "correct": "Correto",
+    "incorrect": "Incorreto"
+  },
+  "offline": {
+    "banner": "Estás offline. Podes repetir os quizzes guardados abaixo.",
+    "message": "Estás atualmente offline"
+  },
+  "errors": {
+    "network": "Erro de rede. Por favor, verifica a tua ligação e tenta novamente.",
+    "generic": "Ocorreu um erro. Por favor, tenta novamente."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Home",
+    "settings": "Settings",
+    "topics": "Topics",
+    "help": "Help",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading..."
+  },
+  "home": {
+    "welcome": "Welcome back!",
+    "startQuiz": "Start New Quiz",
+    "recentTopics": "Recent Topics",
+    "noQuizzes": "No quizzes yet",
+    "startFirst": "Start your first quiz to see it here!",
+    "notPlayedYet": "Not played yet"
+  },
+  "quiz": {
+    "title": "{{topic}} Quiz",
+    "questionOf": "Question {{current}} of {{total}}",
+    "nextQuestion": "Next Question",
+    "submitAnswer": "Submit Answer",
+    "confirmLeave": "Are you sure you want to leave? Your progress will be lost."
+  },
+  "results": {
+    "title": "Results",
+    "reviewAnswers": "Review Your Answers",
+    "perfectScore": "Perfect Score!",
+    "greatJob": "Great Job!",
+    "keepPracticing": "Keep Practicing!",
+    "tryAnother": "Try Another Topic",
+    "score": "Score",
+    "correct": "Correct",
+    "incorrect": "Incorrect"
+  },
+  "offline": {
+    "banner": "You're offline. You can replay saved quizzes below.",
+    "message": "You're currently offline"
+  },
+  "errors": {
+    "network": "Network error. Please check your connection and try again.",
+    "generic": "An error occurred. Please try again."
+  }
+}
