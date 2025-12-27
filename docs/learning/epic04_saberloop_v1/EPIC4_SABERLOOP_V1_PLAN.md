@@ -59,26 +59,30 @@ Before starting Epic 4, you should have completed:
 │  ┌──────────────────┐  ┌──────────────────┐                │
 │  │ OpenRouter       │  │ i18n             │                │
 │  │ Onboarding UX    │  │ Multi-language   │                │
-│  │ (Phase 10) ✅    │  │ (Phase 30)       │                │
+│  │ (Phase 10) ✅    │  │ (Phase 30) ✅    │                │
 │  └──────────────────┘  └──────────────────┘                │
+│  ┌──────────────────┐                                      │
+│  │ Sharing Feature  │                                      │
+│  │ (Phase 70)       │                                      │
+│  └──────────────────┘                                      │
 │                                                             │
 │  Code Quality                                               │
 │  ┌──────────────────┐  ┌──────────────────┐                │
 │  │ Dead Code        │  │ Architecture     │                │
 │  │ Detection        │  │ Testing          │                │
-│  │ (Phase 15)       │  │ (Phase 20)       │                │
+│  │ (Phase 15) ✅    │  │ (Phase 20) ✅    │                │
 │  └──────────────────┘  └──────────────────┘                │
 │  ┌──────────────────┐                                      │
 │  │ JSDoc Type       │                                      │
 │  │ Checking         │                                      │
-│  │ (Phase 48)       │                                      │
+│  │ (Phase 48) ✅    │                                      │
 │  └──────────────────┘                                      │
 │                                                             │
 │  Testing & Observability                                    │
 │  ┌──────────────────┐  ┌──────────────────┐                │
 │  │ Maestro Testing  │  │ Telemetry        │                │
 │  │ Expansion        │  │ Enhancement      │                │
-│  │ (Phase 50)       │  │ (Phase 40)       │                │
+│  │ (Phase 50)       │  │ (Phase 40) ✅    │                │
 │  └──────────────────┘  └──────────────────┘                │
 │                                                             │
 │  Business                                                   │
@@ -590,6 +594,44 @@ Implement Google AdSense integration for passive revenue.
 
 ---
 
+### **Phase 70: Sharing Feature** (4-6 sessions)
+
+Add sharing functionality to allow users to share quiz achievements on social media.
+
+**Status:** Ready to Implement
+
+**Key Features:**
+- Share button on Results screen
+- Achievement card image generation (Canvas API)
+- Web Share API with fallbacks
+- Deep link handling (`?topic=` parameter)
+- Share modal with preview
+
+**Learning Objectives:**
+- Web Share API and browser support
+- Canvas API for image generation
+- Deep linking in PWAs
+- Social sharing best practices
+
+**Deliverables:**
+- [ ] `src/utils/share.js` - Share API utilities
+- [ ] `src/utils/share-image.js` - Canvas image generator
+- [ ] `src/components/ShareModal.js` - Share options modal
+- [ ] Share button in ResultsView
+- [ ] Deep link handling in main.js
+- [ ] Unit and E2E tests
+
+**Success Criteria:**
+- [ ] Share button visible on Results screen
+- [ ] Can share text + link via Web Share API
+- [ ] Fallback to clipboard works on Firefox
+- [ ] Deep links open app with topic pre-filled
+- [ ] Generated achievement card image
+
+**Related:** [Issue #11](https://github.com/vitorsilva/saberloop/issues/11), [PHASE70_SHARING.md](./PHASE70_SHARING.md)
+
+---
+
 ### **Phase 80: Unit Test Coverage Improvement** (1 session)
 
 Improve unit test coverage for critical utility and API modules.
@@ -738,6 +780,7 @@ Experimental research phase to assess feasibility of E2E mutation testing.
 | Phase 48 | 2-3 | JSDoc Type Checking | ✅ Complete |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
+| Phase 70 | 4-6 | Sharing Feature | Ready |
 | Phase 80 | 1 | Test Coverage | ✅ Complete |
 | Phase 85 | 2-3 | Mutation Testing Setup | Ready |
 | Phase 86 | 3-4 | Mutation Testing Expansion | Ready (after 85) |
@@ -764,9 +807,10 @@ While phases can be worked on in any order, here's a suggested priority:
 10. **Phase 45** - Answer Randomization ✅
 11. **Phase 46** - Configurable Question Count ✅
 12. **Phase 47** - AI Model Selection ✅
-13. **Phase 48** - JSDoc Type Checking
+13. **Phase 48** - JSDoc Type Checking ✅
 14. **Phase 50** - Maestro Testing
 15. **Phase 60** - Monetization (after user base grows)
+16. **Phase 70** - Sharing Feature
 
 ---
 
