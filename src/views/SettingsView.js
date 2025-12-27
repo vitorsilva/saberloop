@@ -43,15 +43,15 @@
     </label>
 
     <!-- Default Questions Per Quiz -->
-    <label class="flex flex-col opacity-50">
+    <label class="flex flex-col">
       <p class="text-base font-medium pb-2 text-text-light
   dark:text-text-dark">${t('settings.defaultQuestions')}</p>
-      <select id="questionsPerQuiz" disabled class="form-select flex w-full rounded-lg
+      <select id="questionsPerQuiz" data-testid="questions-per-quiz-select" class="form-select flex w-full rounded-lg
   h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark
   border border-border-light dark:border-border-dark text-text-light
-  dark:text-text-dark cursor-not-allowed">
+  dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary">
         <option value="5">${t('settings.nQuestions', { count: 5 })}</option>
-        <option value="10" selected>${t('settings.nQuestions', { count: 10 })}</option>
+        <option value="10">${t('settings.nQuestions', { count: 10 })}</option>
         <option value="15">${t('settings.nQuestions', { count: 15 })}</option>
       </select>
     </label>
