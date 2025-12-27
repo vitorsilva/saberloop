@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger.js';
+import { t } from '../core/i18n.js';
 
 /**
  * Show a bottom sheet modal with explanation for an incorrect answer
@@ -31,7 +32,7 @@ export function showExplanationModal({ question, userAnswer, correctAnswer, onFe
         <div class="flex justify-center mb-4">
           <span class="bg-error/20 text-error px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
             <span class="material-symbols-outlined text-base">error</span>
-            INCORRECT
+            ${t('explanation.incorrect')}
           </span>
         </div>
 
@@ -44,7 +45,7 @@ export function showExplanationModal({ question, userAnswer, correctAnswer, onFe
           <div class="flex-1 bg-error/10 rounded-xl p-4">
             <div class="flex items-center gap-2 text-error text-sm mb-1">
               <span class="material-symbols-outlined text-base">close</span>
-              YOU SELECTED
+              ${t('explanation.youSelected')}
             </div>
             <p class="text-text-light dark:text-text-dark text-lg font-semibold">${cleanUserAnswer}</p>
           </div>
@@ -53,7 +54,7 @@ export function showExplanationModal({ question, userAnswer, correctAnswer, onFe
             <div class="flex items-center justify-between text-success text-sm mb-1">
               <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-base">check</span>
-                CORRECT ANSWER
+                ${t('explanation.correctAnswer')}
               </span>
               <span class="material-symbols-outlined">check_circle</span>
             </div>
@@ -68,26 +69,26 @@ export function showExplanationModal({ question, userAnswer, correctAnswer, onFe
         <div class="px-4 mb-6" id="explanationContent">
           <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined text-primary">lightbulb</span>
-            <h3 class="text-text-light dark:text-text-dark font-bold text-lg">Why it's ${cleanCorrectAnswer}</h3>
+            <h3 class="text-text-light dark:text-text-dark font-bold text-lg">${t('explanation.whyIts', { answer: cleanCorrectAnswer })}</h3>
           </div>
           <!-- Loading state -->
           <div id="explanationLoading" class="flex items-center gap-2 text-subtext-light dark:text-subtext-dark">
             <span class="material-symbols-outlined animate-spin">progress_activity</span>
-            <span>Generating explanation...</span>
+            <span>${t('explanation.generating')}</span>
           </div>
           <!-- Explanation text (hidden initially) -->
           <p id="explanationText" class="text-subtext-light dark:text-subtext-dark leading-relaxed hidden"></p>
           <!-- Error state (hidden initially) -->
           <div id="explanationError" class="hidden">
-            <p class="text-error mb-3">Failed to generate explanation.</p>
-            <button id="retryBtn" class="text-primary font-medium hover:underline">Try again</button>
+            <p class="text-error mb-3">${t('explanation.failed')}</p>
+            <button id="retryBtn" class="text-primary font-medium hover:underline">${t('explanation.tryAgain')}</button>
           </div>
         </div>
 
         <!-- Got it Button -->
         <div class="px-4 pb-8">
           <button id="gotItBtn" data-testid="got-it-btn" class="w-full bg-primary rounded-xl py-4 font-bold text-white flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors">
-            Got it!
+            ${t('explanation.gotIt')}
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>

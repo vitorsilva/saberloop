@@ -1,4 +1,5 @@
   import { logger } from '../utils/logger.js';
+  import { t } from '../core/i18n.js';
 
   /**
    * Show a modal prompting user to connect to OpenRouter
@@ -22,12 +23,11 @@
             </div>
 
             <h2 data-testid="connect-modal-title" class="text-xl font-bold text-text-light dark:text-text-dark mb-2">
-              Connect to OpenRouter
+              ${t('connectModal.title')}
             </h2>
 
             <p class="text-subtext-light dark:text-subtext-dark text-sm mb-6">
-              To generate new quizzes, you need to connect your OpenRouter account. It's      
-  free!
+              ${t('connectModal.description')}
             </p>
 
             <button
@@ -36,7 +36,7 @@
               class="w-full h-12 rounded-xl bg-primary text-white font-bold
   hover:bg-primary/90 transition-colors mb-3"
             >
-              Connect with OpenRouter
+              ${t('settings.connectWithOpenRouter')}
             </button>
 
             <button
@@ -46,7 +46,7 @@
   dark:text-subtext-dark font-medium hover:bg-card-light dark:hover:bg-card-dark
   transition-colors"
             >
-              Cancel
+              ${t('common.cancel')}
             </button>
           </div>
         </div>
@@ -61,7 +61,7 @@
         connectBtn.innerHTML = `
           <span class="material-symbols-outlined animate-spin
   mr-2">progress_activity</span>
-          Connecting...
+          ${t('connectModal.connecting')}
         `;
 
         try {
@@ -70,7 +70,7 @@
         } catch (error) {
           logger.error('Auth failed in ConnectModal', { error: error.message });
           connectBtn.disabled = false;
-          connectBtn.textContent = 'Connect with OpenRouter';
+          connectBtn.textContent = t('settings.connectWithOpenRouter');
         }
       });
 

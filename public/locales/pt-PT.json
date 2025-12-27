@@ -128,5 +128,66 @@
     "reviewAnytime": "Revê quizzes passados a qualquer momento",
     "connectToAI": "Ligar ao Fornecedor de IA",
     "tryFreeQuizzes": "Experimentar Quizzes Gratuitos"
+  },
+  "help": {
+    "faq": "Perguntas Frequentes",
+    "needMoreHelp": "Precisas de Mais Ajuda?",
+    "reportIssue": "Reportar um Problema",
+    "openGithubIssue": "Abrir um issue no GitHub",
+    "faq1Question": "Como crio um quiz?",
+    "faq1Answer": "No ecrã Início, toca em \"Iniciar Novo Quiz\", introduz um tópico que queiras aprender e toca em \"Gerar Perguntas\". A IA criará perguntas personalizadas para ti.",
+    "faq2Question": "A app funciona offline?",
+    "faq2Answer": "Sim! Quizzes de exemplo estão disponíveis offline. No entanto, gerar novos quizzes requer ligação à internet e uma chave API do OpenRouter.",
+    "faq3Question": "Como me ligo ao OpenRouter?",
+    "faq3Answer": "Vai a Definições e toca em \"Ligar com OpenRouter\". Serás redirecionado para criar uma conta gratuita. Uma vez ligado, podes gerar quizzes ilimitados (dentro dos limites da API).",
+    "faq4Question": "Os meus dados são privados?",
+    "faq4Answer": "Sim. O teu histórico de quizzes e definições são guardados localmente no teu dispositivo. A tua chave API do OpenRouter também é guardada localmente e apenas usada para gerar quizzes.",
+    "faq5Question": "O que é o OpenRouter?",
+    "faq5Answer": "O OpenRouter é um serviço que fornece acesso a modelos de IA. O Saberloop usa-o para gerar perguntas de quiz. Podes criar uma conta gratuita com pedidos diários limitados."
+  },
+  "connection": {
+    "confirmed": "Ligação Confirmada!",
+    "allSet": "Tudo pronto! A tua conta OpenRouter gratuita está ligada.",
+    "freeTierIncludes": "O nível gratuito inclui:",
+    "limitedFreeGenerations": "Gerações de quiz gratuitas limitadas",
+    "noCreditCard": "Sem cartão de crédito necessário",
+    "worksOfflineSaved": "Funciona offline com quizzes guardados",
+    "startFirstQuiz": "Iniciar o Teu Primeiro Quiz"
+  },
+  "openrouter": {
+    "setupTitle": "Configurar OpenRouter",
+    "createFreeAccount": "Cria a tua conta gratuita",
+    "followSteps": "Segue estes passos para te ligares ao OpenRouter.",
+    "noCreditCardRequired": "Sem cartão de crédito necessário",
+    "forFreeTier": "para o nível gratuito.",
+    "freeAccess": "Acesso Gratuito",
+    "noCreditsNeeded": "Não precisas de adicionar créditos inicialmente. Vários modelos de IA são completamente gratuitos.",
+    "continueToOpenRouter": "Continuar para OpenRouter",
+    "doItLater": "Faço depois",
+    "seeInstructions": "Ver instruções para criação de conta gratuita:",
+    "step1Title": "Registar",
+    "step1Desc": "Visita OpenRouter.ai e clica no botão \"Sign Up\" no canto superior direito.",
+    "step2Title": "Criar Conta",
+    "step2Desc": "Escolhe registar-te com Google, GitHub, ou cria uma conta com o teu email.",
+    "step3Title": "Saltar Pagamento",
+    "step3Desc": "Na página de créditos, procura o pequeno link \"Skip\" ou \"Continue without adding credits\" abaixo das opções de pagamento.",
+    "step4Title": "Autorizar",
+    "step4Desc": "Revê as permissões e clica em \"Authorize\" para ligar o Saberloop à tua conta OpenRouter.",
+    "importantNoPayment": "Importante: Não adicionar pagamento. O nível gratuito é suficiente para começar!"
+  },
+  "connectModal": {
+    "title": "Ligar ao OpenRouter",
+    "description": "Para gerar novos quizzes, precisas de ligar a tua conta OpenRouter. É gratuito!",
+    "connecting": "A ligar..."
+  },
+  "explanation": {
+    "incorrect": "INCORRETO",
+    "youSelected": "SELECIONASTE",
+    "correctAnswer": "RESPOSTA CORRETA",
+    "whyIts": "Porquê {{answer}}",
+    "generating": "A gerar explicação...",
+    "failed": "Falha ao gerar explicação.",
+    "tryAgain": "Tentar novamente",
+    "gotIt": "Percebido!"
   }
 }

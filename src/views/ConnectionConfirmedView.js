@@ -1,4 +1,5 @@
   import BaseView from './BaseView.js';
+  import { t } from '../core/i18n.js';
 
   export default class ConnectionConfirmedView extends BaseView {
     constructor() {
@@ -25,31 +26,31 @@
 
             <!-- Title -->
             <h1 data-testid="connection-confirmed-title" class="text-text-light dark:text-text-dark text-2xl font-bold mb-2">
-              Connection Confirmed!
+              ${t('connection.confirmed')}
             </h1>
 
             <!-- Subtitle -->
             <p class="text-subtext-light dark:text-subtext-dark text-center mb-6">
-              You're all set! Your free OpenRouter account is connected.
+              ${t('connection.allSet')}
             </p>
 
             <!-- Benefits list -->
             <div class="w-full max-w-xs mb-8 p-4 rounded-xl bg-card-light dark:bg-card-dark">
               <p class="text-text-light dark:text-text-dark font-medium mb-3">
-                Free tier includes:
+                ${t('connection.freeTierIncludes')}
               </p>
               <ul class="space-y-2">
                 <li class="flex items-center gap-2 text-sm text-subtext-light dark:text-subtext-dark">
                   <span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
-                  Limited free quiz generations
+                  ${t('connection.limitedFreeGenerations')}
                 </li>
                 <li class="flex items-center gap-2 text-sm text-subtext-light dark:text-subtext-dark">
                   <span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
-                  No credit card required
+                  ${t('connection.noCreditCard')}
                 </li>
                 <li class="flex items-center gap-2 text-sm text-subtext-light dark:text-subtext-dark">
                   <span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
-                  Works offline with saved quizzes
+                  ${t('connection.worksOfflineSaved')}
                 </li>
               </ul>
             </div>
@@ -58,7 +59,7 @@
             <button id="start-quiz-btn" data-testid="start-quiz-btn" class="w-full max-w-xs px-6 py-3.5 rounded-xl
               bg-primary hover:bg-primary-dark text-white font-medium transition-colors
               flex items-center justify-center gap-2">
-              Start Your First Quiz
+              ${t('connection.startFirstQuiz')}
               <span class="material-symbols-outlined text-xl">arrow_forward</span>
             </button>
 

@@ -1,4 +1,5 @@
 import BaseView from './BaseView.js';
+import { t } from '../core/i18n.js';
 
 export default class HelpView extends BaseView {
   constructor() {
@@ -16,13 +17,13 @@ bg-background-light dark:bg-background-dark">
             <span class="material-symbols-outlined">arrow_back</span>
           </a>
           <h1 data-testid="help-title" class="text-text-light dark:text-text-dark text-lg font-bold
-leading-tight tracking-[-0.015em] flex-1">Help</h1>
+leading-tight tracking-[-0.015em] flex-1">${t('common.help')}</h1>
         </div>
 
         <div class="flex-grow px-4 pb-8">
           <!-- FAQ Section -->
           <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold
-leading-tight tracking-[-0.015em] pb-3 pt-4">Frequently Asked Questions</h2>
+leading-tight tracking-[-0.015em] pb-3 pt-4">${t('help.faq')}</h2>
 
           <div class="flex flex-col gap-3" id="faqContainer">
             <!-- FAQ items will be rendered here -->
@@ -30,7 +31,7 @@ leading-tight tracking-[-0.015em] pb-3 pt-4">Frequently Asked Questions</h2>
 
           <!-- Contact Section -->
           <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold
-leading-tight tracking-[-0.015em] pb-3 pt-8">Need More Help?</h2>
+leading-tight tracking-[-0.015em] pb-3 pt-8">${t('help.needMoreHelp')}</h2>
 
           <div class="flex flex-col gap-3">
             <a href="https://github.com/vitorsilva/demo-pwa-app/issues"
@@ -42,9 +43,9 @@ justify-between hover:bg-primary/10 transition-colors">
 dark:text-text-dark">bug_report</span>
                 <div>
                   <p class="text-text-light dark:text-text-dark text-base
-font-medium">Report an Issue</p>
+font-medium">${t('help.reportIssue')}</p>
                   <p class="text-subtext-light dark:text-subtext-dark text-sm">
-Open a GitHub issue</p>
+${t('help.openGithubIssue')}</p>
                 </div>
               </div>
               <span class="material-symbols-outlined text-subtext-light
@@ -62,24 +63,24 @@ dark:text-subtext-dark">open_in_new</span>
   renderFAQ() {
     const faqData = [
       {
-        question: 'How do I create a quiz?',
-        answer: 'From the Home screen, tap "Start New Quiz", enter a topic you want to learn about, and tap "Generate Quiz". The AI will create personalized questions for you.'
+        question: t('help.faq1Question'),
+        answer: t('help.faq1Answer')
       },
       {
-        question: 'Does the app work offline?',
-        answer: 'Yes! Sample quizzes are available offline. However, generating new quizzes requires an internet connection and an OpenRouter API key.'
+        question: t('help.faq2Question'),
+        answer: t('help.faq2Answer')
       },
       {
-        question: 'How do I connect to OpenRouter?',
-        answer: 'Go to Settings and tap "Connect with OpenRouter". You\'ll be redirected to create a free account. Once connected, you can generate unlimited quizzes (within API limits).'
+        question: t('help.faq3Question'),
+        answer: t('help.faq3Answer')
       },
       {
-        question: 'Is my data private?',
-        answer: 'Yes. Your quiz history and settings are stored locally on your device. Your OpenRouter API key is also stored locally and only used to generate quizzes.'
+        question: t('help.faq4Question'),
+        answer: t('help.faq4Answer')
       },
       {
-        question: 'What is OpenRouter?',
-        answer: 'OpenRouter is a service that provides access to AI models. Saberloop uses it to generate quiz questions. You can create a free account with limited daily requests.'
+        question: t('help.faq5Question'),
+        answer: t('help.faq5Answer')
       }
     ];
 
