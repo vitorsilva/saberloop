@@ -3,7 +3,7 @@
   import { APP_VERSION, BUILD_DATE } from '../version.js';
   import { isConnected, disconnect } from '../services/auth-service.js';
   import { isFeatureEnabled } from '../core/features.js';
-  import { t } from '../core/i18n.js';
+  import { t, changeLanguage, getCurrentLanguage, SUPPORTED_LANGUAGES } from '../core/i18n.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -68,6 +68,18 @@
         <option value="medium">${t('settings.medium')}</option>
         <option value="hard">${t('settings.hard')}</option>
         <option value="mixed" selected>${t('settings.mixed')}</option>
+      </select>
+    </label>
+
+    <!-- Language -->
+    <label class="flex flex-col">
+      <p class="text-base font-medium pb-2 text-text-light
+  dark:text-text-dark">${t('settings.language')}</p>
+      <select id="languageSelect" data-testid="language-select" class="form-select flex w-full rounded-lg
+  h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark
+  border border-border-light dark:border-border-dark text-text-light
+  dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary">
+        ${this.renderLanguageOptions()}
       </select>
     </label>
   </div>
@@ -174,6 +186,15 @@
       this.bindEvents();
     }
 
+    renderLanguageOptions() {
+      const currentLang = getCurrentLanguage();
+      return SUPPORTED_LANGUAGES.map(lang =>
+        `<option value="${lang.code}" ${lang.code === currentLang ? 'selected' : ''}>
+          ${lang.flag} ${lang.name}
+        </option>`
+      ).join('');
+    }
+
     loadSettings() {
       const settings = getSettings();
 
@@ -181,10 +202,12 @@
       const gradeSelect = this.querySelector('#defaultGradeLevel');
       const questionsSelect = this.querySelector('#questionsPerQuiz');
       const difficultySelect = this.querySelector('#difficulty');
+      const languageSelect = this.querySelector('#languageSelect');
 
       if (gradeSelect) gradeSelect.value = settings.defaultGradeLevel;
-      if (questionsSelect) questionsSelect.value = settings.questionsPerQuiz;       
+      if (questionsSelect) questionsSelect.value = settings.questionsPerQuiz;
       if (difficultySelect) difficultySelect.value = settings.difficulty;
+      if (languageSelect) languageSelect.value = getCurrentLanguage();
     }
 
       async loadAccountStatus() {
@@ -249,6 +272,7 @@
       const gradeSelect = this.querySelector('#defaultGradeLevel');
       const questionsSelect = this.querySelector('#questionsPerQuiz');
       const difficultySelect = this.querySelector('#difficulty');
+      const languageSelect = this.querySelector('#languageSelect');
 
       this.addEventListener(gradeSelect, 'change', (e) => {
         saveSetting('defaultGradeLevel', e.target.value);
@@ -260,6 +284,13 @@
 
       this.addEventListener(difficultySelect, 'change', (e) => {
         saveSetting('difficulty', e.target.value);
+      });
+
+      this.addEventListener(languageSelect, 'change', async (e) => {
+        const newLang = e.target.value;
+        await changeLanguage(newLang);
+        // Re-render to apply new language
+        await this.render();
       });
     }
 

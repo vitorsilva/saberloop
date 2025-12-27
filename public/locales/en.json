@@ -53,6 +53,7 @@
     "medium": "Medium",
     "hard": "Hard",
     "mixed": "Mixed",
+    "language": "Language",
     "connection": "Connection to AI Provider",
     "about": "About",
     "helpFaq": "Help & FAQ",

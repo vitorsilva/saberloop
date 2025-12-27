@@ -109,7 +109,8 @@
       "Bash(node scripts/deploy-ftp.cjs:*)",
       "Bash(echo:*)",
       "Bash(npm install:*)",
-      "Bash(npm run build:deploy:staging:*)"
+      "Bash(npm run build:deploy:staging:*)",
+      "Bash(git branch:*)"
     ],
     "deny": [],
     "ask": []
