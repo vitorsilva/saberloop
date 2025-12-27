@@ -196,5 +196,19 @@
     "failed": "Falha ao gerar explicação.",
     "tryAgain": "Tentar novamente",
     "gotIt": "Percebido!"
+  },
+  "share": {
+    "button": "Partilhar Resultados",
+    "title": "Partilha a Tua Pontuação",
+    "preview": "Pré-visualização",
+    "shareVia": "Partilhar via...",
+    "copyLink": "Copiar Link",
+    "moreOptions": "Mais Opções",
+    "copied": "Copiado para a área de transferência!",
+    "quizMaster": "Mestre do Quiz de {{topic}}!",
+    "scoreMessage": "Obtive {{score}}/{{total}} ({{percentage}}%) no Saberloop!",
+    "challengeText": "Consegues superar a minha pontuação?",
+    "shareSuccess": "Partilhado com sucesso!",
+    "shareFailed": "Não foi possível partilhar. Tenta copiar o link."
   }
 }
