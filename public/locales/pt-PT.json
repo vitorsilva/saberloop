@@ -36,8 +36,13 @@
     "reviewAnswers": "Rever as Tuas Respostas",
     "perfectScore": "Pontuação Perfeita!",
     "greatJob": "Excelente Trabalho!",
+    "goodWork": "Bom Trabalho!",
     "keepPracticing": "Continua a Praticar!",
     "tryAnother": "Tentar Outro Tópico",
+    "continueOnTopic": "Continuar neste tópico",
+    "scoreSummary": "Respondeste corretamente a {{correct}} de {{total}} perguntas.",
+    "yourAnswer": "A tua resposta",
+    "correctAnswer": "Resposta correta",
     "score": "Pontuação",
     "correct": "Correto",
     "incorrect": "Incorreto"

@@ -6,6 +6,7 @@ import { logger } from '../utils/logger.js';
 import { isFeatureEnabled } from '../core/features.js';
 import { showExplanationModal } from '../components/ExplanationModal.js';
 import { calculateNextGradeLevel } from '../utils/gradeProgression.js';
+import { t } from '../core/i18n.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -34,15 +35,15 @@ export default class ResultsView extends BaseView {
     const strokeDashoffset = 100 - percentage;
 
     // Determine message based on score
-    let message = 'Great Job!';
+    let message = t('results.greatJob');
     if (percentage === 100) {
-      message = 'Perfect Score!';
+      message = t('results.perfectScore');
     } else if (percentage >= 80) {
-      message = 'Great Job!';
+      message = t('results.greatJob');
     } else if (percentage >= 60) {
-      message = 'Good Work!';
+      message = t('results.goodWork');
     } else {
-      message = 'Keep Practicing!';
+      message = t('results.keepPracticing');
     }
 
     // Check if features are enabled
@@ -64,7 +65,7 @@ export default class ResultsView extends BaseView {
               </div>
               <div class="flex flex-col justify-center">
                 <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal">${question.question}</p>
-                <p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal">Your answer: ${userAnswer}</p>
+                <p class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal">${t('results.yourAnswer')}: ${userAnswer}</p>
               </div>
             </div>
             <div class="shrink-0">
@@ -95,8 +96,8 @@ export default class ResultsView extends BaseView {
               </div>
               <div class="flex flex-col justify-center">
                 <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal">${question.question}</p>
-                <p class="text-error text-sm font-normal leading-normal">Your answer: ${userAnswer}</p>
-                <p class="text-success text-sm font-normal leading-normal">Correct answer: ${correctAnswer}</p>
+                <p class="text-error text-sm font-normal leading-normal">${t('results.yourAnswer')}: ${userAnswer}</p>
+                <p class="text-success text-sm font-normal leading-normal">${t('results.correctAnswer')}: ${correctAnswer}</p>
               </div>
             </div>
             <div class="shrink-0">
@@ -114,7 +115,7 @@ export default class ResultsView extends BaseView {
           <button id="backBtn" class="text-text-light dark:text-text-dark flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10">
             <span class="material-symbols-outlined">arrow_back</span>
           </button>
-          <h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Results</h1>
+          <h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">${t('results.title')}</h1>
         </header>
 
         <main class="flex-grow px-4 pt-6 pb-40">
@@ -130,11 +131,11 @@ export default class ResultsView extends BaseView {
               </div>
             </div>
             <p data-testid="result-message" class="text-text-light dark:text-text-dark text-xl font-bold mt-4">${message}</p>
-            <p data-testid="score-summary" class="text-subtext-light dark:text-subtext-dark mt-1">You answered ${correctCount} out of ${totalQuestions} questions correctly.</p>
+            <p data-testid="score-summary" class="text-subtext-light dark:text-subtext-dark mt-1">${t('results.scoreSummary', { correct: correctCount, total: totalQuestions })}</p>
           </div>
 
           <!-- Section Header -->
-          <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pt-8 pb-3">Review Your Answers</h2>
+          <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pt-8 pb-3">${t('results.reviewAnswers')}</h2>
 
           <!-- Question List -->
           <div class="flex flex-col space-y-2">
@@ -149,16 +150,16 @@ export default class ResultsView extends BaseView {
             ${showContinueButton ? `
             <div class="flex gap-3">
               <button id="continueTopicBtn" class="flex-1 rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
-                Continue on this topic
+                ${t('results.continueOnTopic')}
                 <span class="material-symbols-outlined text-xl">arrow_forward</span>
               </button>
               <button id="tryAnotherBtn" class="flex-1 rounded-xl border-2 border-border-light dark:border-border-dark h-14 text-center text-base font-bold text-text-light dark:text-text-dark hover:bg-card-light dark:hover:bg-card-dark">
-                Try Another Topic
+                ${t('results.tryAnother')}
               </button>
             </div>
             ` : `
             <button id="tryAnotherBtn" class="w-full rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30">
-              Try Another Topic
+              ${t('results.tryAnother')}
             </button>
             `}
           </div>
@@ -168,15 +169,15 @@ export default class ResultsView extends BaseView {
             <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
               <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
                 <span class="material-symbols-outlined text-2xl">home</span>
-                <span class="text-xs font-medium">Home</span>
+                <span class="text-xs font-medium">${t('common.home')}</span>
               </a>
               <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/history">
                 <span class="material-symbols-outlined text-2xl fill">category</span>
-                <span class="text-xs font-bold">Topics</span>
+                <span class="text-xs font-bold">${t('common.topics')}</span>
               </a>
               <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
                 <span class="material-symbols-outlined text-2xl">settings</span>
-                <span class="text-xs font-medium">Settings</span>
+                <span class="text-xs font-medium">${t('common.settings')}</span>
               </a>
             </div>
           </div>

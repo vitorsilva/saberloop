@@ -36,8 +36,13 @@
     "reviewAnswers": "Review Your Answers",
     "perfectScore": "Perfect Score!",
     "greatJob": "Great Job!",
+    "goodWork": "Good Work!",
     "keepPracticing": "Keep Practicing!",
     "tryAnother": "Try Another Topic",
+    "continueOnTopic": "Continue on this topic",
+    "scoreSummary": "You answered {{correct}} out of {{total}} questions correctly.",
+    "yourAnswer": "Your answer",
+    "correctAnswer": "Correct answer",
     "score": "Score",
     "correct": "Correct",
     "incorrect": "Incorrect"
