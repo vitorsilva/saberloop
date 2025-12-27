@@ -4,18 +4,18 @@ import { logger } from '../utils/logger.js';
   /**
    * Mock question generation - returns fake but realistic questions
    * @param {string} topic - The topic to generate questions about
-   * @param {string} gradeLevel - The grade level for the questions
-   * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
-   * @param {Object} options - Optional settings
-   * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
-   * @param {string} options.language - Language code (unused in mock, accepted for interface consistency)
-   * @param {number} options.questionCount - Number of questions to generate (default: 5)
-   * @returns {Promise<Array>} Array of question objects
+   * @param {string} [gradeLevel] - The grade level for the questions
+   * @param {string} [_apiKey] - The API key (unused in mock, accepted for interface consistency)
+   * @param {Object} [options] - Optional settings
+   * @param {Array<string>} [options.previousQuestions] - Questions to exclude (for continue feature)
+   * @param {string} [options.language] - Language code (unused in mock, accepted for interface consistency)
+   * @param {number} [options.questionCount] - Number of questions to generate (default: 5)
+   * @returns {Promise<{language: string, questions: Array}>} Object with language and questions array
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', _apiKey, options = {}) {
     // Simulate network delay (real APIs take time)
     // Can be overridden via window.MOCK_API_DELAY_MS for testing
-    const delay = (typeof window !== 'undefined' && window.MOCK_API_DELAY_MS) || 1000;
+    const delay = (typeof window !== 'undefined' && /** @type {*} */ (window).MOCK_API_DELAY_MS) || 1000;
     await new Promise(resolve => setTimeout(resolve, delay));
 
     const { previousQuestions = [], questionCount = 5 } = options;
