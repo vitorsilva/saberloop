@@ -24,6 +24,17 @@
     "yesterday": "Yesterday",
     "daysAgo": "{{count}} days ago"
   },
+  "topicInput": {
+    "title": "New Quiz",
+    "whatToPractice": "What do you want to practice?",
+    "placeholder": "World War II, Photosynthesis, Algebra...",
+    "gradeLevel": "Grade Level (Optional)",
+    "selectGradeLevel": "Select grade level",
+    "middleSchool": "Middle School",
+    "highSchool": "High School",
+    "college": "College",
+    "generate": "Generate Questions"
+  },
   "quiz": {
     "title": "{{topic}} Quiz",
     "questionOf": "Question {{current}} of {{total}}",
@@ -54,6 +65,7 @@
   "errors": {
     "network": "Network error. Please check your connection and try again.",
     "generic": "An error occurred. Please try again.",
-    "cannotReplay": "This quiz cannot be replayed. The questions were not saved."
+    "cannotReplay": "This quiz cannot be replayed. The questions were not saved.",
+    "enterTopic": "Please enter a topic to practice!"
   }
 }

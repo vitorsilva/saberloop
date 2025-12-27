@@ -24,6 +24,17 @@
     "yesterday": "Ontem",
     "daysAgo": "Há {{count}} dias"
   },
+  "topicInput": {
+    "title": "Novo Quiz",
+    "whatToPractice": "O que queres praticar?",
+    "placeholder": "Segunda Guerra Mundial, Fotossíntese, Álgebra...",
+    "gradeLevel": "Nível de Ensino (Opcional)",
+    "selectGradeLevel": "Seleciona o nível de ensino",
+    "middleSchool": "Ensino Básico",
+    "highSchool": "Ensino Secundário",
+    "college": "Universidade",
+    "generate": "Gerar Perguntas"
+  },
   "quiz": {
     "title": "Quiz de {{topic}}",
     "questionOf": "Pergunta {{current}} de {{total}}",
@@ -54,6 +65,7 @@
   "errors": {
     "network": "Erro de rede. Por favor, verifica a tua ligação e tenta novamente.",
     "generic": "Ocorreu um erro. Por favor, tenta novamente.",
-    "cannotReplay": "Este quiz não pode ser repetido. As perguntas não foram guardadas."
+    "cannotReplay": "Este quiz não pode ser repetido. As perguntas não foram guardadas.",
+    "enterTopic": "Por favor, introduz um tópico para praticar!"
   }
 }
