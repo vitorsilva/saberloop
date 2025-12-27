@@ -1,53 +1,62 @@
-
 // Function to update output text
-  export function updateOutput() {
-    // Get references to DOM elements
-    const textInput = document.getElementById('textInput');
-    const textOutput = document.getElementById('textOutput');
-    const inputValue = textInput.value;
+export function updateOutput() {
+  // Get references to DOM elements
+  const textInput = /** @type {HTMLInputElement} */ (document.getElementById('textInput'));
+  const textOutput = document.getElementById('textOutput');
+  const inputValue = textInput?.value || '';
 
-    if (inputValue.trim() === '') {
-        textOutput.innerHTML = '<span class="placeholder">Your text will appear here...</span>';
-    } else {
-        textOutput.textContent = inputValue;
-    }
+  if (!textOutput) return;
+
+  if (inputValue.trim() === '') {
+    textOutput.innerHTML = '<span class="placeholder">Your text will appear here...</span>';
+  } else {
+    textOutput.textContent = inputValue;
+  }
+}
+
+if (typeof document !== 'undefined' && document.getElementById('textInput')) {
+  const textInput = document.getElementById('textInput');
+  const installBtn = document.getElementById('installBtn');
+
+  // Listen for input events
+  if (textInput) {
+    textInput.addEventListener('input', updateOutput);
   }
 
-  if (typeof document !== 'undefined' && document.getElementById('textInput')) {
-    // Listen for input events
-    textInput.addEventListener('input', updateOutput);
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
 
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
 
-    updateOnlineStatus();
+  let deferredPrompt;
 
-    let deferredPrompt;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-  const installBtn = document.getElementById('installBtn');
-      e.preventDefault();
-      deferredPrompt = e;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) {
       installBtn.classList.remove('hidden');
+    }
   });
 
-  installBtn.addEventListener('click', async () => {
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
       if (!deferredPrompt) {
-          return;
+        return;
       }
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
 
       if (outcome === 'accepted') {
-          console.log('User accepted the install prompt');
+        console.log('User accepted the install prompt');
       } else {
-          console.log('User dismissed the install prompt');
+        console.log('User dismissed the install prompt');
       }
 
       deferredPrompt = null;
       installBtn.classList.add('hidden');
-  });    
+    });
   }
+}
 
   export function updateOnlineStatus() {
     const statusElement = document.getElementById('status');
