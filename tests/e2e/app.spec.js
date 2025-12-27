@@ -1194,4 +1194,208 @@ test.describe('Saberloop E2E Tests', () => {
     expect(foundExtendedMessage).toBe(true);
   });
 
+  test('should display current AI model in Settings when connected', async ({ page }) => {
+    // Set up auth state (handles navigation to / and waiting for home page)
+    await setupAuthenticatedState(page);
+    await page.goto('/#/settings');
+
+    // Wait for Settings page to load
+    await expect(page.getByTestId('settings-title')).toBeVisible();
+
+    // Should show the current model card
+    await expect(page.locator('text=Current AI Model')).toBeVisible();
+
+    // Should display the model name (default is Deepseek R1t2 Chimera)
+    const modelName = page.getByTestId('current-model-name');
+    await expect(modelName).toBeVisible();
+    await expect(modelName).toContainText(/Deepseek|Gemma|Llama/i);
+
+    // Should have a Change button
+    await expect(page.locator('#changeModelBtn')).toBeVisible();
+    await expect(page.locator('#changeModelBtn')).toContainText('Change');
+  });
+
+  test('should open and close model selector in Settings', async ({ page }) => {
+    // Set up auth state
+    await setupAuthenticatedState(page);
+    await page.goto('/#/settings');
+
+    // Wait for Settings page to load
+    await expect(page.getByTestId('settings-title')).toBeVisible();
+
+    // Model selector container should be hidden initially
+    const selectorContainer = page.locator('#modelSelectorContainer');
+    await expect(selectorContainer).toHaveClass(/hidden/);
+
+    // Click Change button
+    await page.click('#changeModelBtn');
+
+    // Container should now be visible
+    await expect(selectorContainer).not.toHaveClass(/hidden/);
+
+    // Should show loading state or model list
+    await page.waitForTimeout(500);
+
+    // Change button should now say Cancel
+    await expect(page.locator('#changeModelBtn')).toContainText('Cancel');
+
+    // Click Cancel to close
+    await page.click('#changeModelBtn');
+
+    // Container should be hidden again
+    await expect(selectorContainer).toHaveClass(/hidden/);
+
+    // Button should say Change again
+    await expect(page.locator('#changeModelBtn')).toContainText('Change');
+  });
+
+  test('should allow selecting a different AI model', async ({ page }) => {
+    // Mock the models API response
+    await page.route('**/api/v1/models', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: [
+            {
+              id: 'google/gemma-2-9b-it:free',
+              name: 'Gemma 2 9B',
+              description: 'Google Gemma 2',
+              context_length: 8192,
+              pricing: { prompt: '0', completion: '0' }
+            },
+            {
+              id: 'meta-llama/llama-3.1-8b-instruct:free',
+              name: 'Llama 3.1 8B',
+              description: 'Meta Llama 3.1',
+              context_length: 131072,
+              pricing: { prompt: '0', completion: '0' }
+            },
+            {
+              id: 'tngtech/deepseek-r1t2-chimera:free',
+              name: 'DeepSeek R1T2 Chimera',
+              description: 'Default model',
+              context_length: 65536,
+              pricing: { prompt: '0', completion: '0' }
+            }
+          ]
+        })
+      });
+    });
+
+    // Set up auth state
+    await setupAuthenticatedState(page);
+    await page.goto('/#/settings');
+
+    // Wait for Settings page to load
+    await expect(page.getByTestId('settings-title')).toBeVisible();
+
+    // Get initial model name
+    const modelName = page.getByTestId('current-model-name');
+    const initialModel = await modelName.textContent();
+
+    // Click Change button
+    await page.click('#changeModelBtn');
+
+    // Wait for models to load
+    await expect(page.locator('text=Select a model:')).toBeVisible({ timeout: 5000 });
+
+    // Should see model options
+    const modelOptions = page.locator('input[name="modelSelect"]');
+    await expect(modelOptions).toHaveCount(3);
+
+    // Select a different model (Gemma)
+    const gemmaRadio = page.locator('input[value="google/gemma-2-9b-it:free"]');
+    await gemmaRadio.click();
+
+    // Selector should close after selection
+    await page.waitForTimeout(300);
+    await expect(page.locator('#modelSelectorContainer')).toHaveClass(/hidden/);
+
+    // Model name should be updated (getModelDisplayName converts 'google/gemma-2-9b-it:free' to 'Gemma 2 9b It')
+    await expect(modelName).toContainText('Gemma 2 9b It');
+    expect(await modelName.textContent()).not.toBe(initialModel);
+  });
+
+  test('should persist model selection after page refresh', async ({ page }) => {
+    // Mock the models API response
+    await page.route('**/api/v1/models', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: [
+            {
+              id: 'google/gemma-2-9b-it:free',
+              name: 'Gemma 2 9B',
+              description: 'Google Gemma 2',
+              context_length: 8192,
+              pricing: { prompt: '0', completion: '0' }
+            },
+            {
+              id: 'tngtech/deepseek-r1t2-chimera:free',
+              name: 'DeepSeek R1T2 Chimera',
+              description: 'Default model',
+              context_length: 65536,
+              pricing: { prompt: '0', completion: '0' }
+            }
+          ]
+        })
+      });
+    });
+
+    // Set up auth state
+    await setupAuthenticatedState(page);
+    await page.goto('/#/settings');
+
+    // Wait for Settings page to load
+    await expect(page.getByTestId('settings-title')).toBeVisible();
+
+    // Click Change button
+    await page.click('#changeModelBtn');
+
+    // Wait for models to load
+    await expect(page.locator('text=Select a model:')).toBeVisible({ timeout: 5000 });
+
+    // Select Gemma model
+    await page.locator('input[value="google/gemma-2-9b-it:free"]').click();
+    await page.waitForTimeout(300);
+
+    // Verify it's selected (getModelDisplayName converts ID to display name)
+    await expect(page.getByTestId('current-model-name')).toContainText('Gemma 2 9b It');
+
+    // Reload the page
+    await page.reload();
+
+    // Wait for Settings page to reload
+    await expect(page.getByTestId('settings-title')).toBeVisible();
+
+    // Model should still be Gemma (after reload, name comes from getModelDisplayName)
+    await expect(page.getByTestId('current-model-name')).toContainText('Gemma 2 9b It');
+  });
+
+  test('should show error message when model loading fails', async ({ page }) => {
+    // Mock the models API to fail
+    await page.route('**/api/v1/models', async (route) => {
+      await route.fulfill({
+        status: 401,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Unauthorized' })
+      });
+    });
+
+    // Set up auth state
+    await setupAuthenticatedState(page);
+    await page.goto('/#/settings');
+
+    // Wait for Settings page to load
+    await expect(page.getByTestId('settings-title')).toBeVisible();
+
+    // Click Change button
+    await page.click('#changeModelBtn');
+
+    // Should show error message
+    await expect(page.locator('text=Failed to load models')).toBeVisible({ timeout: 5000 });
+  });
+
 });

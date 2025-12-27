@@ -6,12 +6,19 @@
 
   const SETTINGS_KEY = 'quizmaster_settings';
 
+  // Default free model on OpenRouter
+  const DEFAULT_MODEL = 'tngtech/deepseek-r1t2-chimera:free';
+
   // Default values for all settings
   const DEFAULT_SETTINGS = {
     defaultGradeLevel: 'middle school',
     questionsPerQuiz: '5',
-    difficulty: 'mixed'
+    difficulty: 'mixed',
+    selectedModel: DEFAULT_MODEL
   };
+
+  // Export for use in other modules
+  export { DEFAULT_MODEL };
 
   /**
    * Get all settings (merged with defaults)

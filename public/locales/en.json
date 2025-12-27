@@ -66,7 +66,13 @@
     "notConnected": "Not Connected",
     "connectToGenerate": "Connect to generate quizzes",
     "connectWithOpenRouter": "Connect with OpenRouter",
-    "confirmDisconnect": "Are you sure you want to disconnect? You will need to reconnect to generate new quizzes."
+    "confirmDisconnect": "Are you sure you want to disconnect? You will need to reconnect to generate new quizzes.",
+    "currentModel": "Current AI Model",
+    "changeModel": "Change",
+    "loadingModels": "Loading available models...",
+    "errorLoadingModels": "Failed to load models. Please try again.",
+    "selectModel": "Select a model:",
+    "contextLength": "Context: {{length}}"
   },
   "loading": {
     "preparing": "Preparing your questions...",

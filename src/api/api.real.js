@@ -2,6 +2,7 @@
 
   import { callOpenRouter } from './openrouter-client.js';
   import { logger } from '../utils/logger.js';
+  import { getSelectedModel } from '../services/model-service.js';
 
   // Language code to full name mapping
   const LANGUAGE_NAMES = {
@@ -135,8 +136,8 @@ ${exclusionSection}
       }
 
       const duration = Math.round(performance.now() - startTime);
-      logger.debug('Questions generated successfully', { language: data.language, count: data.questions.length });
-      logger.perf('quiz_generation', { value: duration, status: 'success', topic });
+      logger.debug('Questions generated successfully', { language: data.language, count: data.questions.length, model: result.model });
+      logger.perf('quiz_generation', { value: duration, status: 'success', topic, model: result.model });
 
       return {
         language: data.language || 'EN-US',
@@ -145,8 +146,9 @@ ${exclusionSection}
 
     } catch (error) {
       const duration = Math.round(performance.now() - startTime);
-      logger.error('Question generation failed', { error: error.message });
-      logger.perf('quiz_generation', { value: duration, status: 'error', topic, error: error.message });
+      const model = getSelectedModel(); // Get model for error tracking
+      logger.error('Question generation failed', { error: error.message, model });
+      logger.perf('quiz_generation', { value: duration, status: 'error', topic, model, error: error.message });
       throw error;
     }
   }
