@@ -107,8 +107,8 @@ function handleDeepLinks() {
     // Track telemetry
     telemetry.track('deep_link_opened', { topic: decodedTopic });
 
-    // Clear query params from URL without page reload
-    const cleanUrl = window.location.pathname + window.location.hash;
+    // Clear query params and navigate to topic input
+    const cleanUrl = window.location.pathname + '#/topic-input';
     window.history.replaceState({}, '', cleanUrl);
   }
 }
