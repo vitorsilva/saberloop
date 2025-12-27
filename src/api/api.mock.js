@@ -9,7 +9,8 @@ import { logger } from '../utils/logger.js';
    * @param {Object} options - Optional settings
    * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
    * @param {string} options.language - Language code (unused in mock, accepted for interface consistency)
-   * @returns {Promise<Array>} Array of 5 question objects
+   * @param {number} options.questionCount - Number of questions to generate (default: 5)
+   * @returns {Promise<Array>} Array of question objects
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', _apiKey, options = {}) {
     // Simulate network delay (real APIs take time)
@@ -17,11 +18,11 @@ import { logger } from '../utils/logger.js';
     const delay = (typeof window !== 'undefined' && window.MOCK_API_DELAY_MS) || 1000;
     await new Promise(resolve => setTimeout(resolve, delay));
 
-    const { previousQuestions = [] } = options;
-    logger.debug('Mock API generating questions', { topic, gradeLevel, previousQuestionsCount: previousQuestions.length });
+    const { previousQuestions = [], questionCount = 5 } = options;
+    logger.debug('Mock API generating questions', { topic, gradeLevel, questionCount, previousQuestionsCount: previousQuestions.length });
 
-    // Return realistic mock data
-    const mockQuestions = [
+    // Question templates to cycle through
+    const questionTemplates = [
       {
         question: `What is the main concept behind ${topic}?`,
         options: [
@@ -30,7 +31,7 @@ import { logger } from '../utils/logger.js';
           "C) A common misconception",
           "D) An unrelated distractor"
         ],
-        correct: 1, // Index of correct option (B)
+        correct: 1,
         difficulty: "easy"
       },
       {
@@ -41,7 +42,7 @@ import { logger } from '../utils/logger.js';
           "C) By understanding and applying the underlying concepts",
           "D) By guessing randomly"
         ],
-        correct: 1, // Index of correct option (C)
+        correct: 2,
         difficulty: "medium"
       },
       {
@@ -52,7 +53,7 @@ import { logger } from '../utils/logger.js';
           "C) An outdated idea no longer relevant",
           "D) A simple fact that requires no understanding"
         ],
-        correct: 1, // Index of correct option (B)
+        correct: 1,
         difficulty: "easy"
       },
       {
@@ -63,7 +64,7 @@ import { logger } from '../utils/logger.js';
           "C) They never make mistakes with this topic",
           "D) They always get it right on the first try"
         ],
-        correct: 1, // Index of correct option (B)
+        correct: 1,
         difficulty: "medium"
       },
       {
@@ -74,10 +75,20 @@ import { logger } from '../utils/logger.js';
           "C) It contradicts all other known concepts",
           "D) It has no relationship to anything else"
         ],
-        correct: 1, // Index of correct option (B)
+        correct: 1,
         difficulty: "challenging"
       }
     ];
+
+    // Generate requested number of questions by cycling through templates
+    const mockQuestions = [];
+    for (let i = 0; i < questionCount; i++) {
+      const template = questionTemplates[i % questionTemplates.length];
+      mockQuestions.push({
+        ...template,
+        question: template.question + (i >= questionTemplates.length ? ` (Part ${Math.floor(i / questionTemplates.length) + 1})` : '')
+      });
+    }
 
     logger.debug('Mock API questions generated', { count: mockQuestions.length, language: 'EN-US' });
 

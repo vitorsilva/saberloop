@@ -20,10 +20,11 @@
    * @param {Object} options - Optional settings
    * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
    * @param {string} options.language - Language code for content generation (e.g., 'en', 'pt-PT')
+   * @param {number} options.questionCount - Number of questions to generate (default: 5)
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey, options = {}) {
     const startTime = performance.now();
-    const { previousQuestions = [], language = 'en' } = options;
+    const { previousQuestions = [], language = 'en', questionCount = 5 } = options;
     const languageName = LANGUAGE_NAMES[language] || 'English';
     logger.debug('Generating questions', { topic, gradeLevel, language, previousQuestionsCount: previousQuestions.length });
 
@@ -47,7 +48,7 @@ ones as possible and note any that might overlap.
       : '';
 
     // Build the prompt for question generation
-    const prompt = `You are an expert educational content creator. Generate exactly 5
+    const prompt = `You are an expert educational content creator. Generate exactly ${questionCount}
   multiple-choice questions about "${topic}" appropriate for ${gradeLevel} students.
 ${exclusionSection}
 
@@ -61,7 +62,7 @@ ${exclusionSection}
   Requirements:
   - Each question should have 4 answer options (A, B, C, D)
   - Only one correct answer per question
-  - Include a mix of difficulty: 2 easy, 2 medium, 1 challenging
+  - Include a mix of difficulty levels: easy, medium, and challenging
   - Questions should test understanding, not just memorization
   - Use clear, concise language appropriate for ${gradeLevel}
   - Avoid ambiguous phrasing
@@ -75,7 +76,7 @@ ${exclusionSection}
 
   CORRECT ANSWER DISTRIBUTION:
   - Distribute correct answers across positions A, B, C, D
-  - For 5 questions: vary which position has the correct answer
+  - Vary which position has the correct answer across all questions
   - Do NOT cluster all correct answers in the same position
 
   Return your response as a JSON object with this exact structure:
@@ -128,8 +129,8 @@ ${exclusionSection}
       }
 
       // Validate structure
-      if (!data.questions || !Array.isArray(data.questions) || data.questions.length !== 5) {
-        logger.error('Invalid questions structure', { questionCount: data.questions?.length });
+      if (!data.questions || !Array.isArray(data.questions) || data.questions.length !== questionCount) {
+        logger.error('Invalid questions structure', { expected: questionCount, received: data.questions?.length });
         throw new Error('AI returned invalid question format');
       }
 

@@ -9,7 +9,7 @@
   // Default values for all settings
   const DEFAULT_SETTINGS = {
     defaultGradeLevel: 'middle school',
-    questionsPerQuiz: '10',
+    questionsPerQuiz: '5',
     difficulty: 'mixed'
   };
 
