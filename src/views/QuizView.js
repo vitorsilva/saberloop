@@ -109,15 +109,15 @@ export default class QuizView extends BaseView {
         <!-- Bottom Navigation Bar -->
         <div class="fixed bottom-0 left-0 right-0 h-20 bg-background-light dark:bg-background-dark backdrop-blur-md border-t border-border-light dark:border-border-dark">
           <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
-            <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
+            <a class="nav-link flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
               <span class="material-symbols-outlined text-2xl">home</span>
               <span class="text-xs font-medium">${t('common.home')}</span>
             </a>
-            <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/history">
+            <a class="nav-link flex flex-col items-center justify-center text-primary gap-1" href="#/history">
               <span class="material-symbols-outlined text-2xl fill">category</span>
               <span class="text-xs font-bold">${t('common.topics')}</span>
             </a>
-            <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
+            <a class="nav-link flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
               <span class="material-symbols-outlined text-2xl">settings</span>
               <span class="text-xs font-medium">${t('common.settings')}</span>
             </a>
@@ -166,6 +166,18 @@ export default class QuizView extends BaseView {
         state.set('currentAnswers', this.answers);
         this.navigateTo('/results');
       }
+    });
+
+    // Bottom navigation links - show confirmation before leaving quiz
+    const navLinks = this.appContainer.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+      this.addEventListener(link, 'click', (e) => {
+        e.preventDefault();
+        if (confirm(t('quiz.confirmLeave'))) {
+          const href = /** @type {HTMLAnchorElement} */ (link).getAttribute('href');
+          window.location.hash = href.replace('#', '');
+        }
+      });
     });
   }
 }
