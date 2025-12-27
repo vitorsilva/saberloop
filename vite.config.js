@@ -1,8 +1,21 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig(({ command }) => ({
-    base: command === 'serve' ? '/' : '/app/',
+// Determine base path based on environment
+// - Development (serve): '/'
+// - Production: '/app/'
+// - Staging: '/app-staging/'
+function getBasePath(command) {
+    if (command === 'serve') return '/';
+    if (process.env.DEPLOY_TARGET === 'staging') return '/app-staging/';
+    return '/app/';
+}
+
+export default defineConfig(({ command }) => {
+    const base = getBasePath(command);
+
+    return {
+    base,
     root: '.',
 
     plugins: [
@@ -13,35 +26,35 @@ export default defineConfig(({ command }) => ({
             manifest: {
                 name: 'Saberloop - Learn Anything, Practice Anything',
                 short_name: 'Saberloop',
-                id: '/app/',
+                id: base,
                 description: 'The fun way to learn and track your progress with AI-powered quizzes',
                 theme_color: '#FF6B35',
                 background_color: '#1a1a2e',
                 display: 'standalone',
                 orientation: 'portrait-primary',
-                scope: '/app/',
-                start_url: '/app/',
+                scope: base,
+                start_url: base,
                 icons: [
                     {
-                        src: '/app/icons/icon-192x192.png',
+                        src: `${base}icons/icon-192x192.png`,
                         sizes: '192x192',
                         type: 'image/png',
                         purpose: 'any'
                     },
                     {
-                        src: '/app/icons/icon-512x512.png',
+                        src: `${base}icons/icon-512x512.png`,
                         sizes: '512x512',
                         type: 'image/png',
                         purpose: 'any'
                     },
                     {
-                        src: '/app/icons/icon-192x192-maskable.png',
+                        src: `${base}icons/icon-192x192-maskable.png`,
                         sizes: '192x192',
                         type: 'image/png',
                         purpose: 'maskable'
                     },
                     {
-                        src: '/app/icons/icon-512x512-maskable.png',
+                        src: `${base}icons/icon-512x512-maskable.png`,
                         sizes: '512x512',
                         type: 'image/png',
                         purpose: 'maskable'
@@ -49,21 +62,21 @@ export default defineConfig(({ command }) => ({
                 ],
                 screenshots: [
                     {
-                        src: '/app/icons/screenshot-mobile-1.png',
+                        src: `${base}icons/screenshot-mobile-1.png`,
                         sizes: '400x855',
                         type: 'image/png',
                         form_factor: 'narrow',
                         label: 'Saberloop Welcome Screen'
                     },
                     {
-                        src: '/app/icons/screenshot-mobile-2.png',
+                        src: `${base}icons/screenshot-mobile-2.png`,
                         sizes: '400x855',
                         type: 'image/png',
                         form_factor: 'narrow',
                         label: 'Saberloop Home Screen'
                     },
                     {
-                        src: '/app/icons/screenshot-desktop-1.png',
+                        src: `${base}icons/screenshot-desktop-1.png`,
                         sizes: '1280x720',
                         type: 'image/png',
                         form_factor: 'wide',
@@ -122,7 +135,7 @@ export default defineConfig(({ command }) => ({
                 ],
 
                 cleanupOutdatedCaches: true,
-                navigateFallback: '/app/index.html',
+                navigateFallback: `${base}index.html`,
                 navigateFallbackDenylist: [/^\/api/, /^\/\.netlify/]
             },
 
@@ -155,4 +168,5 @@ export default defineConfig(({ command }) => ({
             }
         }
     }
-}));
+};
+});
