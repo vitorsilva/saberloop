@@ -66,7 +66,13 @@
     "notConnected": "Não Ligado",
     "connectToGenerate": "Liga para gerar quizzes",
     "connectWithOpenRouter": "Ligar com OpenRouter",
-    "confirmDisconnect": "Tens a certeza que queres desligar? Terás de te ligar novamente para gerar novos quizzes."
+    "confirmDisconnect": "Tens a certeza que queres desligar? Terás de te ligar novamente para gerar novos quizzes.",
+    "currentModel": "Modelo de IA Atual",
+    "changeModel": "Alterar",
+    "loadingModels": "A carregar modelos disponíveis...",
+    "errorLoadingModels": "Falha ao carregar modelos. Por favor, tenta novamente.",
+    "selectModel": "Seleciona um modelo:",
+    "contextLength": "Contexto: {{length}}"
   },
   "loading": {
     "preparing": "A preparar as tuas perguntas...",
