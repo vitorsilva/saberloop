@@ -1,0 +1,187 @@
+strict digraph "dependency-cruiser output"{
+    rankdir="LR" splines="true" overlap="false" nodesep="0.16" ranksep="0.18" fontname="Helvetica-bold" fontsize="9" style="rounded,bold,filled" fillcolor="#ffffff" compound="true"
+    node [shape="box" style="rounded, filled" height="0.2" color="black" fillcolor="#ffffcc" fontcolor="black" fontname="Helvetica" fontsize="9"]
+    edge [arrowhead="normal" arrowsize="0.6" penwidth="2.0" color="#00000033" fontname="Helvetica" fontsize="9"]
+
+    subgraph "cluster_node_modules" {label="node_modules" "node_modules/fake-indexeddb" [label=<fake-indexeddb> tooltip="fake-indexeddb" URL="https://www.npmjs.com/package/fake-indexeddb" shape="box3d" fillcolor="#c40b0a1a" fontcolor="#c40b0a"] }
+    subgraph "cluster_node_modules" {label="node_modules" "node_modules/idb" [label=<idb> tooltip="idb" URL="https://www.npmjs.com/package/idb" shape="box3d" fillcolor="#c40b0a1a" fontcolor="#c40b0a"] }
+    subgraph "cluster_node_modules" {label="node_modules" "node_modules/loglevel" [label=<loglevel> tooltip="loglevel" URL="https://www.npmjs.com/package/loglevel" shape="box3d" fillcolor="#c40b0a1a" fontcolor="#c40b0a"] }
+    subgraph "cluster_node_modules" {label="node_modules" "node_modules/vitest" [label=<vitest> tooltip="vitest" URL="https://www.npmjs.com/package/vitest" shape="box3d" fillcolor="#c40b0a1a" fontcolor="#c40b0a"] }
+    subgraph "cluster_node_modules" {label="node_modules" "node_modules/web-vitals" [label=<web-vitals> tooltip="web-vitals" URL="https://www.npmjs.com/package/web-vitals" shape="box3d" fillcolor="#c40b0a1a" fontcolor="#c40b0a"] }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/api" {label="api" "src/api/api.mock.js" [label=<api.mock.js> tooltip="api.mock.js" URL="src/api/api.mock.js" ] } }
+    "src/api/api.mock.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/api" {label="api" "src/api/api.real.js" [label=<api.real.js> tooltip="api.real.js" URL="src/api/api.real.js" ] } }
+    "src/api/api.real.js" -> "src/utils/logger.js"
+    "src/api/api.real.js" -> "src/api/openrouter-client.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/api" {label="api" "src/api/api.real.test.js" [label=<api.real.test.js> tooltip="api.real.test.js" URL="src/api/api.real.test.js" ] } }
+    "src/api/api.real.test.js" -> "src/api/api.real.js"
+    "src/api/api.real.test.js" -> "src/api/openrouter-client.js"
+    "src/api/api.real.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/api" {label="api" "src/api/index.js" [label=<index.js> tooltip="index.js" URL="src/api/index.js" ] } }
+    "src/api/index.js" -> "src/utils/logger.js"
+    "src/api/index.js" -> "src/api/api.mock.js" [style="dashed"]
+    "src/api/index.js" -> "src/api/api.real.js" [style="dashed"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/api" {label="api" "src/api/openrouter-auth.js" [label=<openrouter-auth.js> tooltip="openrouter-auth.js" URL="src/api/openrouter-auth.js" ] } }
+    "src/api/openrouter-auth.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/api" {label="api" "src/api/openrouter-auth.test.js" [label=<openrouter-auth.test.js> tooltip="openrouter-auth.test.js" URL="src/api/openrouter-auth.test.js" ] } }
+    "src/api/openrouter-auth.test.js" -> "src/api/openrouter-auth.js"
+    "src/api/openrouter-auth.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/api" {label="api" "src/api/openrouter-client.js" [label=<openrouter-client.js> tooltip="openrouter-client.js" URL="src/api/openrouter-client.js" ] } }
+    "src/api/openrouter-client.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/api" {label="api" "src/api/openrouter-client.test.js" [label=<openrouter-client.test.js> tooltip="openrouter-client.test.js" URL="src/api/openrouter-client.test.js" ] } }
+    "src/api/openrouter-client.test.js" -> "src/api/openrouter-client.js"
+    "src/api/openrouter-client.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" "src/app.js" [label=<app.js> tooltip="app.js" URL="src/app.js" ] }
+    subgraph "cluster_src" {label="src" "src/app.test.js" [label=<app.test.js> tooltip="app.test.js" URL="src/app.test.js" ] }
+    "src/app.test.js" -> "src/app.js"
+    "src/app.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" "src/components/ConnectModal.js" [label=<ConnectModal.js> tooltip="ConnectModal.js" URL="src/components/ConnectModal.js" ] } }
+    "src/components/ConnectModal.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" "src/components/ExplanationModal.js" [label=<ExplanationModal.js> tooltip="ExplanationModal.js" URL="src/components/ExplanationModal.js" ] } }
+    "src/components/ExplanationModal.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/core" {label="core" "src/core/db.js" [label=<db.js> tooltip="db.js" URL="src/core/db.js" ] } }
+    "src/core/db.js" -> "node_modules/idb" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/core" {label="core" "src/core/db.test.js" [label=<db.test.js> tooltip="db.test.js" URL="src/core/db.test.js" ] } }
+    "src/core/db.test.js" -> "src/core/db.js"
+    "src/core/db.test.js" -> "node_modules/fake-indexeddb" [penwidth="1.0"]
+    "src/core/db.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/core" {label="core" "src/core/features.js" [label=<features.js> tooltip="features.js" URL="src/core/features.js" ] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/core" {label="core" "src/core/features.test.js" [label=<features.test.js> tooltip="features.test.js" URL="src/core/features.test.js" ] } }
+    "src/core/features.test.js" -> "src/core/features.js"
+    "src/core/features.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/core" {label="core" "src/core/router.js" [label=<router.js> tooltip="router.js" URL="src/core/router.js" ] } }
+    "src/core/router.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/core" {label="core" "src/core/settings.js" [label=<settings.js> tooltip="settings.js" URL="src/core/settings.js" ] } }
+    "src/core/settings.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/core" {label="core" "src/core/settings.test.js" [label=<settings.test.js> tooltip="settings.test.js" URL="src/core/settings.test.js" ] } }
+    "src/core/settings.test.js" -> "src/core/settings.js"
+    "src/core/settings.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/core" {label="core" "src/core/state.js" [label=<state.js> tooltip="state.js" URL="src/core/state.js" ] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/data" {label="data" "src/data/sample-quizzes.json" [label=<sample-quizzes.json> tooltip="sample-quizzes.json" URL="src/data/sample-quizzes.json" fillcolor="#ffee44"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/features" {label="features" "src/features/onboarding.js" [label=<onboarding.js> tooltip="onboarding.js" URL="src/features/onboarding.js" ] } }
+    "src/features/onboarding.js" -> "src/core/db.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/features" {label="features" "src/features/sample-loader.js" [label=<sample-loader.js> tooltip="sample-loader.js" URL="src/features/sample-loader.js" ] } }
+    "src/features/sample-loader.js" -> "src/core/db.js"
+    "src/features/sample-loader.js" -> "src/data/sample-quizzes.json"
+    "src/features/sample-loader.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" "src/main.js" [label=<main.js> tooltip="main.js" URL="src/main.js" ] }
+    "src/main.js" -> "src/api/openrouter-auth.js"
+    "src/main.js" -> "src/core/db.js"
+    "src/main.js" -> "src/core/features.js"
+    "src/main.js" -> "src/core/router.js"
+    "src/main.js" -> "src/features/onboarding.js"
+    "src/main.js" -> "src/features/sample-loader.js"
+    "src/main.js" -> "src/styles/main.css"
+    "src/main.js" -> "src/utils/errorHandler.js"
+    "src/main.js" -> "src/utils/logger.js"
+    "src/main.js" -> "src/utils/network.js"
+    "src/main.js" -> "src/utils/performance.js"
+    "src/main.js" -> "src/utils/telemetry.js"
+    "src/main.js" -> "src/views/ConnectionConfirmedView.js"
+    "src/main.js" -> "src/views/HelpView.js"
+    "src/main.js" -> "src/views/HomeView.js"
+    "src/main.js" -> "src/views/LoadingView.js"
+    "src/main.js" -> "src/views/OpenRouterGuideView.js"
+    "src/main.js" -> "src/views/QuizView.js"
+    "src/main.js" -> "src/views/ResultsView.js"
+    "src/main.js" -> "src/views/SettingsView.js"
+    "src/main.js" -> "src/views/TopicInputView.js"
+    "src/main.js" -> "src/views/TopicsView.js"
+    "src/main.js" -> "src/views/WelcomeView.js"
+    "src/main.js" -> "virtual:pwa-register"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/services" {label="services" "src/services/auth-service.js" [label=<auth-service.js> tooltip="auth-service.js" URL="src/services/auth-service.js" ] } }
+    "src/services/auth-service.js" -> "src/api/openrouter-auth.js"
+    "src/services/auth-service.js" -> "src/core/db.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/services" {label="services" "src/services/quiz-service.js" [label=<quiz-service.js> tooltip="quiz-service.js" URL="src/services/quiz-service.js" ] } }
+    "src/services/quiz-service.js" -> "src/api/index.js"
+    "src/services/quiz-service.js" -> "src/core/db.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/styles" {label="styles" "src/styles/main.css" [label=<main.css> tooltip="main.css" URL="src/styles/main.css" ] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/errorHandler.js" [label=<errorHandler.js> tooltip="errorHandler.js" URL="src/utils/errorHandler.js" ] } }
+    "src/utils/errorHandler.js" -> "src/utils/logger.js"
+    "src/utils/errorHandler.js" -> "src/utils/telemetry.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/errorHandler.test.js" [label=<errorHandler.test.js> tooltip="errorHandler.test.js" URL="src/utils/errorHandler.test.js" ] } }
+    "src/utils/errorHandler.test.js" -> "src/utils/errorHandler.js"
+    "src/utils/errorHandler.test.js" -> "src/utils/logger.js"
+    "src/utils/errorHandler.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/gradeProgression.js" [label=<gradeProgression.js> tooltip="gradeProgression.js" URL="src/utils/gradeProgression.js" ] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/gradeProgression.test.js" [label=<gradeProgression.test.js> tooltip="gradeProgression.test.js" URL="src/utils/gradeProgression.test.js" ] } }
+    "src/utils/gradeProgression.test.js" -> "src/utils/gradeProgression.js"
+    "src/utils/gradeProgression.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/logger.js" [label=<logger.js> tooltip="logger.js" URL="src/utils/logger.js" ] } }
+    "src/utils/logger.js" -> "src/utils/telemetry.js"
+    "src/utils/logger.js" -> "node_modules/loglevel" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/logger.test.js" [label=<logger.test.js> tooltip="logger.test.js" URL="src/utils/logger.test.js" ] } }
+    "src/utils/logger.test.js" -> "src/utils/logger.js"
+    "src/utils/logger.test.js" -> "node_modules/loglevel" [penwidth="1.0"]
+    "src/utils/logger.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/network.js" [label=<network.js> tooltip="network.js" URL="src/utils/network.js" ] } }
+    "src/utils/network.js" -> "src/utils/logger.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/network.test.js" [label=<network.test.js> tooltip="network.test.js" URL="src/utils/network.test.js" ] } }
+    "src/utils/network.test.js" -> "src/utils/network.js"
+    "src/utils/network.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/performance.js" [label=<performance.js> tooltip="performance.js" URL="src/utils/performance.js" ] } }
+    "src/utils/performance.js" -> "src/utils/logger.js"
+    "src/utils/performance.js" -> "src/utils/telemetry.js"
+    "src/utils/performance.js" -> "node_modules/web-vitals" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/telemetry.js" [label=<telemetry.js> tooltip="telemetry.js" URL="src/utils/telemetry.js" ] } }
+    "src/utils/telemetry.js" -> "src/core/features.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/utils" {label="utils" "src/utils/telemetry.test.js" [label=<telemetry.test.js> tooltip="telemetry.test.js" URL="src/utils/telemetry.test.js" ] } }
+    "src/utils/telemetry.test.js" -> "src/core/features.js"
+    "src/utils/telemetry.test.js" -> "src/utils/telemetry.js"
+    "src/utils/telemetry.test.js" -> "node_modules/vitest" [penwidth="1.0"]
+    subgraph "cluster_src" {label="src" "src/version.js" [label=<version.js> tooltip="version.js" URL="src/version.js" ] }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/BaseView.js" [label=<BaseView.js> tooltip="BaseView.js" URL="src/views/BaseView.js" ] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/ConnectionConfirmedView.js" [label=<ConnectionConfirmedView.js> tooltip="ConnectionConfirmedView.js" URL="src/views/ConnectionConfirmedView.js" ] } }
+    "src/views/ConnectionConfirmedView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/HelpView.js" [label=<HelpView.js> tooltip="HelpView.js" URL="src/views/HelpView.js" ] } }
+    "src/views/HelpView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/HomeView.js" [label=<HomeView.js> tooltip="HomeView.js" URL="src/views/HomeView.js" ] } }
+    "src/views/HomeView.js" -> "src/components/ConnectModal.js"
+    "src/views/HomeView.js" -> "src/core/features.js"
+    "src/views/HomeView.js" -> "src/core/state.js"
+    "src/views/HomeView.js" -> "src/services/auth-service.js"
+    "src/views/HomeView.js" -> "src/services/quiz-service.js"
+    "src/views/HomeView.js" -> "src/utils/network.js"
+    "src/views/HomeView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/LoadingView.js" [label=<LoadingView.js> tooltip="LoadingView.js" URL="src/views/LoadingView.js" ] } }
+    "src/views/LoadingView.js" -> "src/core/state.js"
+    "src/views/LoadingView.js" -> "src/services/auth-service.js"
+    "src/views/LoadingView.js" -> "src/services/quiz-service.js"
+    "src/views/LoadingView.js" -> "src/utils/logger.js"
+    "src/views/LoadingView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/OpenRouterGuideView.js" [label=<OpenRouterGuideView.js> tooltip="OpenRouterGuideView.js" URL="src/views/OpenRouterGuideView.js" ] } }
+    "src/views/OpenRouterGuideView.js" -> "src/services/auth-service.js"
+    "src/views/OpenRouterGuideView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/QuizView.js" [label=<QuizView.js> tooltip="QuizView.js" URL="src/views/QuizView.js" ] } }
+    "src/views/QuizView.js" -> "src/core/state.js"
+    "src/views/QuizView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/ResultsView.js" [label=<ResultsView.js> tooltip="ResultsView.js" URL="src/views/ResultsView.js" ] } }
+    "src/views/ResultsView.js" -> "src/components/ExplanationModal.js"
+    "src/views/ResultsView.js" -> "src/core/features.js"
+    "src/views/ResultsView.js" -> "src/core/state.js"
+    "src/views/ResultsView.js" -> "src/services/auth-service.js"
+    "src/views/ResultsView.js" -> "src/services/quiz-service.js"
+    "src/views/ResultsView.js" -> "src/utils/gradeProgression.js"
+    "src/views/ResultsView.js" -> "src/utils/logger.js"
+    "src/views/ResultsView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/SettingsView.js" [label=<SettingsView.js> tooltip="SettingsView.js" URL="src/views/SettingsView.js" ] } }
+    "src/views/SettingsView.js" -> "src/core/features.js"
+    "src/views/SettingsView.js" -> "src/core/settings.js"
+    "src/views/SettingsView.js" -> "src/services/auth-service.js"
+    "src/views/SettingsView.js" -> "src/version.js"
+    "src/views/SettingsView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/TopicInputView.js" [label=<TopicInputView.js> tooltip="TopicInputView.js" URL="src/views/TopicInputView.js" ] } }
+    "src/views/TopicInputView.js" -> "src/core/state.js"
+    "src/views/TopicInputView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/TopicsView.js" [label=<TopicsView.js> tooltip="TopicsView.js" URL="src/views/TopicsView.js" ] } }
+    "src/views/TopicsView.js" -> "src/core/state.js"
+    "src/views/TopicsView.js" -> "src/services/quiz-service.js"
+    "src/views/TopicsView.js" -> "src/views/BaseView.js"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/views" {label="views" "src/views/WelcomeView.js" [label=<WelcomeView.js> tooltip="WelcomeView.js" URL="src/views/WelcomeView.js" ] } }
+    "src/views/WelcomeView.js" -> "src/components/ConnectModal.js"
+    "src/views/WelcomeView.js" -> "src/core/features.js"
+    "src/views/WelcomeView.js" -> "src/features/onboarding.js"
+    "src/views/WelcomeView.js" -> "src/services/auth-service.js"
+    "src/views/WelcomeView.js" -> "src/views/BaseView.js"
+    "virtual:pwa-register" [label=<virtual:pwa-register> tooltip="virtual:pwa-register" ]
+}
