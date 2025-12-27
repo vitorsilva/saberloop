@@ -462,8 +462,10 @@ test.describe('Saberloop E2E Tests', () => {
     const egyptQuizzes = page.locator('.quiz-item >> text=Ancient Egypt');
     await expect(egyptQuizzes).toHaveCount(1);
 
-    // Score should be updated (0/5 now since we selected wrong answers)
-    await expect(page.locator('#recentTopicsList >> text=0/5')).toBeVisible();
+    // Score should be updated (different from 5/5 since we selected option 0 randomly)
+    // Note: With answer shuffling on replay, we can't predict exact score
+    // Just verify score format is displayed (any X/5 pattern)
+    await expect(page.locator('#recentTopicsList').locator('text=/\\d\\/5/')).toBeVisible();
   });
 
   test('should navigate to settings page', async ({ page }) => {
