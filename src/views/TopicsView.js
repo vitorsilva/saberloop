@@ -2,6 +2,7 @@
   import { getQuizHistory, getQuizSession } from '../services/quiz-service.js';
   import state from '../core/state.js';
   import { t } from '../core/i18n.js';
+  import { formatRelativeDate } from '../utils/formatters.js';
 
   export default class TopicsView extends BaseView {
     async render() {
@@ -99,9 +100,9 @@
       // Format the date - handle unplayed quizzes (timestamp = 0)
       let dateStr;
       if (!session.timestamp || session.timestamp === 0) {
-        dateStr = hasScore ? this.formatDate(new Date(session.timestamp)) : t('home.notPlayedYet');
+        dateStr = hasScore ? formatRelativeDate(session.timestamp) : t('home.notPlayedYet');
       } else {
-        dateStr = this.formatDate(new Date(session.timestamp));
+        dateStr = formatRelativeDate(session.timestamp);
       }
 
       const canReplay = !!session.questions;
@@ -145,18 +146,6 @@
           </div>
         </div>
       `;
-    }
-
-    formatDate(date) {
-      const now = new Date();
-      const diffMs = now - date;
-      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 0) return t('dates.today');
-      if (diffDays === 1) return t('dates.yesterday');
-      if (diffDays < 7) return t('dates.daysAgo', { count: diffDays });
-
-      return date.toLocaleDateString();
     }
 
     attachListeners() {
