@@ -1,22 +1,28 @@
-# Phase 48: JSDoc Configuration & Type Checking
+# Phase 48: JSDoc Documentation & Type Checking
 
 ## Overview
 
-Configure JSDoc-based type checking to improve code quality and developer experience without migrating to TypeScript. Enable IDE intelligence, catch type errors at edit-time, and establish type definitions for core data structures.
+Configure JSDoc for **two purposes**:
+1. **Documentation Generation** - Generate HTML API docs from code comments
+2. **Type Checking** - Catch type errors at edit-time via VS Code and CLI
+
+This improves code quality and developer experience without migrating to TypeScript.
 
 ## Problem Statement
 
 **Current State:**
 - JSDoc comments exist across 17 files (~128 annotations)
 - Good coverage in services (`quiz-service.js`, `auth-service.js`)
+- No documentation website generated from code
 - No `jsconfig.json` - VS Code type checking disabled
 - No custom type definitions for complex objects (Quiz, Question, Session)
 - No automated type checking in CI
 
 **Desired State:**
+- `npm run docs` generates browsable HTML API documentation
 - `jsconfig.json` enables type checking with `checkJs: true`
 - Custom type definitions (`@typedef`) for core data structures
-- NPM script for type checking (`npm run typecheck`)
+- `npm run typecheck` validates types from CLI
 - CI integration (warning mode initially)
 - Improved IDE autocomplete and error detection
 
@@ -29,29 +35,84 @@ Configure JSDoc-based type checking to improve code quality and developer experi
 | Gradual adoption | Add per-file/function | All-or-nothing migration |
 | Runtime overhead | None | None (compiles away) |
 | IDE support | Good (VS Code) | Excellent |
+| Documentation | Built-in HTML generation | Requires separate tool |
 | Best for | Existing vanilla JS projects | New projects, large teams |
 
 **Decision:** JSDoc is the right choice for Saberloop because:
 1. Project is vanilla JavaScript with no TypeScript tooling
 2. Already using JSDoc in key files
 3. Can adopt incrementally without build changes
-4. Matches learning-focused nature of the project
+4. Generates documentation AND enables type checking
+5. Matches learning-focused nature of the project
 
 ---
 
 ## Learning Objectives
 
-- Understanding `jsconfig.json` configuration
+- Understanding JSDoc comment syntax and tags
+- Generating HTML documentation with JSDoc CLI
+- Configuring `jsconfig.json` for type checking
 - Writing `@typedef` for complex object types
 - Using `@param`, `@returns`, `@type` effectively
-- TypeScript-style JSDoc annotations
 - CI integration for type checking
 
 ---
 
 ## Implementation Plan
 
-### 48.1 - Create jsconfig.json
+### 48.1 - Install Dependencies
+
+**Install JSDoc for documentation generation:**
+```bash
+npm install --save-dev jsdoc
+```
+
+**Install TypeScript for type checking:**
+```bash
+npm install --save-dev typescript
+```
+
+**Why both?**
+- `jsdoc` - Generates HTML documentation from comments
+- `typescript` - Checks types in JS files using JSDoc annotations (via `tsc` CLI)
+
+---
+
+### 48.2 - Create JSDoc Configuration
+
+**File:** `jsdoc.config.json` (project root)
+
+**Purpose:** Configure JSDoc documentation generation.
+
+```json
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".+\\.js$",
+    "excludePattern": "(node_modules|test)"
+  },
+  "opts": {
+    "destination": "docs/api",
+    "recurse": true,
+    "readme": "README.md"
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true
+  }
+}
+```
+
+**Key options:**
+- `source.include` - Which directories to document
+- `opts.destination` - Where to output HTML docs
+- `opts.recurse` - Include subdirectories
+- `plugins/markdown` - Render markdown in descriptions
+
+---
+
+### 48.3 - Create jsconfig.json
 
 **File:** `jsconfig.json` (project root)
 
@@ -88,7 +149,7 @@ Configure JSDoc-based type checking to improve code quality and developer experi
 
 ---
 
-### 48.2 - Create Type Definitions File
+### 48.4 - Create Type Definitions File
 
 **File:** `src/types.js`
 
@@ -97,6 +158,7 @@ Configure JSDoc-based type checking to improve code quality and developer experi
 ```javascript
 /**
  * @file Type definitions for Saberloop
+ * @module types
  *
  * This file contains JSDoc type definitions used throughout the application.
  * Import types using:
@@ -229,45 +291,43 @@ export {};
 
 ---
 
-### 48.3 - Add Type Checking Script
+### 48.5 - Add NPM Scripts
 
 **File:** `package.json`
 
-**Add script:**
+**Add scripts:**
 ```json
 {
   "scripts": {
-    "typecheck": "tsc --noEmit --allowJs --checkJs --skipLibCheck --target ES2022 --moduleResolution bundler src/**/*.js"
-  }
-}
-```
-
-**Alternative (simpler, uses jsconfig.json):**
-```json
-{
-  "scripts": {
+    "docs": "jsdoc -c jsdoc.config.json",
+    "docs:open": "jsdoc -c jsdoc.config.json && start docs/api/index.html",
     "typecheck": "tsc -p jsconfig.json --noEmit"
   }
 }
 ```
 
-**Note:** This requires TypeScript as a dev dependency for the CLI. VS Code uses its built-in TypeScript for real-time checking.
+**Scripts explained:**
+- `npm run docs` - Generate HTML documentation to `docs/api/`
+- `npm run docs:open` - Generate and open in browser (Windows)
+- `npm run typecheck` - Check types using TypeScript CLI
 
 ---
 
-### 48.4 - Install TypeScript (Dev Dependency)
+### 48.6 - Update .gitignore
 
-TypeScript CLI is needed for the `npm run typecheck` command:
+**File:** `.gitignore`
 
-```bash
-npm install --save-dev typescript
+**Add:**
+```
+# Generated documentation
+docs/api/
 ```
 
-**Why?** Even though we're not writing TypeScript, the `tsc` CLI can check JavaScript files with JSDoc annotations.
+Documentation is generated on demand, not committed.
 
 ---
 
-### 48.5 - Update CI Workflow
+### 48.7 - Update CI Workflow
 
 **File:** `.github/workflows/test.yml`
 
@@ -281,7 +341,7 @@ npm install --save-dev typescript
 
 ---
 
-### 48.6 - Improve Key File JSDoc Coverage
+### 48.8 - Improve Key File JSDoc Coverage
 
 **Priority files to enhance (based on complexity/usage):**
 
@@ -309,9 +369,11 @@ export async function saveSession(session) {
 
 | File | Change Type | Description |
 |------|-------------|-------------|
+| `jsdoc.config.json` | Create | JSDoc documentation config |
 | `jsconfig.json` | Create | Enable JS type checking |
 | `src/types.js` | Create | Shared type definitions |
-| `package.json` | Modify | Add typecheck script |
+| `package.json` | Modify | Add docs and typecheck scripts |
+| `.gitignore` | Modify | Ignore generated docs |
 | `.github/workflows/test.yml` | Modify | Add type check step |
 | `src/core/db.js` | Modify | Improve JSDoc coverage |
 | `src/core/state.js` | Modify | Improve JSDoc coverage |
@@ -323,18 +385,24 @@ export async function saveSession(session) {
 
 ### Verification Steps
 
-1. **VS Code Integration:**
+1. **Documentation Generation:**
+   - [ ] `npm run docs` generates HTML to `docs/api/`
+   - [ ] Open `docs/api/index.html` in browser
+   - [ ] Navigate module list, click on functions
+   - [ ] Type definitions appear correctly
+
+2. **VS Code Integration:**
    - [ ] Open a `.js` file in VS Code
    - [ ] Hover over a function - see type info
    - [ ] Intentionally add type error - see red squiggle
    - [ ] Autocomplete works for typed objects
 
-2. **CLI Type Check:**
+3. **CLI Type Check:**
    - [ ] `npm run typecheck` runs without fatal errors
    - [ ] Type errors are reported (if any exist)
    - [ ] Exit code is 0 when no errors
 
-3. **CI Integration:**
+4. **CI Integration:**
    - [ ] GitHub Actions runs typecheck step
    - [ ] Failures don't block the build (warning mode)
    - [ ] Type errors visible in CI logs
@@ -343,30 +411,35 @@ export async function saveSession(session) {
 
 ## Commits Plan
 
-1. `chore: add jsconfig.json for JS type checking`
+1. `chore: add jsdoc and typescript dev dependencies`
+   - Install jsdoc and typescript
+
+2. `chore: add jsdoc.config.json for documentation generation`
+   - Create jsdoc.config.json
+
+3. `chore: add jsconfig.json for JS type checking`
    - Create jsconfig.json
 
-2. `feat: add type definitions for core data structures`
+4. `feat: add type definitions for core data structures`
    - Create src/types.js with @typedef declarations
 
-3. `chore: add typecheck npm script`
-   - Install typescript as dev dependency
-   - Add typecheck script to package.json
+5. `chore: add docs and typecheck npm scripts`
+   - Add scripts to package.json
+   - Update .gitignore
 
-4. `ci: add type checking step to GitHub Actions`
+6. `ci: add type checking step to GitHub Actions`
    - Update test.yml with typecheck step
 
-5. `docs: improve JSDoc coverage in core modules`
+7. `docs: improve JSDoc coverage in core modules`
    - Enhance db.js, state.js, openrouter-client.js
    - Reference types from types.js
-
-6. `docs: add Phase 47 documentation`
-   - This phase document
 
 ---
 
 ## Success Criteria
 
+- [ ] `npm run docs` generates HTML documentation
+- [ ] Documentation is browsable and shows all public APIs
 - [ ] `jsconfig.json` created and VS Code recognizes it
 - [ ] `src/types.js` defines core types (Question, QuizSession, etc.)
 - [ ] `npm run typecheck` runs successfully
@@ -384,12 +457,13 @@ export async function saveSession(session) {
 - 100% type coverage (focus on public APIs and complex types)
 - Type checking test files (excluded in jsconfig.json)
 - Third-party library type definitions (@types/*)
+- Hosting documentation (local generation only)
 
 ---
 
 ## Future Enhancements (Optional)
 
-After Phase 47 is complete, consider:
+After Phase 48 is complete, consider:
 
 1. **Phase 48.1: Strict Mode Migration**
    - Enable `strict: true` in jsconfig.json
@@ -403,11 +477,15 @@ After Phase 47 is complete, consider:
    - Change CI from warning to blocking
    - After 2-4 weeks of stable operation
 
+4. **Phase 48.4: Host Documentation**
+   - Deploy docs to GitHub Pages or separate URL
+   - Auto-generate on push to main
+
 ---
 
 ## Related Files
 
-- Configuration: `jsconfig.json`, `package.json`
+- Configuration: `jsdoc.config.json`, `jsconfig.json`, `package.json`
 - Types: `src/types.js`
 - Core modules: `db.js`, `state.js`, `settings.js`
 - Services: `quiz-service.js`, `auth-service.js`
@@ -418,6 +496,7 @@ After Phase 47 is complete, consider:
 ## References
 
 - [JSDoc Reference](https://jsdoc.app/)
+- [JSDoc Getting Started](https://jsdoc.app/about-getting-started.html)
 - [TypeScript JSDoc Support](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
 - [VS Code JavaScript Type Checking](https://code.visualstudio.com/docs/nodejs/working-with-javascript#_type-checking-javascript)
 - [jsconfig.json Reference](https://code.visualstudio.com/docs/languages/jsconfig)
