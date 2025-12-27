@@ -513,8 +513,11 @@ test.describe('Saberloop E2E Tests', () => {
     // Wait for page to fully load
     await expect(page.locator('#defaultGradeLevel')).toBeVisible();
 
-    // Change settings (only defaultGradeLevel is enabled, others are disabled for now)
+    // Change grade level setting
     await page.selectOption('#defaultGradeLevel', 'college');
+
+    // Change questions per quiz setting
+    await page.selectOption('#questionsPerQuiz', '15');
 
     // Wait for settings to be saved (they save on change)
     await page.waitForTimeout(500);
@@ -524,6 +527,29 @@ test.describe('Saberloop E2E Tests', () => {
 
     // Verify settings persisted
     await expect(page.locator('#defaultGradeLevel')).toHaveValue('college');
+    await expect(page.locator('#questionsPerQuiz')).toHaveValue('15');
+  });
+
+  test('should generate quiz with configured question count', async ({ page }) => {
+    // Set up auth state
+    await setupAuthenticatedState(page);
+
+    // Go to settings and set question count to 10
+    await page.goto('/#/settings');
+    await expect(page.locator('#questionsPerQuiz')).toBeVisible();
+    await page.selectOption('#questionsPerQuiz', '10');
+    await page.waitForTimeout(300);
+
+    // Navigate to topic input and create quiz
+    await page.goto('/#/topic-input');
+    await page.fill('#topicInput', 'Math basics');
+    await page.click('#generateBtn');
+
+    // Wait for quiz to load
+    await page.waitForURL(/#\/quiz/, { timeout: 15000 });
+
+    // Verify progress shows 10 total questions (e.g., "Question 1 of 10")
+    await expect(page.locator('[data-testid="question-progress"]')).toContainText('of 10');
   });
 
   test('should handle offline mode correctly', async ({ page, context }) => {
