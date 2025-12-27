@@ -34,7 +34,7 @@ export function formatRelativeDate(date) {
   // Calculate difference in days (ignoring time)
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const target = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
-  const diffMs = today - target;
+  const diffMs = today.getTime() - target.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   // Use translated strings for common cases
@@ -72,8 +72,8 @@ export function formatNumber(number, options = {}) {
 /**
  * Format a value as a percentage
  * @param {number} value - Value between 0 and 1 (or 0-100 if isRaw=true)
- * @param {Object} options - Additional options
- * @param {boolean} options.isRaw - If true, value is already 0-100 scale
+ * @param {Object} [options] - Additional options
+ * @param {boolean} [options.isRaw] - If true, value is already 0-100 scale
  * @returns {string} Formatted percentage string
  */
 export function formatPercent(value, options = {}) {
