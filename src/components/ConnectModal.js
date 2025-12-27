@@ -55,7 +55,7 @@
       document.body.appendChild(backdrop);
 
       // Handle connect button
-      const connectBtn = backdrop.querySelector('#connectBtn');
+      const connectBtn = /** @type {HTMLButtonElement} */ (backdrop.querySelector('#connectBtn'));
       connectBtn.addEventListener('click', async () => {
         connectBtn.disabled = true;
         connectBtn.innerHTML = `
