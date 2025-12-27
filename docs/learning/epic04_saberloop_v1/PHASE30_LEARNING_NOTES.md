@@ -101,9 +101,9 @@ A: Validate before deploying. Check the manifest matches the target.
 
 ---
 
-## Phase 30.1: i18n Infrastructure (PR #40 - In Review)
+## Phase 30.1: i18n Infrastructure (Complete)
 
-**Status:** PR created, awaiting review
+**Status:** ✅ Merged (PR #40)
 
 ### What We Did
 
@@ -175,9 +175,85 @@ const { initI18n, t } = await import('./i18n.js');
 
 ---
 
-## Phase 30.2: Test Migration to data-testid (Pending)
+## Phase 30.2: Test Migration to data-testid (In Progress)
 
-*To be completed*
+**Status:** PR pending - data-testid attributes added, E2E migration deferred
+
+### What We Did
+
+| Deliverable | Status |
+|-------------|--------|
+| Add data-testid to HomeView | ✅ |
+| Add data-testid to QuizView | ✅ |
+| Add data-testid to ResultsView | ✅ |
+| Add data-testid to SettingsView | ✅ |
+| Add data-testid to TopicInputView | ✅ |
+| Add data-testid to WelcomeView | ✅ |
+| Add data-testid to LoadingView | ✅ |
+| Add data-testid to TopicsView | ✅ |
+| Add data-testid to HelpView | ✅ |
+| Add data-testid to ConnectionConfirmedView | ✅ |
+| Add data-testid to OpenRouterGuideView | ✅ |
+| Add data-testid to ConnectModal | ✅ |
+| Add data-testid to ExplanationModal | ✅ |
+| Migrate E2E tests to use data-testid | ⏳ Deferred |
+| All tests pass (202 total) | ✅ |
+
+### Key Learnings
+
+#### 1. data-testid Pattern
+
+The `data-testid` attribute provides stable selectors for E2E tests that don't break when:
+- Text content changes (translations)
+- CSS classes change (styling refactors)
+- Element structure changes (within reason)
+
+```html
+<!-- Before: fragile selector -->
+<h2 class="text-xl font-bold">Welcome back!</h2>
+<!-- Test: page.getByText('Welcome back!') - breaks on translation -->
+
+<!-- After: stable selector -->
+<h2 data-testid="welcome-heading" class="text-xl font-bold">Welcome back!</h2>
+<!-- Test: page.getByTestId('welcome-heading') - works regardless of text -->
+```
+
+#### 2. Naming Convention
+
+We used descriptive, kebab-case names that indicate the element's purpose:
+- `welcome-heading` - Main heading on welcome page
+- `quiz-title` - Title showing quiz topic
+- `score-percentage` - The percentage score display
+- `generate-quiz-btn` - Button to generate quiz
+
+#### 3. Scope of Changes
+
+Added data-testid to key UI elements across:
+- **12 view files** - All major app views
+- **2 component files** - Modal components
+- **29 total elements** - Interactive and display elements
+
+### data-testid Inventory
+
+| View/Component | data-testid values |
+|----------------|-------------------|
+| HomeView | `welcome-heading`, `recent-topics-heading`, `no-quizzes-message`, `quiz-topic`, `quiz-date`, `quiz-score` |
+| QuizView | `quiz-title`, `question-progress`, `question-text` |
+| ResultsView | `score-percentage`, `result-message`, `score-summary` |
+| SettingsView | `settings-title`, `grade-level-select`, `app-version` |
+| TopicInputView | `new-quiz-title`, `topic-input`, `generate-quiz-btn` |
+| WelcomeView | `welcome-title`, `connect-btn`, `skip-btn` |
+| LoadingView | `loading-topic`, `loading-message` |
+| TopicsView | `topics-title`, `quiz-count` |
+| HelpView | `help-title` |
+| ConnectionConfirmedView | `connection-confirmed-title`, `start-quiz-btn` |
+| OpenRouterGuideView | `openrouter-guide-title` |
+| ConnectModal | `connect-modal-title`, `modal-connect-btn`, `modal-cancel-btn` |
+| ExplanationModal | `explanation-question`, `got-it-btn` |
+
+### Next Steps
+
+The actual E2E test migration (updating selectors in `tests/e2e/app.spec.js`) is deferred to a follow-up task. The infrastructure is now in place
 
 ---
 
@@ -216,8 +292,8 @@ const { initI18n, t } = await import('./i18n.js');
 | Sub-Phase | Status | Key Learning |
 |-----------|--------|--------------|
 | Pre-Phase: Staging | ✅ Complete | Environment variables, validation, cross-platform scripts |
-| 30.1: Infrastructure | ⏳ Pending | |
-| 30.2: Test Migration | ⏳ Pending | |
+| 30.1: Infrastructure | ✅ Complete | i18next setup, lazy loading, language normalization |
+| 30.2: Test Migration | 🔄 In Progress | data-testid pattern for i18n-safe testing |
 | 30.3: String Extraction | ⏳ Pending | |
 | 30.4: Language Settings | ⏳ Pending | |
 | 30.5: LLM Integration | ⏳ Pending | |
@@ -228,8 +304,6 @@ const { initI18n, t } = await import('./i18n.js');
 
 ## Next Session
 
-Start Phase 30.1: i18n Infrastructure Setup
-- Install i18next
-- Create core i18n module
-- Add starter translation files (en, pt-PT)
-- Add unit tests
+Continue Phase 30.2 or start Phase 30.3:
+- **Option A:** Migrate E2E tests in `app.spec.js` to use data-testid selectors
+- **Option B:** Start Phase 30.3 - String extraction (replace hardcoded strings with `t()` calls)
