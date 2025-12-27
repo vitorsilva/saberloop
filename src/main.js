@@ -23,6 +23,7 @@ import { initPerformanceMonitoring } from './utils/performance.js'
 import { isFeatureEnabled } from './core/features.js';
 import { telemetry } from './utils/telemetry.js';
 import { initI18n } from './core/i18n.js';
+import state from './core/state.js';
 
 logger.info('Saberloop initializing');
 initErrorHandling();
@@ -55,6 +56,9 @@ async function init() {
       return; // Don't continue with normal init
     }
 
+    // Handle deep links (e.g., ?topic=History)
+    handleDeepLinks();
+
     // Register routes
     router.addRoute('/', HomeView);
     router.addRoute('/topic-input', TopicInputView);
@@ -84,6 +88,28 @@ async function init() {
 
   } catch (error) {
     logger.error('Initialization failed', { error: error.message });
+  }
+}
+
+/**
+ * Handle deep links from shared URLs
+ * Parses query params and stores prefilled topic in state
+ */
+function handleDeepLinks() {
+  const params = new URLSearchParams(window.location.search);
+  const topic = params.get('topic');
+
+  if (topic) {
+    const decodedTopic = decodeURIComponent(topic);
+    state.set('prefilledTopic', decodedTopic);
+    logger.debug('Deep link handled', { topic: decodedTopic });
+
+    // Track telemetry
+    telemetry.track('deep_link_opened', { topic: decodedTopic });
+
+    // Clear query params from URL without page reload
+    const cleanUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, '', cleanUrl);
   }
 }
 
