@@ -4,6 +4,7 @@ import { generateQuestions } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
 import { t, getCurrentLanguage } from '../core/i18n.js';
+import { getSetting } from '../core/settings.js';
 
 // Default timing constants (can be overridden via window.LOADING_VIEW_CONFIG for testing)
 const getConfig = () => {
@@ -182,8 +183,10 @@ export default class LoadingView extends BaseView {
       }
 
       // Build options for question generation
+      const questionCount = parseInt(getSetting('questionsPerQuiz'), 10) || 5;
       const options = {
-        language: getCurrentLanguage()
+        language: getCurrentLanguage(),
+        questionCount
       };
 
       // If continuing on topic, pass previous questions to exclude
