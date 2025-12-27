@@ -24,9 +24,10 @@ Epic 4 focuses on **maintaining** the production Saberloop app and **enhancing**
 2. **Knip** - Dead code detection and cleanup
 3. **i18next** - Internationalization for multi-language support
 4. **dependency-cruiser** - Architecture testing and enforcement
-5. **Maestro** - Comprehensive mobile UI testing
-6. **Google AdSense** - Non-intrusive monetization
-7. **Self-hosted Telemetry** - VPS-based observability without paid services
+5. **JSDoc** - Type checking without TypeScript
+6. **Maestro** - Comprehensive mobile UI testing
+7. **Google AdSense** - Non-intrusive monetization
+8. **Self-hosted Telemetry** - VPS-based observability without paid services
 
 ---
 
@@ -67,6 +68,11 @@ Before starting Epic 4, you should have completed:
 │  │ Detection        │  │ Testing          │                │
 │  │ (Phase 15)       │  │ (Phase 20)       │                │
 │  └──────────────────┘  └──────────────────┘                │
+│  ┌──────────────────┐                                      │
+│  │ JSDoc Type       │                                      │
+│  │ Checking         │                                      │
+│  │ (Phase 48)       │                                      │
+│  └──────────────────┘                                      │
 │                                                             │
 │  Testing & Observability                                    │
 │  ┌──────────────────┐  ┌──────────────────┐                │
@@ -477,6 +483,41 @@ Enable users to see and change the AI model used for quiz generation.
 
 ---
 
+### **Phase 48: JSDoc Configuration & Type Checking** (2-3 sessions)
+
+Enable JSDoc-based type checking for improved code quality and IDE experience.
+
+**Status:** Ready to Implement
+
+**Key Features:**
+- `jsconfig.json` with `checkJs: true`
+- Custom type definitions (`@typedef`) for core data structures
+- NPM script for type checking
+- CI integration (warning mode)
+- Improved IDE autocomplete and error detection
+
+**Learning Objectives:**
+- Understanding `jsconfig.json` configuration
+- Writing `@typedef` for complex object types
+- TypeScript-style JSDoc annotations
+- CI integration for type checking
+
+**Deliverables:**
+- [ ] `jsconfig.json` - Enable JS type checking
+- [ ] `src/types.js` - Shared type definitions
+- [ ] `npm run typecheck` - Type checking script
+- [ ] GitHub Actions integration (warning mode)
+- [ ] Improved JSDoc in core modules (db.js, state.js)
+- [ ] `PHASE48_JSDOC_CONFIGURATION.md` - Documentation
+
+**Success Criteria:**
+- [ ] VS Code shows type info on hover
+- [ ] `npm run typecheck` runs successfully
+- [ ] CI runs typecheck in warning mode
+- [ ] Core types defined (Question, QuizSession, AuthState)
+
+---
+
 ### **Phase 50: Maestro Testing Expansion** (3-4 sessions)
 
 Expand Maestro test coverage to match Playwright E2E tests.
@@ -689,13 +730,14 @@ Experimental research phase to assess feasibility of E2E mutation testing.
 | Phase 45 | 1 | Answer Randomization | ✅ Complete |
 | Phase 46 | 1 | Configurable Question Count | ✅ Complete |
 | Phase 47 | 1 | AI Model Selection | ✅ Complete |
+| Phase 48 | 2-3 | JSDoc Type Checking | Ready |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
 | Phase 80 | 1 | Test Coverage | ✅ Complete |
 | Phase 85 | 2-3 | Mutation Testing Setup | Ready |
 | Phase 86 | 3-4 | Mutation Testing Expansion | Ready (after 85) |
 | Phase 87 | 1-2 | E2E Mutation Exploration | Experimental |
-| **Total** | **~38-53** | **Full Epic** | |
+| **Total** | **~40-56** | **Full Epic** | |
 
 **Note:** Phase numbers use intervals of 10 to allow for inserting new phases if needed.
 
@@ -717,8 +759,9 @@ While phases can be worked on in any order, here's a suggested priority:
 10. **Phase 45** - Answer Randomization ✅
 11. **Phase 46** - Configurable Question Count ✅
 12. **Phase 47** - AI Model Selection ✅
-13. **Phase 50** - Maestro Testing
-14. **Phase 60** - Monetization (after user base grows)
+13. **Phase 48** - JSDoc Type Checking
+14. **Phase 50** - Maestro Testing
+15. **Phase 60** - Monetization (after user base grows)
 
 ---
 
@@ -805,6 +848,7 @@ When you're ready to begin Epic 4, say:
 - `PHASE30_I18N.md`
 - `PHASE40_TELEMETRY.md`
 - `PHASE46_CONFIGURABLE_QUESTION_COUNT.md`
+- `PHASE48_JSDOC_CONFIGURATION.md`
 - `PHASE50_MAESTRO_TESTING.md`
 - `PHASE60_MONETIZATION.md`
 - `PHASE80_TEST_COVERAGE.md`
