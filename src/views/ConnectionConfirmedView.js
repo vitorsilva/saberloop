@@ -24,7 +24,7 @@
             </div>
 
             <!-- Title -->
-            <h1 class="text-text-light dark:text-text-dark text-2xl font-bold mb-2">
+            <h1 data-testid="connection-confirmed-title" class="text-text-light dark:text-text-dark text-2xl font-bold mb-2">
               Connection Confirmed!
             </h1>
 
@@ -55,7 +55,7 @@
             </div>
 
             <!-- CTA Button -->
-            <button id="start-quiz-btn" class="w-full max-w-xs px-6 py-3.5 rounded-xl
+            <button id="start-quiz-btn" data-testid="start-quiz-btn" class="w-full max-w-xs px-6 py-3.5 rounded-xl
               bg-primary hover:bg-primary-dark text-white font-medium transition-colors
               flex items-center justify-center gap-2">
               Start Your First Quiz

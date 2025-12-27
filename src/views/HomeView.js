@@ -28,7 +28,7 @@ export default class HomeView extends BaseView {
 
         <div class="flex-grow px-4">
           <!-- Headline Text -->
-          <h2 class="text-text-light dark:text-text-dark tracking-light text-[32px] font-bold leading-tight text-left pb-3 pt-6">Welcome back!</h2>
+          <h2 data-testid="welcome-heading" class="text-text-light dark:text-text-dark tracking-light text-[32px] font-bold leading-tight text-left pb-3 pt-6">Welcome back!</h2>
 
         <!-- Offline Banner -->
         <div id="offlineBanner" class="bg-orange-500/20 border
@@ -54,7 +54,7 @@ export default class HomeView extends BaseView {
         </div>
 
           <!-- Section Header -->
-          <h3 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3 pt-8">Recent Topics</h3>
+          <h3 data-testid="recent-topics-heading" class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3 pt-8">Recent Topics</h3>
 
           <!-- List Items Container -->
           <div id="recentTopicsList" class="flex flex-col gap-3">
@@ -96,12 +96,12 @@ export default class HomeView extends BaseView {
     // Handle empty state
     if (!sessions || sessions.length === 0) {
       return `
-        <div class="flex flex-col items-center justify-center py-8 text-center">    
-          <span class="material-symbols-outlined text-5xl text-subtext-light        
+        <div data-testid="no-quizzes-message" class="flex flex-col items-center justify-center py-8 text-center">
+          <span class="material-symbols-outlined text-5xl text-subtext-light
   dark:text-subtext-dark mb-3">quiz</span>
           <p class="text-subtext-light dark:text-subtext-dark text-base">No
   quizzes yet</p>
-          <p class="text-subtext-light dark:text-subtext-dark text-sm">Start        
+          <p class="text-subtext-light dark:text-subtext-dark text-sm">Start
   your first quiz to see it here!</p>
         </div>
       `;
@@ -147,13 +147,10 @@ export default class HomeView extends BaseView {
   text-3xl">school</span>
           </div>
           <div class="flex flex-1 flex-col">
-            <p class="text-text-light dark:text-text-dark text-base font-bold       
-  leading-normal">${session.topic}</p>
-            <p class="text-subtext-light dark:text-subtext-dark text-sm
-  font-normal leading-normal">${dateStr}</p>
+            <p data-testid="quiz-topic" class="text-text-light dark:text-text-dark text-base font-bold leading-normal">${session.topic}</p>
+            <p data-testid="quiz-date" class="text-subtext-light dark:text-subtext-dark text-sm font-normal leading-normal">${dateStr}</p>
           </div>
-          <p class="${colorClass.split(' ')[0]} text-lg
-  font-bold">${scoreDisplay}</p>
+          <p data-testid="quiz-score" class="${colorClass.split(' ')[0]} text-lg font-bold">${scoreDisplay}</p>
         </div>
       `;
     }).join('');

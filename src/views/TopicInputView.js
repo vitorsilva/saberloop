@@ -7,7 +7,7 @@ export default class TopicInputView extends BaseView {
       <div class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <!-- Top App Bar -->
         <header class="flex items-center p-4 border-b border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
-          <h1 class="text-lg font-bold flex-1 text-center text-text-light dark:text-text-dark">New Quiz</h1>
+          <h1 data-testid="new-quiz-title" class="text-lg font-bold flex-1 text-center text-text-light dark:text-text-dark">New Quiz</h1>
         </header>
 
         <!-- Main Content -->
@@ -16,7 +16,7 @@ export default class TopicInputView extends BaseView {
             <!-- Text Field for Topic -->
             <label class="flex flex-col">
               <p class="text-base font-medium pb-2 text-text-light dark:text-text-dark">What do you want to practice?</p>
-              <textarea id="topicInput" class="form-input flex w-full resize-none overflow-hidden rounded-lg min-h-36 p-4 text-base font-normal leading-normal placeholder:text-subtext-light dark:placeholder:text-subtext-dark bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary" placeholder="World War II, Photosynthesis, Algebra..."></textarea>
+              <textarea id="topicInput" data-testid="topic-input" class="form-input flex w-full resize-none overflow-hidden rounded-lg min-h-36 p-4 text-base font-normal leading-normal placeholder:text-subtext-light dark:placeholder:text-subtext-dark bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary" placeholder="World War II, Photosynthesis, Algebra..."></textarea>
             </label>
 
             <!-- Select Field for Grade Level -->
@@ -33,7 +33,7 @@ export default class TopicInputView extends BaseView {
 
           <!-- Generate Button -->
           <div class="mt-8">
-            <button id="generateBtn" class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90">
+            <button id="generateBtn" data-testid="generate-quiz-btn" class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90">
               <span class="truncate">Generate Questions</span>
             </button>
           </div>

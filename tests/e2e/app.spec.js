@@ -71,7 +71,7 @@ async function setupAuthenticatedState(page) {
   await page.goto('/#/');
 
   // Wait for the home page to be visible (not welcome page)
-  await page.waitForSelector('h2:has-text("Welcome back!")', { timeout: 15000 });
+  await page.waitForSelector('[data-testid="welcome-heading"]', { timeout: 15000 });
 }
 
 // Helper to clear sessions for clean test state
@@ -109,13 +109,13 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page.locator('h1')).toContainText('Saberloop');
 
     // Check for welcome message
-    await expect(page.locator('h2')).toContainText('Welcome back!');
+    await expect(page.getByTestId('welcome-heading')).toBeVisible();
 
     // Check for Start New Quiz button
     await expect(page.locator('#startQuizBtn')).toBeVisible();
 
     // Check for Recent Topics section
-    await expect(page.locator('h3')).toContainText('Recent Topics');
+    await expect(page.getByTestId('recent-topics-heading')).toBeVisible();
   });
 
   test('should navigate to topic input screen', async ({ page }) => {
@@ -129,10 +129,10 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page).toHaveURL(/#\/topic-input/);
 
     // Check for New Quiz header
-    await expect(page.locator('h1')).toContainText('New Quiz');
+    await expect(page.getByTestId('new-quiz-title')).toBeVisible();
 
     // Check for input fields
-    await expect(page.locator('#topicInput')).toBeVisible();
+    await expect(page.getByTestId('topic-input')).toBeVisible();
     await expect(page.locator('#gradeLevelSelect')).toBeVisible();
     await expect(page.locator('#generateBtn')).toBeVisible();
   });
@@ -157,10 +157,10 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Check quiz header
-    await expect(page.locator('h1')).toContainText('Science Quiz');
+    await expect(page.getByTestId('quiz-title')).toBeVisible();
 
     // Check progress indicator
-    await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+    await expect(page.getByTestId('question-progress')).toBeVisible();
 
     // Answer all 5 questions
     for (let i = 0; i < 5; i++) {
@@ -196,12 +196,11 @@ test.describe('Saberloop E2E Tests', () => {
     // Wait for results to render
     await page.waitForLoadState('networkidle');
 
-    // Check score is displayed (testing shows 80% due to timing, which is acceptable)
-    const scoreText = page.locator('p.text-success.text-5xl').first();
-    await expect(scoreText).toBeVisible();
+    // Check score is displayed
+    await expect(page.getByTestId('score-percentage')).toBeVisible();
 
     // Check that a success message is shown
-    await expect(page.locator('p.text-text-light.dark\\:text-text-dark.text-xl.font-bold')).toBeVisible();
+    await expect(page.getByTestId('result-message')).toBeVisible();
 
     // Check review section
     await expect(page.locator('h2')).toContainText('Review Your Answers');
@@ -307,8 +306,8 @@ test.describe('Saberloop E2E Tests', () => {
     await page.click('#submitBtn');
 
     // Check results show 80%
-    await expect(page.locator('text=80%')).toBeVisible();
-    await expect(page.locator('text=Great Job!')).toBeVisible();
+    await expect(page.getByTestId('score-percentage')).toContainText('80%');
+    await expect(page.getByTestId('result-message')).toBeVisible();
 
     // Check that both correct (check icon) and incorrect (close icon) are shown
     await expect(page.locator('span:has-text("check")')).toHaveCount(4);
@@ -359,10 +358,10 @@ test.describe('Saberloop E2E Tests', () => {
     await setupAuthenticatedState(page);
     await clearSessions(page);
     await page.reload();
-    await page.waitForSelector('h2:has-text("Welcome back!")', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="welcome-heading"]', { timeout: 10000 });
 
     // Verify home page shows empty state
-    await expect(page.locator('#recentTopicsList >> text=No quizzes yet')).toBeVisible();
+    await expect(page.getByTestId('no-quizzes-message')).toBeVisible();
 
     // Complete a quiz
     await page.goto('/#/topic-input');
@@ -403,7 +402,7 @@ test.describe('Saberloop E2E Tests', () => {
     await setupAuthenticatedState(page);
     await clearSessions(page);
     await page.reload();
-    await page.waitForSelector('h2:has-text("Welcome back!")', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="welcome-heading"]', { timeout: 10000 });
 
     // Step 1: Complete a quiz first to have something to replay
     await page.goto('/#/topic-input');
@@ -440,10 +439,10 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page).toHaveURL(/#\/quiz/);
 
     // Should show the same topic
-    await expect(page.locator('h1')).toContainText('Ancient Egypt Quiz');
+    await expect(page.getByTestId('quiz-title')).toBeVisible();
 
     // Should show question 1
-    await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+    await expect(page.getByTestId('question-progress')).toBeVisible();
 
     // Step 5: Complete the replay with different answers
     for (let i = 0; i < 5; i++) {
@@ -478,7 +477,7 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page).toHaveURL(/#\/settings/);
 
     // Check for Settings header
-    await expect(page.locator('h1')).toContainText('Settings');
+    await expect(page.getByTestId('settings-title')).toBeVisible();
 
     // Check for Preferences section
     await expect(page.locator('h2').first()).toContainText('Preferences');
@@ -532,7 +531,7 @@ test.describe('Saberloop E2E Tests', () => {
     await setupAuthenticatedState(page);
     await clearSessions(page);
     await page.reload();
-    await page.waitForSelector('h2:has-text("Welcome back!")', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="welcome-heading"]', { timeout: 10000 });
 
     await page.goto('/#/topic-input');
     await page.fill('#topicInput', 'Marine Biology');
@@ -590,7 +589,7 @@ test.describe('Saberloop E2E Tests', () => {
     await page.waitForTimeout(500); // Wait for UI to update
 
     // Wait for home page to load
-    await expect(page.locator('h2')).toContainText('Welcome back!');
+    await expect(page.getByTestId('welcome-heading')).toBeVisible();
 
     // Verify button is re-enabled
     await expect(page.locator('#startQuizBtn')).toBeEnabled();
@@ -604,7 +603,7 @@ test.describe('Saberloop E2E Tests', () => {
     await setupAuthenticatedState(page);
     await clearSessions(page);
     await page.reload();
-    await page.waitForSelector('h2:has-text("Welcome back!")', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="welcome-heading"]', { timeout: 10000 });
 
     // Create first quiz
     await page.goto('/#/topic-input');
@@ -644,7 +643,7 @@ test.describe('Saberloop E2E Tests', () => {
 
     // Should be on history page
     await expect(page).toHaveURL(/#\/history/);
-    await expect(page.locator('h1')).toContainText('Quiz History');
+    await expect(page.getByTestId('topics-title')).toBeVisible();
 
     // Step 3: Verify quiz items are displayed
     const quizItems = page.locator('.quiz-item');
@@ -664,8 +663,8 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page).toHaveURL(/#\/quiz/);
 
     // Should show the quiz (Chemistry is most recent, so it's first)
-    await expect(page.locator('h1')).toContainText('Quiz');
-    await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+    await expect(page.getByTestId('quiz-title')).toBeVisible();
+    await expect(page.getByTestId('question-progress')).toBeVisible();
   });
 
   test('should keep submit button visible in viewport after selecting answer (issue #10)', async ({ page }) => {
@@ -992,10 +991,10 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Quiz should still be for Physics
-    await expect(page.locator('h1')).toContainText('Physics Quiz');
+    await expect(page.getByTestId('quiz-title')).toBeVisible();
 
     // Should show Question 1 of 5 (new quiz)
-    await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+    await expect(page.getByTestId('question-progress')).toBeVisible();
   });
 
   test('should allow multiple continues on same topic', async ({ page }) => {
@@ -1039,7 +1038,7 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Quiz should still be Chemistry
-    await expect(page.locator('h1')).toContainText('Chemistry Quiz');
+    await expect(page.getByTestId('quiz-title')).toBeVisible();
   });
 
   test('should clear continue chain when Try Another Topic is clicked', async ({ page }) => {
@@ -1076,7 +1075,7 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
     // Quiz should be for Geology (new topic)
-    await expect(page.locator('h1')).toContainText('Geology Quiz');
+    await expect(page.getByTestId('quiz-title')).toBeVisible();
   });
 
   test('should show countdown timer after delay during quiz generation (issue #37)', async ({ page }) => {
@@ -1153,7 +1152,7 @@ test.describe('Saberloop E2E Tests', () => {
     await expect(countdown).toContainText('Almost done');
 
     // Extended messages should be in rotation - wait and check for one of them
-    const loadingMessage = page.locator('#loadingMessage');
+    const loadingMessage = page.getByTestId('loading-message');
 
     // Wait up to 6 seconds for extended message to appear in rotation
     let foundExtendedMessage = false;

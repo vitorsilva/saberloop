@@ -15,7 +15,7 @@ bg-background-light dark:bg-background-dark">
           <a href="#/settings" class="text-text-light dark:text-text-dark">
             <span class="material-symbols-outlined">arrow_back</span>
           </a>
-          <h1 class="text-text-light dark:text-text-dark text-lg font-bold
+          <h1 data-testid="help-title" class="text-text-light dark:text-text-dark text-lg font-bold
 leading-tight tracking-[-0.015em] flex-1">Help</h1>
         </div>
 

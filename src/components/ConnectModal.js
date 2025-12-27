@@ -21,7 +21,7 @@
               <span class="material-symbols-outlined text-3xl text-primary">link</span>       
             </div>
 
-            <h2 class="text-xl font-bold text-text-light dark:text-text-dark mb-2">
+            <h2 data-testid="connect-modal-title" class="text-xl font-bold text-text-light dark:text-text-dark mb-2">
               Connect to OpenRouter
             </h2>
 
@@ -32,6 +32,7 @@
 
             <button
               id="connectBtn"
+              data-testid="modal-connect-btn"
               class="w-full h-12 rounded-xl bg-primary text-white font-bold
   hover:bg-primary/90 transition-colors mb-3"
             >
@@ -40,6 +41,7 @@
 
             <button
               id="cancelBtn"
+              data-testid="modal-cancel-btn"
               class="w-full h-12 rounded-xl bg-transparent text-subtext-light
   dark:text-subtext-dark font-medium hover:bg-card-light dark:hover:bg-card-dark
   transition-colors"

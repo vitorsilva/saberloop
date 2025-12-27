@@ -13,9 +13,9 @@
           <!-- Header -->
           <header class="flex items-center p-4 pb-2 justify-between
   bg-background-light dark:bg-background-dark">
-            <h1 class="text-text-light dark:text-text-dark text-lg
+            <h1 data-testid="topics-title" class="text-text-light dark:text-text-dark text-lg
   font-bold leading-tight tracking-[-0.015em]">Quiz History</h1>
-            <span class="text-subtext-light dark:text-subtext-dark
+            <span data-testid="quiz-count" class="text-subtext-light dark:text-subtext-dark
   text-sm">${sessions.length} quizzes</span>
           </header>
 

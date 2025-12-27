@@ -36,7 +36,7 @@ export function showExplanationModal({ question, userAnswer, correctAnswer, onFe
         </div>
 
         <!-- Question -->
-        <h2 class="text-text-light dark:text-text-dark text-xl font-bold text-center px-6 mb-6">${question}</h2>
+        <h2 data-testid="explanation-question" class="text-text-light dark:text-text-dark text-xl font-bold text-center px-6 mb-6">${question}</h2>
 
         <!-- Answer Cards Side by Side -->
         <div class="flex gap-3 px-4 mb-6">
@@ -86,7 +86,7 @@ export function showExplanationModal({ question, userAnswer, correctAnswer, onFe
 
         <!-- Got it Button -->
         <div class="px-4 pb-8">
-          <button id="gotItBtn" class="w-full bg-primary rounded-xl py-4 font-bold text-white flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors">
+          <button id="gotItBtn" data-testid="got-it-btn" class="w-full bg-primary rounded-xl py-4 font-bold text-white flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors">
             Got it!
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
