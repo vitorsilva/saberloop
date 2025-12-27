@@ -4,8 +4,8 @@ import { logger } from '../utils/logger.js';
   /**
    * Mock question generation - returns fake but realistic questions
    * @param {string} topic - The topic to generate questions about
-   * @param {string} [gradeLevel] - The grade level for the questions
-   * @param {string} [_apiKey] - The API key (unused in mock, accepted for interface consistency)
+   * @param {string} gradeLevel - The grade level for the questions
+   * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
    * @param {Object} [options] - Optional settings
    * @param {Array<string>} [options.previousQuestions] - Questions to exclude (for continue feature)
    * @param {string} [options.language] - Language code (unused in mock, accepted for interface consistency)
