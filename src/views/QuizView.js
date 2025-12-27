@@ -1,6 +1,7 @@
 import BaseView from './BaseView.js';
 import state from '../core/state.js';
 import { t } from '../core/i18n.js';
+import { shuffleAllQuestions } from '../utils/shuffle.js';
 
 export default class QuizView extends BaseView {
   constructor() {
@@ -34,6 +35,11 @@ export default class QuizView extends BaseView {
       this.questions = generatedQuestions;
       this.language = quizLanguage;
       this.answers = new Array(this.questions.length).fill(null);
+
+      // Shuffle options on replay to prevent position memorization
+      if (state.get('replaySessionId')) {
+        this.questions = shuffleAllQuestions(this.questions);
+      }
 
       // Clear from state to prevent reuse
       state.set('generatedQuestions', null);
