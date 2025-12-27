@@ -105,7 +105,11 @@
       "Bash(npm run deploy:*)",
       "WebFetch(domain:gemini.google.com)",
       "Bash(npm run test:coverage:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: add Phase 80 - Unit Test Coverage Improvement\n\n- Add PHASE80_TEST_COVERAGE.md with implementation plan and results\n- Add PHASE80_LEARNING_NOTES.md with testing techniques learned\n- Update EPIC4_SABERLOOP_V1_PLAN.md with Phase 80 entry\n\nOverall coverage improved from 68% to 82.7% \\(+14.7%\\)\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: add Phase 80 - Unit Test Coverage Improvement\n\n- Add PHASE80_TEST_COVERAGE.md with implementation plan and results\n- Add PHASE80_LEARNING_NOTES.md with testing techniques learned\n- Update EPIC4_SABERLOOP_V1_PLAN.md with Phase 80 entry\n\nOverall coverage improved from 68% to 82.7% \\(+14.7%\\)\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(node scripts/deploy-ftp.cjs:*)",
+      "Bash(echo:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:deploy:staging:*)"
     ],
     "deny": [],
     "ask": []

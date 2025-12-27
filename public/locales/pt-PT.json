@@ -19,6 +19,11 @@
     "startFirst": "Inicia o teu primeiro quiz para o veres aqui!",
     "notPlayedYet": "Ainda não jogado"
   },
+  "dates": {
+    "today": "Hoje",
+    "yesterday": "Ontem",
+    "daysAgo": "Há {{count}} dias"
+  },
   "quiz": {
     "title": "Quiz de {{topic}}",
     "questionOf": "Pergunta {{current}} de {{total}}",
@@ -43,6 +48,7 @@
   },
   "errors": {
     "network": "Erro de rede. Por favor, verifica a tua ligação e tenta novamente.",
-    "generic": "Ocorreu um erro. Por favor, tenta novamente."
+    "generic": "Ocorreu um erro. Por favor, tenta novamente.",
+    "cannotReplay": "Este quiz não pode ser repetido. As perguntas não foram guardadas."
   }
 }

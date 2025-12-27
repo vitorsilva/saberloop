@@ -1,5 +1,6 @@
 import BaseView from './BaseView.js';
 import state from '../core/state.js';
+import { t } from '../core/i18n.js';
 
 export default class QuizView extends BaseView {
   constructor() {
@@ -54,13 +55,13 @@ export default class QuizView extends BaseView {
             <div id="backBtn" class="flex size-12 shrink-0 items-center justify-start text-text-light dark:text-text-dark cursor-pointer">
               <span class="material-symbols-outlined">arrow_back</span>
             </div>
-            <h1 data-testid="quiz-title" class="flex-1 text-center text-lg font-bold text-text-light dark:text-text-dark">${this.topic} Quiz</h1>
+            <h1 data-testid="quiz-title" class="flex-1 text-center text-lg font-bold text-text-light dark:text-text-dark">${t('quiz.title', { topic: this.topic })}</h1>
             <div class="size-12 shrink-0"></div> <!-- Spacer -->
           </header>
 
           <!-- Progress Bar -->
           <div class="flex flex-col gap-2 p-4 pt-0">
-            <p data-testid="question-progress" class="text-base font-medium leading-normal text-text-light dark:text-text-dark">Question ${this.currentQuestionIndex + 1} of ${this.questions.length}</p>
+            <p data-testid="question-progress" class="text-base font-medium leading-normal text-text-light dark:text-text-dark">${t('quiz.questionOf', { current: this.currentQuestionIndex + 1, total: this.questions.length })}</p>
             <div class="rounded-full bg-border-light dark:bg-border-dark">
               <div class="h-2 rounded-full bg-primary" style="width: ${progress}%;"></div>
             </div>
@@ -95,7 +96,7 @@ export default class QuizView extends BaseView {
           <button
             id="submitBtn"
             class="flex h-14 min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90 ${this.selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : ''}">
-            <span class="text-left">${this.currentQuestionIndex < this.questions.length - 1 ? 'Next Question' : 'Submit Answer'}</span>
+            <span class="text-left">${this.currentQuestionIndex < this.questions.length - 1 ? t('quiz.nextQuestion') : t('quiz.submitAnswer')}</span>
           </button>
         </div>
 
@@ -104,15 +105,15 @@ export default class QuizView extends BaseView {
           <div class="flex justify-around items-center h-full max-w-lg mx-auto px-4">
             <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
               <span class="material-symbols-outlined text-2xl">home</span>
-              <span class="text-xs font-medium">Home</span>
+              <span class="text-xs font-medium">${t('common.home')}</span>
             </a>
             <a class="flex flex-col items-center justify-center text-primary gap-1" href="#/history">
               <span class="material-symbols-outlined text-2xl fill">category</span>
-              <span class="text-xs font-bold">Topics</span>
+              <span class="text-xs font-bold">${t('common.topics')}</span>
             </a>
             <a class="flex flex-col items-center justify-center text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/settings">
               <span class="material-symbols-outlined text-2xl">settings</span>
-              <span class="text-xs font-medium">Settings</span>
+              <span class="text-xs font-medium">${t('common.settings')}</span>
             </a>
           </div>
         </div>
@@ -126,7 +127,7 @@ export default class QuizView extends BaseView {
     // Back button
     const backBtn = this.querySelector('#backBtn');
     this.addEventListener(backBtn, 'click', () => {
-      if (confirm('Are you sure you want to leave? Your progress will be lost.')) {
+      if (confirm(t('quiz.confirmLeave'))) {
         this.navigateTo('/');
       }
     });
