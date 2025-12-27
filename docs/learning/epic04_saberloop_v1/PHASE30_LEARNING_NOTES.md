@@ -101,9 +101,77 @@ A: Validate before deploying. Check the manifest matches the target.
 
 ---
 
-## Phase 30.1: i18n Infrastructure (Pending)
+## Phase 30.1: i18n Infrastructure (PR #40 - In Review)
 
-*To be completed*
+**Status:** PR created, awaiting review
+
+### What We Did
+
+| Deliverable | Status |
+|-------------|--------|
+| Install i18next and language detector | ✅ |
+| Create `src/core/i18n.js` module | ✅ |
+| Create `public/locales/en.json` (~25 keys) | ✅ |
+| Create `public/locales/pt-PT.json` (~25 keys) | ✅ |
+| Add unit tests (22 tests) | ✅ |
+| All tests pass (202 total) | ✅ |
+
+### Key Learnings
+
+#### 1. Numeronyms
+
+- **i18n** = internationalization (i + 18 letters + n)
+- **l10n** = localization
+- **a11y** = accessibility
+
+#### 2. i18next Initialization
+
+```javascript
+await i18next
+    .use(LanguageDetector)
+    .init({
+        resources,
+        fallbackLng: 'en',
+        interpolation: { escapeValue: false }
+    });
+```
+
+**Key insight:** `escapeValue: false` because vanilla JS doesn't need XSS protection like React's JSX.
+
+#### 3. Lazy Loading Translations
+
+```javascript
+async function loadTranslations(lang) {
+    const response = await fetch(`${import.meta.env.BASE_URL}locales/${lang}.json`);
+    return await response.json();
+}
+```
+
+**Key insight:** Using `import.meta.env.BASE_URL` ensures paths work in both dev (`/`) and production (`/app/`).
+
+#### 4. Language Code Normalization
+
+```javascript
+function normalizeLanguageCode(code) {
+    // pt-BR -> pt-PT (our supported variant)
+    // en-US -> en (base language)
+}
+```
+
+**Key insight:** Users might have `pt-BR` in their browser, but we support `pt-PT`. Normalize to closest match.
+
+#### 5. Testing Async Modules
+
+```javascript
+beforeEach(() => {
+    vi.resetModules(); // Reset module state between tests
+});
+
+// Import fresh for each test
+const { initI18n, t } = await import('./i18n.js');
+```
+
+**Key insight:** `vi.resetModules()` clears the module cache, giving each test a fresh instance.
 
 ---
 
