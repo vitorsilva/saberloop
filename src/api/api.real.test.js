@@ -16,6 +16,16 @@ vi.mock('../utils/logger.js', () => ({
 import { generateQuestions } from './api.real.js';
 import { callOpenRouter } from './openrouter-client.js';
 
+// Helper to generate mock questions of a specific count
+function generateMockQuestions(count) {
+  return Array.from({ length: count }, (_, i) => ({
+    question: `Q${i + 1}?`,
+    options: ['A', 'B', 'C', 'D'],
+    correct: i % 4,
+    difficulty: ['easy', 'medium', 'challenging'][i % 3]
+  }));
+}
+
 describe('generateQuestions prompt', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -105,5 +115,69 @@ describe('generateQuestions prompt', () => {
 
     // Assert: Exclusion section should not be present
     expect(capturedPrompt).not.toContain('AVOID DUPLICATE QUESTIONS');
+  });
+
+  it('should use default questionCount of 5 in prompt', async () => {
+    let capturedPrompt = '';
+    callOpenRouter.mockImplementation(async (apiKey, prompt) => {
+      capturedPrompt = prompt;
+      return {
+        text: JSON.stringify({
+          language: 'EN-US',
+          questions: generateMockQuestions(5)
+        })
+      };
+    });
+
+    await generateQuestions('Test Topic', 'middle school', 'fake-api-key');
+
+    expect(capturedPrompt).toContain('Generate exactly 5');
+  });
+
+  it('should use custom questionCount in prompt', async () => {
+    let capturedPrompt = '';
+    callOpenRouter.mockImplementation(async (apiKey, prompt) => {
+      capturedPrompt = prompt;
+      return {
+        text: JSON.stringify({
+          language: 'EN-US',
+          questions: generateMockQuestions(10)
+        })
+      };
+    });
+
+    await generateQuestions('Test Topic', 'middle school', 'fake-api-key', { questionCount: 10 });
+
+    expect(capturedPrompt).toContain('Generate exactly 10');
+  });
+
+  it('should validate response has correct number of questions', async () => {
+    callOpenRouter.mockImplementation(async () => {
+      return {
+        text: JSON.stringify({
+          language: 'EN-US',
+          questions: generateMockQuestions(3) // Wrong count
+        })
+      };
+    });
+
+    await expect(
+      generateQuestions('Test Topic', 'middle school', 'fake-api-key', { questionCount: 5 })
+    ).rejects.toThrow('AI returned invalid question format');
+  });
+
+  it('should accept response with matching questionCount', async () => {
+    callOpenRouter.mockImplementation(async () => {
+      return {
+        text: JSON.stringify({
+          language: 'EN-US',
+          questions: generateMockQuestions(15)
+        })
+      };
+    });
+
+    const result = await generateQuestions('Test Topic', 'middle school', 'fake-api-key', { questionCount: 15 });
+
+    expect(result.questions).toHaveLength(15);
   });
 });
