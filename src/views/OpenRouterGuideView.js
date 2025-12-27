@@ -22,7 +22,7 @@
                   stroke-width="2" d="M15 19l-7-7 7-7"/>
               </svg>
             </button>
-            <h1 class="text-text-light dark:text-text-dark text-lg font-bold
+            <h1 data-testid="openrouter-guide-title" class="text-text-light dark:text-text-dark text-lg font-bold
               leading-tight tracking-[-0.015em]">Set up OpenRouter</h1>
           </div>
 

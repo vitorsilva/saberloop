@@ -16,7 +16,7 @@
             <!-- Hero Section -->
             <div class="mb-8 flex flex-col items-center">
               <img src="/app/icons/icon-192x192.png" alt="Saberloop logo" class="mb-6 h-24 w-24 rounded-3xl">
-              <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">
+              <h1 data-testid="welcome-title" class="text-3xl font-bold text-text-light dark:text-text-dark">
                 Welcome to Saberloop
               </h1>
               <p class="mt-2 text-center text-subtext-light
@@ -74,6 +74,7 @@
             <div class="w-full max-w-sm">
               <button
                 id="connectBtn"
+                data-testid="connect-btn"
                 class="flex h-14 w-full items-center justify-center rounded-xl
   bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary/90
    transition-colors"
@@ -83,6 +84,7 @@
 
               <button
                 id="skipBtn"
+                data-testid="skip-btn"
                 class="flex h-14 w-full items-center justify-center rounded-xl
   bg-card-light dark:bg-card-dark font-bold text-text-light dark:text-text-dark
   mt-3 hover:bg-border-light dark:hover:bg-border-dark transition-colors"

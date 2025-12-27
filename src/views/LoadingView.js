@@ -61,7 +61,7 @@ export default class LoadingView extends BaseView {
             <p class="text-sm text-subtext-light dark:text-subtext-darkuppercase tracking-wider">
               Generating quiz for
             </p>
-            <h1 class="text-2xl font-bold text-text-light dark:text-text-dark mt-2">
+            <h1 data-testid="loading-topic" class="text-2xl font-bold text-text-light dark:text-text-dark mt-2">
               ${this.escapeHtml(topic)}
             </h1>
             <p class="text-sm text-subtext-light dark:text-subtext-dark mt-1">    
@@ -70,7 +70,7 @@ export default class LoadingView extends BaseView {
           </div>
 
           <!-- Dynamic Message -->
-          <p id="loadingMessage" class="text-base text-primary font-medium animate-pulse">
+          <p id="loadingMessage" data-testid="loading-message" class="text-base text-primary font-medium animate-pulse">
             ${isOffline ? 'You appear to be offline...' : this.loadingMessages[0]}
           </p>
 

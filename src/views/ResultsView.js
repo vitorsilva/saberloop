@@ -126,11 +126,11 @@ export default class ResultsView extends BaseView {
                 <circle class="stroke-success" cx="18" cy="18" fill="none" r="16" stroke-dasharray="100" stroke-dashoffset="${strokeDashoffset}" stroke-linecap="round" stroke-width="3"></circle>
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <p class="text-success text-5xl font-extrabold">${percentage}%</p>
+                <p data-testid="score-percentage" class="text-success text-5xl font-extrabold">${percentage}%</p>
               </div>
             </div>
-            <p class="text-text-light dark:text-text-dark text-xl font-bold mt-4">${message}</p>
-            <p class="text-subtext-light dark:text-subtext-dark mt-1">You answered ${correctCount} out of ${totalQuestions} questions correctly.</p>
+            <p data-testid="result-message" class="text-text-light dark:text-text-dark text-xl font-bold mt-4">${message}</p>
+            <p data-testid="score-summary" class="text-subtext-light dark:text-subtext-dark mt-1">You answered ${correctCount} out of ${totalQuestions} questions correctly.</p>
           </div>
 
           <!-- Section Header -->

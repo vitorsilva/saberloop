@@ -16,7 +16,7 @@
           <!-- Top App Bar -->
           <div class="flex items-center p-4 pb-2 justify-between
   bg-background-light dark:bg-background-dark">
-            <h1 class="text-text-light dark:text-text-dark text-lg font-bold        
+            <h1 data-testid="settings-title" class="text-text-light dark:text-text-dark text-lg font-bold
   leading-tight tracking-[-0.015em] flex-1">Settings</h1>
           </div>
 
@@ -30,8 +30,8 @@
     <label class="flex flex-col">
       <p class="text-base font-medium pb-2 text-text-light
   dark:text-text-dark">Default Grade Level</p>
-      <select id="defaultGradeLevel" class="form-select flex w-full rounded-lg      
-  h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark     
+      <select id="defaultGradeLevel" data-testid="grade-level-select" class="form-select flex w-full rounded-lg
+  h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark
   border border-border-light dark:border-border-dark text-text-light
   dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary">        
         <option value="elementary">Elementary School</option>
@@ -102,7 +102,7 @@
                 <div class="flex items-center justify-between">
                   <p class="text-text-light dark:text-text-dark text-base
   font-medium">Version</p>
-                  <p class="text-subtext-light dark:text-subtext-dark
+                  <p data-testid="app-version" class="text-subtext-light dark:text-subtext-dark
   text-base">${APP_VERSION}</p>
                 </div>
               </div>

@@ -54,13 +54,13 @@ export default class QuizView extends BaseView {
             <div id="backBtn" class="flex size-12 shrink-0 items-center justify-start text-text-light dark:text-text-dark cursor-pointer">
               <span class="material-symbols-outlined">arrow_back</span>
             </div>
-            <h1 class="flex-1 text-center text-lg font-bold text-text-light dark:text-text-dark">${this.topic} Quiz</h1>
+            <h1 data-testid="quiz-title" class="flex-1 text-center text-lg font-bold text-text-light dark:text-text-dark">${this.topic} Quiz</h1>
             <div class="size-12 shrink-0"></div> <!-- Spacer -->
           </header>
 
           <!-- Progress Bar -->
           <div class="flex flex-col gap-2 p-4 pt-0">
-            <p class="text-base font-medium leading-normal text-text-light dark:text-text-dark">Question ${this.currentQuestionIndex + 1} of ${this.questions.length}</p>
+            <p data-testid="question-progress" class="text-base font-medium leading-normal text-text-light dark:text-text-dark">Question ${this.currentQuestionIndex + 1} of ${this.questions.length}</p>
             <div class="rounded-full bg-border-light dark:bg-border-dark">
               <div class="h-2 rounded-full bg-primary" style="width: ${progress}%;"></div>
             </div>
@@ -68,7 +68,7 @@ export default class QuizView extends BaseView {
 
           <!-- Headline Text -->
           <main class="px-4">
-            <h2 class="text-text-light dark:text-text-dark text-[28px] font-bold leading-tight pt-6 pb-6">${question.question}</h2>
+            <h2 data-testid="question-text" class="text-text-light dark:text-text-dark text-[28px] font-bold leading-tight pt-6 pb-6">${question.question}</h2>
           </main>
 
           <!-- Button Group -->
