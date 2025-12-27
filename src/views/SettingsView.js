@@ -3,6 +3,7 @@
   import { APP_VERSION, BUILD_DATE } from '../version.js';
   import { isConnected, disconnect } from '../services/auth-service.js';
   import { isFeatureEnabled } from '../core/features.js';
+  import { t } from '../core/i18n.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -17,71 +18,71 @@
           <div class="flex items-center p-4 pb-2 justify-between
   bg-background-light dark:bg-background-dark">
             <h1 data-testid="settings-title" class="text-text-light dark:text-text-dark text-lg font-bold
-  leading-tight tracking-[-0.015em] flex-1">Settings</h1>
+  leading-tight tracking-[-0.015em] flex-1">${t('common.settings')}</h1>
           </div>
 
           <div class="flex-grow px-4">
  <!-- Preferences Section -->
   <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold
-  leading-tight tracking-[-0.015em] pb-3 pt-4">Preferences</h2>
+  leading-tight tracking-[-0.015em] pb-3 pt-4">${t('settings.preferences')}</h2>
 
   <div class="flex flex-col gap-4">
     <!-- Default Grade Level -->
     <label class="flex flex-col">
       <p class="text-base font-medium pb-2 text-text-light
-  dark:text-text-dark">Default Grade Level</p>
+  dark:text-text-dark">${t('settings.defaultGradeLevel')}</p>
       <select id="defaultGradeLevel" data-testid="grade-level-select" class="form-select flex w-full rounded-lg
   h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark
   border border-border-light dark:border-border-dark text-text-light
-  dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary">        
-        <option value="elementary">Elementary School</option>
-        <option value="middle school">Middle School</option>
-        <option value="high school">High School</option>
-        <option value="college">College</option>
+  dark:text-text-dark focus:ring-2 focus:ring-primary focus:border-primary">
+        <option value="elementary">${t('settings.elementary')}</option>
+        <option value="middle school">${t('topicInput.middleSchool')}</option>
+        <option value="high school">${t('topicInput.highSchool')}</option>
+        <option value="college">${t('topicInput.college')}</option>
       </select>
     </label>
 
     <!-- Default Questions Per Quiz -->
     <label class="flex flex-col opacity-50">
       <p class="text-base font-medium pb-2 text-text-light
-  dark:text-text-dark">Default Questions Per Quiz</p>
+  dark:text-text-dark">${t('settings.defaultQuestions')}</p>
       <select id="questionsPerQuiz" disabled class="form-select flex w-full rounded-lg
   h-14 p-4 text-base font-normal leading-normal bg-card-light dark:bg-card-dark
   border border-border-light dark:border-border-dark text-text-light
   dark:text-text-dark cursor-not-allowed">
-        <option value="5">5 questions</option>
-        <option value="10" selected>10 questions</option>
-        <option value="15">15 questions</option>
+        <option value="5">${t('settings.nQuestions', { count: 5 })}</option>
+        <option value="10" selected>${t('settings.nQuestions', { count: 10 })}</option>
+        <option value="15">${t('settings.nQuestions', { count: 15 })}</option>
       </select>
     </label>
 
     <!-- Default Difficulty -->
     <label class="flex flex-col opacity-50">
       <p class="text-base font-medium pb-2 text-text-light
-  dark:text-text-dark">Default Difficulty</p>
+  dark:text-text-dark">${t('settings.defaultDifficulty')}</p>
       <select id="difficulty" disabled class="form-select flex w-full rounded-lg h-14 p-4
    text-base font-normal leading-normal bg-card-light dark:bg-card-dark border
   border-border-light dark:border-border-dark text-text-light
   dark:text-text-dark cursor-not-allowed">
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
-        <option value="mixed" selected>Mixed</option>
+        <option value="easy">${t('settings.easy')}</option>
+        <option value="medium">${t('settings.medium')}</option>
+        <option value="hard">${t('settings.hard')}</option>
+        <option value="mixed" selected>${t('settings.mixed')}</option>
       </select>
     </label>
   </div>
 
                <!-- Connection to AI Provider Section -->
               <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight
-   tracking-[-0.015em] pb-3 pt-8">Connection to AI Provider</h2>
+   tracking-[-0.015em] pb-3 pt-8">${t('settings.connection')}</h2>
 
               <div id="accountSection" class="flex flex-col gap-3">
                 <!-- Will be populated by loadAccountStatus() -->
               </div>
 
            <!-- About Section -->
-            <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold    
-   leading-tight tracking-[-0.015em] pb-3 pt-8">About</h2>
+            <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold
+   leading-tight tracking-[-0.015em] pb-3 pt-8">${t('settings.about')}</h2>
 
             <div class="flex flex-col gap-3">
               <!-- Help Link -->
@@ -91,7 +92,7 @@
                   <span class="material-symbols-outlined text-text-light
   dark:text-text-dark">help</span>
                   <p class="text-text-light dark:text-text-dark text-base
-  font-medium">Help & FAQ</p>
+  font-medium">${t('settings.helpFaq')}</p>
                 </div>
                 <span class="material-symbols-outlined text-subtext-light
   dark:text-subtext-dark">chevron_right</span>
@@ -101,7 +102,7 @@
               <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
                 <div class="flex items-center justify-between">
                   <p class="text-text-light dark:text-text-dark text-base
-  font-medium">Version</p>
+  font-medium">${t('settings.version')}</p>
                   <p data-testid="app-version" class="text-subtext-light dark:text-subtext-dark
   text-base">${APP_VERSION}</p>
                 </div>
@@ -116,7 +117,7 @@
                   <span class="material-symbols-outlined text-text-light
   dark:text-text-dark">code</span>
                   <p class="text-text-light dark:text-text-dark text-base
-  font-medium">View on GitHub</p>
+  font-medium">${t('settings.viewOnGithub')}</p>
                 </div>
                 <span class="material-symbols-outlined text-subtext-light
   dark:text-subtext-dark">open_in_new</span>
@@ -125,7 +126,7 @@
               <!-- Credits -->
               <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
                 <p class="text-text-light dark:text-text-dark text-base
-  font-medium mb-2">Built with</p>
+  font-medium mb-2">${t('settings.builtWith')}</p>
                 <p class="text-subtext-light dark:text-subtext-dark
   text-sm">Claude AI by Anthropic</p>
                 <p class="text-subtext-light dark:text-subtext-dark
@@ -140,24 +141,24 @@
           <div class="fixed bottom-0 left-0 right-0 h-20 bg-background-light
   dark:bg-background-dark backdrop-blur-md border-t border-border-light
   dark:border-border-dark">
-            <div class="flex justify-around items-center h-full max-w-lg mx-auto    
+            <div class="flex justify-around items-center h-full max-w-lg mx-auto
    px-4">
               <a class="flex flex-col items-center justify-center
-  text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">    
-                <span class="material-symbols-outlined text-2xl">home</span>        
-                <span class="text-xs font-medium">Home</span>
+  text-subtext-light dark:text-subtext-dark hover:text-primary gap-1" href="#/">
+                <span class="material-symbols-outlined text-2xl">home</span>
+                <span class="text-xs font-medium">${t('common.home')}</span>
               </a>
               <a class="flex flex-col items-center justify-center
   text-subtext-light dark:text-subtext-dark hover:text-primary gap-1"
   href="#/history">
-                <span class="material-symbols-outlined text-2xl">category</span>    
-                <span class="text-xs font-medium">Topics</span>
+                <span class="material-symbols-outlined text-2xl">category</span>
+                <span class="text-xs font-medium">${t('common.topics')}</span>
               </a>
-              <a class="flex flex-col items-center justify-center text-primary      
+              <a class="flex flex-col items-center justify-center text-primary
   gap-1" href="#/settings">
                 <span class="material-symbols-outlined text-2xl
   fill">settings</span>
-                <span class="text-xs font-bold">Settings</span>
+                <span class="text-xs font-bold">${t('common.settings')}</span>
               </a>
             </div>
           </div>
@@ -195,20 +196,19 @@
             <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <span class="material-symbols-outlined text-green-500">check_circle</span>        
+                  <span class="material-symbols-outlined text-green-500">check_circle</span>
                   <div>
                     <p class="text-text-light dark:text-text-dark text-base
-  font-medium">OpenRouter Connected</p>
-                    <p class="text-subtext-light dark:text-subtext-dark text-sm">Free tier: 50      
-  requests/day</p>
+  font-medium">${t('settings.openrouterConnected')}</p>
+                    <p class="text-subtext-light dark:text-subtext-dark text-sm">${t('settings.freeTier')}</p>
                   </div>
                 </div>
               </div>
             </div>
-            <button id="disconnectBtn" class="bg-red-500/10 hover:bg-red-500/20 text-red-500        
+            <button id="disconnectBtn" class="bg-red-500/10 hover:bg-red-500/20 text-red-500
   rounded-xl p-4 flex items-center justify-center gap-2 transition-colors">
               <span class="material-symbols-outlined">logout</span>
-              <span class="font-medium">Disconnect</span>
+              <span class="font-medium">${t('settings.disconnect')}</span>
             </button>
           `;
 
@@ -221,24 +221,22 @@
               <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-yellow-500">warning</span>
                 <div>
-                  <p class="text-text-light dark:text-text-dark text-base font-medium">Not
-  Connected</p>
-                  <p class="text-subtext-light dark:text-subtext-dark text-sm">Connect to
-  generate quizzes</p>
+                  <p class="text-text-light dark:text-text-dark text-base font-medium">${t('settings.notConnected')}</p>
+                  <p class="text-subtext-light dark:text-subtext-dark text-sm">${t('settings.connectToGenerate')}</p>
                 </div>
               </div>
             </div>
             <a href="#${isFeatureEnabled('OPENROUTER_GUIDE', 'settings') ? '/setup-openrouter' : '/welcome'}"
               class="bg-primary hover:bg-primary/90 text-white rounded-xl p-4 flex items-center justify-center gap-2 transition-colors">
               <span class="material-symbols-outlined">link</span>
-              <span class="font-medium">Connect with OpenRouter</span>
+              <span class="font-medium">${t('settings.connectWithOpenRouter')}</span>
             </a>
           `;
         }
       }
 
       async handleDisconnect() {
-        if (confirm('Are you sure you want to disconnect? You will need to reconnect to generate new quizzes.')) {
+        if (confirm(t('settings.confirmDisconnect'))) {
           await disconnect();
           // Reload the app to show WelcomeView
           window.location.href = window.location.origin + '/#/';
