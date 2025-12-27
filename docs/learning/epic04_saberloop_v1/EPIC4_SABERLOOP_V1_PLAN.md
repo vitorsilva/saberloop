@@ -300,7 +300,7 @@ Implement services layer to fix architectural violations and promote warning rul
 
 Transform Saberloop to support multiple languages.
 
-**Status:** In Progress (Pre-phase complete: Staging environment - PR #39)
+**Status:** In Progress (30.1 ✅ i18n infrastructure, 30.2 ✅ data-testid migration)
 
 **Key Features:**
 - i18next integration for UI translation
@@ -317,12 +317,12 @@ Transform Saberloop to support multiple languages.
 - data-testid testing pattern
 
 **Deliverables:**
-- [ ] `src/core/i18n.js` - i18next configuration
-- [ ] `public/locales/` - Translation files (en, pt, es, fr, de)
+- [x] `src/core/i18n.js` - i18next configuration
+- [x] `public/locales/` - Translation files (en, pt-PT)
 - [ ] `src/utils/formatters.js` - Locale-aware formatters
 - [ ] `scripts/translate.js` - CLI translation tool
 - [ ] All views updated with `t()` function
-- [ ] E2E tests migrated to data-testid
+- [x] E2E tests migrated to data-testid
 - [ ] Language selector in Settings
 
 **Success Criteria:**
