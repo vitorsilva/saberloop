@@ -405,6 +405,40 @@ Prevent answer position memorization by randomizing correct answer placement.
 
 ---
 
+### **Phase 46: Configurable Questions Per Quiz** (1 session)
+
+Enable the "Default Questions Per Quiz" setting to control quiz length.
+
+**Status:** ✅ Complete (December 27, 2024)
+
+**Key Features:**
+- Settings dropdown enabled (5, 10, 15 questions)
+- Dynamic question count in LLM prompt
+- Mock API generates N questions by cycling templates
+- Default changed to 5 for consistency
+
+**Learning Objectives:**
+- End-to-end feature wiring (Settings → API)
+- Mock API template cycling
+- Unit and E2E test coverage for new features
+
+**Deliverables:**
+- [x] `src/views/SettingsView.js` - Enabled dropdown
+- [x] `src/views/LoadingView.js` - Pass questionCount to API
+- [x] `src/api/api.real.js` - Dynamic count in prompt
+- [x] `src/api/api.mock.js` - Generate N questions
+- [x] 4 new unit tests
+- [x] 1 new E2E test
+- [x] `PHASE46_CONFIGURABLE_QUESTION_COUNT.md` - Documentation
+
+**Success Criteria:**
+- [x] Setting dropdown enabled and functional
+- [x] Quiz generates requested number of questions
+- [x] All 239 unit tests pass
+- [x] All 37 E2E tests pass
+
+---
+
 ### **Phase 50: Maestro Testing Expansion** (3-4 sessions)
 
 Expand Maestro test coverage to match Playwright E2E tests.
@@ -519,6 +553,7 @@ Improve unit test coverage for critical utility and API modules.
 | Phase 30 | 8-11 | Internationalization | ✅ Complete |
 | Phase 40 | 5-8 | Telemetry Enhancement | ✅ Complete |
 | Phase 45 | 1 | Answer Randomization | ✅ Complete |
+| Phase 46 | 1 | Configurable Question Count | ✅ Complete |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
 | Phase 80 | 1 | Test Coverage | ✅ Complete |
@@ -542,8 +577,9 @@ While phases can be worked on in any order, here's a suggested priority:
 8. **Phase 30** - i18n ✅ Complete
 9. **Phase 40** - Telemetry ✅
 10. **Phase 45** - Answer Randomization ✅
-11. **Phase 50** - Maestro Testing
-12. **Phase 60** - Monetization (after user base grows)
+11. **Phase 46** - Configurable Question Count ✅
+12. **Phase 50** - Maestro Testing
+13. **Phase 60** - Monetization (after user base grows)
 
 ---
 
@@ -557,6 +593,7 @@ While phases can be worked on in any order, here's a suggested priority:
 - [x] 5+ languages supported (15 configured) ✅
 - [x] Self-hosted telemetry operational ✅
 - [x] Answer randomization prevents memorization ✅
+- [x] Configurable questions per quiz ✅
 - [ ] Maestro tests in CI
 - [ ] Monetization ready (if desired)
 
@@ -628,6 +665,7 @@ When you're ready to begin Epic 4, say:
 - `PHASE22_LANDING_PAGE_ANALYTICS.md`
 - `PHASE30_I18N.md`
 - `PHASE40_TELEMETRY.md`
+- `PHASE46_CONFIGURABLE_QUESTION_COUNT.md`
 - `PHASE50_MAESTRO_TESTING.md`
 - `PHASE60_MONETIZATION.md`
 - `PHASE80_TEST_COVERAGE.md`
