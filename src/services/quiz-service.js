@@ -49,6 +49,7 @@ export async function updateQuizSession(id, updates) {
  * @param {string} apiKey - OpenRouter API key
  * @param {Object} options - Optional settings
  * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
+ * @param {string} options.language - Language code for content generation (e.g., 'en', 'pt-PT')
  * @returns {Promise<{questions: Array, language: string}>}
  */
 export async function generateQuestions(topic, gradeLevel, apiKey, options = {}) {
@@ -62,8 +63,9 @@ export async function generateQuestions(topic, gradeLevel, apiKey, options = {})
  * @param {string} correctAnswer - The correct answer
  * @param {string} gradeLevel - Education level
  * @param {string} apiKey - OpenRouter API key
+ * @param {string} language - Language code for the explanation (e.g., 'en', 'pt-PT')
  * @returns {Promise<string>} Explanation text
  */
-export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey) {
-  return apiGenerateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey);
+export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey, language = 'en') {
+  return apiGenerateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey, language);
 }
