@@ -175,9 +175,9 @@ const { initI18n, t } = await import('./i18n.js');
 
 ---
 
-## Phase 30.2: Test Migration to data-testid (In Progress)
+## Phase 30.2: Test Migration to data-testid (Complete)
 
-**Status:** PR pending - data-testid attributes added, E2E migration deferred
+**Status:** ✅ PR #41 - data-testid attributes added and E2E tests migrated
 
 ### What We Did
 
@@ -196,8 +196,8 @@ const { initI18n, t } = await import('./i18n.js');
 | Add data-testid to OpenRouterGuideView | ✅ |
 | Add data-testid to ConnectModal | ✅ |
 | Add data-testid to ExplanationModal | ✅ |
-| Migrate E2E tests to use data-testid | ⏳ Deferred |
-| All tests pass (202 total) | ✅ |
+| Migrate E2E tests to use data-testid | ✅ |
+| All tests pass (202 unit + 28 E2E) | ✅ |
 
 ### Key Learnings
 
@@ -251,9 +251,21 @@ Added data-testid to key UI elements across:
 | ConnectModal | `connect-modal-title`, `modal-connect-btn`, `modal-cancel-btn` |
 | ExplanationModal | `explanation-question`, `got-it-btn` |
 
-### Next Steps
+### E2E Selectors Migrated
 
-The actual E2E test migration (updating selectors in `tests/e2e/app.spec.js`) is deferred to a follow-up task. The infrastructure is now in place
+Updated `tests/e2e/app.spec.js` to use `getByTestId()` selectors:
+
+```javascript
+// Before (fragile)
+await page.waitForSelector('h2:has-text("Welcome back!")');
+await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+
+// After (i18n-safe)
+await page.waitForSelector('[data-testid="welcome-heading"]');
+await expect(page.getByTestId('question-progress')).toBeVisible();
+```
+
+All 28 E2E tests pass with the new selectors
 
 ---
 
@@ -293,7 +305,7 @@ The actual E2E test migration (updating selectors in `tests/e2e/app.spec.js`) is
 |-----------|--------|--------------|
 | Pre-Phase: Staging | ✅ Complete | Environment variables, validation, cross-platform scripts |
 | 30.1: Infrastructure | ✅ Complete | i18next setup, lazy loading, language normalization |
-| 30.2: Test Migration | 🔄 In Progress | data-testid pattern for i18n-safe testing |
+| 30.2: Test Migration | ✅ Complete | data-testid pattern for i18n-safe testing |
 | 30.3: String Extraction | ⏳ Pending | |
 | 30.4: Language Settings | ⏳ Pending | |
 | 30.5: LLM Integration | ⏳ Pending | |
@@ -304,6 +316,7 @@ The actual E2E test migration (updating selectors in `tests/e2e/app.spec.js`) is
 
 ## Next Session
 
-Continue Phase 30.2 or start Phase 30.3:
-- **Option A:** Migrate E2E tests in `app.spec.js` to use data-testid selectors
-- **Option B:** Start Phase 30.3 - String extraction (replace hardcoded strings with `t()` calls)
+Start Phase 30.3: String Extraction
+- Replace hardcoded strings in views with `t()` calls
+- Update views to initialize i18n
+- Add language change listener for dynamic re-rendering
