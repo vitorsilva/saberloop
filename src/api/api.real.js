@@ -3,6 +3,15 @@
   import { callOpenRouter } from './openrouter-client.js';
   import { logger } from '../utils/logger.js';
 
+  // Language code to full name mapping
+  const LANGUAGE_NAMES = {
+    'en': 'English',
+    'pt-PT': 'Portuguese (European)',
+    'es': 'Spanish',
+    'fr': 'French',
+    'de': 'German'
+  };
+
   /**
    * Generate quiz questions using OpenRouter
    * @param {string} topic - The topic to generate questions about
@@ -10,11 +19,13 @@
    * @param {string} apiKey - The OpenRouter API key
    * @param {Object} options - Optional settings
    * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
+   * @param {string} options.language - Language code for content generation (e.g., 'en', 'pt-PT')
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey, options = {}) {
     const startTime = performance.now();
-    const { previousQuestions = [] } = options;
-    logger.debug('Generating questions', { topic, gradeLevel, previousQuestionsCount: previousQuestions.length });
+    const { previousQuestions = [], language = 'en' } = options;
+    const languageName = LANGUAGE_NAMES[language] || 'English';
+    logger.debug('Generating questions', { topic, gradeLevel, language, previousQuestionsCount: previousQuestions.length });
 
     if (!apiKey) {
       throw new Error('API key is required');
@@ -41,14 +52,11 @@ ones as possible and note any that might overlap.
 ${exclusionSection}
 
   LANGUAGE REQUIREMENT (CRITICAL):
-  - Detect the language of the topic "${topic}"
-  - Generate ALL questions and ALL answer options in the SAME language as the topic
-  - For example:
-  - If topic is "Digestive System" → questions in English (EN-US)
-  - If topic is "Sistema Digestivo" → questions in Portuguese (PT-PT)
-  - If topic is "Système Digestif" → questions in French (FR-FR)
-  - Do NOT mix languages - everything must be consistent
-  - If the topic language is ambiguous, default to English (EN-US)
+  - Generate ALL content in ${languageName} (${language})
+  - The questions, ALL answer options, and any text must be in ${languageName}
+  - Do NOT auto-detect language from the topic
+  - Even if the topic is written in a different language, respond in ${languageName}
+  - Do NOT mix languages - everything must be in ${languageName}
 
   Requirements:
   - Each question should have 4 answer options (A, B, C, D)
@@ -81,8 +89,8 @@ ${exclusionSection}
   IMPORTANT:
   - The "correct" field must be a NUMBER (0 for first option, 1 for second option, 2 for third
   option, 3 for fourth option)
-  - ALL text must be in the same language as the topic
-  - The "language" field must be a locale code (e.g., "EN-US", "PT-PT", "ES-ES", "FR-FR")
+  - ALL text must be in ${languageName}
+  - The "language" field should be "${language}"
   - Return ONLY the JSON object, no other text before or after.`;
 
     try {
@@ -144,10 +152,12 @@ ${exclusionSection}
    * @param {string} correctAnswer - The correct answer
    * @param {string} gradeLevel - The grade level
    * @param {string} apiKey - The OpenRouter API key
+   * @param {string} language - Language code for the explanation (e.g., 'en', 'pt-PT')
    */
   export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel =
-  'middle school', apiKey) {
-    logger.debug('Generating explanation for incorrect answer');
+  'middle school', apiKey, language = 'en') {
+    const languageName = LANGUAGE_NAMES[language] || 'English';
+    logger.debug('Generating explanation for incorrect answer', { language });
 
     if (!apiKey) {
       throw new Error('API key is required');
@@ -167,7 +177,7 @@ ${exclusionSection}
   - Briefly explain why the student's answer was incorrect (if different from correct)
   - Keep the explanation concise (2-3 sentences max)
   - Use language appropriate for ${gradeLevel} level
-  - Detect the language of the question and respond in the same language
+  - Write the explanation in ${languageName} (${language})
 
   Provide only the explanation, no other text.`;
 
