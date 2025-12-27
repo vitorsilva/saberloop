@@ -4,6 +4,8 @@
   import { isConnected, disconnect } from '../services/auth-service.js';
   import { isFeatureEnabled } from '../core/features.js';
   import { t, changeLanguage, getCurrentLanguage, SUPPORTED_LANGUAGES } from '../core/i18n.js';
+  import { getSelectedModel, getModelDisplayName, getAvailableModels, saveSelectedModel } from '../services/model-service.js';
+import { getApiKey } from '../services/auth-service.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -215,6 +217,9 @@
         const connected = await isConnected();
 
         if (connected) {
+          const currentModel = getSelectedModel();
+          const modelName = getModelDisplayName(currentModel);
+
           accountSection.innerHTML = `
             <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
               <div class="flex items-center justify-between">
@@ -228,6 +233,26 @@
                 </div>
               </div>
             </div>
+
+            <!-- Model Selection -->
+            <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-primary">smart_toy</span>
+                  <div>
+                    <p class="text-text-light dark:text-text-dark text-base font-medium">${t('settings.currentModel')}</p>
+                    <p data-testid="current-model-name" class="text-subtext-light dark:text-subtext-dark text-sm">${modelName}</p>
+                  </div>
+                </div>
+                <button id="changeModelBtn" class="text-primary hover:text-primary/80 text-sm font-medium transition-colors">
+                  ${t('settings.changeModel')}
+                </button>
+              </div>
+              <div id="modelSelectorContainer" class="hidden mt-4">
+                <!-- Model selector will be inserted here -->
+              </div>
+            </div>
+
             <button id="disconnectBtn" class="bg-red-500/10 hover:bg-red-500/20 text-red-500
   rounded-xl p-4 flex items-center justify-center gap-2 transition-colors">
               <span class="material-symbols-outlined">logout</span>
@@ -238,6 +263,10 @@
           // Bind disconnect button
           const disconnectBtn = this.querySelector('#disconnectBtn');
           this.addEventListener(disconnectBtn, 'click', () => this.handleDisconnect());
+
+          // Bind change model button
+          const changeModelBtn = this.querySelector('#changeModelBtn');
+          this.addEventListener(changeModelBtn, 'click', () => this.toggleModelSelector());
         } else {
           accountSection.innerHTML = `
             <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
@@ -292,6 +321,90 @@
         // Re-render to apply new language
         await this.render();
       });
+    }
+
+    async toggleModelSelector() {
+      const container = this.querySelector('#modelSelectorContainer');
+      const changeBtn = this.querySelector('#changeModelBtn');
+
+      if (container.classList.contains('hidden')) {
+        // Show selector and fetch models
+        container.classList.remove('hidden');
+        changeBtn.textContent = t('common.cancel');
+
+        // Show loading state
+        container.innerHTML = `
+          <div class="flex items-center justify-center py-4">
+            <span class="material-symbols-outlined animate-spin text-primary">sync</span>
+            <span class="ml-2 text-subtext-light dark:text-subtext-dark">${t('settings.loadingModels')}</span>
+          </div>
+        `;
+
+        try {
+          const apiKey = await getApiKey();
+          const models = await getAvailableModels(apiKey);
+          this.renderModelSelector(models);
+        } catch (error) {
+          container.innerHTML = `
+            <div class="text-red-500 text-sm py-2">
+              ${t('settings.errorLoadingModels')}
+            </div>
+          `;
+        }
+      } else {
+        // Hide selector
+        container.classList.add('hidden');
+        container.innerHTML = '';
+        changeBtn.textContent = t('settings.changeModel');
+      }
+    }
+
+    renderModelSelector(models) {
+      const container = this.querySelector('#modelSelectorContainer');
+      const currentModel = getSelectedModel();
+
+      container.innerHTML = `
+        <div class="border-t border-border-light dark:border-border-dark pt-4">
+          <p class="text-sm text-subtext-light dark:text-subtext-dark mb-3">${t('settings.selectModel')}</p>
+          <div class="flex flex-col gap-2 max-h-64 overflow-y-auto">
+            ${models.map(model => `
+              <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer
+                ${model.id === currentModel ? 'bg-primary/10 border border-primary' : 'bg-background-light dark:bg-background-dark hover:bg-primary/5'}">
+                <input type="radio" name="modelSelect" value="${model.id}"
+                  ${model.id === currentModel ? 'checked' : ''}
+                  class="w-4 h-4 text-primary focus:ring-primary">
+                <div class="flex-1 min-w-0">
+                  <p class="text-text-light dark:text-text-dark text-sm font-medium truncate">${model.name}</p>
+                  ${model.contextLength ? `<p class="text-subtext-light dark:text-subtext-dark text-xs">${t('settings.contextLength', { length: Math.round(model.contextLength / 1000) + 'K' })}</p>` : ''}
+                </div>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      // Bind radio change events
+      const radios = container.querySelectorAll('input[name="modelSelect"]');
+      radios.forEach(radio => {
+        this.addEventListener(radio, 'change', (e) => this.handleModelSelection(e.target.value));
+      });
+    }
+
+    async handleModelSelection(modelId) {
+      saveSelectedModel(modelId);
+
+      // Update the displayed model name
+      const modelNameEl = this.querySelector('[data-testid="current-model-name"]');
+      if (modelNameEl) {
+        modelNameEl.textContent = getModelDisplayName(modelId);
+      }
+
+      // Close the selector
+      const container = this.querySelector('#modelSelectorContainer');
+      const changeBtn = this.querySelector('#changeModelBtn');
+      container.classList.add('hidden');
+      container.innerHTML = '';
+      changeBtn.textContent = t('settings.changeModel');
     }
 
   }

@@ -1,5 +1,5 @@
   import { describe, it, expect, beforeEach, vi } from 'vitest';
-  import { getSettings, getSetting, saveSetting, saveSettings } from './settings.js';       
+  import { getSettings, getSetting, saveSetting, saveSettings, DEFAULT_MODEL } from './settings.js';       
 
   describe('Settings Utilities', () => {
 
@@ -15,6 +15,7 @@
         expect(settings.defaultGradeLevel).toBe('middle school');
         expect(settings.questionsPerQuiz).toBe('5');
         expect(settings.difficulty).toBe('mixed');
+        expect(settings.selectedModel).toBe(DEFAULT_MODEL);
       });
 
       it('should return stored settings merged with defaults', () => {
@@ -30,6 +31,7 @@
         expect(settings.defaultGradeLevel).toBe('college');
         expect(settings.questionsPerQuiz).toBe('5'); // default
         expect(settings.difficulty).toBe('mixed'); // default
+        expect(settings.selectedModel).toBe(DEFAULT_MODEL); // default
       });
 
       it('should handle corrupted localStorage gracefully', () => {
