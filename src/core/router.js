@@ -11,7 +11,7 @@
     /**
      * Register a route
      * @param {string} path - Route path (e.g., '/home')
-     * @param {class} ViewClass - View class to render
+     * @param {Function} ViewClass - View class to render
      */
     addRoute(path, ViewClass) {
       this.routes.set(path, ViewClass);
