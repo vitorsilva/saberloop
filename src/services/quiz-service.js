@@ -50,6 +50,7 @@ export async function updateQuizSession(id, updates) {
  * @param {Object} options - Optional settings
  * @param {Array<string>} options.previousQuestions - Questions to exclude (for continue feature)
  * @param {string} options.language - Language code for content generation (e.g., 'en', 'pt-PT')
+ * @param {number} options.questionCount - Number of questions to generate (default: 5)
  * @returns {Promise<{questions: Array, language: string}>}
  */
 export async function generateQuestions(topic, gradeLevel, apiKey, options = {}) {
