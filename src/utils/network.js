@@ -15,7 +15,7 @@
 
   /**
    * Listen for when browser goes online
-   * @param {Function} callback - Function to call when online
+   * @param {EventListener} callback - Function to call when online
    */
   export function onOnline(callback) {
     window.addEventListener('online', callback);
@@ -23,7 +23,7 @@
 
   /**
    * Listen for when browser goes offline
-   * @param {Function} callback - Function to call when offline
+   * @param {EventListener} callback - Function to call when offline
    */
   export function onOffline(callback) {
     window.addEventListener('offline', callback);
@@ -53,7 +53,7 @@
    */
   export function updateOfflineUI() {
     const banner = document.getElementById('offlineBanner');
-    const button = document.getElementById('startQuizBtn');
+    const button = /** @type {HTMLButtonElement} */ (document.getElementById('startQuizBtn'));
 
     if (isOnline()) {
       // Online: hide banner, enable button
