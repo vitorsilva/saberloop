@@ -285,6 +285,39 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
+### [Offline Mode Testing](./OFFLINE_MODE_TESTING.md) ⭐ **Ready to Implement**
+
+**Status:** Planning Complete
+
+**What it is:**
+- Comprehensive offline testing (unit + E2E)
+- Visual regression testing with screenshots
+- JSDoc documentation for network utilities
+- i18n verification for offline messages
+- Architecture compliance verification
+
+**Why it's optional:**
+- ✅ Basic offline functionality already works
+- ✅ Existing E2E test covers happy path
+- ⚠️ Requires 4-6 sessions of focused effort
+- ⚠️ Visual regression tests add maintenance overhead
+
+**Why you might want it:**
+- 🔒 **Confidence** - Verify offline UX hasn't regressed
+- 📸 **Visual documentation** - Before/after screenshots
+- 🧪 **Edge case coverage** - Rapid toggling, mid-operation loss
+- 📝 **JSDoc types** - Better IDE support for network utils
+- 🌍 **i18n completeness** - Offline messages in all languages
+- 🏗️ **Architecture verified** - Layer boundaries respected
+
+**When to revisit:**
+- Before production launch
+- If users report offline issues
+- When PWA quality certification needed
+- Before mobile app store submission
+
+---
+
 ## How to Use This Folder
 
 ### If You're Planning Epic 3
@@ -362,12 +395,12 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 9 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection)
+**Current count:** 10 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection, Offline Mode Testing)
 
 **Status:** All documented and ready to implement when desired
 
 ---
 
-**Last Updated:** 2025-12-21
+**Last Updated:** 2025-12-28
 **Location:** `docs/parking_lot/`
 **Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
