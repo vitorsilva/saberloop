@@ -80,10 +80,15 @@ Before starting Epic 4, you should have completed:
 │                                                             │
 │  Testing & Observability                                    │
 │  ┌──────────────────┐  ┌──────────────────┐                │
-│  │ Maestro Testing  │  │ Telemetry        │                │
-│  │ Expansion        │  │ Enhancement      │                │
-│  │ (Phase 60)       │  │ (Phase 40) ✅    │                │
+│  │ Offline Mode     │  │ Telemetry        │                │
+│  │ Testing          │  │ Enhancement      │                │
+│  │ (Phase 50)       │  │ (Phase 40) ✅    │                │
 │  └──────────────────┘  └──────────────────┘                │
+│  ┌──────────────────┐                                      │
+│  │ Maestro Testing  │                                      │
+│  │ Expansion        │                                      │
+│  │ (Phase 60)       │                                      │
+│  └──────────────────┘                                      │
 │                                                             │
 │  Ongoing                                                    │
 │  ┌──────────────────────────────────────────────────────┐  │
@@ -558,6 +563,43 @@ Display LLM usage costs to users, helping them understand API spending.
 
 ---
 
+### **Phase 50: Offline Mode Testing** (4-6 sessions)
+
+Comprehensive testing of offline functionality to ensure excellent UX when used without internet.
+
+**Status:** Ready to Implement
+
+**Key Features:**
+- Comprehensive offline test coverage (unit + E2E)
+- Visual documentation of offline UX
+- Edge case testing (rapid toggling, mid-operation loss)
+- JSDoc documentation for network utilities
+- i18n verification for offline messages
+
+**Learning Objectives:**
+- Playwright offline simulation (`context.setOffline()`)
+- Visual regression testing with screenshots
+- Edge case scenario design
+- Network utility documentation
+
+**Deliverables:**
+- [ ] `tests/e2e/offline.spec.js` - Dedicated offline E2E tests (15+ tests)
+- [ ] `docs/issues/offline/OFFLINE_UX_SPEC.md` - UX specification
+- [ ] JSDoc added to `src/utils/network.js`
+- [ ] Screenshots documenting offline UX
+- [ ] 10+ new unit tests for edge cases
+
+**Success Criteria:**
+- [ ] `src/utils/network.js` at 100% coverage
+- [ ] 15+ new E2E tests for offline scenarios
+- [ ] Visual regression tests with screenshots
+- [ ] All offline messages have translation keys
+- [ ] Architecture tests pass
+
+**Related:** [PHASE50_OFFLINE_MODE_TESTING.md](./PHASE50_OFFLINE_MODE_TESTING.md)
+
+---
+
 ### **Phase 60: Maestro Testing Expansion** (3-4 sessions)
 
 Expand Maestro test coverage to match Playwright E2E tests.
@@ -712,6 +754,7 @@ Configure mutation testing with Stryker to assess test quality beyond code cover
 | Phase 47 | 1 | AI Model Selection | ✅ Complete |
 | Phase 48 | 2-3 | JSDoc Type Checking | ✅ Complete |
 | Phase 49 | 3-4 | Usage & Cost Tracking | Ready |
+| Phase 50 | 4-6 | Offline Mode Testing | Ready |
 | Phase 60 | 3-4 | Maestro Testing | Ready |
 | Phase 70 | 4-6 | Sharing Feature | ✅ Complete |
 | Phase 80 | 1 | Test Coverage | ✅ Complete |
@@ -742,8 +785,9 @@ While phases can be worked on in any order, here's a suggested priority:
 14. **Phase 70** - Sharing Feature ✅ Complete
 15. **Phase 80** - Test Coverage ✅ Complete
 16. **Phase 49** - Usage & Cost Tracking
-17. **Phase 60** - Maestro Testing
-18. **Phase 85** - Mutation Testing Setup
+17. **Phase 50** - Offline Mode Testing
+18. **Phase 60** - Maestro Testing
+19. **Phase 85** - Mutation Testing Setup
 
 ---
 
@@ -787,7 +831,6 @@ The following items remain in the parking lot for consideration in future epics:
 - **PHASE86_MUTATION_TESTING_EXPANSION.md** - Extended mutation testing scope
 - **PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md** - E2E mutation testing research
 - **DATA_DELETION_FEATURE.md** - GDPR-compliant data deletion
-- **OFFLINE_MODE_TESTING.md** - Comprehensive offline testing strategy
 - **TELEMETRY_ANALYSIS_PLAN.md** - Advanced telemetry analysis workflows
 - **investigation_decentralized_storage.md** - Decentralized storage research
 
@@ -844,6 +887,7 @@ When you're ready to begin Epic 4, say:
 - `PHASE47_MODEL_SELECTION.md`
 - `PHASE48_JSDOC_CONFIGURATION.md`
 - `PHASE49_USAGE_COST_TRACKING.md`
+- `PHASE50_OFFLINE_MODE_TESTING.md`
 - `PHASE60_MAESTRO_TESTING.md`
 - `PHASE70_SHARING.md`
 - `PHASE80_TEST_COVERAGE.md`
