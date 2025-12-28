@@ -130,7 +130,7 @@ export function showShareModal({ topic, score, total, percentage }) {
 
         // Store blob for native share
         backdrop.dataset.imageBlob = 'ready';
-        sheet._imageBlob = blob;
+        /** @type {any} */ (sheet)._imageBlob = blob;
       })
       .catch((error) => {
         logger.error('Failed to generate share image', { error: error.message });
@@ -193,7 +193,7 @@ export function showShareModal({ topic, score, total, percentage }) {
     const moreOptionsBtn = backdrop.querySelector('#moreOptionsBtn');
     if (moreOptionsBtn) {
       moreOptionsBtn.addEventListener('click', async () => {
-        const imageBlob = sheet._imageBlob;
+        const imageBlob = /** @type {any} */ (sheet)._imageBlob;
         if (imageBlob) {
           await shareWithImage({
             title: t('share.quizMaster', { topic }),
