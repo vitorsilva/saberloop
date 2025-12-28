@@ -1,8 +1,14 @@
 # Database Schema
 
-Saberloop uses IndexedDB for client-side data persistence.
+Saberloop uses **dual client-side storage**:
+- **IndexedDB** - Quiz data, sessions, API keys (via `src/core/db.js`)
+- **localStorage** - User preferences, settings, caches (via `src/core/settings.js`)
 
-## Database Configuration
+---
+
+## IndexedDB (Primary Data Store)
+
+### Configuration
 
 | Property | Value |
 |----------|-------|
@@ -78,9 +84,9 @@ interface Question {
 
 ---
 
-### 3. `settings`
+### 3. `settings` (IndexedDB)
 
-Stores application settings and user preferences.
+Stores application state and sensitive data (API keys).
 
 **Key Path:** `key`
 
@@ -92,16 +98,13 @@ interface Setting {
 }
 ```
 
-**Known Settings:**
+**Known Settings (IndexedDB):**
 
 | Key | Value Type | Description |
 |-----|------------|-------------|
-| `openrouter_api_key` | `{ key: string, storedAt: string }` | OpenRouter API key |
+| `openrouter_api_key` | `{ key: string, storedAt: string }` | OpenRouter API key (secure) |
 | `welcome_seen` | `boolean` | Whether welcome screen was shown |
-| `samples_loaded` | `{ version: string }` | Sample data version |
-| `gradeLevel` | `string` | Default grade level preference |
-| `questionCount` | `number` | Default questions per quiz |
-| `difficulty` | `string` | Default difficulty preference |
+| `samples_loaded` | `{ version: string }` | Sample data version tracking |
 
 ---
 
@@ -181,6 +184,52 @@ upgrade(db, oldVersion, newVersion) {
   }
 }
 ```
+
+---
+
+## localStorage (User Preferences)
+
+User preferences and caches are stored in localStorage via `src/core/settings.js`.
+
+### Storage Key
+
+| Property | Value |
+|----------|-------|
+| Key | `quizmaster_settings` |
+| Format | JSON object |
+
+### User Preferences
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `defaultGradeLevel` | string | `"middle school"` | Default education level |
+| `questionsPerQuiz` | string | `"5"` | Questions per quiz |
+| `difficulty` | string | `"mixed"` | Difficulty preference |
+| `selectedModel` | string | `"tngtech/deepseek-r1t2-chimera:free"` | AI model selection |
+
+### Operations
+
+```javascript
+// src/core/settings.js
+import { getSetting, saveSetting, getSettings } from '../core/settings.js';
+
+// Get single setting (with default fallback)
+const level = getSetting('defaultGradeLevel');  // "middle school"
+
+// Save single setting
+saveSetting('selectedModel', 'anthropic/claude-3-haiku');
+
+// Get all settings
+const allSettings = getSettings();
+```
+
+### Other localStorage Keys
+
+| Key | Purpose | Module |
+|-----|---------|--------|
+| `i18nextLng` | Language preference | `src/core/i18n.js` |
+| `openrouter_models_cache` | Cached model list (24h TTL) | `src/services/model-service.js` |
+| `saberloop_telemetry_queue` | Offline telemetry events | `src/utils/telemetry.js` |
 
 ---
 

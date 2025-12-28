@@ -17,7 +17,8 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 │           │                      │                           │
 │  ┌────────▼─────────────────────────────────┐               │
 │  │              Views                        │               │
-│  │  Home │ Quiz │ Results │ Settings │ ...  │               │
+│  │  Home │ Quiz │ Results │ Settings │       │               │
+│  │  Topics │ Help │ Welcome │ Loading │ ...  │               │
 │  └────────┬─────────────────────────────────┘               │
 │           │                                                  │
 │  ┌────────▼─────────────────────────────────┐               │
@@ -65,9 +66,11 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 | Views | `src/views/` | UI presentation, user interaction |
 | Services | `src/services/` | Business logic, coordinates api/db |
 | API | `src/api/` | External API calls (OpenRouter) |
-| Core | `src/core/` | Database, state, router, settings |
+| Core | `src/core/` | Database, state, router, settings, i18n, feature flags |
 | Components | `src/components/` | Reusable presentational UI |
-| Utils | `src/utils/` | Shared utilities (logger, network) |
+| Utils | `src/utils/` | Shared utilities (logger, network, telemetry, share) |
+| Features | `src/features/` | Feature modules (onboarding, sample-loader) |
+| Data | `src/data/` | Static data files (sample quizzes) |
 
 ### AI Integration (Client-Side)
 
@@ -75,11 +78,12 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 |-----------|------------|---------|
 | API Gateway | OpenRouter | Multi-model AI access |
 | Key Storage | IndexedDB | Secure local storage |
-| Default Model | Claude 3 Haiku | Fast, cost-effective |
+| Default Model | DeepSeek R1T2 Chimera (free) | User-selectable, free tier default |
 
 **Services Layer:**
 - `quiz-service.js` - Quiz operations (history, sessions, generation)
 - `auth-service.js` - Authentication (connection status, OAuth flow)
+- `model-service.js` - AI model selection, free model discovery
 
 **No Server Backend Required:**
 - Users provide their own OpenRouter API key
@@ -90,8 +94,54 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| Client Storage | IndexedDB | Quiz sessions, questions, settings |
+| Client Storage | IndexedDB | Quiz sessions, questions, API keys |
+| User Preferences | localStorage | Settings, language preference, model cache |
 | Library | idb | Promise-based IndexedDB wrapper |
+
+### Internationalization (i18n)
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| Library | i18next | Translation framework |
+| Detection | i18next-browser-languagedetector | Auto-detect user language |
+| Storage | localStorage | Persist language preference |
+
+**Supported Languages:**
+- English (en) - Default
+- Portuguese (pt-PT)
+- Spanish (es)
+- French (fr)
+- German (de)
+
+Translation files are loaded dynamically from `/locales/{lang}.json`.
+
+### Feature Flags
+
+The app uses a feature flag system (`src/core/features.js`) for gradual rollout:
+
+| Phase | Behavior |
+|-------|----------|
+| DISABLED | Feature code exists but is not active |
+| SETTINGS_ONLY | Only accessible via Settings page |
+| ENABLED | Available everywhere |
+
+**Current Feature Flags:**
+- `OPENROUTER_GUIDE` - Step-by-step OpenRouter connection guide
+- `TELEMETRY` - Send logs/errors to VPS for debugging
+- `EXPLANATION_FEATURE` - AI-generated explanations for wrong answers
+- `CONTINUE_TOPIC` - Continue quiz with new questions on same topic
+- `SHARE_FEATURE` - Share quiz results to social media
+
+### Telemetry
+
+Self-hosted observability via `src/utils/telemetry.js`:
+
+| Feature | Description |
+|---------|-------------|
+| Event Batching | Collects events, sends in batches |
+| Offline Queue | localStorage fallback when offline |
+| Feature Flag | Controlled by `TELEMETRY` feature flag |
+| Privacy | Self-hosted VPS, no third-party services |
 
 ## Data Flow
 
