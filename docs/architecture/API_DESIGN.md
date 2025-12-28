@@ -55,6 +55,10 @@ Generate quiz questions for a given topic.
 |-------|------|----------|-------------|
 | `topic` | string | Yes | Quiz topic (2-200 characters) |
 | `gradeLevel` | string | No | Target audience level (default: "middle school") |
+| `apiKey` | string | Yes | User's OpenRouter API key |
+| `options.language` | string | No | Language code for content (e.g., 'en', 'pt-PT') |
+| `options.questionCount` | number | No | Number of questions (default: 5) |
+| `options.previousQuestions` | array | No | Questions to exclude (for "Continue" feature) |
 
 **Response:**
 ```json
@@ -100,7 +104,9 @@ Generate an explanation for why an answer was incorrect.
 | `question` | string | Yes | The question text |
 | `userAnswer` | string | Yes | User's incorrect answer |
 | `correctAnswer` | string | Yes | The correct answer |
-| `topic` | string | No | Original topic for context |
+| `gradeLevel` | string | Yes | Education level for appropriate explanation |
+| `apiKey` | string | Yes | User's OpenRouter API key |
+| `language` | string | No | Language code for the explanation (default: 'en') |
 
 **Response:**
 ```json
@@ -157,6 +163,48 @@ export const generateQuestions = useRealApi ? realGenerate : mockGenerate;
 ## Rate Limiting
 
 Rate limiting is handled by OpenRouter based on the user's account tier.
+
+---
+
+## Model Selection
+
+### Get Available Models
+
+Fetches available free models from OpenRouter (cached for 24 hours).
+
+**Endpoint:**
+```
+GET https://openrouter.ai/api/v1/models
+```
+
+**Client Code:**
+```javascript
+// src/services/model-service.js
+import { getAvailableModels, getSelectedModel, saveSelectedModel } from '../services/model-service.js';
+
+// Fetch free models (cached)
+const models = await getAvailableModels(apiKey);
+
+// Get currently selected model
+const modelId = getSelectedModel();  // Returns default if none selected
+
+// Save user's model selection
+saveSelectedModel('anthropic/claude-3-haiku');
+```
+
+**Response (filtered for free models):**
+```json
+[
+  {
+    "id": "tngtech/deepseek-r1t2-chimera:free",
+    "name": "DeepSeek R1T2 Chimera",
+    "description": "...",
+    "contextLength": 32768
+  }
+]
+```
+
+**Default Model:** `tngtech/deepseek-r1t2-chimera:free`
 
 ---
 

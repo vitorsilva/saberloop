@@ -52,18 +52,22 @@ The services layer (`src/services/`) provides a clean abstraction between UI and
 |---------|---------|-------|
 | `quiz-service.js` | Quiz business logic | db.js, api/index.js |
 | `auth-service.js` | Authentication operations | db.js, openrouter-auth.js |
+| `model-service.js` | AI model selection | settings.js, OpenRouter API |
 
 ### Allowed Dependencies
 
 | From | Can Import | Reasoning |
 |------|------------|-----------|
 | `main.js` | All layers | Entry point orchestration |
-| `views/` | services, components, utils, state | UI only knows about services |
-| `components/` | utils only | Pure presentational, no side effects |
-| `services/` | api, db, state, utils | Coordinates all business logic |
+| `views/` | services, components, utils, state, features, i18n | UI only knows about services |
+| `components/` | utils, i18n only | Pure presentational, no side effects |
+| `services/` | api, db, state, settings, utils | Coordinates all business logic |
 | `api/` | utils only | Receives credentials as params |
 | `core/db.js` | utils, external libs | Pure data layer |
 | `core/state.js` | Nothing | Pure singleton |
+| `core/i18n.js` | external libs only | Translation framework |
+| `core/features.js` | Nothing | Feature flag definitions |
+| `core/settings.js` | utils only | localStorage wrapper |
 
 ---
 
