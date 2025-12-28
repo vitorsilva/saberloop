@@ -285,36 +285,33 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
-### [Offline Mode Testing](./OFFLINE_MODE_TESTING.md) ⭐ **Ready to Implement**
+### [Explanation Performance Improvement](./EXPLANATION_PERFORMANCE_IMPROVEMENT.md) ⭐ **Ready to Implement**
 
 **Status:** Planning Complete
 
 **What it is:**
-- Comprehensive offline testing (unit + E2E)
-- Visual regression testing with screenshots
-- JSDoc documentation for network utilities
-- i18n verification for offline messages
-- Architecture compliance verification
+- Split explanation into `rightAnswerExplanation` (cacheable) and `wrongAnswerExplanation` (personalized)
+- Cache correct answer explanation in session for instant display
+- Progressive loading: show cached content immediately, load personalized in parallel
+- Offline/no-LLM graceful degradation with cached content
 
 **Why it's optional:**
-- ✅ Basic offline functionality already works
-- ✅ Existing E2E test covers happy path
-- ⚠️ Requires 4-6 sessions of focused effort
-- ⚠️ Visual regression tests add maintenance overhead
+- ✅ Current explanation feature works (full generation each time)
+- ⚠️ Moderate implementation effort (UI, API, storage changes)
+- ⚠️ Changes LLM prompt structure (JSON parsing needed)
 
 **Why you might want it:**
-- 🔒 **Confidence** - Verify offline UX hasn't regressed
-- 📸 **Visual documentation** - Before/after screenshots
-- 🧪 **Edge case coverage** - Rapid toggling, mid-operation loss
-- 📝 **JSDoc types** - Better IDE support for network utils
-- 🌍 **i18n completeness** - Offline messages in all languages
-- 🏗️ **Architecture verified** - Layer boundaries respected
+- ⚡ **Better UX** - Instant content display instead of waiting
+- 📴 **Offline support** - Partial functionality without network
+- 💰 **Token savings** - Only generate personalized part on repeat views
+- 🔄 **Quiz retakes** - Cached explanations persist across sessions
+- 🎓 **Learning value** - Progressive loading patterns, structured API responses
 
 **When to revisit:**
-- Before production launch
-- If users report offline issues
-- When PWA quality certification needed
-- Before mobile app store submission
+- Want to improve explanation UX
+- Need offline explanation support
+- Optimizing LLM token usage
+- Before public launch
 
 ---
 
@@ -395,7 +392,7 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 10 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection, Offline Mode Testing)
+**Current count:** 10 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection, Explanation Performance Improvement)
 
 **Status:** All documented and ready to implement when desired
 
