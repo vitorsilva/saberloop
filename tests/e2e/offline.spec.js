@@ -87,4 +87,35 @@ test.describe('Offline Mode', () => {
     await expect(offlineBanner).not.toHaveClass(/hidden/);
   });
 
+  test('should complete a sample quiz while offline', async ({ page, context }) => {
+    // Verify we have sample quizzes available (pre-loaded on first launch)
+    const quizItem = page.locator('.quiz-item').first();
+    await expect(quizItem).toBeVisible();
+
+    // Go offline BEFORE starting the quiz
+    await context.setOffline(true);
+
+    // Start the sample quiz
+    await quizItem.click();
+
+    // Should navigate to quiz (not loading - uses cached questions)
+    await expect(page).toHaveURL(/#\/quiz/);
+
+    // Answer all 5 questions
+    for (let i = 0; i < 5; i++) {
+      // Click first option
+      await page.locator('.option-btn').first().click();
+      await page.waitForTimeout(200);
+      // Click submit/next
+      await page.locator('#submitBtn').click();
+      await page.waitForTimeout(300);
+    }
+
+    // Should see results page
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Results should display score percentage
+    await expect(page.getByTestId('score-percentage')).toBeVisible();
+  });
+
 });
