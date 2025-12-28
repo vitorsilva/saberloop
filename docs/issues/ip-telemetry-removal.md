@@ -1,5 +1,6 @@
-# Issue: Remove IP Address from Telemetry
+# Issue #56: Remove IP Address from Telemetry
 
+**GitHub**: https://github.com/vitorsilva/saberloop/issues/56
 **Date**: 2025-12-28
 **Reported by**: User
 **Priority**: High (Privacy/Security)
