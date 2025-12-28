@@ -529,7 +529,7 @@ Enable JSDoc-based documentation generation and type checking for improved code 
 
 Comprehensive testing of offline functionality to ensure excellent UX when used without internet.
 
-**Status:** Ready to Implement
+**Status:** In Progress (5/55 E2E tests complete)
 
 **Key Features:**
 - Comprehensive offline test coverage (unit + E2E)
@@ -545,15 +545,29 @@ Comprehensive testing of offline functionality to ensure excellent UX when used 
 - Network utility documentation
 
 **Deliverables:**
-- [ ] `tests/e2e/offline.spec.js` - Dedicated offline E2E tests (15+ tests)
+- [x] `tests/e2e/offline.spec.js` - Dedicated offline E2E tests (5 tests done, 15+ target)
+- [x] `tests/e2e/helpers.js` - Shared test helper functions
 - [ ] `docs/issues/offline/OFFLINE_UX_SPEC.md` - UX specification
 - [ ] JSDoc added to `src/utils/network.js`
 - [ ] Screenshots documenting offline UX
 - [ ] 10+ new unit tests for edge cases
+- [ ] i18n verification for offline messages
+
+**Current Progress:**
+- ✅ E2E: Banner show/hide on connection change
+- ✅ E2E: Rapid offline/online toggling
+- ✅ E2E: Navigation while offline
+- ✅ E2E: Full quiz flow offline (sample quiz)
+- ⏳ E2E: Mid-operation connection loss
+- ⏳ E2E: Visual regression tests
+- ⏳ Unit tests: Edge cases
+- ⏳ Documentation: Screenshots, UX spec
+- ⏳ JSDoc: Network utilities
+- ⏳ i18n: Offline message audit
 
 **Success Criteria:**
-- [ ] `src/utils/network.js` at 100% coverage
-- [ ] 15+ new E2E tests for offline scenarios
+- [ ] `src/utils/network.js` at 100% coverage (currently 100%)
+- [ ] 15+ new E2E tests for offline scenarios (5 done)
 - [ ] Visual regression tests with screenshots
 - [ ] All offline messages have translation keys
 - [ ] Architecture tests pass
