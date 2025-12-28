@@ -527,6 +527,44 @@ Enable JSDoc-based documentation generation and type checking for improved code 
 
 ---
 
+### **Phase 49: Usage & Cost Tracking** (3-4 sessions)
+
+Display LLM usage costs to users, helping them understand API spending.
+
+**Status:** Research Complete / Ready to Implement
+
+**Key Features:**
+- Enable `usage: { include: true }` in OpenRouter requests
+- Display cost per quiz on Results page
+- Show cost history in Topics view
+- For free models: show estimated cost on paid equivalent
+- Optional: Credits balance in Settings
+
+**Learning Objectives:**
+- OpenRouter usage accounting API
+- Cost calculation and estimation
+- User-facing spending transparency
+- Data persistence for usage metrics
+
+**Deliverables:**
+- [ ] `src/services/cost-service.js` - Cost calculation utilities
+- [ ] `src/api/openrouter-client.js` - Usage tracking enabled
+- [ ] `src/views/ResultsView.js` - Cost info card
+- [ ] `src/views/TopicsView.js` - Cost per quiz display
+- [ ] Usage data stored with quiz sessions
+- [ ] i18n translations
+- [ ] Unit and E2E tests
+
+**Success Criteria:**
+- [ ] Cost displayed after each quiz
+- [ ] Free models show "Free" + estimated paid cost
+- [ ] Cost history visible in Topics page
+- [ ] All tests pass
+
+**Related:** [PHASE49_USAGE_COST_TRACKING.md](./PHASE49_USAGE_COST_TRACKING.md)
+
+---
+
 ### **Phase 50: Maestro Testing Expansion** (3-4 sessions)
 
 Expand Maestro test coverage to match Playwright E2E tests.
@@ -778,6 +816,7 @@ Experimental research phase to assess feasibility of E2E mutation testing.
 | Phase 46 | 1 | Configurable Question Count | ✅ Complete |
 | Phase 47 | 1 | AI Model Selection | ✅ Complete |
 | Phase 48 | 2-3 | JSDoc Type Checking | ✅ Complete |
+| Phase 49 | 3-4 | Usage & Cost Tracking | Ready |
 | Phase 50 | 3-4 | Maestro Testing | Ready |
 | Phase 60 | 3-4 | Monetization | Ready |
 | Phase 70 | 4-6 | Sharing Feature | Ready |
@@ -808,9 +847,10 @@ While phases can be worked on in any order, here's a suggested priority:
 11. **Phase 46** - Configurable Question Count ✅
 12. **Phase 47** - AI Model Selection ✅
 13. **Phase 48** - JSDoc Type Checking ✅
-14. **Phase 50** - Maestro Testing
-15. **Phase 60** - Monetization (after user base grows)
-16. **Phase 70** - Sharing Feature
+14. **Phase 49** - Usage & Cost Tracking
+15. **Phase 50** - Maestro Testing
+16. **Phase 60** - Monetization (after user base grows)
+17. **Phase 70** - Sharing Feature
 
 ---
 
@@ -898,6 +938,7 @@ When you're ready to begin Epic 4, say:
 - `PHASE40_TELEMETRY.md`
 - `PHASE46_CONFIGURABLE_QUESTION_COUNT.md`
 - `PHASE48_JSDOC_CONFIGURATION.md`
+- `PHASE49_USAGE_COST_TRACKING.md`
 - `PHASE50_MAESTRO_TESTING.md`
 - `PHASE60_MONETIZATION.md`
 - `PHASE80_TEST_COVERAGE.md`
