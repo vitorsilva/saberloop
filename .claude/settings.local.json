@@ -113,7 +113,15 @@
       "Bash(git branch:*)",
       "Bash(gh pr view:*)",
       "Bash(npm run translate:*)",
-      "Bash(npm run build:deploy:*)"
+      "Bash(npm run build:deploy:*)",
+      "Bash(git merge:*)",
+      "Bash(npm run docs:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(cut:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh issue close:*)",
+      "Bash(git rm:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

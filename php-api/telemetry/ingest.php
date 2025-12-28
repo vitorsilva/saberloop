@@ -82,15 +82,13 @@ $logFile = $logDir . '/' . $config['log_prefix'] . $date . '.jsonl';
 
 // Add server-side metadata to each event
 $serverTime = date('c');
-$clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
 // Prepare lines to write
 $lines = '';
 foreach ($data['events'] as $event) {
-    // Add server metadata
+    // Add server metadata (no IP - privacy protection)
     $event['_server'] = [
         'receivedAt' => $serverTime,
-        'clientIp' => $clientIp,
         'batchSentAt' => $data['sentAt'] ?? null,
     ];
 

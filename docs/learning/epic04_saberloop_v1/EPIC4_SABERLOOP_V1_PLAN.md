@@ -63,7 +63,7 @@ Before starting Epic 4, you should have completed:
 │  └──────────────────┘  └──────────────────┘                │
 │  ┌──────────────────┐                                      │
 │  │ Sharing Feature  │                                      │
-│  │ (Phase 70)       │                                      │
+│  │ (Phase 70) ✅    │                                      │
 │  └──────────────────┘                                      │
 │                                                             │
 │  Code Quality                                               │
@@ -80,15 +80,13 @@ Before starting Epic 4, you should have completed:
 │                                                             │
 │  Testing & Observability                                    │
 │  ┌──────────────────┐  ┌──────────────────┐                │
-│  │ Maestro Testing  │  │ Telemetry        │                │
-│  │ Expansion        │  │ Enhancement      │                │
+│  │ Offline Mode     │  │ Telemetry        │                │
+│  │ Testing          │  │ Enhancement      │                │
 │  │ (Phase 50)       │  │ (Phase 40) ✅    │                │
 │  └──────────────────┘  └──────────────────┘                │
-│                                                             │
-│  Business                                                   │
 │  ┌──────────────────┐                                      │
-│  │ Monetization     │                                      │
-│  │ Strategy         │                                      │
+│  │ Maestro Testing  │                                      │
+│  │ Expansion        │                                      │
 │  │ (Phase 60)       │                                      │
 │  └──────────────────┘                                      │
 │                                                             │
@@ -565,7 +563,44 @@ Display LLM usage costs to users, helping them understand API spending.
 
 ---
 
-### **Phase 50: Maestro Testing Expansion** (3-4 sessions)
+### **Phase 50: Offline Mode Testing** (4-6 sessions)
+
+Comprehensive testing of offline functionality to ensure excellent UX when used without internet.
+
+**Status:** Ready to Implement
+
+**Key Features:**
+- Comprehensive offline test coverage (unit + E2E)
+- Visual documentation of offline UX
+- Edge case testing (rapid toggling, mid-operation loss)
+- JSDoc documentation for network utilities
+- i18n verification for offline messages
+
+**Learning Objectives:**
+- Playwright offline simulation (`context.setOffline()`)
+- Visual regression testing with screenshots
+- Edge case scenario design
+- Network utility documentation
+
+**Deliverables:**
+- [ ] `tests/e2e/offline.spec.js` - Dedicated offline E2E tests (15+ tests)
+- [ ] `docs/issues/offline/OFFLINE_UX_SPEC.md` - UX specification
+- [ ] JSDoc added to `src/utils/network.js`
+- [ ] Screenshots documenting offline UX
+- [ ] 10+ new unit tests for edge cases
+
+**Success Criteria:**
+- [ ] `src/utils/network.js` at 100% coverage
+- [ ] 15+ new E2E tests for offline scenarios
+- [ ] Visual regression tests with screenshots
+- [ ] All offline messages have translation keys
+- [ ] Architecture tests pass
+
+**Related:** [PHASE50_OFFLINE_MODE_TESTING.md](./PHASE50_OFFLINE_MODE_TESTING.md)
+
+---
+
+### **Phase 60: Maestro Testing Expansion** (3-4 sessions)
 
 Expand Maestro test coverage to match Playwright E2E tests.
 
@@ -597,46 +632,11 @@ Expand Maestro test coverage to match Playwright E2E tests.
 
 ---
 
-### **Phase 60: Monetization Strategy** (3-4 sessions)
-
-Implement Google AdSense integration for passive revenue.
-
-**Status:** Ready to Implement
-
-**Key Features:**
-- Ads during loading states (non-intrusive)
-- Offline graceful handling
-- SPA navigation support
-- Privacy policy compliance
-
-**Learning Objectives:**
-- Google AdSense setup and policies
-- Ad placement strategy (loading states)
-- PWA monetization patterns
-- Legal compliance (GDPR, privacy)
-
-**Deliverables:**
-- [ ] AdSense account setup
-- [ ] `public/ads.txt` - Ad inventory authorization
-- [ ] `src/utils/adManager.js` - Ad loading utility
-- [ ] `src/views/PrivacyView.js` - Privacy policy
-- [ ] Loading views with ad placements
-- [ ] Unit and E2E tests
-
-**Success Criteria:**
-- AdSense account approved
-- Ads display during natural wait times
-- No ads during active quiz
-- Offline mode unaffected
-- User experience remains positive
-
----
-
 ### **Phase 70: Sharing Feature** (4-6 sessions)
 
 Add sharing functionality to allow users to share quiz achievements on social media.
 
-**Status:** Ready to Implement
+**Status:** ✅ Complete (December 27, 2024)
 
 **Key Features:**
 - Share button on Results screen
@@ -652,21 +652,21 @@ Add sharing functionality to allow users to share quiz achievements on social me
 - Social sharing best practices
 
 **Deliverables:**
-- [ ] `src/utils/share.js` - Share API utilities
-- [ ] `src/utils/share-image.js` - Canvas image generator
-- [ ] `src/components/ShareModal.js` - Share options modal
-- [ ] Share button in ResultsView
-- [ ] Deep link handling in main.js
-- [ ] Unit and E2E tests
+- [x] `src/utils/share.js` - Share API utilities
+- [x] `src/utils/share-image.js` - Canvas image generator
+- [x] `src/components/ShareModal.js` - Share options modal
+- [x] Share button in ResultsView
+- [x] Deep link handling in main.js
+- [x] Unit and E2E tests
 
 **Success Criteria:**
-- [ ] Share button visible on Results screen
-- [ ] Can share text + link via Web Share API
-- [ ] Fallback to clipboard works on Firefox
-- [ ] Deep links open app with topic pre-filled
-- [ ] Generated achievement card image
+- [x] Share button visible on Results screen
+- [x] Can share text + link via Web Share API
+- [x] Fallback to clipboard works on Firefox
+- [x] Deep links open app with topic pre-filled
+- [x] Generated achievement card image
 
-**Related:** [Issue #11](https://github.com/vitorsilva/saberloop/issues/11), [PHASE70_SHARING.md](./PHASE70_SHARING.md)
+**Related:** [Issue #11](https://github.com/vitorsilva/saberloop/issues/11) ✅ Closed, [PHASE70_SHARING.md](./PHASE70_SHARING.md)
 
 ---
 
@@ -736,69 +736,6 @@ Configure mutation testing with Stryker to assess test quality beyond code cover
 
 ---
 
-### **Phase 86: Mutation Testing Expansion** (3-4 sessions)
-
-Expand mutation testing to core infrastructure and API modules.
-
-**Status:** Ready (after Phase 85)
-
-**Key Features:**
-- Wave 2: Core infrastructure (state, db, settings, features)
-- Wave 3: API layer (openrouter-auth, api.real)
-- Performance optimization with incremental mode
-- ~960 lines of additional coverage
-
-**Learning Objectives:**
-- Testing core infrastructure patterns
-- API module mutation testing
-- Managing larger mutation sets
-- Behavior vs implementation testing
-
-**Deliverables:**
-- [ ] Wave 2 and Wave 3 files in Stryker config
-- [ ] Combined mutation score >75%
-- [ ] Performance optimizations applied
-- [ ] `PHASE86_LEARNING_NOTES.md` - Documentation
-
-**Success Criteria:**
-- [ ] All 9 target files included in mutation testing
-- [ ] Combined mutation score >75%
-- [ ] Runtime <20 min for full scope
-- [ ] 10-20 new tests added to kill mutants
-
----
-
-### **Phase 87: E2E Mutation Testing Exploration** (1-2 sessions)
-
-Experimental research phase to assess feasibility of E2E mutation testing.
-
-**Status:** Experimental / Research (after Phase 86)
-
-**Key Features:**
-- Manual mutation testing against Playwright E2E tests
-- Feasibility and value assessment
-- Custom Stryker runner exploration (optional)
-- Decision framework for future investment
-
-**Learning Objectives:**
-- Mutation testing limitations
-- E2E testing value assessment
-- Research methodology
-- Evidence-based decision making
-
-**Deliverables:**
-- [ ] 9 mutations manually tested against E2E
-- [ ] Analysis document with findings
-- [ ] Recommendation: pursue further or stop
-- [ ] `PHASE87_LEARNING_NOTES.md` - Documentation
-
-**Success Criteria:**
-- [ ] Can answer: Do E2E tests catch mutations unit tests miss?
-- [ ] Can answer: Is automated E2E mutation testing feasible?
-- [ ] Clear recommendation for ongoing strategy
-
----
-
 ## Estimated Timeline
 
 | Phase | Sessions | Focus | Status |
@@ -817,14 +754,12 @@ Experimental research phase to assess feasibility of E2E mutation testing.
 | Phase 47 | 1 | AI Model Selection | ✅ Complete |
 | Phase 48 | 2-3 | JSDoc Type Checking | ✅ Complete |
 | Phase 49 | 3-4 | Usage & Cost Tracking | Ready |
-| Phase 50 | 3-4 | Maestro Testing | Ready |
-| Phase 60 | 3-4 | Monetization | Ready |
-| Phase 70 | 4-6 | Sharing Feature | Ready |
+| Phase 50 | 4-6 | Offline Mode Testing | Ready |
+| Phase 60 | 3-4 | Maestro Testing | Ready |
+| Phase 70 | 4-6 | Sharing Feature | ✅ Complete |
 | Phase 80 | 1 | Test Coverage | ✅ Complete |
 | Phase 85 | 2-3 | Mutation Testing Setup | Ready |
-| Phase 86 | 3-4 | Mutation Testing Expansion | Ready (after 85) |
-| Phase 87 | 1-2 | E2E Mutation Exploration | Experimental |
-| **Total** | **~40-56** | **Full Epic** | |
+| **Total** | **~35-50** | **Full Epic** | |
 
 **Note:** Phase numbers use intervals of 10 to allow for inserting new phases if needed.
 
@@ -847,10 +782,12 @@ While phases can be worked on in any order, here's a suggested priority:
 11. **Phase 46** - Configurable Question Count ✅
 12. **Phase 47** - AI Model Selection ✅
 13. **Phase 48** - JSDoc Type Checking ✅
-14. **Phase 49** - Usage & Cost Tracking
-15. **Phase 50** - Maestro Testing
-16. **Phase 60** - Monetization (after user base grows)
-17. **Phase 70** - Sharing Feature
+14. **Phase 70** - Sharing Feature ✅ Complete
+15. **Phase 80** - Test Coverage ✅ Complete
+16. **Phase 49** - Usage & Cost Tracking
+17. **Phase 50** - Offline Mode Testing
+18. **Phase 60** - Maestro Testing
+19. **Phase 85** - Mutation Testing Setup
 
 ---
 
@@ -865,8 +802,8 @@ While phases can be worked on in any order, here's a suggested priority:
 - [x] Self-hosted telemetry operational ✅
 - [x] Answer randomization prevents memorization ✅
 - [x] Configurable questions per quiz ✅
+- [x] Sharing feature with deep links ✅
 - [ ] Maestro tests in CI
-- [ ] Monetization ready (if desired)
 
 ### User-Facing Milestones
 - [x] Easier OpenRouter setup ✅
@@ -877,7 +814,6 @@ While phases can be worked on in any order, here's a suggested priority:
 ### Business Milestones
 - [ ] App on Play Store (production)
 - [ ] Growing user base
-- [ ] Revenue stream established (optional)
 - [ ] Feedback loop with users
 
 ---
@@ -890,6 +826,13 @@ The following items remain in the parking lot for consideration in future epics:
 - **PHASE8_OAUTH.md** - OAuth integration (if Anthropic enables it)
 - **PHASE3.7_OPENAI_INTEGRATION.md** - OpenAI as provider option
 - **IOS_APP_STORE.md** - iOS App Store publishing
+- **PHASE60_MONETIZATION.md** - Google AdSense integration (defer until user base grows)
+- **PHASE70_V2_SHARING_FEATURES.md** - Advanced sharing features (future enhancements)
+- **PHASE86_MUTATION_TESTING_EXPANSION.md** - Extended mutation testing scope
+- **PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md** - E2E mutation testing research
+- **DATA_DELETION_FEATURE.md** - GDPR-compliant data deletion
+- **TELEMETRY_ANALYSIS_PLAN.md** - Advanced telemetry analysis workflows
+- **investigation_decentralized_storage.md** - Decentralized storage research
 
 ---
 
@@ -933,18 +876,22 @@ When you're ready to begin Epic 4, say:
 - `PHASE10_OPENROUTER_ONBOARDING_UX.md`
 - `PHASE15_DEAD_CODE_DETECTION.md`
 - `PHASE20_ARCH_TESTING.md`
-- `PHASE22_LANDING_PAGE_ANALYTICS.md`
+- `PHASE22_LEARNING_NOTES.md`
+- `PHASE25_SERVICES_LAYER.md`
+- `PHASE27_EXPLANATION_FEATURE.md`
+- `PHASE28_CONTINUE_TOPIC.md`
 - `PHASE30_I18N.md`
 - `PHASE40_TELEMETRY.md`
+- `PHASE45_ANSWER_RANDOMIZATION.md`
 - `PHASE46_CONFIGURABLE_QUESTION_COUNT.md`
+- `PHASE47_MODEL_SELECTION.md`
 - `PHASE48_JSDOC_CONFIGURATION.md`
 - `PHASE49_USAGE_COST_TRACKING.md`
-- `PHASE50_MAESTRO_TESTING.md`
-- `PHASE60_MONETIZATION.md`
+- `PHASE50_OFFLINE_MODE_TESTING.md`
+- `PHASE60_MAESTRO_TESTING.md`
+- `PHASE70_SHARING.md`
 - `PHASE80_TEST_COVERAGE.md`
 - `PHASE85_MUTATION_TESTING.md`
-- `PHASE86_MUTATION_TESTING_EXPANSION.md`
-- `PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md`
 
 ---
 
