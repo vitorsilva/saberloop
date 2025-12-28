@@ -783,8 +783,13 @@ The following items remain in the parking lot for consideration in future epics:
 - **PHASE3.7_OPENAI_INTEGRATION.md** - OpenAI as provider option
 - **IOS_APP_STORE.md** - iOS App Store publishing
 - **PHASE60_MONETIZATION.md** - Google AdSense integration (defer until user base grows)
+- **PHASE70_V2_SHARING_FEATURES.md** - Advanced sharing features (future enhancements)
 - **PHASE86_MUTATION_TESTING_EXPANSION.md** - Extended mutation testing scope
 - **PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md** - E2E mutation testing research
+- **DATA_DELETION_FEATURE.md** - GDPR-compliant data deletion
+- **OFFLINE_MODE_TESTING.md** - Comprehensive offline testing strategy
+- **TELEMETRY_ANALYSIS_PLAN.md** - Advanced telemetry analysis workflows
+- **investigation_decentralized_storage.md** - Decentralized storage research
 
 ---
 
@@ -828,10 +833,15 @@ When you're ready to begin Epic 4, say:
 - `PHASE10_OPENROUTER_ONBOARDING_UX.md`
 - `PHASE15_DEAD_CODE_DETECTION.md`
 - `PHASE20_ARCH_TESTING.md`
-- `PHASE22_LANDING_PAGE_ANALYTICS.md`
+- `PHASE22_LEARNING_NOTES.md`
+- `PHASE25_SERVICES_LAYER.md`
+- `PHASE27_EXPLANATION_FEATURE.md`
+- `PHASE28_CONTINUE_TOPIC.md`
 - `PHASE30_I18N.md`
 - `PHASE40_TELEMETRY.md`
+- `PHASE45_ANSWER_RANDOMIZATION.md`
 - `PHASE46_CONFIGURABLE_QUESTION_COUNT.md`
+- `PHASE47_MODEL_SELECTION.md`
 - `PHASE48_JSDOC_CONFIGURATION.md`
 - `PHASE49_USAGE_COST_TRACKING.md`
 - `PHASE60_MAESTRO_TESTING.md`
