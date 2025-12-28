@@ -525,44 +525,6 @@ Enable JSDoc-based documentation generation and type checking for improved code 
 
 ---
 
-### **Phase 49: Usage & Cost Tracking** (3-4 sessions)
-
-Display LLM usage costs to users, helping them understand API spending.
-
-**Status:** Research Complete / Ready to Implement
-
-**Key Features:**
-- Enable `usage: { include: true }` in OpenRouter requests
-- Display cost per quiz on Results page
-- Show cost history in Topics view
-- For free models: show estimated cost on paid equivalent
-- Optional: Credits balance in Settings
-
-**Learning Objectives:**
-- OpenRouter usage accounting API
-- Cost calculation and estimation
-- User-facing spending transparency
-- Data persistence for usage metrics
-
-**Deliverables:**
-- [ ] `src/services/cost-service.js` - Cost calculation utilities
-- [ ] `src/api/openrouter-client.js` - Usage tracking enabled
-- [ ] `src/views/ResultsView.js` - Cost info card
-- [ ] `src/views/TopicsView.js` - Cost per quiz display
-- [ ] Usage data stored with quiz sessions
-- [ ] i18n translations
-- [ ] Unit and E2E tests
-
-**Success Criteria:**
-- [ ] Cost displayed after each quiz
-- [ ] Free models show "Free" + estimated paid cost
-- [ ] Cost history visible in Topics page
-- [ ] All tests pass
-
-**Related:** [PHASE49_USAGE_COST_TRACKING.md](./PHASE49_USAGE_COST_TRACKING.md)
-
----
-
 ### **Phase 50: Offline Mode Testing** (4-6 sessions)
 
 Comprehensive testing of offline functionality to ensure excellent UX when used without internet.
@@ -753,7 +715,6 @@ Configure mutation testing with Stryker to assess test quality beyond code cover
 | Phase 46 | 1 | Configurable Question Count | ✅ Complete |
 | Phase 47 | 1 | AI Model Selection | ✅ Complete |
 | Phase 48 | 2-3 | JSDoc Type Checking | ✅ Complete |
-| Phase 49 | 3-4 | Usage & Cost Tracking | Ready |
 | Phase 50 | 4-6 | Offline Mode Testing | Ready |
 | Phase 60 | 3-4 | Maestro Testing | Ready |
 | Phase 70 | 4-6 | Sharing Feature | ✅ Complete |
@@ -784,10 +745,9 @@ While phases can be worked on in any order, here's a suggested priority:
 13. **Phase 48** - JSDoc Type Checking ✅
 14. **Phase 70** - Sharing Feature ✅ Complete
 15. **Phase 80** - Test Coverage ✅ Complete
-16. **Phase 49** - Usage & Cost Tracking
-17. **Phase 50** - Offline Mode Testing
-18. **Phase 60** - Maestro Testing
-19. **Phase 85** - Mutation Testing Setup
+16. **Phase 50** - Offline Mode Testing
+17. **Phase 60** - Maestro Testing
+18. **Phase 85** - Mutation Testing Setup
 
 ---
 
@@ -826,6 +786,7 @@ The following items remain in the parking lot for consideration in future epics:
 - **PHASE8_OAUTH.md** - OAuth integration (if Anthropic enables it)
 - **PHASE3.7_OPENAI_INTEGRATION.md** - OpenAI as provider option
 - **IOS_APP_STORE.md** - iOS App Store publishing
+- **PHASE49_USAGE_COST_TRACKING.md** - Display LLM usage costs to users
 - **PHASE60_MONETIZATION.md** - Google AdSense integration (defer until user base grows)
 - **PHASE70_V2_SHARING_FEATURES.md** - Advanced sharing features (future enhancements)
 - **PHASE86_MUTATION_TESTING_EXPANSION.md** - Extended mutation testing scope
@@ -886,7 +847,6 @@ When you're ready to begin Epic 4, say:
 - `PHASE46_CONFIGURABLE_QUESTION_COUNT.md`
 - `PHASE47_MODEL_SELECTION.md`
 - `PHASE48_JSDOC_CONFIGURATION.md`
-- `PHASE49_USAGE_COST_TRACKING.md`
 - `PHASE50_OFFLINE_MODE_TESTING.md`
 - `PHASE60_MAESTRO_TESTING.md`
 - `PHASE70_SHARING.md`
