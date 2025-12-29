@@ -183,6 +183,14 @@ start reports/mutation/mutation.html
 
 ---
 
+## Next Steps
+
+Phase 85 is complete! The next available phase is:
+
+- **Phase 60: Maestro Testing Expansion** - Expand mobile UI test coverage
+
+---
+
 ## References
 
 - [Stryker Mutator](https://stryker-mutator.io/)
