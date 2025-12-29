@@ -111,11 +111,41 @@ test.describe('Offline Mode', () => {
       await page.waitForTimeout(300);
     }
 
-    // Should see results page
+    // Should see results paged
     await expect(page).toHaveURL(/#\/results/);
 
     // Results should display score percentage
     await expect(page.getByTestId('score-percentage')).toBeVisible();
   });
 
+    test('should complete quiz even if connection lost mid-quiz', async ({ page, context }) => {
+      // Start online - click on a sample quiz
+      const quizItem = page.locator('.quiz-item').first();
+      await quizItem.click();
+      await expect(page).toHaveURL(/#\/quiz/);
+
+      // Answer first 2 questions while ONLINE
+      for (let i = 0; i < 2; i++) {
+        await page.locator('.option-btn').first().click();
+        await page.waitForTimeout(200);
+        await page.locator('#submitBtn').click();
+        await page.waitForTimeout(300);
+      }
+
+      // NOW go offline mid-quiz
+      await context.setOffline(true);
+
+      // Answer remaining 3 questions while OFFLINE
+      for (let i = 0; i < 3; i++) {
+        await page.locator('.option-btn').first().click();
+        await page.waitForTimeout(200);
+        await page.locator('#submitBtn').click();
+        await page.waitForTimeout(300);
+      }
+
+      // Should still see results page
+      await expect(page).toHaveURL(/#\/results/);
+      await expect(page.getByTestId('score-percentage')).toBeVisible();
+    });
+      
 });
