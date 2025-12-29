@@ -86,8 +86,8 @@ describe('shuffleQuestionOptions', () => {
     };
 
     const shuffled = shuffleQuestionOptions(question);
-    expect(shuffled.options).toEqual(['The only answer']);
-    expect(shuffled.correct).toBe(0);
+    // Should return the SAME object reference (early return optimization)
+    expect(shuffled).toBe(question);
   });
 
   it('should handle empty options array', () => {
