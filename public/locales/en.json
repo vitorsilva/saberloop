@@ -113,8 +113,7 @@
     "incorrect": "Incorrect"
   },
   "offline": {
-    "banner": "You're offline. You can replay saved quizzes below.",
-    "message": "You're currently offline"
+    "banner": "You're offline. You can replay saved quizzes below."
   },
   "errors": {
     "network": "Network error. Please check your connection and try again.",

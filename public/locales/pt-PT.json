@@ -113,8 +113,7 @@
     "incorrect": "Incorreto"
   },
   "offline": {
-    "banner": "Estás offline. Podes repetir os quizzes guardados abaixo.",
-    "message": "Estás atualmente offline"
+    "banner": "Estás offline. Podes repetir os quizzes guardados abaixo."
   },
   "errors": {
     "network": "Erro de rede. Por favor, verifica a tua ligação e tenta novamente.",
