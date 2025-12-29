@@ -278,6 +278,25 @@ Add section between Screenshots and CTA:
 
 ---
 
+## Asset Location
+
+All promotional assets are stored in `docs/product-info/`:
+
+```
+docs/product-info/
+├── logos/           # App icons, maskable icons (48px to 512px)
+├── mockups/         # UI design mockups (Stitch-generated, phase concepts)
+├── screenshots/     # Feature screenshots for marketing
+│   ├── phase27_*.png      # Explanation modal screenshots
+│   ├── phase28_*.png      # Results page screenshots
+│   └── landing-*.png      # NEW: Landing page promotional shots
+└── quiz-generator-exploration.md
+```
+
+This structure was established in **Phase 3.5: Branding & Identity** (see `docs/learning/epic03_quizmaster_v2/PHASE3.5_BRANDING.md`).
+
+---
+
 ## Automated Screenshot Capture
 
 ### Playwright Script for Landing Page Screenshots
@@ -297,7 +316,7 @@ import { test } from '@playwright/test';
 
 // Mobile viewport for app screenshots (matches current landing page images)
 const MOBILE_VIEWPORT = { width: 375, height: 667 };
-const SCREENSHOT_DIR = 'public/icons';
+const SCREENSHOT_DIR = 'docs/product-info/screenshots';
 
 // Helper to set up authenticated state (copied from app.spec.js)
 async function setupAuthenticatedState(page) {
@@ -369,7 +388,7 @@ test.describe('Capture Landing Page Screenshots', () => {
 
     // Capture screenshot
     await page.screenshot({
-      path: `${SCREENSHOT_DIR}/screenshot-quiz-action.png`,
+      path: `${SCREENSHOT_DIR}/landing-quiz-action.png`,
       fullPage: false
     });
 
@@ -407,7 +426,7 @@ test.describe('Capture Landing Page Screenshots', () => {
 
     // Capture screenshot with modal open
     await page.screenshot({
-      path: `${SCREENSHOT_DIR}/screenshot-explanation-modal.png`,
+      path: `${SCREENSHOT_DIR}/landing-explanation-modal.png`,
       fullPage: false
     });
 
@@ -442,7 +461,7 @@ test.describe('Capture Landing Page Screenshots', () => {
 
     // Capture screenshot
     await page.screenshot({
-      path: `${SCREENSHOT_DIR}/screenshot-results-continue.png`,
+      path: `${SCREENSHOT_DIR}/landing-results-continue.png`,
       fullPage: false
     });
 
@@ -473,7 +492,7 @@ test.describe('Capture Landing Page Screenshots', () => {
 
     // Capture screenshot
     await page.screenshot({
-      path: `${SCREENSHOT_DIR}/screenshot-settings.png`,
+      path: `${SCREENSHOT_DIR}/landing-settings.png`,
       fullPage: false
     });
 
@@ -503,7 +522,7 @@ test.describe('Capture Landing Page Screenshots', () => {
 
     // Capture screenshot
     await page.screenshot({
-      path: `${SCREENSHOT_DIR}/screenshot-home-history.png`,
+      path: `${SCREENSHOT_DIR}/landing-home-history.png`,
       fullPage: false
     });
 
@@ -522,12 +541,12 @@ npx playwright test tests/e2e/capture-screenshots.spec.js
 # Or run with headed browser to see what's happening
 npx playwright test tests/e2e/capture-screenshots.spec.js --headed
 
-# Screenshots will be saved to public/icons/
-# - screenshot-quiz-action.png
-# - screenshot-explanation-modal.png
-# - screenshot-results-continue.png
-# - screenshot-settings.png
-# - screenshot-home-history.png
+# Screenshots will be saved to docs/product-info/screenshots/
+# - landing-quiz-action.png
+# - landing-explanation-modal.png
+# - landing-results-continue.png
+# - landing-settings.png
+# - landing-home-history.png
 ```
 
 ### Post-Processing (Optional)
@@ -540,7 +559,7 @@ After capturing, you may want to:
 
 ```bash
 # Example: Optimize all new screenshots
-for f in public/icons/screenshot-*.png; do
+for f in docs/product-info/screenshots/landing-*.png; do
   pngquant --quality=80-90 --ext .png --force "$f"
 done
 ```
