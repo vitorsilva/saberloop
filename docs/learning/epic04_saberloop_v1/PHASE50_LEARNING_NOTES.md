@@ -168,8 +168,13 @@ All screenshots saved to: `docs/learning/epic04_saberloop_v1/screenshots/`
 3. Visual regression adds complexity (baseline storage, flakiness, maintenance)
 4. E2E tests already verify functional behavior
 
-### Phase 4 (JSDoc)
-- [ ] Add JSDoc to `src/utils/network.js`
+### Phase 4 (JSDoc) - ✅ Already Complete
+- [x] Add JSDoc to `src/utils/network.js`
+
+**Finding:** `network.js` already has comprehensive JSDoc:
+- Module-level header comment
+- All exported functions have `@param` and `@returns` annotations
+- Inline comments explain online/offline behavior
 
 ### Phase 5 (i18n)
 - [ ] Audit offline message translation keys
@@ -183,7 +188,9 @@ All screenshots saved to: `docs/learning/epic04_saberloop_v1/screenshots/`
 
 ## Next Session
 
-Continue with **Phase 4: JSDoc** - add type documentation to `src/utils/network.js`.
+Continue with **Phase 5: i18n** - audit offline message translation keys.
+
+Remaining: Phase 5 (i18n), Phase 6 (Architecture)
 
 ---
 
