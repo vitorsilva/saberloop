@@ -23,3 +23,6 @@ php-api/vendor/
 nul
 package/
 telemetry-logs/
+
+# stryker temp files
+.stryker-tmp
