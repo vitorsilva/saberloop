@@ -25,12 +25,13 @@ describe('Formatters', () => {
   });
 
   describe('formatDate', () => {
-    it('should format date using Intl.DateTimeFormat', () => {
+    it('should format date using Intl.DateTimeFormat with default options', () => {
       const date = new Date('2024-06-15');
       const result = formatDate(date);
-      // Result depends on locale, but should be a string
-      expect(typeof result).toBe('string');
-      expect(result.length).toBeGreaterThan(0);
+      // Verify default options are applied: year:'numeric', month:'short', day:'numeric'       
+      expect(result).toContain('Jun');   // month: 'short'
+      expect(result).toContain('2024');  // year: 'numeric'
+      expect(result).toContain('15');    // day: 'numeric'
     });
 
     it('should use current language from i18n', () => {
@@ -72,25 +73,29 @@ describe('Formatters', () => {
       const threeDaysAgo = new Date();
       threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
       const result = formatRelativeDate(threeDaysAgo);
-      // Intl.RelativeTimeFormat returns locale-specific string
-      expect(typeof result).toBe('string');
-      expect(result.length).toBeGreaterThan(0);
+      // Should contain "3" and "day" (e.g., "3 days ago")
+      expect(result).toContain('3');
+      expect(result.toLowerCase()).toContain('day');
     });
 
     it('should use Intl.RelativeTimeFormat for weeks', () => {
       const twoWeeksAgo = new Date();
       twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
       const result = formatRelativeDate(twoWeeksAgo);
-      expect(typeof result).toBe('string');
-      expect(result.length).toBeGreaterThan(0);
+      // Should contain "2" and "week" (e.g., "2 weeks ago")
+      expect(result).toContain('2');
+      expect(result.toLowerCase()).toContain('week');
     });
 
     it('should fall back to formatted date for older dates', () => {
       const oldDate = new Date();
       oldDate.setDate(oldDate.getDate() - 60);
       const result = formatRelativeDate(oldDate);
-      expect(typeof result).toBe('string');
-      expect(result.length).toBeGreaterThan(0);
+      // Should NOT contain relative time words, should be formatted date
+      expect(result.toLowerCase()).not.toContain('day');
+      expect(result.toLowerCase()).not.toContain('week');
+      // Should contain year (formatted date)
+      expect(result).toContain(String(oldDate.getFullYear()));
     });
   });
 
@@ -121,9 +126,9 @@ describe('Formatters', () => {
     });
 
     it('should handle raw percentage values (0-100)', () => {
+      // 85 raw should become 85%, not 8500%
       const result = formatPercent(85, { isRaw: true });
-      expect(result).toContain('85');
-      expect(result).toContain('%');
+      expect(result).toBe('85%');
     });
 
     it('should use current language from i18n', () => {
