@@ -114,6 +114,16 @@ describe('Formatters', () => {
       // Should contain year (formatted date)
       expect(result).toContain(String(oldDate.getFullYear()));
     });
+
+    it('should switch to formatted date at exactly 30 days', () => {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const result = formatRelativeDate(thirtyDaysAgo);
+      // 30 days should use formatted date, not weeks
+      expect(result.toLowerCase()).not.toContain('week');
+      expect(result).toContain(String(thirtyDaysAgo.getFullYear()));
+    });
+
   });
 
   describe('formatNumber', () => {
