@@ -1,0 +1,218 @@
+# Phase 50: Offline Mode Testing - Learning Notes
+
+**Date Started:** December 29, 2024
+**Date Completed:** December 29, 2024
+**Status:** ✅ Complete
+
+---
+
+## Session 1: Initial E2E Tests & Documentation
+
+### What Was Done
+
+1. **Created E2E test infrastructure:**
+   - `tests/e2e/offline.spec.js` - Dedicated offline test file (5 tests)
+   - `tests/e2e/helpers.js` - Shared test helper functions
+
+2. **Captured baseline screenshots** documenting current offline UX:
+   - `phase50-online-baseline.png` - Normal online state
+   - `phase50-offline-banner.png` - Offline banner and disabled button
+   - `phase50-offline-settings.png` - Settings page while offline
+   - `phase50-offline-quiz-replay.png` - Quiz replay from IndexedDB
+   - `phase50-online-recovered.png` - State after connection restored
+
+---
+
+## Offline Behavior Documentation
+
+### Visual Indicators
+
+| State | Network Indicator | Banner | Start Quiz Button |
+|-------|------------------|--------|-------------------|
+| Online | Green dot (bottom-right) | Hidden | Enabled (blue) |
+| Offline | Orange dot (bottom-right) | Visible (orange) | Disabled (gray) |
+
+### Offline Banner
+
+- **Location:** Below "Welcome back!" heading, above "Start New Quiz" button
+- **Icon:** `wifi_off` material icon
+- **Message:** "You're offline. You can replay saved quizzes below."
+- **Color:** Orange/brown background
+
+### Features Available Offline
+
+| Feature | Works Offline? | Notes |
+|---------|---------------|-------|
+| View home page | Yes | All cached via service worker |
+| View quiz history | Yes | Data from IndexedDB |
+| Replay saved quizzes | Yes | Questions stored in IndexedDB |
+| Navigate between views | Yes | SPA routing works offline |
+| Change settings | Yes | Settings stored locally |
+| Change language | Yes | Translations bundled |
+| Start new quiz | No | Requires OpenRouter API |
+| Connect to OpenRouter | No | Requires OAuth flow |
+| Get AI explanations | No | Requires OpenRouter API |
+
+### Connection State Transitions
+
+**Going Offline:**
+1. Browser fires `offline` event
+2. `network.js` detects change via `navigator.onLine`
+3. Banner becomes visible (removes `hidden` class from `#offlineBanner`)
+4. Start Quiz button disabled
+5. Network indicator changes to orange
+
+**Going Online:**
+1. Browser fires `online` event
+2. `network.js` detects change
+3. Banner hidden (adds `hidden` class)
+4. Start Quiz button re-enabled
+5. Network indicator changes to green
+
+---
+
+## E2E Tests Created
+
+### `tests/e2e/offline.spec.js`
+
+| Test | Description | Status |
+|------|-------------|--------|
+| `should show offline banner when connection is lost` | Verifies banner appears when offline | Pass |
+| `should hide offline banner when connection is restored` | Verifies banner hides when online | Pass |
+| `should handle rapid offline/online toggling gracefully` | Tests 5x rapid toggle stability | Pass |
+| `should allow navigation to all views while offline` | Tests Settings, History, Home nav | Pass |
+| `should complete a sample quiz while offline` | Full quiz flow using sample data | Pass |
+| `should complete quiz even if connection lost mid-quiz` | Go offline mid-quiz, still complete | Pass |
+| `should handle full offline/online cycle with quiz replay` | Create quiz, go offline, replay, go online | Pass |
+
+### Test Helpers (`tests/e2e/helpers.js`)
+
+- `setupAuthenticatedState(page)` - Sets up IndexedDB with API key and welcome flag
+- `clearSessions(page)` - Clears quiz sessions for clean state
+
+---
+
+## Key Learnings
+
+### 1. Playwright Offline Simulation
+
+```javascript
+// context.setOffline() controls network at browser level
+await context.setOffline(true);  // Simulate offline
+await context.setOffline(false); // Restore connection
+
+// Different from page - context affects the whole browser session
+// page = single tab/DOM, context = browser session/network
+```
+
+### 2. CSS Class-Based Visibility
+
+The app uses CSS classes for offline banner visibility:
+```javascript
+// Check banner is hidden (has 'hidden' class)
+await expect(offlineBanner).toHaveClass(/hidden/);
+
+// Check banner is visible (doesn't have 'hidden' class)
+await expect(offlineBanner).not.toHaveClass(/hidden/);
+```
+
+### 3. Test File Isolation
+
+Initially imported helpers from `app.spec.js`, but this caused Playwright to run both files (38 tests instead of 4). Solution: extract helpers to non-`.spec.js` file.
+
+### 4. Sample Quizzes Enable Offline Testing
+
+Sample quizzes are pre-loaded on first launch, stored in IndexedDB. This allows testing the full quiz flow offline without needing API mocking.
+
+---
+
+## Screenshots
+
+All screenshots saved to: `docs/learning/epic04_saberloop_v1/screenshots/`
+
+| Screenshot | Description |
+|------------|-------------|
+| `phase50-online-baseline.png` | Home page in online state |
+| `phase50-offline-banner.png` | Home page with offline banner visible |
+| `phase50-offline-settings.png` | Settings page while offline |
+| `phase50-offline-quiz-replay.png` | Quiz replay working offline |
+| `phase50-online-recovered.png` | Home page after connection restored |
+
+---
+
+## Remaining Work
+
+### Phase 1 (Documentation) - ✅ Complete
+- [x] Capture screenshots
+- [x] Document current behavior
+
+### Phase 2 (Unit Tests) - ✅ Skipped (Intentionally)
+- [x] ~~Add edge case tests to `network.test.js`~~
+
+**Decision:** Phase 2 was intentionally skipped because:
+1. `network.js` already has **100% unit test coverage** (20 tests in `network.test.js`)
+2. Edge cases like **rapid toggling** are more meaningful at the E2E level where Playwright actually simulates real network changes via `context.setOffline()`
+3. At the unit level, rapid toggling would only test our mocking of `navigator.onLine`, not real browser behavior
+4. The E2E test `should handle rapid offline/online toggling gracefully` already covers this scenario with real browser behavior
+
+### Phase 3 (E2E Tests) - ✅ Complete (7 tests)
+- [x] Connection transitions (banner show/hide, rapid toggling)
+- [x] Navigation while offline
+- [x] Sample quiz completion offline
+- [x] Mid-quiz connection loss
+- [x] Full offline/online cycle with quiz replay (moved from app.spec.js)
+- [x] ~~Visual regression tests~~ - Skipped
+
+**Decision:** Visual regression tests skipped because:
+1. Manual screenshots already captured in Phase 1 (5 images)
+2. Screenshots provide sufficient documentation of expected UI
+3. Visual regression adds complexity (baseline storage, flakiness, maintenance)
+4. E2E tests already verify functional behavior
+
+### Phase 4 (JSDoc) - ✅ Already Complete
+- [x] Add JSDoc to `src/utils/network.js`
+
+**Finding:** `network.js` already has comprehensive JSDoc:
+- Module-level header comment
+- All exported functions have `@param` and `@returns` annotations
+- Inline comments explain online/offline behavior
+
+### Phase 5 (i18n) - ✅ Complete
+- [x] Audit offline message translation keys
+- [x] Verify translations exist
+
+**Audit Results:**
+| Translation Key | en.json | pt-PT.json | Used In |
+|-----------------|---------|------------|---------|
+| `offline.banner` | ✅ | ✅ | HomeView.js |
+| `loading.offlineAppear` | ✅ | ✅ | LoadingView.js |
+| `loading.offlineWarning` | ✅ | ✅ | LoadingView.js |
+
+**Cleanup:** Removed unused `offline.message` key from both locale files (dead translation).
+
+### Phase 6 (Architecture) - ✅ Complete
+- [x] Run `npm run arch:test`
+- [x] Verify network module compliance
+
+**Result:** 74 modules, 178 dependencies cruised. Only 1 warning (`src/types.js` orphan - expected, contains JSDoc typedefs). Network module has **no violations**.
+
+---
+
+## Summary
+
+Phase 50 comprehensively tested and documented offline functionality:
+
+| Sub-Phase | Status | Key Outcome |
+|-----------|--------|-------------|
+| Phase 1: Documentation | ✅ | 5 screenshots, behavior matrix |
+| Phase 2: Unit Tests | ✅ Skipped | 100% coverage already exists |
+| Phase 3: E2E Tests | ✅ | 7 tests in `offline.spec.js` |
+| Phase 4: JSDoc | ✅ | Already documented |
+| Phase 5: i18n Audit | ✅ | All keys present, 1 dead key removed |
+| Phase 6: Architecture | ✅ | No violations for network module |
+
+**Bonus:** Discovered and removed unused `offline.message` translation key.
+
+---
+
+**Last Updated:** December 29, 2024

@@ -121,7 +121,8 @@
       "Bash(gh pr list:*)",
       "Bash(gh issue close:*)",
       "Bash(git rm:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npm run deploy:telemetry:*)"
     ],
     "deny": [],
     "ask": []
