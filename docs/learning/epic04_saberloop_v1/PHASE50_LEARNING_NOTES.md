@@ -81,6 +81,8 @@
 | `should handle rapid offline/online toggling gracefully` | Tests 5x rapid toggle stability | Pass |
 | `should allow navigation to all views while offline` | Tests Settings, History, Home nav | Pass |
 | `should complete a sample quiz while offline` | Full quiz flow using sample data | Pass |
+| `should complete quiz even if connection lost mid-quiz` | Go offline mid-quiz, still complete | Pass |
+| `should handle full offline/online cycle with quiz replay` | Create quiz, go offline, replay, go online | Pass |
 
 ### Test Helpers (`tests/e2e/helpers.js`)
 
@@ -152,10 +154,16 @@ All screenshots saved to: `docs/learning/epic04_saberloop_v1/screenshots/`
 3. At the unit level, rapid toggling would only test our mocking of `navigator.onLine`, not real browser behavior
 4. The E2E test `should handle rapid offline/online toggling gracefully` already covers this scenario with real browser behavior
 
-### Phase 3 (E2E Tests)
+### Phase 3 (E2E Tests) - ✅ Complete
 - [x] Connection transitions (5 tests)
-- [ ] Mid-operation connection loss
-- [ ] Visual regression tests
+- [x] Mid-operation connection loss (1 test)
+- [x] ~~Visual regression tests~~ - Skipped
+
+**Decision:** Visual regression tests skipped because:
+1. Manual screenshots already captured in Phase 1 (5 images)
+2. Screenshots provide sufficient documentation of expected UI
+3. Visual regression adds complexity (baseline storage, flakiness, maintenance)
+4. E2E tests already verify functional behavior
 
 ### Phase 4 (JSDoc)
 - [ ] Add JSDoc to `src/utils/network.js`
