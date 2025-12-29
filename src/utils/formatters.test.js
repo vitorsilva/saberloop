@@ -73,18 +73,35 @@ describe('Formatters', () => {
       const threeDaysAgo = new Date();
       threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
       const result = formatRelativeDate(threeDaysAgo);
-      // Should contain "3" and "day" (e.g., "3 days ago")
+      // Should contain "3" and "day" and be in the past (not future)
       expect(result).toContain('3');
       expect(result.toLowerCase()).toContain('day');
+      expect(result.toLowerCase()).toContain('ago');
+    });
+
+    it('should switch to weeks format at exactly 7 days', () => {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const result = formatRelativeDate(sevenDaysAgo);
+      // 7 days = 1 week, should use week format not day format
+      expect(result.toLowerCase()).toContain('week');
+      expect(result.toLowerCase()).not.toContain('day');
     });
 
     it('should use Intl.RelativeTimeFormat for weeks', () => {
+      // Test 1 week ago - should use "last week" (numeric: 'auto')
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 10); // 10 days = 1 week in floor division      
+      const resultOne = formatRelativeDate(oneWeekAgo);
+      expect(resultOne.toLowerCase()).toContain('last');
+      expect(resultOne.toLowerCase()).toContain('week');
+
+      // Test 2 weeks ago
       const twoWeeksAgo = new Date();
       twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-      const result = formatRelativeDate(twoWeeksAgo);
-      // Should contain "2" and "week" (e.g., "2 weeks ago")
-      expect(result).toContain('2');
-      expect(result.toLowerCase()).toContain('week');
+      const resultTwo = formatRelativeDate(twoWeeksAgo);
+      expect(resultTwo).toContain('2');
+      expect(resultTwo.toLowerCase()).toContain('week');
     });
 
     it('should fall back to formatted date for older dates', () => {
