@@ -566,6 +566,125 @@ done
 
 ---
 
+## Animated Demo Video (Playwright)
+
+Video recording is already enabled in `playwright.config.js:12`:
+
+```javascript
+video: 'on', // Record video for all tests (for documentation)
+```
+
+### Demo Video Script
+
+Add to `tests/e2e/capture-screenshots.spec.js`:
+
+```javascript
+test('6. Demo video - Complete user journey', async ({ page }) => {
+  await setupAuthenticatedState(page);
+
+  // Start from home - pause to show the UI
+  await page.waitForTimeout(1000);
+
+  // Navigate to topic input
+  await page.goto('/#/topic-input');
+  await page.waitForTimeout(500);
+
+  // Type topic slowly (character by character for visual effect)
+  const topic = 'World History';
+  for (const char of topic) {
+    await page.type('#topicInput', char, { delay: 100 });
+  }
+  await page.waitForTimeout(500);
+
+  // Select grade level
+  await page.selectOption('#gradeLevelSelect', 'high school');
+  await page.waitForTimeout(500);
+
+  // Generate quiz
+  await page.click('#generateBtn');
+
+  // Show loading state briefly
+  await page.waitForURL(/#\/loading/);
+  await page.waitForTimeout(1500);
+
+  // Wait for quiz
+  await page.waitForURL(/#\/quiz/, { timeout: 15000 });
+  await page.waitForTimeout(800);
+
+  // Answer questions with deliberate pauses
+  // Get one wrong to show explanation feature
+  await page.locator('.option-btn').nth(0).click(); // Wrong answer
+  await page.waitForTimeout(400);
+  await page.click('#submitBtn');
+  await page.waitForTimeout(600);
+
+  // Answer rest correctly
+  for (let i = 1; i < 5; i++) {
+    await page.locator('.option-btn').nth(1).click();
+    await page.waitForTimeout(300);
+    await page.click('#submitBtn');
+    await page.waitForTimeout(500);
+  }
+
+  // Show results
+  await page.waitForURL(/#\/results/);
+  await page.waitForTimeout(1000);
+
+  // Click explain button to show modal
+  await page.locator('.explain-btn').click();
+  await page.waitForSelector('#explanationModal', { state: 'visible' });
+  await page.waitForTimeout(2000); // Let user read explanation
+
+  // Close modal
+  await page.click('#gotItBtn');
+  await page.waitForTimeout(800);
+
+  // Show Continue button
+  await page.locator('#continueTopicBtn').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1500);
+
+  console.log('✓ Captured: Demo video (~30s journey)');
+});
+```
+
+### How to Generate Demo Video
+
+```bash
+# Run just the demo video test
+npx playwright test tests/e2e/capture-screenshots.spec.js -g "Demo video"
+
+# Video saved to: test-results/capture-screenshots-6-Demo-video/video.webm
+
+# Convert to MP4 for web (requires ffmpeg)
+ffmpeg -i test-results/*/video.webm -c:v libx264 -crf 23 docs/product-info/demo-video.mp4
+
+# Or convert to GIF for landing page (smaller, auto-plays)
+ffmpeg -i test-results/*/video.webm -vf "fps=10,scale=320:-1" -loop 0 docs/product-info/demo.gif
+```
+
+### Embedding on Landing Page
+
+**Option A: Video element (MP4)**
+```html
+<video autoplay muted loop playsinline>
+  <source src="/app/demo-video.mp4" type="video/mp4">
+</video>
+```
+
+**Option B: GIF (simpler, auto-plays everywhere)**
+```html
+<img src="/app/demo.gif" alt="Saberloop app demo" loading="lazy">
+```
+
+**Option C: Poster + Play button (saves bandwidth)**
+```html
+<video poster="/app/demo-poster.png" controls>
+  <source src="/app/demo-video.mp4" type="video/mp4">
+</video>
+```
+
+---
+
 ## Implementation Checklist
 
 ### Content Changes
@@ -582,6 +701,8 @@ done
 - [ ] Screenshot: Results page with Continue button visible
 - [ ] Screenshot: Settings page showing customization options
 - [ ] Optional: Share card mockup image
+- [ ] Demo video: Complete user journey (~30s)
+- [ ] Convert video to MP4/GIF for landing page
 
 ### Technical Changes
 - [ ] Add CSS for 6-column feature grid (or 3x2 layout)
@@ -603,8 +724,7 @@ Track in Google Analytics (already set up):
 
 ## Out of Scope (Future Considerations)
 
-1. **Animated demo/video** — show app in action
-2. **Interactive demo** — embedded mini-quiz on landing page
-3. **A/B testing** — test different value propositions
-4. **Localized landing pages** — landing page in PT, ES, FR, DE
-5. **PWA install prompt on landing page** — for web visitors
+1. **Interactive demo** — embedded mini-quiz on landing page
+2. **A/B testing** — test different value propositions
+3. **Localized landing pages** — landing page in PT, ES, FR, DE
+4. **PWA install prompt on landing page** — for web visitors
