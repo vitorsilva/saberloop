@@ -44,7 +44,8 @@
     "translate": "node scripts/translate.js",
     "docs": "jsdoc -c jsdoc.config.json",
     "docs:open": "jsdoc -c jsdoc.config.json && start docs/api/index.html",
-    "typecheck": "tsc -p jsconfig.json --noEmit"
+    "typecheck": "tsc -p jsconfig.json --noEmit",
+    "test:mutation": "stryker run"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",

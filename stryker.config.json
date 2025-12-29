@@ -1,13 +1,19 @@
 {
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-  "_comment": "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information.",
   "packageManager": "npm",
-  "reporters": [
-    "html",
-    "clear-text",
-    "progress"
-  ],
+  "reporters": ["html", "clear-text", "progress"],
   "testRunner": "vitest",
-  "testRunner_comment": "Take a look at https://stryker-mutator.io/docs/stryker-js/vitest-runner for information about the vitest plugin.",
-  "coverageAnalysis": "perTest"
+  "coverageAnalysis": "perTest",
+  "mutate": [
+    "src/utils/gradeProgression.js",
+    "src/utils/shuffle.js",
+    "src/utils/formatters.js"
+  ],
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": null
+  },
+  "timeoutMS": 10000,
+  "concurrency": 4
 }
