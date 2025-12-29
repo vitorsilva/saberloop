@@ -154,9 +154,12 @@ All screenshots saved to: `docs/learning/epic04_saberloop_v1/screenshots/`
 3. At the unit level, rapid toggling would only test our mocking of `navigator.onLine`, not real browser behavior
 4. The E2E test `should handle rapid offline/online toggling gracefully` already covers this scenario with real browser behavior
 
-### Phase 3 (E2E Tests) - ✅ Complete
-- [x] Connection transitions (5 tests)
-- [x] Mid-operation connection loss (1 test)
+### Phase 3 (E2E Tests) - ✅ Complete (7 tests)
+- [x] Connection transitions (banner show/hide, rapid toggling)
+- [x] Navigation while offline
+- [x] Sample quiz completion offline
+- [x] Mid-quiz connection loss
+- [x] Full offline/online cycle with quiz replay (moved from app.spec.js)
 - [x] ~~Visual regression tests~~ - Skipped
 
 **Decision:** Visual regression tests skipped because:
@@ -180,7 +183,7 @@ All screenshots saved to: `docs/learning/epic04_saberloop_v1/screenshots/`
 
 ## Next Session
 
-Continue with **Phase 3: E2E Tests** - add mid-operation connection loss tests and visual regression tests.
+Continue with **Phase 4: JSDoc** - add type documentation to `src/utils/network.js`.
 
 ---
 
