@@ -173,11 +173,12 @@ maestro test .maestro/flows/01-onboarding.yaml --debug-output .maestro/debug
 ### Session 1 (Dec 29):
 - ✅ Smoke test - PASSES
 - ✅ 01-onboarding.yaml - PASSES
-- ⚠️ 02-quiz-flow.yaml - FAILS (state-dependent)
+- ⚠️ 02-quiz-flow.yaml - FAILED (state-dependent, fixed in Session 2)
 - ⏳ 03-07 - Not yet tested
 
 ### Session 2 (Dec 30):
 **All tests passing after fixes:**
+- ✅ 02-quiz-flow.yaml - PASSES (fixed by navigate-home dialog handling)
 - ✅ 03-quiz-results.yaml - PASSES
 - ✅ 04-replay-quiz.yaml - PASSES
 - ✅ 05-navigation.yaml - PASSES
@@ -228,7 +229,7 @@ maestro test .maestro/flows/01-onboarding.yaml --debug-output .maestro/debug
 **Test Results (All Passing):**
 - ✅ smoke-test.yaml
 - ✅ 01-onboarding.yaml
-- ✅ 02-quiz-flow.yaml (needs retry due to state)
+- ✅ 02-quiz-flow.yaml
 - ✅ 03-quiz-results.yaml
 - ✅ 04-replay-quiz.yaml
 - ✅ 05-navigation.yaml
