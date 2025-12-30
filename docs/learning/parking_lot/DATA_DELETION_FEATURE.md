@@ -359,9 +359,13 @@ db.js, settings.js, etc. (Core Layer)
 ### Phase 5: Testing
 
 #### 5.1 Unit tests
+- [ ] `src/utils/storage.test.js` - Test `formatStorageSize()` and `getStorageBreakdown()`
 - [ ] `src/core/db.test.js` - Test `clearAllUserData()`
 - [ ] `src/services/data-service.test.js` - Test `deleteAllUserData()` orchestration
-- [ ] Ensure good coverage (aim for 80%+)
+- [ ] Run `npm run test:coverage` and verify:
+  - [ ] `src/utils/storage.js` ≥ 80% coverage
+  - [ ] `src/services/data-service.js` ≥ 80% coverage
+  - [ ] New functions in `src/core/db.js` covered
 
 #### 5.2 E2E tests
 **File**: `tests/e2e/data-deletion.spec.js` (NEW)
@@ -376,6 +380,17 @@ db.js, settings.js, etc. (Core Layer)
 #### 5.3 Architecture validation
 - [ ] Run `npm run arch:test` to verify no layer violations
 - [ ] Ensure data-service.js follows service layer patterns
+- [ ] Ensure storage.js follows utils layer patterns
+
+#### 5.4 Maestro testing (mobile)
+**File**: `.maestro/flows/data-deletion.yaml` (NEW)
+- [ ] Test storage usage displays in Settings
+- [ ] Test delete button navigates to confirmation
+- [ ] Test cancel returns to Settings
+- [ ] Test delete clears data and shows success
+- [ ] Test sample quizzes available after deletion
+
+---
 
 ### Phase 6: Documentation & Polish
 
@@ -402,6 +417,7 @@ db.js, settings.js, etc. (Core Layer)
 | `src/services/data-service.test.js` | Data service unit tests |
 | `src/components/DeleteDataModal.js` | Confirmation modal |
 | `tests/e2e/data-deletion.spec.js` | E2E tests |
+| `.maestro/flows/data-deletion.yaml` | Maestro mobile tests |
 
 ### Modified Files
 | File | Changes |
@@ -414,6 +430,41 @@ db.js, settings.js, etc. (Core Layer)
 | `public/locales/es.json` | Add Spanish strings |
 | `public/locales/fr.json` | Add French strings |
 | `public/locales/de.json` | Add German strings |
+
+---
+
+## Test Commands
+
+Run these commands to verify the implementation:
+
+```bash
+# Unit tests
+npm test -- --run
+
+# Unit tests with coverage
+npm run test:coverage
+
+# E2E tests (headless)
+npm run test:e2e
+
+# E2E tests (with UI)
+npm run test:e2e:ui
+
+# Architecture tests
+npm run arch:test
+
+# Dead code detection
+npm run lint:dead-code
+
+# Type checking
+npm run typecheck
+
+# Maestro mobile tests (requires Android emulator)
+maestro test .maestro/flows/data-deletion.yaml
+
+# Run all checks before PR
+npm test -- --run && npm run test:e2e && npm run arch:test && npm run typecheck
+```
 
 ---
 
@@ -432,13 +483,21 @@ db.js, settings.js, etc. (Core Layer)
 - [ ] `deleteAllUserData()` clears all storage types
 - [ ] `deleteAllUserData()` reloads samples
 
-### E2E Tests
+### E2E Tests (Playwright)
+- [ ] Storage usage displays in Settings
 - [ ] Delete button appears in Settings
 - [ ] Clicking button shows confirmation modal
 - [ ] Cancel closes modal, data preserved
 - [ ] Confirm deletes data, shows success toast
 - [ ] App functional after deletion
 - [ ] Sample quizzes available after deletion
+
+### Maestro Tests (Mobile)
+- [ ] Storage usage visible on Settings screen
+- [ ] Delete button tap opens confirmation
+- [ ] Cancel returns to Settings
+- [ ] Delete clears data and shows success
+- [ ] Sample quizzes load after deletion
 
 ### Manual Tests
 - [ ] Test on Chrome desktop
