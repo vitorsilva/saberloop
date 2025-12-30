@@ -26,3 +26,7 @@ telemetry-logs/
 
 # stryker temp files
 .stryker-tmp
+
+# Maestro test artifacts (keep screenshots/)
+.maestro/tests/*
+!.maestro/tests/screenshots/
