@@ -1,9 +1,51 @@
-# Phase 87: E2E Mutation Testing Exploration
+# Phase 87: E2E Mutation Testing Exploration (Wave 3)
 
 **Status:** Experimental / Research
-**Priority:** Low
+**Priority:** Low (Exploratory)
 **Estimated Effort:** 1-2 sessions
-**Prerequisites:** Phase 85 and 86 complete
+**Created:** 2024-12-XX
+**Updated:** 2024-12-30
+
+## Session Log
+
+| Date | Status | Notes |
+|------|--------|-------|
+| 2024-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+
+---
+
+## Overview
+
+Explore the feasibility and value of mutation testing with E2E tests (Playwright). This is an **experimental/research phase** to understand what's possible, not to implement a production solution.
+
+**Key Goal:** Answer "Do E2E tests catch mutations that unit tests miss?"
+
+---
+
+## What You'll Learn
+
+### New Technologies & Concepts
+
+1. **Manual Mutation Testing** - Hand-crafted mutations to validate test effectiveness
+2. **E2E Test Quality Assessment** - Understanding what E2E tests actually verify
+3. **Test Strategy Gaps** - Finding holes in test coverage at integration level
+4. **Performance Tradeoffs** - Why mutation testing E2E tests is challenging
+5. **Research Methodology** - How to explore experimental testing approaches
+6. **Tool Limitations** - Understanding when tools don't exist yet
+
+---
+
+## Prerequisites
+
+Before starting this phase, you should have:
+
+- ✅ **Phase 85** complete (Mutation testing Wave 1)
+- ✅ **Phase 86** complete (Mutation testing Wave 2)
+- ✅ E2E tests with Playwright working
+- ✅ Understanding of mutation testing concepts
+- ✅ Curiosity and willingness to experiment!
+
+---
 
 ## Objective
 

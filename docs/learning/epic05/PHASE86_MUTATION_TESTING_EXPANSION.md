@@ -1,13 +1,55 @@
-# Phase 86: Mutation Testing Expansion (Wave 2 & 3)
+# Phase 86: Mutation Testing Expansion (Wave 2)
 
 **Status:** Ready (after Phase 85)
-**Priority:** Medium
+**Priority:** Medium (Code Quality)
 **Estimated Effort:** 3-4 sessions
-**Prerequisites:** Phase 85 complete with >80% mutation score on Wave 1
+**Created:** 2024-12-XX
+**Updated:** 2024-12-30
+
+## Session Log
+
+| Date | Status | Notes |
+|------|--------|-------|
+| 2024-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+
+---
+
+## Overview
+
+Expand mutation testing to core infrastructure modules (~400 lines). This phase targets state management, database operations, settings, and feature flags - the foundational code that supports all features.
+
+**Key Goal:** Achieve >80% mutation score on critical infrastructure code.
+
+---
+
+## What You'll Learn
+
+### New Technologies & Concepts
+
+1. **State Management Testing** - Validating state transitions and pub/sub patterns
+2. **IndexedDB Test Strategies** - Mocking database operations effectively
+3. **Settings Validation Testing** - Configuration merge and default handling
+4. **Feature Flag Testing** - Boolean logic and context-aware flags
+5. **Infrastructure Mutation Patterns** - Common weak spots in foundational code
+6. **Test Quality Metrics** - Moving beyond coverage to mutation scores
+
+---
+
+## Prerequisites
+
+Before starting this phase, you should have:
+
+- ✅ **Phase 85** complete (Mutation testing Wave 1 with >80% score)
+- ✅ Stryker configured and working (`stryker.config.json`)
+- ✅ Unit tests for all Wave 2 target files
+- ✅ Understanding of mutation testing concepts (from Phase 85)
+- ✅ Familiarity with state.js, db.js, settings.js, features.js
+
+---
 
 ## Objective
 
-Expand mutation testing coverage to include core infrastructure and API modules, building on the foundation established in Phase 85.
+Expand mutation testing coverage to include core infrastructure modules, building on the foundation established in Phase 85.
 
 ---
 
