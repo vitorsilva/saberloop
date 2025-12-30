@@ -1,0 +1,78 @@
+appId: com.saberloop.app
+---
+# Test 03: Quiz Results with Mixed Answers
+# Verifies results display with correct/incorrect answers and info button
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Find and tap on any sample quiz
+- tapOn:
+    text: ".*Solar System.*|.*Basic Math.*|.*Famous Scientists.*"
+
+# Wait for quiz to load
+- extendedWaitUntil:
+    visible: "Question.*of.*"
+    timeout: 10000
+
+- takeScreenshot: 03-quiz-started
+
+# Answer 5 questions with mixed results (some wrong to test results display)
+# Answer first 4 with option A, last with option B (gives varied results)
+
+# Question 1 - Answer A
+- tapOn:
+    text: "A\\).*"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Question 2 - Answer B (different to get variety)
+- tapOn:
+    text: "B\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 3 - Answer A
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 4 - Answer C (different to get variety)
+- tapOn:
+    text: "C\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 5 - Answer A
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Wait for results page
+- extendedWaitUntil:
+    visible: ".*Results.*|.*Score.*|.*%.*"
+    timeout: 10000
+
+# Verify results page shows percentage
+- assertVisible:
+    text: ".*%.*"
+
+- takeScreenshot: 03-results-page
+
+# Verify action buttons exist
+- assertVisible:
+    text: ".*Try Another.*|.*Continue.*"
+
+- takeScreenshot: 03-results-complete

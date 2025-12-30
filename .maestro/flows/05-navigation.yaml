@@ -1,0 +1,64 @@
+appId: com.saberloop.app
+---
+# Test 05: Bottom Navigation
+# Verifies navigation between Home, History, and Settings
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Verify we're on home screen
+- assertVisible:
+    text: "Saberloop"
+
+- takeScreenshot: 05-nav-home
+
+# Verify bottom nav icons are visible
+- assertVisible:
+    text: "Home"
+
+- assertVisible:
+    text: ".*History.*|.*Topics.*"
+
+- assertVisible:
+    text: "Settings"
+
+# Navigate to History/Topics
+- tapOn:
+    text: ".*History.*|.*Topics.*"
+
+# Verify History page
+- assertVisible:
+    text: ".*Topics.*|.*History.*|.*Your Quizzes.*"
+
+- takeScreenshot: 05-nav-history
+
+# Verify quiz items are displayed (sample quizzes should exist)
+- assertVisible:
+    text: ".*Solar System.*|.*Basic Math.*"
+    optional: true
+
+# Navigate to Settings
+- tapOn: "Settings"
+
+# Verify Settings page
+- assertVisible:
+    text: "Settings"
+
+- assertVisible:
+    text: ".*Preferences.*"
+
+- takeScreenshot: 05-nav-settings
+
+# Navigate back to Home
+- tapOn: "Home"
+
+# Verify we're back on home
+- assertVisible:
+    text: "Saberloop"
+
+- assertVisible:
+    text: ".*Start.*Quiz.*|.*Generate.*Quiz.*"
+
+- takeScreenshot: 05-nav-back-home

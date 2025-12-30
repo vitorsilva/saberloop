@@ -1,0 +1,30 @@
+appId: com.saberloop.app
+---
+# Test 01: Onboarding Flow
+# Verifies welcome screen and navigation to home with sample quizzes
+
+# Launch the app
+- launchApp
+
+# Take screenshot of initial state (welcome or home)
+- takeScreenshot: 01-initial-state
+
+# Handle welcome screen if present (optional - may already be on home)
+- tapOn:
+    text: "Try Free Quizzes"
+    optional: true
+
+# Ensure we're on home by tapping Home in nav
+- tapOn:
+    text: "Home"
+    optional: true
+
+# Verify we're on home screen (accept multiple possible texts)
+- assertVisible:
+    text: ".*Saberloop.*|.*Welcome back.*"
+
+# Verify sample quizzes are visible
+- assertVisible:
+    text: ".*Solar System.*|.*Basic Math.*|.*Famous Scientists.*"
+
+- takeScreenshot: 01-home-with-samples
