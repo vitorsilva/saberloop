@@ -1,0 +1,18 @@
+appId: com.saberloop.app
+---
+# Shared helper: Navigate to home screen
+# Handles both fresh (welcome) and returning (home) user states
+
+# If on welcome screen, tap "Try Free Quizzes" to get to home (optional)
+- tapOn:
+    text: "Try Free Quizzes"
+    optional: true
+
+# Tap Home in bottom nav to ensure we're on home screen
+- tapOn:
+    text: "Home"
+    optional: true
+
+# Wait for home screen elements
+- assertVisible:
+    text: ".*Saberloop.*|.*Welcome back.*"
