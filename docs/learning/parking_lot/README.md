@@ -285,36 +285,6 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
-### [Explanation Performance Improvement](./EXPLANATION_PERFORMANCE_IMPROVEMENT.md) ⭐ **Ready to Implement**
-
-**Status:** Planning Complete
-
-**What it is:**
-- Split explanation into `rightAnswerExplanation` (cacheable) and `wrongAnswerExplanation` (personalized)
-- Cache correct answer explanation in session for instant display
-- Progressive loading: show cached content immediately, load personalized in parallel
-- Offline/no-LLM graceful degradation with cached content
-
-**Why it's optional:**
-- ✅ Current explanation feature works (full generation each time)
-- ⚠️ Moderate implementation effort (UI, API, storage changes)
-- ⚠️ Changes LLM prompt structure (JSON parsing needed)
-
-**Why you might want it:**
-- ⚡ **Better UX** - Instant content display instead of waiting
-- 📴 **Offline support** - Partial functionality without network
-- 💰 **Token savings** - Only generate personalized part on repeat views
-- 🔄 **Quiz retakes** - Cached explanations persist across sessions
-- 🎓 **Learning value** - Progressive loading patterns, structured API responses
-
-**When to revisit:**
-- Want to improve explanation UX
-- Need offline explanation support
-- Optimizing LLM token usage
-- Before public launch
-
----
-
 ## How to Use This Folder
 
 ### If You're Planning Epic 3
@@ -392,12 +362,27 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 10 ideas (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection, Explanation Performance Improvement)
+**Current count:** 9 ideas remaining (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection)
 
 **Status:** All documented and ready to implement when desired
 
 ---
 
-**Last Updated:** 2025-12-28
+## Recently Moved to Epic 5
+
+The following items have been promoted from parking lot to **Epic 5: Growth & Excellence** ([see Epic 5 plan](../epic05/EPIC5_PLAN.md)):
+
+- ✅ **Explanation Performance Improvement** → Epic 5
+- ✅ **Data Deletion Feature** → Epic 5
+- ✅ **Usage & Cost Tracking** (Phase 49) → Epic 5
+- ✅ **Landing Page Improvements** → Epic 5
+- ✅ **Google Play Store Update** → Epic 5
+- ✅ **Mutation Testing Expansion** (Phases 86-87) → Epic 5
+
+---
+
+**Last Updated:** 2025-12-30
 **Location:** `docs/parking_lot/`
-**Related:** [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
+**Related:**
+- [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)
+- [Epic 5 Plan](../epic05/EPIC5_PLAN.md)
