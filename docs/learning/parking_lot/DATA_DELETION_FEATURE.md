@@ -2,6 +2,7 @@
 
 **Status**: 📋 Planning
 **Created**: 2024-12-28
+**Updated**: 2024-12-30
 **Branch**: `claude/add-data-deletion-iZN2V`
 
 ---
@@ -125,6 +126,14 @@ User stays on Settings page
 │  ──────────── NEW ────────────      │
 │  Data Management                    │
 │  ┌─────────────────────────────────┐│
+│  │ 🗄️ Storage Usage                ││
+│  │                                 ││
+│  │ Settings & Preferences   1.2 KB ││
+│  │ Quizzes & History       44.0 KB ││
+│  │ ───────────────────────────────  ││
+│  │ Total                   45.2 KB ││
+│  └─────────────────────────────────┘│
+│  ┌─────────────────────────────────┐│
 │  │ 🗑️ Delete All Data              ││
 │  │    Remove all quizzes,          ││
 │  │    settings, and connections    ││
@@ -222,7 +231,54 @@ db.js, settings.js, etc. (Core Layer)
 
 ---
 
+## Learning Objectives
+
+| Topic | What You'll Learn |
+|-------|-------------------|
+| **Storage Manager API** | Using `navigator.storage.estimate()` for total origin storage |
+| **IndexedDB Size Calculation** | Serializing data to JSON to measure store sizes |
+| **Byte Formatting** | Converting bytes to human-readable units (KB, MB, GB) |
+| **Async UI Updates** | Loading data after initial render with loading states |
+| **Data Cleanup Patterns** | Orchestrating deletion across multiple storage systems |
+| **Confirmation UX** | Modal patterns for destructive actions |
+
+---
+
 ## Implementation Plan
+
+### Phase 0: Storage Size Display
+
+#### 0.1 Create storage utility
+**File**: `src/utils/storage.js`
+- [ ] Create `formatStorageSize(bytes)` - formats bytes to human-readable (B, KB, MB, GB)
+- [ ] Create `getStorageBreakdown()` - returns { core, quizzes, total } with formatted strings
+- [ ] Calculate core size: localStorage settings + IndexedDB settings store
+- [ ] Calculate quizzes size: IndexedDB topics + sessions stores
+- [ ] Add JSDoc documentation
+- [ ] Add unit tests in `src/utils/storage.test.js`
+
+#### 0.2 Add Storage Usage card to Settings
+**File**: `src/views/SettingsView.js`
+- [ ] Add "Data Management" section header
+- [ ] Add Storage Usage card with breakdown display
+- [ ] Load storage breakdown asynchronously on render
+- [ ] Show loading state ("...") while calculating
+- [ ] Handle errors gracefully (show "--" on failure)
+
+#### 0.3 Add i18n strings for storage display
+**Files**: `public/locales/{en,pt-PT}.json`
+- [ ] Add keys:
+  ```json
+  "settings": {
+    "dataManagement": "Data Management",
+    "storageUsage": "Storage Usage",
+    "coreData": "Settings & Preferences",
+    "quizzesData": "Quizzes & History",
+    "totalUsed": "Total"
+  }
+  ```
+
+---
 
 ### Phase 1: Core Infrastructure
 
@@ -303,9 +359,13 @@ db.js, settings.js, etc. (Core Layer)
 ### Phase 5: Testing
 
 #### 5.1 Unit tests
+- [ ] `src/utils/storage.test.js` - Test `formatStorageSize()` and `getStorageBreakdown()`
 - [ ] `src/core/db.test.js` - Test `clearAllUserData()`
 - [ ] `src/services/data-service.test.js` - Test `deleteAllUserData()` orchestration
-- [ ] Ensure good coverage (aim for 80%+)
+- [ ] Run `npm run test:coverage` and verify:
+  - [ ] `src/utils/storage.js` ≥ 80% coverage
+  - [ ] `src/services/data-service.js` ≥ 80% coverage
+  - [ ] New functions in `src/core/db.js` covered
 
 #### 5.2 E2E tests
 **File**: `tests/e2e/data-deletion.spec.js` (NEW)
@@ -320,6 +380,17 @@ db.js, settings.js, etc. (Core Layer)
 #### 5.3 Architecture validation
 - [ ] Run `npm run arch:test` to verify no layer violations
 - [ ] Ensure data-service.js follows service layer patterns
+- [ ] Ensure storage.js follows utils layer patterns
+
+#### 5.4 Maestro testing (mobile)
+**File**: `.maestro/flows/data-deletion.yaml` (NEW)
+- [ ] Test storage usage displays in Settings
+- [ ] Test delete button navigates to confirmation
+- [ ] Test cancel returns to Settings
+- [ ] Test delete clears data and shows success
+- [ ] Test sample quizzes available after deletion
+
+---
 
 ### Phase 6: Documentation & Polish
 
@@ -340,10 +411,13 @@ db.js, settings.js, etc. (Core Layer)
 ### New Files
 | File | Purpose |
 |------|---------|
+| `src/utils/storage.js` | Storage size calculation utilities |
+| `src/utils/storage.test.js` | Storage utility unit tests |
 | `src/services/data-service.js` | Data deletion orchestration |
-| `src/services/data-service.test.js` | Unit tests |
+| `src/services/data-service.test.js` | Data service unit tests |
 | `src/components/DeleteDataModal.js` | Confirmation modal |
 | `tests/e2e/data-deletion.spec.js` | E2E tests |
+| `.maestro/flows/data-deletion.yaml` | Maestro mobile tests |
 
 ### Modified Files
 | File | Changes |
@@ -359,22 +433,71 @@ db.js, settings.js, etc. (Core Layer)
 
 ---
 
+## Test Commands
+
+Run these commands to verify the implementation:
+
+```bash
+# Unit tests
+npm test -- --run
+
+# Unit tests with coverage
+npm run test:coverage
+
+# E2E tests (headless)
+npm run test:e2e
+
+# E2E tests (with UI)
+npm run test:e2e:ui
+
+# Architecture tests
+npm run arch:test
+
+# Dead code detection
+npm run lint:dead-code
+
+# Type checking
+npm run typecheck
+
+# Maestro mobile tests (requires Android emulator)
+maestro test .maestro/flows/data-deletion.yaml
+
+# Run all checks before PR
+npm test -- --run && npm run test:e2e && npm run arch:test && npm run typecheck
+```
+
+---
+
 ## Testing Checklist
 
-### Unit Tests
+### Unit Tests (Phase 0 - Storage Display)
+- [ ] `formatStorageSize()` formats bytes correctly (B, KB, MB, GB)
+- [ ] `getStorageBreakdown()` returns core and quizzes sizes
+- [ ] `getStorageBreakdown()` handles empty databases gracefully
+- [ ] Total equals core + quizzes
+
+### Unit Tests (Phase 1+ - Data Deletion)
 - [ ] `clearAllUserData()` deletes non-sample sessions
 - [ ] `clearAllUserData()` preserves sample sessions
 - [ ] `clearAllUserData()` clears settings
 - [ ] `deleteAllUserData()` clears all storage types
 - [ ] `deleteAllUserData()` reloads samples
 
-### E2E Tests
+### E2E Tests (Playwright)
+- [ ] Storage usage displays in Settings
 - [ ] Delete button appears in Settings
 - [ ] Clicking button shows confirmation modal
 - [ ] Cancel closes modal, data preserved
 - [ ] Confirm deletes data, shows success toast
 - [ ] App functional after deletion
 - [ ] Sample quizzes available after deletion
+
+### Maestro Tests (Mobile)
+- [ ] Storage usage visible on Settings screen
+- [ ] Delete button tap opens confirmation
+- [ ] Cancel returns to Settings
+- [ ] Delete clears data and shows success
+- [ ] Sample quizzes load after deletion
 
 ### Manual Tests
 - [ ] Test on Chrome desktop
@@ -388,16 +511,76 @@ db.js, settings.js, etc. (Core Layer)
 
 ## Acceptance Criteria
 
-1. ✅ User can delete all data from Settings page
-2. ✅ Confirmation modal prevents accidental deletion
-3. ✅ Success message confirms deletion
-4. ✅ Sample quizzes automatically reload
-5. ✅ App remains functional after deletion
-6. ✅ All strings translated to 5 languages
-7. ✅ Unit test coverage ≥ 80% for new code
-8. ✅ E2E tests pass
-9. ✅ Architecture tests pass
-10. ✅ Before/after screenshots documented
+### Phase 0: Storage Display
+1. [ ] Storage usage displayed in Settings under "Data Management"
+2. [ ] Breakdown shows Settings & Preferences vs Quizzes & History
+3. [ ] Total storage calculated correctly
+4. [ ] Loading state shown while calculating
+5. [ ] Unit tests pass for storage utilities
+
+### Phase 1+: Data Deletion
+6. [ ] User can delete all data from Settings page
+7. [ ] Confirmation modal prevents accidental deletion
+8. [ ] Success message confirms deletion
+9. [ ] Sample quizzes automatically reload
+10. [ ] App remains functional after deletion
+11. [ ] All strings translated to supported languages
+12. [ ] Unit test coverage ≥ 80% for new code
+13. [ ] E2E tests pass
+14. [ ] Architecture tests pass
+15. [ ] Before/after screenshots documented
+
+---
+
+## Troubleshooting / Common Pitfalls
+
+Based on findings from previous phases, watch out for these issues:
+
+### Maestro Testing (Mobile)
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| TWA state not clearable | Maestro `clearState` doesn't affect IndexedDB/localStorage in TWA apps | Use in-app "Delete All Data" feature as test setup |
+| Airplane mode flaky in CI | Device airplane mode toggles unreliable in CI | Skip network-dependent tests in CI or use dedicated offline flows |
+| Emulator startup slow | Cold boot takes 30-60s | Use `-no-snapshot-load` flag or keep emulator running |
+| APK version mismatch | Testing outdated APK | Always run `npm run build && npm run build:twa` before testing |
+| ADB not found | `ANDROID_HOME` not set | Set `export ANDROID_HOME=~/Android/Sdk` and add to PATH |
+
+### E2E Testing (Playwright)
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Test file isolation | Importing from `.spec.js` runs both files | Extract shared utils to non-spec helper files |
+| Offline simulation | `page.setOffline()` doesn't work for service workers | Use `context.setOffline(true)` before navigation |
+| No offline data | Sample quizzes not loaded | Visit home page first to trigger sample loading |
+| Flaky selectors | i18n changes text content | Use `data-testid` attributes for stable selectors |
+
+### Unit Testing
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Can't capture handlers | Event handlers not accessible | Return handler from setup function or store in module state |
+| Browser globals undefined | `localStorage`, `navigator` not in Node | Mock using `vi.stubGlobal()` or `Object.defineProperty()` |
+| localStorage mock issues | Can't spy on `localStorage.getItem` directly | Spy on `Storage.prototype.getItem` instead |
+| Timers not advancing | Using `Date.now()` with fake timers | Use `vi.useFakeTimers()` with `vi.advanceTimersByTime()` |
+| Coverage below threshold | New files not meeting 80% | Write tests for error paths, not just happy paths |
+
+### i18n / Cross-Platform
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Text selectors break | Translations change button text | Use `data-testid` for all testable elements |
+| ENV vars not working | Different syntax Windows vs Unix | Use `cross-env` package: `cross-env VITE_API=mock npm test` |
+| Missing translations | New keys not in all locale files | Run build to catch missing keys, check all 5 language files |
+
+### Code Coverage
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Coverage drops | New code not tested | Run `npm run test:coverage` and check new files specifically |
+| Branch coverage low | Missing error path tests | Add tests for `try/catch`, `if/else`, and edge cases |
+| Coverage report unclear | Too many files | Use `--coverage.include='src/utils/storage.js'` for specific files |
+
+### Architecture
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Layer violation | Service importing from view | Check imports: views→services→core→utils (one direction) |
+| Unexpected warning | New file not in dependency rules | Update `.dependency-cruiser.cjs` if adding new module patterns |
 
 ---
 
