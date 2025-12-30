@@ -1,0 +1,87 @@
+appId: com.saberloop.app
+---
+# Test 07: Offline Mode
+# Verifies offline behavior - banner, button states, and saved quiz access
+# NOTE: This test uses airplane mode toggle which may be flaky in CI
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Verify we're online - Start New Quiz button should be enabled
+- assertVisible:
+    text: ".*Start.*Quiz.*|.*Generate.*Quiz.*"
+
+- takeScreenshot: 07-online-state
+
+# Enable airplane mode (go offline)
+- toggleAirplaneMode
+
+# Wait for offline state to be detected
+- extendedWaitUntil:
+    visible: ".*offline.*|.*Offline.*"
+    timeout: 5000
+
+# Verify offline banner appears
+- assertVisible:
+    text: ".*offline.*|.*Offline.*"
+
+- takeScreenshot: 07-offline-banner
+
+# Verify Start New Quiz button is disabled (can't generate while offline)
+# Note: We can't easily assert disabled state, but we can verify the banner
+
+# Tap on a saved quiz (should still work offline)
+- tapOn:
+    text: "Solar System"
+
+# Verify quiz loads from saved data
+- assertVisible:
+    text: "Solar System Quiz"
+
+- assertVisible:
+    text: "Question 1 of 5"
+
+- takeScreenshot: 07-offline-quiz-started
+
+# Answer a few questions to verify quiz works offline
+- tapOn:
+    text: "A).*"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+- assertVisible: "Question 2 of 5"
+- tapOn:
+    text: "A).*"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Go back to home (don't complete the quiz)
+- tapOn: "Home"
+
+# Handle confirmation dialog if it appears
+- runFlow:
+    when:
+      visible: ".*leave.*|.*Leave.*"
+    commands:
+      - tapOn: ".*OK.*|.*Yes.*|.*Leave.*"
+
+# Disable airplane mode (go back online)
+- toggleAirplaneMode
+
+# Wait for online state
+- extendedWaitUntil:
+    notVisible: ".*offline.*|.*Offline.*"
+    timeout: 5000
+
+# Verify offline banner disappears
+- assertNotVisible:
+    text: ".*You're offline.*"
+    optional: true
+
+- takeScreenshot: 07-back-online
+
+# Verify Start New Quiz button is re-enabled (visible and functional)
+- assertVisible:
+    text: ".*Start.*Quiz.*|.*Generate.*Quiz.*"

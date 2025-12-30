@@ -1,0 +1,79 @@
+appId: com.saberloop.app
+---
+# Test 02: Complete Quiz Flow
+# Completes a quiz - state-agnostic (handles resumed or new quizzes)
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Take screenshot of home
+- takeScreenshot: 02-home-screen
+
+# Tap on first available quiz (any sample quiz)
+- tapOn:
+    text: ".*Solar System.*|.*Basic Math.*|.*Famous Scientists.*"
+
+# Wait for quiz to load
+- extendedWaitUntil:
+    visible: "Question.*of.*"
+    timeout: 10000
+
+- takeScreenshot: 02-quiz-started
+
+# Answer 5 questions (tap first option each time, then submit)
+# Loop: answer and submit for each question until we reach results
+
+# Question 1
+- tapOn:
+    text: "A\\).*"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Question 2
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 3
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 4
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 5
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Wait for results page
+- extendedWaitUntil:
+    visible: ".*Results.*|.*Score.*|.*%.*"
+    timeout: 10000
+
+# Verify results page
+- assertVisible:
+    text: ".*%.*"
+
+- takeScreenshot: 02-quiz-results
+
+# Verify action buttons
+- assertVisible:
+    text: ".*Try Another.*|.*Continue.*"

@@ -1,0 +1,64 @@
+appId: com.saberloop.app
+---
+# Test 06: Settings Page
+# Verifies settings page content and sections
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Navigate to Settings
+- tapOn: "Settings"
+
+# Verify Settings page header
+- assertVisible:
+    text: "Settings"
+
+- takeScreenshot: 06-settings-page
+
+# Verify Preferences section
+- assertVisible:
+    text: ".*Preferences.*"
+
+# Verify grade level setting
+- assertVisible:
+    text: ".*Grade.*Level.*|.*Default.*Grade.*"
+
+# Verify questions per quiz setting
+- assertVisible:
+    text: ".*Questions.*Quiz.*"
+
+# Verify difficulty setting (if visible)
+- assertVisible:
+    text: ".*Difficulty.*"
+    optional: true
+
+# Scroll down to see more content
+- scroll
+
+# Verify About section
+- assertVisible:
+    text: "About"
+
+# Verify version number
+- assertVisible:
+    text: ".*Version.*"
+
+# Verify GitHub link
+- assertVisible:
+    text: ".*GitHub.*"
+
+- takeScreenshot: 06-settings-about
+
+# Verify Connection section (OpenRouter status)
+- assertVisible:
+    text: ".*Connection.*|.*OpenRouter.*|.*AI.*Provider.*"
+    optional: true
+
+# Navigate back to Home
+- tapOn: "Home"
+
+# Verify navigation succeeded
+- assertVisible:
+    text: "Saberloop"

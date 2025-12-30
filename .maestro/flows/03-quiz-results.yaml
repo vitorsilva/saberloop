@@ -1,0 +1,85 @@
+appId: com.saberloop.app
+---
+# Test 03: Quiz Results with Mixed Answers
+# Verifies results display with correct/incorrect answers and info button
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Find and tap on Basic Math quiz
+- tapOn:
+    text: "Basic Math"
+
+# Verify quiz started
+- assertVisible:
+    text: "Basic Math Quiz"
+
+# Answer Question 1: CORRECT - C (12)
+- assertVisible: "What is 7"
+- tapOn: "C) 12"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Answer Question 2: INCORRECT - A (5) instead of C (7)
+- assertVisible: "Question 2 of 5"
+- tapOn: "A) 5"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Answer Question 3: CORRECT - C (24)
+- assertVisible: "Question 3 of 5"
+- tapOn: "C) 24"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Answer Question 4: CORRECT - C (6)
+- assertVisible: "Question 4 of 5"
+- tapOn: "C) 6"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Answer Question 5: CORRECT - B (98)
+- assertVisible: "Question 5 of 5"
+- tapOn: "B) 98"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Verify results page
+- assertVisible:
+    text: ".*Results.*"
+
+# Should show 80% (4/5 correct)
+- assertVisible:
+    text: "80%"
+
+- takeScreenshot: 03-results-80-percent
+
+# Verify Review Your Answers section
+- assertVisible:
+    text: ".*Review.*Answers.*"
+
+# Verify check marks for correct answers exist
+- assertVisible:
+    text: ".*check.*"
+    optional: true
+
+# Verify X mark for incorrect answer exists
+- assertVisible:
+    text: ".*close.*"
+    optional: true
+
+# Verify info button appears (for incorrect answer explanation)
+- assertVisible:
+    text: ".*info.*|.*why.*"
+    optional: true
+
+# Verify action buttons
+- assertVisible:
+    text: ".*Try Another.*"
+
+- assertVisible:
+    text: ".*Continue.*topic.*"
+
+- takeScreenshot: 03-results-review-section
