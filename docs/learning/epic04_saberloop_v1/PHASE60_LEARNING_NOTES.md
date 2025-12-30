@@ -1,0 +1,215 @@
+# Phase 60: Maestro Testing Expansion - Learning Notes
+
+**Started:** December 29, 2024
+**Status:** Implementation Complete - Awaiting Local Testing
+
+---
+
+## Summary
+
+Expanded Maestro test coverage from 3 basic checks to 7 comprehensive test flows, achieving closer parity with Playwright E2E tests (56 scenarios).
+
+## What Was Built
+
+### Directory Structure
+```
+.maestro/
+├── config.yaml                      # Existing
+├── smoke-test.yaml                  # Existing (3 basic tests)
+└── flows/
+    ├── _shared/
+    │   └── navigate-home.yaml       # Reusable navigation helper
+    ├── 01-onboarding.yaml           # Welcome → Home flow
+    ├── 02-quiz-flow.yaml            # Complete quiz (100% score)
+    ├── 03-quiz-results.yaml         # Mixed results (80% score)
+    ├── 04-replay-quiz.yaml          # Replay saved quiz
+    ├── 05-navigation.yaml           # Bottom nav testing
+    ├── 06-settings.yaml             # Settings page verification
+    └── 07-offline.yaml              # Offline mode testing
+```
+
+### GitHub Actions Workflow
+- `.github/workflows/maestro.yml` - CI pipeline for running Maestro tests
+- Uses `reactivecircus/android-emulator-runner@v2` for emulator management
+- AVD caching for faster subsequent runs
+- Excludes offline test (07) in CI due to airplane mode flakiness
+- Uploads test results and screenshots as artifacts
+
+## Key Concepts Learned
+
+### 1. Maestro Flow Organization
+- **Separate files** = Better error isolation, parallel execution, granular CI reporting
+- **Shared helpers** in `_shared/` folder can be imported with `runFlow`
+- **Naming convention**: Numeric prefix (01-, 02-) for execution order
+
+### 2. State-Resilient Testing
+Since TWA data persists in Chrome's storage and can't be easily cleared:
+- Use `runFlow` with `when` condition to handle multiple states
+- Flexible regex assertions: `".*Start.*Quiz.*|.*Generate.*Quiz.*"`
+- Navigate to known state before testing specific flows
+
+### 3. Maestro Commands Used
+| Command | Purpose |
+|---------|---------|
+| `launchApp` | Start the app |
+| `tapOn` | Click element by text |
+| `assertVisible` | Verify element exists |
+| `assertNotVisible` | Verify element hidden |
+| `takeScreenshot` | Capture state for debugging |
+| `runFlow` | Execute shared helper or conditional flow |
+| `toggleAirplaneMode` | Network state testing |
+| `extendedWaitUntil` | Wait with timeout |
+| `scroll` | Scroll the view |
+| `runScript` | Execute JavaScript (logging) |
+
+### 4. Sample Quiz Answer Mapping
+For **Basic Math** quiz (used in tests 02 & 03):
+- Q1 (7+5): C) 12 - index 2
+- Q2 (15-8): C) 7 - index 2
+- Q3 (6×4): C) 24 - index 2
+- Q4 (36÷6): C) 6 - index 2
+- Q5 (largest): B) 98 - index 1 ⚠️ Different!
+
+### 5. CI Considerations
+- **Airplane mode** is flaky in CI emulators - excluded from workflow
+- **APK path** with spaces requires proper quoting
+- **Emulator startup** takes ~2-3 minutes; caching helps
+- **Test isolation** - each flow runs independently
+
+## Files Created
+
+| File | Lines | Purpose |
+|------|-------|---------|
+| `flows/_shared/navigate-home.yaml` | 20 | Shared navigation helper |
+| `flows/01-onboarding.yaml` | 45 | Welcome/onboarding verification |
+| `flows/02-quiz-flow.yaml` | 75 | Complete quiz flow (100%) |
+| `flows/03-quiz-results.yaml` | 80 | Results with mixed answers (80%) |
+| `flows/04-replay-quiz.yaml` | 75 | Replay saved quiz |
+| `flows/05-navigation.yaml` | 55 | Bottom navigation testing |
+| `flows/06-settings.yaml` | 60 | Settings page verification |
+| `flows/07-offline.yaml` | 85 | Offline mode behavior |
+| `.github/workflows/maestro.yml` | 100 | CI workflow |
+
+## Next Steps
+
+1. **Test locally** - Run flows on actual Android device/emulator
+2. **Debug issues** - Fix any selector or timing issues
+3. **Push to GitHub** - Trigger CI workflow
+4. **Monitor CI** - Verify tests pass in GitHub Actions
+5. **Iterate** - Fix flaky tests, add more coverage
+
+## Testing Locally (Windows)
+
+**Prerequisites (already set up in Phase 9.5.5):**
+- Maestro 2.0.10 installed natively on Windows (NOT WSL)
+- Android Studio with emulator
+- JAVA_HOME = `C:\Program Files\Android\Android Studio\jbr`
+- PATH includes `%USERPROFILE%\maestro\maestro\bin`
+- PATH includes `%LOCALAPPDATA%\Android\Sdk\platform-tools` (for adb)
+
+**If ADB not found**, add to PATH:
+```powershell
+# Temporary (current session)
+$env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
+
+# Permanent
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:LOCALAPPDATA\Android\Sdk\platform-tools", "User")
+```
+
+```powershell
+# 1. Start Android emulator via Android Studio Device Manager
+
+# 2. Verify Maestro sees the device
+maestro --version
+
+# 3. Install the APK (if not already installed)
+adb install "package/Saberloop - Google Play package/Saberloop.apk"
+
+# 4. Run individual flow (with proper output directory)
+maestro test .maestro/flows/01-onboarding.yaml --test-output-dir .maestro/tests
+
+# 5. Run all flows
+maestro test .maestro/flows/ --test-output-dir .maestro/tests
+
+# 6. Run with debug output
+maestro test .maestro/flows/01-onboarding.yaml --debug-output .maestro/debug
+```
+
+**Note:** The `--test-output-dir` flag is required because `config.yaml`'s `testOutputDir` is not respected by Maestro (discovered in Phase 9.5.5).
+
+## Comparison: Playwright vs Maestro
+
+| Aspect | Playwright | Maestro |
+|--------|------------|---------|
+| Target | Web browser | Native/TWA app |
+| Language | JavaScript | YAML |
+| Selectors | CSS/XPath/TestId | Text/Accessibility |
+| Network mocking | Built-in | Limited |
+| Offline testing | `context.setOffline()` | `toggleAirplaneMode` |
+| CI setup | Simple | Requires emulator |
+| Debug | Trace viewer | Screenshots/logs |
+
+## Gotchas
+
+1. **Text matching** - Maestro uses regex; escape special chars
+2. **Timing** - TWA loads slower than web; may need waits
+3. **State persistence** - Can't clear app data easily in tests
+4. **Airplane mode** - Requires elevated permissions; flaky in CI
+5. **APK path** - Spaces in path require proper handling
+6. **Windows vs WSL** - Use native Windows Maestro, NOT WSL (can't see Windows emulator)
+7. **Output directory** - Use `--test-output-dir` flag, `config.yaml` setting is ignored
+8. **runScript NOT supported** - Maestro's `runScript` requires a file path, NOT inline script
+9. **runFlow with when** - Conditional flows can hang; use `optional: true` on tapOn instead
+
+## Related Documentation
+
+- **Phase 9.5.5 (Maestro Setup):** `docs/learning/epic03_quizmaster_v2/PHASE9_LEARNING_NOTES.md` (Session 5-6)
+- **Existing smoke test:** `.maestro/smoke-test.yaml`
+
+---
+
+## Testing Session Results (Dec 29, 2025)
+
+**Tests Run:**
+- ✅ Smoke test - PASSES
+- ✅ 01-onboarding.yaml - PASSES
+- ⚠️ 02-quiz-flow.yaml - FAILS (state-dependent)
+- ⏳ 03-07 - Not yet tested
+
+**Key Issues Discovered:**
+
+1. **State Persistence** - App data persists between test runs
+   - Previous quiz progress affects current tests
+   - Can't easily reset state
+   - Need more robust navigation/state handling
+
+2. **Regex Escaping** - Special chars need escaping
+   - `)` → `\\)` in YAML
+   - `|` works for OR patterns
+
+3. **Test Flakiness** - Tests depend on app state
+   - Quiz might be mid-progress
+   - Home screen might show different quizzes
+
+**Fixes Applied:**
+- Removed `runScript` (requires file, not inline)
+- Simplified `runFlow when` → `tapOn optional: true`
+- Added `extendedWaitUntil` for screen transitions
+- Made assertions more flexible with regex patterns
+
+**Next Steps:**
+- Add `clearState` or `clearKeychain` commands (if available for TWA)
+- Consider running specific test subsets
+- May need to accept some state-dependent behavior
+
+---
+
+**Phase Status:** Initial implementation complete. Tests committed and pushed.
+
+**Commits:**
+- `f5b6ad6` - fix: Maestro syntax corrections and testing session notes
+
+**Remaining Work:**
+- Refine tests for state handling (02-quiz-flow.yaml fails due to state persistence)
+- Test remaining flows (03-07) locally
+- Consider adding `clearState` or state reset mechanisms
