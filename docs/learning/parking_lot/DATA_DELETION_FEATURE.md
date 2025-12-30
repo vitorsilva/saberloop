@@ -2,6 +2,7 @@
 
 **Status**: 📋 Planning
 **Created**: 2024-12-28
+**Updated**: 2024-12-30
 **Branch**: `claude/add-data-deletion-iZN2V`
 
 ---
@@ -125,6 +126,14 @@ User stays on Settings page
 │  ──────────── NEW ────────────      │
 │  Data Management                    │
 │  ┌─────────────────────────────────┐│
+│  │ 🗄️ Storage Usage                ││
+│  │                                 ││
+│  │ Settings & Preferences   1.2 KB ││
+│  │ Quizzes & History       44.0 KB ││
+│  │ ───────────────────────────────  ││
+│  │ Total                   45.2 KB ││
+│  └─────────────────────────────────┘│
+│  ┌─────────────────────────────────┐│
 │  │ 🗑️ Delete All Data              ││
 │  │    Remove all quizzes,          ││
 │  │    settings, and connections    ││
@@ -222,7 +231,54 @@ db.js, settings.js, etc. (Core Layer)
 
 ---
 
+## Learning Objectives
+
+| Topic | What You'll Learn |
+|-------|-------------------|
+| **Storage Manager API** | Using `navigator.storage.estimate()` for total origin storage |
+| **IndexedDB Size Calculation** | Serializing data to JSON to measure store sizes |
+| **Byte Formatting** | Converting bytes to human-readable units (KB, MB, GB) |
+| **Async UI Updates** | Loading data after initial render with loading states |
+| **Data Cleanup Patterns** | Orchestrating deletion across multiple storage systems |
+| **Confirmation UX** | Modal patterns for destructive actions |
+
+---
+
 ## Implementation Plan
+
+### Phase 0: Storage Size Display
+
+#### 0.1 Create storage utility
+**File**: `src/utils/storage.js`
+- [ ] Create `formatStorageSize(bytes)` - formats bytes to human-readable (B, KB, MB, GB)
+- [ ] Create `getStorageBreakdown()` - returns { core, quizzes, total } with formatted strings
+- [ ] Calculate core size: localStorage settings + IndexedDB settings store
+- [ ] Calculate quizzes size: IndexedDB topics + sessions stores
+- [ ] Add JSDoc documentation
+- [ ] Add unit tests in `src/utils/storage.test.js`
+
+#### 0.2 Add Storage Usage card to Settings
+**File**: `src/views/SettingsView.js`
+- [ ] Add "Data Management" section header
+- [ ] Add Storage Usage card with breakdown display
+- [ ] Load storage breakdown asynchronously on render
+- [ ] Show loading state ("...") while calculating
+- [ ] Handle errors gracefully (show "--" on failure)
+
+#### 0.3 Add i18n strings for storage display
+**Files**: `public/locales/{en,pt-PT}.json`
+- [ ] Add keys:
+  ```json
+  "settings": {
+    "dataManagement": "Data Management",
+    "storageUsage": "Storage Usage",
+    "coreData": "Settings & Preferences",
+    "quizzesData": "Quizzes & History",
+    "totalUsed": "Total"
+  }
+  ```
+
+---
 
 ### Phase 1: Core Infrastructure
 
@@ -340,8 +396,10 @@ db.js, settings.js, etc. (Core Layer)
 ### New Files
 | File | Purpose |
 |------|---------|
+| `src/utils/storage.js` | Storage size calculation utilities |
+| `src/utils/storage.test.js` | Storage utility unit tests |
 | `src/services/data-service.js` | Data deletion orchestration |
-| `src/services/data-service.test.js` | Unit tests |
+| `src/services/data-service.test.js` | Data service unit tests |
 | `src/components/DeleteDataModal.js` | Confirmation modal |
 | `tests/e2e/data-deletion.spec.js` | E2E tests |
 
@@ -361,7 +419,13 @@ db.js, settings.js, etc. (Core Layer)
 
 ## Testing Checklist
 
-### Unit Tests
+### Unit Tests (Phase 0 - Storage Display)
+- [ ] `formatStorageSize()` formats bytes correctly (B, KB, MB, GB)
+- [ ] `getStorageBreakdown()` returns core and quizzes sizes
+- [ ] `getStorageBreakdown()` handles empty databases gracefully
+- [ ] Total equals core + quizzes
+
+### Unit Tests (Phase 1+ - Data Deletion)
 - [ ] `clearAllUserData()` deletes non-sample sessions
 - [ ] `clearAllUserData()` preserves sample sessions
 - [ ] `clearAllUserData()` clears settings
@@ -388,16 +452,24 @@ db.js, settings.js, etc. (Core Layer)
 
 ## Acceptance Criteria
 
-1. ✅ User can delete all data from Settings page
-2. ✅ Confirmation modal prevents accidental deletion
-3. ✅ Success message confirms deletion
-4. ✅ Sample quizzes automatically reload
-5. ✅ App remains functional after deletion
-6. ✅ All strings translated to 5 languages
-7. ✅ Unit test coverage ≥ 80% for new code
-8. ✅ E2E tests pass
-9. ✅ Architecture tests pass
-10. ✅ Before/after screenshots documented
+### Phase 0: Storage Display
+1. [ ] Storage usage displayed in Settings under "Data Management"
+2. [ ] Breakdown shows Settings & Preferences vs Quizzes & History
+3. [ ] Total storage calculated correctly
+4. [ ] Loading state shown while calculating
+5. [ ] Unit tests pass for storage utilities
+
+### Phase 1+: Data Deletion
+6. [ ] User can delete all data from Settings page
+7. [ ] Confirmation modal prevents accidental deletion
+8. [ ] Success message confirms deletion
+9. [ ] Sample quizzes automatically reload
+10. [ ] App remains functional after deletion
+11. [ ] All strings translated to supported languages
+12. [ ] Unit test coverage ≥ 80% for new code
+13. [ ] E2E tests pass
+14. [ ] Architecture tests pass
+15. [ ] Before/after screenshots documented
 
 ---
 
