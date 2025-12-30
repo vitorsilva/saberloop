@@ -2,6 +2,7 @@ appId: com.saberloop.app
 ---
 # Shared helper: Navigate to home screen
 # Handles both fresh (welcome) and returning (home) user states
+# Also handles leave confirmation dialogs
 
 # If on welcome screen, tap "Try Free Quizzes" to get to home (optional)
 - tapOn:
@@ -13,6 +14,21 @@ appId: com.saberloop.app
     text: "Home"
     optional: true
 
-# Wait for home screen elements
+# Handle "leave quiz" confirmation dialog if it appears
+- tapOn:
+    text: "OK"
+    optional: true
+
+# Wait a moment for navigation
+- extendedWaitUntil:
+    visible: ".*Saberloop.*|.*Welcome back.*|.*Sample Quizzes.*"
+    timeout: 5000
+
+# Tap Home again in case dialog was dismissed
+- tapOn:
+    text: "Home"
+    optional: true
+
+# Verify we're on home screen
 - assertVisible:
-    text: ".*Saberloop.*|.*Welcome back.*"
+    text: ".*Saberloop.*|.*Welcome back.*|.*Sample Quizzes.*"
