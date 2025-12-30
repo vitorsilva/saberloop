@@ -532,6 +532,58 @@ npm test -- --run && npm run test:e2e && npm run arch:test && npm run typecheck
 
 ---
 
+## Troubleshooting / Common Pitfalls
+
+Based on findings from previous phases, watch out for these issues:
+
+### Maestro Testing (Mobile)
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| TWA state not clearable | Maestro `clearState` doesn't affect IndexedDB/localStorage in TWA apps | Use in-app "Delete All Data" feature as test setup |
+| Airplane mode flaky in CI | Device airplane mode toggles unreliable in CI | Skip network-dependent tests in CI or use dedicated offline flows |
+| Emulator startup slow | Cold boot takes 30-60s | Use `-no-snapshot-load` flag or keep emulator running |
+| APK version mismatch | Testing outdated APK | Always run `npm run build && npm run build:twa` before testing |
+| ADB not found | `ANDROID_HOME` not set | Set `export ANDROID_HOME=~/Android/Sdk` and add to PATH |
+
+### E2E Testing (Playwright)
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Test file isolation | Importing from `.spec.js` runs both files | Extract shared utils to non-spec helper files |
+| Offline simulation | `page.setOffline()` doesn't work for service workers | Use `context.setOffline(true)` before navigation |
+| No offline data | Sample quizzes not loaded | Visit home page first to trigger sample loading |
+| Flaky selectors | i18n changes text content | Use `data-testid` attributes for stable selectors |
+
+### Unit Testing
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Can't capture handlers | Event handlers not accessible | Return handler from setup function or store in module state |
+| Browser globals undefined | `localStorage`, `navigator` not in Node | Mock using `vi.stubGlobal()` or `Object.defineProperty()` |
+| localStorage mock issues | Can't spy on `localStorage.getItem` directly | Spy on `Storage.prototype.getItem` instead |
+| Timers not advancing | Using `Date.now()` with fake timers | Use `vi.useFakeTimers()` with `vi.advanceTimersByTime()` |
+| Coverage below threshold | New files not meeting 80% | Write tests for error paths, not just happy paths |
+
+### i18n / Cross-Platform
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Text selectors break | Translations change button text | Use `data-testid` for all testable elements |
+| ENV vars not working | Different syntax Windows vs Unix | Use `cross-env` package: `cross-env VITE_API=mock npm test` |
+| Missing translations | New keys not in all locale files | Run build to catch missing keys, check all 5 language files |
+
+### Code Coverage
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Coverage drops | New code not tested | Run `npm run test:coverage` and check new files specifically |
+| Branch coverage low | Missing error path tests | Add tests for `try/catch`, `if/else`, and edge cases |
+| Coverage report unclear | Too many files | Use `--coverage.include='src/utils/storage.js'` for specific files |
+
+### Architecture
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Layer violation | Service importing from view | Check imports: views→services→core→utils (one direction) |
+| Unexpected warning | New file not in dependency rules | Update `.dependency-cruiser.cjs` if adding new module patterns |
+
+---
+
 ## References
 
 - [W3C Service Worker Issue #998](https://github.com/w3c/ServiceWorker/issues/998) - Uninstall event proposal
