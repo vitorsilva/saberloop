@@ -87,7 +87,7 @@ Before starting Epic 4, you should have completed:
 │  ┌──────────────────┐                                      │
 │  │ Maestro Testing  │                                      │
 │  │ Expansion        │                                      │
-│  │ (Phase 60)       │                                      │
+│  │ (Phase 60) ⏳    │                                      │
 │  └──────────────────┘                                      │
 │                                                             │
 │  Ongoing                                                    │
@@ -576,7 +576,7 @@ Comprehensive testing of offline functionality to ensure excellent UX when used 
 
 Expand Maestro test coverage to match Playwright E2E tests.
 
-**Status:** Ready to Implement
+**Status:** In Progress (on `feature/phase60-maestro-testing` branch)
 
 **Key Features:**
 - 7 comprehensive test flows
@@ -591,16 +591,16 @@ Expand Maestro test coverage to match Playwright E2E tests.
 - Mobile UI automation
 
 **Deliverables:**
-- [ ] `.maestro/flows/` - 7 test flow files
-- [ ] `.github/workflows/maestro.yml` - CI workflow
-- [ ] Shared navigation helpers
-- [ ] Test documentation
+- [x] `.maestro/flows/` - 7 test flow files
+- [x] `.github/workflows/maestro.yml` - CI workflow
+- [x] Shared navigation helpers (`_shared/navigate-home.yaml`)
+- [x] Test documentation (`PHASE60_LEARNING_NOTES.md`)
 
 **Success Criteria:**
-- All 7 test flows pass locally
-- Tests work on fresh or returning user state
-- GitHub Actions runs tests on push/PR
-- Screenshots uploaded as artifacts
+- [x] All 7 test flows pass locally
+- [x] Tests work on fresh or returning user state
+- [ ] GitHub Actions runs tests on push/PR (pending CI verification)
+- [x] Screenshots uploaded as artifacts
 
 ---
 
@@ -727,7 +727,7 @@ Configure mutation testing with Stryker to assess test quality beyond code cover
 | Phase 47 | 1 | AI Model Selection | ✅ Complete |
 | Phase 48 | 2-3 | JSDoc Type Checking | ✅ Complete |
 | Phase 50 | 4-6 | Offline Mode Testing | ✅ Complete |
-| Phase 60 | 3-4 | Maestro Testing | Ready |
+| Phase 60 | 3-4 | Maestro Testing | In Progress |
 | Phase 70 | 4-6 | Sharing Feature | ✅ Complete |
 | Phase 80 | 1 | Test Coverage | ✅ Complete |
 | Phase 85 | 2-3 | Mutation Testing Setup | ✅ Complete |
