@@ -21,7 +21,11 @@ docs/api/
 # PHP dependencies
 php-api/vendor/
 nul
-package/
+# Package folder (except APK for CI testing)
+package/*
+!package/Saberloop - Google Play package/
+package/Saberloop - Google Play package/*
+!package/Saberloop - Google Play package/Saberloop.apk
 telemetry-logs/
 
 # stryker temp files
