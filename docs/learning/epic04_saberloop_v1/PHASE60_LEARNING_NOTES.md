@@ -75,6 +75,40 @@ For **Basic Math** quiz (used in tests 02 & 03):
 - **APK path** with spaces requires proper quoting
 - **Emulator startup** takes ~2-3 minutes; caching helps
 - **Test isolation** - each flow runs independently
+- **CI runtime** ~23 minutes total - too slow for every PR
+
+### 6. Label-Triggered CI (Performance Optimization)
+
+Maestro tests take ~23 minutes in CI. To avoid blocking every PR:
+
+**Trigger mechanism:**
+- Tests only run when PR has label `maestro-test`
+- Manual trigger always available via `workflow_dispatch`
+- Does NOT run automatically on push/PR
+
+**How to use:**
+1. Create PR → fast CI (no Maestro)
+2. Add label `maestro-test` when ready to test mobile
+3. Workflow triggers automatically
+4. Remove label to prevent re-runs on future pushes
+
+**Workflow configuration:**
+```yaml
+on:
+  pull_request:
+    types: [labeled]  # Only on label events
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  maestro-tests:
+    if: github.event.label.name == 'maestro-test' || github.event_name == 'workflow_dispatch'
+```
+
+**When to add the label:**
+- Changes to `.maestro/` test files
+- Changes to TWA/mobile-specific code
+- Before major releases
+- When debugging mobile-specific issues
 
 ## Files Created
 

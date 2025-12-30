@@ -1,25 +1,23 @@
 # Maestro E2E Tests for Android TWA
 # Runs Maestro tests against the Saberloop APK on an Android emulator
+#
+# TRIGGER: Label-based to avoid 20+ min runs on every PR
+# - Add label "maestro-test" to a PR to trigger tests
+# - Manual trigger via workflow_dispatch always available
+# - Does NOT run automatically on push/PR (too slow)
 
 name: Maestro E2E Tests
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.maestro/**'
-      - 'package/**'
-      - '.github/workflows/maestro.yml'
   pull_request:
     branches: [main]
-    paths:
-      - '.maestro/**'
-      - 'package/**'
-      - '.github/workflows/maestro.yml'
+    types: [labeled]
   workflow_dispatch: # Allow manual trigger
 
 jobs:
   maestro-tests:
+    # Only run if label is "maestro-test" or manual trigger
+    if: github.event.label.name == 'maestro-test' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
