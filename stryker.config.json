@@ -7,7 +7,9 @@
   "mutate": [
     "src/utils/gradeProgression.js",
     "src/utils/shuffle.js",
-    "src/utils/formatters.js"
+    "src/utils/formatters.js",
+    "src/utils/storage.js",
+    "src/services/data-service.js"
   ],
   "thresholds": {
     "high": 80,
