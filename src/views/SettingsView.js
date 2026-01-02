@@ -5,6 +5,9 @@
   import { isFeatureEnabled } from '../core/features.js';
   import { t, changeLanguage, getCurrentLanguage, SUPPORTED_LANGUAGES } from '../core/i18n.js';
   import { getSelectedModel, getModelDisplayName, getAvailableModels, saveSelectedModel } from '../services/model-service.js';
+  import { getStorageBreakdown } from '../utils/storage.js';
+  import { showDeleteDataModal } from '../components/DeleteDataModal.js';
+  import { deleteAllUserData } from '../services/data-service.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -91,6 +94,50 @@
 
               <div id="accountSection" class="flex flex-col gap-3">
                 <!-- Will be populated by loadAccountStatus() -->
+              </div>
+
+              <!-- Data Management Section -->
+              <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight
+   tracking-[-0.015em] pb-3 pt-8">${t('settings.dataManagement')}</h2>
+
+              <div class="flex flex-col gap-3">
+                <!-- Storage Usage Card -->
+                <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
+                  <div class="flex items-center gap-3 mb-3">
+                    <span class="material-symbols-outlined text-primary">storage</span>
+                    <p class="text-text-light dark:text-text-dark text-base font-medium">${t('settings.storageUsage')}</p>
+                  </div>
+                  <div id="storageBreakdown" class="flex flex-col gap-2 text-sm">
+                    <div class="flex justify-between">
+                      <span class="text-subtext-light dark:text-subtext-dark">${t('settings.settingsData')}</span>
+                      <span data-testid="storage-settings" class="text-text-light dark:text-text-dark">...</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-subtext-light dark:text-subtext-dark">${t('settings.quizzesData')}</span>
+                      <span data-testid="storage-quizzes" class="text-text-light dark:text-text-dark">...</span>
+                    </div>
+                    <div class="flex justify-between border-t border-border-light dark:border-border-dark pt-2 mt-1">
+                      <span class="text-subtext-light dark:text-subtext-dark font-medium">${t('settings.totalStorage')}</span>
+                      <span data-testid="storage-total" class="text-text-light dark:text-text-dark font-medium">...</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Delete All Data Button (placeholder - will be wired in Phase 3) -->
+                <div id="deleteDataSection" class="bg-card-light dark:bg-card-dark rounded-xl p-4">
+                  <div class="flex items-center gap-3 mb-2">
+                    <span class="material-symbols-outlined text-red-500">delete_forever</span>
+                    <div>
+                      <p class="text-text-light dark:text-text-dark text-base font-medium">${t('settings.deleteAllData')}</p>
+                      <p class="text-subtext-light dark:text-subtext-dark text-sm">${t('settings.deleteAllDataDesc')}</p>
+                    </div>
+                  </div>
+                  <button id="deleteAllDataBtn" data-testid="delete-all-data-btn"
+                    class="w-full mt-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg p-3 flex items-center justify-center gap-2 transition-colors">
+                    <span class="material-symbols-outlined">delete</span>
+                    <span class="font-medium">${t('settings.deleteAllData')}</span>
+                  </button>
+                </div>
               </div>
 
            <!-- About Section -->
@@ -184,7 +231,33 @@
       // Load account connection status
       await this.loadAccountStatus();
 
+      // Load storage breakdown (async, non-blocking)
+      this.loadStorageBreakdown();
+
       this.bindEvents();
+    }
+
+    async loadStorageBreakdown() {
+      try {
+        const breakdown = await getStorageBreakdown();
+
+        const settingsEl = this.querySelector('[data-testid="storage-settings"]');
+        const quizzesEl = this.querySelector('[data-testid="storage-quizzes"]');
+        const totalEl = this.querySelector('[data-testid="storage-total"]');
+
+        if (settingsEl) settingsEl.textContent = breakdown.settings;
+        if (quizzesEl) quizzesEl.textContent = breakdown.quizzes;
+        if (totalEl) totalEl.textContent = breakdown.total;
+      } catch (error) {
+        // On error, show "--" instead of "..."
+        const settingsEl = this.querySelector('[data-testid="storage-settings"]');
+        const quizzesEl = this.querySelector('[data-testid="storage-quizzes"]');
+        const totalEl = this.querySelector('[data-testid="storage-total"]');
+
+        if (settingsEl) settingsEl.textContent = '--';
+        if (quizzesEl) quizzesEl.textContent = '--';
+        if (totalEl) totalEl.textContent = '--';
+      }
     }
 
     renderLanguageOptions() {
@@ -360,6 +433,44 @@
         // Re-render to apply new language
         await this.render();
       });
+
+      // Delete all data button
+      const deleteBtn = this.querySelector('#deleteAllDataBtn');
+      if (deleteBtn) {
+        this.addEventListener(deleteBtn, 'click', () => this.handleDeleteAllData());
+      }
+    }
+
+    async handleDeleteAllData() {
+      const confirmed = await showDeleteDataModal(async () => {
+        await deleteAllUserData();
+      });
+
+      if (confirmed) {
+        // Show success toast
+        this.showSuccessToast(t('settings.deleteDataSuccess'));
+
+        // Re-render to update storage display
+        await this.render();
+      }
+    }
+
+    showSuccessToast(message) {
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-fade-in';
+      toast.innerHTML = `
+        <span class="material-symbols-outlined">check_circle</span>
+        <span>${message}</span>
+      `;
+
+      document.body.appendChild(toast);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        toast.classList.add('animate-fade-out');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
 
     async toggleModelSelector() {

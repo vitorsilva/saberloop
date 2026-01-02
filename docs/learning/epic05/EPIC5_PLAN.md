@@ -97,7 +97,7 @@ Display LLM usage costs to users, helping them understand API spending. Show est
 ---
 
 ### Phase 50: Data Deletion Feature
-**Status:** Planning Complete
+**Status:** ✅ Complete
 **File:** [PHASE50_DATA_DELETION.md](./PHASE50_DATA_DELETION.md)
 
 Provide users with complete control over their data with a "Delete All Data" feature in Settings.

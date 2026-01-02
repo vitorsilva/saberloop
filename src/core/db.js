@@ -75,6 +75,15 @@ export async function getAllTopics() {
     return db.getAllFromIndex('sessions', 'byTopicId', topicId);
   }
 
+  /**
+   * Get all sessions from the database
+   * @returns {Promise<Array>} All session objects
+   */
+  export async function getAllSessions() {
+    const db = await getDB();
+    return db.getAll('sessions');
+  }
+
   export async function getRecentSessions(limit = 10) {
     const db = await getDB();
     const all = await db.getAllFromIndex('sessions', 'byTimestamp');
@@ -157,4 +166,34 @@ export async function getAllTopics() {
   export async function isOpenRouterConnected() {
     const key = await getOpenRouterKey();
     return !!key;
+  }
+
+  // ========== DATA MANAGEMENT ==========
+
+  /**
+   * Clear all user data from IndexedDB.
+   * Preserves sample sessions but clears all user-created data.
+   * @returns {Promise<void>}
+   */
+  export async function clearAllUserData() {
+    const db = await getDB();
+
+    // Delete all non-sample sessions
+    const allSessions = await db.getAll('sessions');
+    for (const session of allSessions) {
+      if (!session.isSample) {
+        await db.delete('sessions', session.id);
+      }
+    }
+
+    // Clear all topics
+    const allTopics = await db.getAll('topics');
+    for (const topic of allTopics) {
+      await db.delete('topics', topic.id);
+    }
+
+    // Clear all settings
+    const tx = db.transaction('settings', 'readwrite');
+    await tx.store.clear();
+    await tx.done;
   }
