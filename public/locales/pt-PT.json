@@ -207,8 +207,12 @@
     "incorrect": "INCORRETO",
     "youSelected": "SELECIONASTE",
     "correctAnswer": "RESPOSTA CORRETA",
+    "title": "Explicação",
     "whyIts": "Porquê {{answer}}",
     "generating": "A gerar explicação...",
+    "loadingPersonalized": "A carregar feedback personalizado...",
+    "connectToAI": "Liga-te à IA para feedback personalizado sobre a tua resposta",
+    "couldntLoad": "Não foi possível carregar o feedback personalizado",
     "failed": "Falha ao gerar explicação.",
     "tryAgain": "Tentar novamente",
     "gotIt": "Percebido!"
