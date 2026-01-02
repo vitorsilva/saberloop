@@ -72,7 +72,11 @@
     "loadingModels": "A carregar modelos disponíveis...",
     "errorLoadingModels": "Falha ao carregar modelos. Por favor, tenta novamente.",
     "selectModel": "Seleciona um modelo:",
-    "contextLength": "Contexto: {{length}}"
+    "contextLength": "Contexto: {{length}}",
+    "creditsBalance": "Saldo de Créditos",
+    "remaining": "restante",
+    "freeTierStatus": "Plano Gratuito",
+    "freeTierLimit": "Número limitado de pedidos/dia"
   },
   "loading": {
     "preparing": "A preparar as tuas perguntas...",
@@ -209,5 +213,11 @@
     "challengeText": "Consegues superar a minha pontuação?",
     "shareSuccess": "Partilhado com sucesso!",
     "shareFailed": "Não foi possível partilhar. Tenta copiar o link."
+  },
+  "usage": {
+    "thisQuizUsed": "Este quiz usou",
+    "tokens": "{{count}} tokens",
+    "freeModel": "Modelo gratuito (sem custo)",
+    "onPaidModel": "Num modelo pago, isto custaria {{cost}}"
   }
 }

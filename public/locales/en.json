@@ -72,7 +72,11 @@
     "loadingModels": "Loading available models...",
     "errorLoadingModels": "Failed to load models. Please try again.",
     "selectModel": "Select a model:",
-    "contextLength": "Context: {{length}}"
+    "contextLength": "Context: {{length}}",
+    "creditsBalance": "Credits Balance",
+    "remaining": "remaining",
+    "freeTierStatus": "Free Tier",
+    "freeTierLimit": "Limited number of requests/day"
   },
   "loading": {
     "preparing": "Preparing your questions...",
@@ -209,5 +213,11 @@
     "challengeText": "Can you beat my score?",
     "shareSuccess": "Shared successfully!",
     "shareFailed": "Could not share. Try copying the link instead."
+  },
+  "usage": {
+    "thisQuizUsed": "This quiz used",
+    "tokens": "{{count}} tokens",
+    "freeModel": "Free model (no charge)",
+    "onPaidModel": "On a paid model, this would cost {{cost}}"
   }
 }

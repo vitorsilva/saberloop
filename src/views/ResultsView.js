@@ -8,6 +8,7 @@ import { showExplanationModal } from '../components/ExplanationModal.js';
 import { showShareModal } from '../components/ShareModal.js';
 import { calculateNextGradeLevel } from '../utils/gradeProgression.js';
 import { t, getCurrentLanguage } from '../core/i18n.js';
+import { getUsageSummary } from '../services/cost-service.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -51,6 +52,12 @@ export default class ResultsView extends BaseView {
     const showExplanationButton = isFeatureEnabled('EXPLANATION_FEATURE');
     const showContinueButton = isFeatureEnabled('CONTINUE_TOPIC');
     const showShareButton = isFeatureEnabled('SHARE_FEATURE');
+    const showUsageCosts = isFeatureEnabled('SHOW_USAGE_COSTS');
+
+    // Get usage data for cost display
+    const usage = state.get('quizUsage');
+    const model = state.get('quizModel');
+    const usageSummary = usage ? getUsageSummary(usage, model) : null;
 
     // Generate question review HTML
     const questionReviewHTML = questions.map((question, index) => {
@@ -135,6 +142,27 @@ export default class ResultsView extends BaseView {
             <p data-testid="result-message" class="text-text-light dark:text-text-dark text-xl font-bold mt-4">${message}</p>
             <p data-testid="score-summary" class="text-subtext-light dark:text-subtext-dark mt-1">${t('results.scoreSummary', { correct: correctCount, total: totalQuestions })}</p>
           </div>
+
+          <!-- Usage Cost Card -->
+          ${showUsageCosts && usageSummary ? `
+          <div data-testid="usage-cost-card" class="mt-4 p-4 rounded-xl bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark">
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-primary text-xl mt-0.5">info</span>
+              <div class="flex-1">
+                <p class="text-sm text-text-light dark:text-text-dark font-medium">${t('usage.thisQuizUsed')}</p>
+                <ul class="mt-1 text-sm text-subtext-light dark:text-subtext-dark">
+                  <li>• ${t('usage.tokens', { count: usageSummary.totalTokens })} (${usageSummary.formattedActualCost})</li>
+                  <li>• ${usageSummary.isFreeModel ? t('usage.freeModel') : model}</li>
+                </ul>
+                ${usageSummary.isFreeModel && usageSummary.formattedEstimatedCost ? `
+                <p class="mt-2 text-xs text-subtext-light dark:text-subtext-dark">
+                  ${t('usage.onPaidModel', { cost: usageSummary.formattedEstimatedCost })}
+                </p>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+          ` : ''}
 
           <!-- Share Button -->
           ${showShareButton ? `
@@ -223,6 +251,8 @@ export default class ResultsView extends BaseView {
 
     const topic = state.get('currentTopic') || 'Unknown Topic';
     const gradeLevel = state.get('currentGradeLevel') || 'Unknown';
+    const model = state.get('quizModel');
+    const usage = state.get('quizUsage');
 
     const session = {
       topic,
@@ -231,7 +261,9 @@ export default class ResultsView extends BaseView {
       score: correctCount,
       totalQuestions,
       questions,
-      answers
+      answers,
+      model,
+      usage
     };
 
     try {

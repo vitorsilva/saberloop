@@ -19,10 +19,21 @@
  */
 
 /**
+ * Usage data from API call
+ * @typedef {Object} UsageData
+ * @property {number} promptTokens - Tokens used in prompt
+ * @property {number} completionTokens - Tokens used in completion
+ * @property {number} totalTokens - Total tokens used
+ * @property {number} costUsd - Cost in USD
+ */
+
+/**
  * Quiz generation result from API
  * @typedef {Object} QuizResult
  * @property {string} language - Language code (e.g., 'EN-US', 'PT-PT')
  * @property {Question[]} questions - Array of generated questions
+ * @property {string} model - Model ID used for generation
+ * @property {UsageData} usage - Token usage and cost data
  */
 
 /**

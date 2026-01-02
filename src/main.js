@@ -16,6 +16,7 @@ import HelpView from './views/HelpView.js';
 import OpenRouterGuideView from './views/OpenRouterGuideView.js';
 import ConnectionConfirmedView from './views/ConnectionConfirmedView.js';
 import { loadSamplesIfNeeded } from './features/sample-loader.js';
+import { prefetchModelPricing } from './services/model-service.js';
 import { shouldShowWelcome, markWelcomeSeen } from './features/onboarding.js';
 import { logger } from './utils/logger.js';
 import { initErrorHandling } from './utils/errorHandler.js';
@@ -48,6 +49,9 @@ async function init() {
 
     // Load sample quizzes if needed
     await loadSamplesIfNeeded();
+
+    // Prefetch model pricing in background (for cost estimates)
+    prefetchModelPricing();
 
     // Check if this is an OAuth callback BEFORE router starts
     if (isAuthCallback()) {

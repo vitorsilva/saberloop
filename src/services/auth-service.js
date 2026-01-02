@@ -4,6 +4,7 @@
  */
 import { isOpenRouterConnected, getOpenRouterKey, removeOpenRouterKey } from '../core/db.js';
 import { startAuth as startOAuthFlow } from '../api/openrouter-auth.js';
+import { getCreditsBalance as fetchCreditsBalance } from '../api/openrouter-client.js';
 
 /**
  * Check if user is connected to OpenRouter
@@ -36,4 +37,14 @@ export async function disconnect() {
  */
 export async function startAuth() {
   return startOAuthFlow();
+}
+
+/**
+ * Get credits balance from OpenRouter
+ * @returns {Promise<{balance: number, balanceFormatted: string}|null>}
+ */
+export async function getCreditsBalance() {
+  const apiKey = await getOpenRouterKey();
+  if (!apiKey) return null;
+  return fetchCreditsBalance(apiKey);
 }

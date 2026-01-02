@@ -197,9 +197,11 @@ export default class LoadingView extends BaseView {
 
       const result = await generateQuestions(topic, gradeLevel, apiKey, options);
 
-      // Store questions and language in state for QuizView
+      // Store questions, language, and usage in state for QuizView
       state.set('generatedQuestions', result.questions);
       state.set('quizLanguage', result.language);
+      state.set('quizModel', result.model);
+      state.set('quizUsage', result.usage);
 
       // Clear interval before navigating
       this.cleanup();

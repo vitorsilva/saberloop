@@ -12,8 +12,8 @@
    * Call OpenRouter Chat API
    * @param {string} apiKey - User's OpenRouter API key
    * @param {string} prompt - The prompt to send
-   * @param {object} options - Optional settings (model, maxTokens, temperature)     
-   * @returns {Promise<{text: string, model: string, usage: object}>}
+   * @param {object} options - Optional settings (model, maxTokens, temperature)
+   * @returns {Promise<{text: string, model: string, usage: {promptTokens: number, completionTokens: number, totalTokens: number, costUsd: number}}>}
    */
   export async function callOpenRouter(apiKey, prompt, options = {}) {
     const {
@@ -36,7 +36,8 @@
         model,
         max_tokens: maxTokens,
         temperature,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        usage: { include: true }
       })
     });
 
@@ -60,7 +61,12 @@
     return {
       text,
       model: data.model,
-      usage: data.usage
+      usage: {
+        promptTokens: data.usage?.prompt_tokens || 0,
+        completionTokens: data.usage?.completion_tokens || 0,
+        totalTokens: data.usage?.total_tokens || 0,
+        costUsd: data.usage?.cost_usd || 0
+      }
     };
   }
 
@@ -97,5 +103,42 @@
     } catch (error) {
       logger.debug('API key test failed', { error: error.message });
       return false;
+    }
+  }
+
+  /**
+   * Get credits balance from OpenRouter
+   * @param {string} apiKey - User's OpenRouter API key
+   * @returns {Promise<{balance: number, balanceFormatted: string}|null>}
+   */
+  export async function getCreditsBalance(apiKey) {
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/auth/key', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        }
+      });
+
+      if (!response.ok) {
+        logger.debug('Failed to fetch credits', { status: response.status });
+        return null;
+      }
+
+      const data = await response.json();
+      // OpenRouter returns limit_remaining in credits (1 credit = $1)
+      const balance = data.data?.limit_remaining ?? null;
+
+      if (balance === null) {
+        return null;
+      }
+
+      return {
+        balance,
+        balanceFormatted: balance >= 0 ? `$${balance.toFixed(2)}` : `$${balance.toFixed(2)}`
+      };
+    } catch (error) {
+      logger.debug('Error fetching credits', { error: error.message });
+      return null;
     }
   }
