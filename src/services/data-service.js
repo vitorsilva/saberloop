@@ -6,7 +6,7 @@
 
 import { clearAllUserData } from '../core/db.js';
 import { loadSamplesIfNeeded } from '../features/sample-loader.js';
-import { state } from '../core/state.js';
+import state from '../core/state.js';
 import { logger } from '../utils/logger.js';
 
 /**

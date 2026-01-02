@@ -13,7 +13,7 @@ vi.mock('../features/sample-loader.js', () => ({
 }));
 
 vi.mock('../core/state.js', () => ({
-  state: {
+  default: {
     clear: vi.fn()
   }
 }));
@@ -29,7 +29,7 @@ vi.mock('../utils/logger.js', () => ({
 import { deleteAllUserData } from './data-service.js';
 import { clearAllUserData } from '../core/db.js';
 import { loadSamplesIfNeeded } from '../features/sample-loader.js';
-import { state } from '../core/state.js';
+import state from '../core/state.js';
 import { logger } from '../utils/logger.js';
 
 describe('Data Service', () => {
