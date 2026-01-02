@@ -156,54 +156,128 @@ ${exclusionSection}
     }
   }
 
-  /**
-   * Generate explanation for wrong answer using OpenRouter
-   * @param {string} question - The question text
-   * @param {string} userAnswer - The user's answer
-   * @param {string} correctAnswer - The correct answer
-   * @param {string} gradeLevel - The grade level
-   * @param {string} apiKey - The OpenRouter API key
-   * @param {string} language - Language code for the explanation (e.g., 'en', 'pt-PT')
-   */
-  export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel =
-  'middle school', apiKey, language = 'en') {
-    const languageName = LANGUAGE_NAMES[language] || 'English';
-    logger.debug('Generating explanation for incorrect answer', { language });
+/**
+ * Generate a structured explanation for wrong answer using OpenRouter.
+ * Returns both the general explanation (cacheable) and personalized feedback.
+ * @param {string} question - The question text
+ * @param {string} userAnswer - The user's answer
+ * @param {string} correctAnswer - The correct answer
+ * @param {string} gradeLevel - The grade level
+ * @param {string} apiKey - The OpenRouter API key
+ * @param {string} language - Language code for the explanation (e.g., 'en', 'pt-PT')
+ * @returns {Promise<{rightAnswerExplanation: string, wrongAnswerExplanation: string}>} Structured explanation
+ */
+export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel =
+'middle school', apiKey, language = 'en') {
+  const languageName = LANGUAGE_NAMES[language] || 'English';
+  logger.debug('Generating structured explanation for incorrect answer', { language });
 
-    if (!apiKey) {
-      throw new Error('API key is required');
-    }
-
-    const prompt = `A ${gradeLevel} student answered a quiz question incorrectly. Please provide
-   a brief, encouraging explanation of why the correct answer is right and help them understand
-  the concept.
-
-  Question: ${question}
-  Student's answer: ${userAnswer}
-  Correct answer: ${correctAnswer}
-
-  Requirements:
-  - Be encouraging and supportive
-  - Explain why the correct answer is right
-  - Briefly explain why the student's answer was incorrect (if different from correct)
-  - Keep the explanation concise (2-3 sentences max)
-  - Use language appropriate for ${gradeLevel} level
-  - Write the explanation in ${languageName} (${language})
-
-  Provide only the explanation, no other text.`;
-
-    try {
-      const result = await callOpenRouter(apiKey, prompt, {
-        maxTokens: 500,
-        temperature: 0.7
-      });
-
-      logger.debug('Explanation generated successfully');
-
-      return result.text.trim();
-
-    } catch (error) {
-      logger.error('Explanation generation failed', { error: error.message });
-      return 'Sorry, we couldn\'t generate an explanation at this time.';
-    }
+  if (!apiKey) {
+    throw new Error('API key is required');
   }
+
+  const prompt = `A ${gradeLevel} student answered a quiz question incorrectly. Provide an explanation in JSON format.
+
+Question: ${question}
+Student's answer: ${userAnswer}
+Correct answer: ${correctAnswer}
+
+Return a JSON object with exactly these two fields:
+{
+  "rightAnswerExplanation": "Why the correct answer is right (2-3 sentences, educational, encouraging)",
+  "wrongAnswerExplanation": "Why the student's specific answer was incorrect (1-2 sentences, helpful)"
+}
+
+Requirements:
+- Be encouraging and supportive
+- Use language appropriate for ${gradeLevel} level
+- Write in ${languageName} (${language})
+- Return ONLY the JSON object, no other text`;
+
+  try {
+    const result = await callOpenRouter(apiKey, prompt, {
+      maxTokens: 500,
+      temperature: 0.7
+    });
+
+    // Parse JSON response
+    let data;
+    try {
+      let jsonText = result.text.trim();
+      // Handle markdown code blocks
+      if (jsonText.startsWith('```json')) {
+        jsonText = jsonText.slice(7);
+      }
+      if (jsonText.startsWith('```')) {
+        jsonText = jsonText.slice(3);
+      }
+      if (jsonText.endsWith('```')) {
+        jsonText = jsonText.slice(0, -3);
+      }
+      data = JSON.parse(jsonText.trim());
+    } catch (parseError) {
+      logger.error('Failed to parse explanation JSON', { parseError: parseError.message });
+      // Fallback: return the raw text as rightAnswerExplanation
+      return {
+        rightAnswerExplanation: result.text.trim(),
+        wrongAnswerExplanation: ''
+      };
+    }
+
+    logger.debug('Structured explanation generated successfully');
+
+    return {
+      rightAnswerExplanation: data.rightAnswerExplanation || '',
+      wrongAnswerExplanation: data.wrongAnswerExplanation || ''
+    };
+
+  } catch (error) {
+    logger.error('Explanation generation failed', { error: error.message });
+    throw error;
+  }
+}
+
+/**
+ * Generate only the wrong answer explanation (when right answer explanation is already cached).
+ * @param {string} question - The question text
+ * @param {string} userAnswer - The user's answer
+ * @param {string} correctAnswer - The correct answer
+ * @param {string} gradeLevel - The grade level
+ * @param {string} apiKey - The OpenRouter API key
+ * @param {string} language - Language code for the explanation (e.g., 'en', 'pt-PT')
+ * @returns {Promise<string>} Wrong answer explanation text
+ */
+export async function generateWrongAnswerExplanation(question, userAnswer, correctAnswer, gradeLevel =
+'middle school', apiKey, language = 'en') {
+  const languageName = LANGUAGE_NAMES[language] || 'English';
+  logger.debug('Generating wrong answer explanation only', { language });
+
+  if (!apiKey) {
+    throw new Error('API key is required');
+  }
+
+  const prompt = `A ${gradeLevel} student answered a quiz question incorrectly.
+
+Question: ${question}
+Student's answer: ${userAnswer}
+Correct answer: ${correctAnswer}
+
+Explain briefly (1-2 sentences) why the student's specific answer "${userAnswer}" was incorrect.
+Be helpful and encouraging. Write in ${languageName} (${language}).
+Provide only the explanation, no other text.`;
+
+  try {
+    const result = await callOpenRouter(apiKey, prompt, {
+      maxTokens: 200,
+      temperature: 0.7
+    });
+
+    logger.debug('Wrong answer explanation generated successfully');
+
+    return result.text.trim();
+
+  } catch (error) {
+    logger.error('Wrong answer explanation generation failed', { error: error.message });
+    throw error;
+  }
+}
