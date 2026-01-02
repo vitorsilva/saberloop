@@ -12,8 +12,8 @@
    * Call OpenRouter Chat API
    * @param {string} apiKey - User's OpenRouter API key
    * @param {string} prompt - The prompt to send
-   * @param {object} options - Optional settings (model, maxTokens, temperature)     
-   * @returns {Promise<{text: string, model: string, usage: object}>}
+   * @param {object} options - Optional settings (model, maxTokens, temperature)
+   * @returns {Promise<{text: string, model: string, usage: {promptTokens: number, completionTokens: number, totalTokens: number, costUsd: number}}>}
    */
   export async function callOpenRouter(apiKey, prompt, options = {}) {
     const {
@@ -36,7 +36,8 @@
         model,
         max_tokens: maxTokens,
         temperature,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        usage: { include: true }
       })
     });
 
@@ -60,7 +61,12 @@
     return {
       text,
       model: data.model,
-      usage: data.usage
+      usage: {
+        promptTokens: data.usage?.prompt_tokens || 0,
+        completionTokens: data.usage?.completion_tokens || 0,
+        totalTokens: data.usage?.total_tokens || 0,
+        costUsd: data.usage?.cost_usd || 0
+      }
     };
   }
 

@@ -100,8 +100,12 @@
 
         expect(result.text).toBe('The answer is 42');
         expect(result.model).toBe('test-model');
-        expect(result.usage).toEqual({ total_tokens: 50, prompt_tokens: 10,
-  completion_tokens: 40 });
+        expect(result.usage).toEqual({
+          promptTokens: 10,
+          completionTokens: 40,
+          totalTokens: 50,
+          costUsd: 0
+        });
       });
 
       it('should throw error on 401 (invalid API key)', async () => {
