@@ -74,7 +74,9 @@
     "selectModel": "Seleciona um modelo:",
     "contextLength": "Contexto: {{length}}",
     "creditsBalance": "Saldo de Créditos",
-    "remaining": "restante"
+    "remaining": "restante",
+    "freeTierStatus": "Plano Gratuito",
+    "freeTierLimit": "Número limitado de pedidos/dia"
   },
   "loading": {
     "preparing": "A preparar as tuas perguntas...",

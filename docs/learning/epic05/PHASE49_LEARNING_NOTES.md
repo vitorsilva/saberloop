@@ -231,3 +231,27 @@ Phase 49 implemented complete usage and cost tracking for the SaberLoop quiz app
 5. **Testing**: 92.68% mutation score, 27+ new unit tests, 7 E2E tests, 1 Maestro flow
 
 The feature is gated behind the `SHOW_USAGE_COSTS` feature flag (currently ENABLED) for gradual rollout.
+
+---
+
+## Session 3 (January 2, 2026 - Fix)
+
+### Issue: Free Tier Users Don't See Credits Card
+
+**Problem**: The credits balance card only showed for paid accounts with credits. Free tier users saw nothing because OpenRouter's `/api/v1/auth/key` endpoint doesn't return `limit_remaining` for free accounts.
+
+**Solution**: Show "Free Tier: Limited number of requests/day" when `getCreditsBalance()` returns null but user is connected.
+
+### Changes Made
+
+| File | Changes |
+|------|---------|
+| `src/views/SettingsView.js` | Show free tier status when credits is null |
+| `public/locales/en.json` | Added `freeTierStatus`, `freeTierLimit` keys |
+| `public/locales/pt-PT.json` | Added Portuguese translations |
+
+### Key Learning
+
+OpenRouter API behavior differs by account type:
+- **Paid accounts**: Return `limit_remaining` with credit balance
+- **Free tier accounts**: No `limit_remaining` field (rate-limited instead)

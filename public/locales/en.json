@@ -74,7 +74,9 @@
     "selectModel": "Select a model:",
     "contextLength": "Context: {{length}}",
     "creditsBalance": "Credits Balance",
-    "remaining": "remaining"
+    "remaining": "remaining",
+    "freeTierStatus": "Free Tier",
+    "freeTierLimit": "Limited number of requests/day"
   },
   "loading": {
     "preparing": "Preparing your questions...",
