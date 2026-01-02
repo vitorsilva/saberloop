@@ -3,6 +3,8 @@
   import state from '../core/state.js';
   import { t } from '../core/i18n.js';
   import { formatRelativeDate } from '../utils/formatters.js';
+  import { isFeatureEnabled } from '../core/features.js';
+  import { formatCost, isFreeModel } from '../services/cost-service.js';
 
   export default class TopicsView extends BaseView {
     async render() {
@@ -105,6 +107,14 @@
         dateStr = formatRelativeDate(session.timestamp);
       }
 
+      // Format cost if available and feature enabled
+      const showCost = isFeatureEnabled('SHOW_USAGE_COSTS') && session.usage;
+      let costStr = '';
+      if (showCost) {
+        const isFree = isFreeModel(session.model);
+        costStr = ` • ${formatCost(session.usage.costUsd || 0, isFree)}`;
+      }
+
       const canReplay = !!session.questions;
 
       // Choose color based on score (gray for unplayed)
@@ -134,9 +144,9 @@
           <div class="flex flex-1 flex-col">
             <p class="text-text-light dark:text-text-dark text-base
   font-bold leading-normal">${session.topic}</p>
-            <p class="text-subtext-light dark:text-subtext-dark text-sm      
+            <p class="text-subtext-light dark:text-subtext-dark text-sm
   font-normal leading-normal">
-              ${dateStr}${!canReplay ? ` • ${t('topics.cannotReplay')}` : ''}
+              ${dateStr}${costStr}${!canReplay ? ` • ${t('topics.cannotReplay')}` : ''}
             </p>
           </div>
           <div class="flex items-center gap-2">
