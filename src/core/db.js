@@ -99,6 +99,34 @@ export async function getAllTopics() {
     await db.put('sessions', updatedSession);
     return updatedSession;
   }
+
+  /**
+   * Update a question's cached explanation in a session.
+   * Used to cache the rightAnswerExplanation for performance.
+   * @param {number} sessionId - The session ID
+   * @param {number} questionIndex - Index of the question in the session's questions array
+   * @param {string} rightAnswerExplanation - The explanation to cache
+   * @returns {Promise<Object|null>} Updated session or null if not found
+   */
+  export async function updateQuestionExplanation(sessionId, questionIndex, rightAnswerExplanation) {
+    const db = await getDB();
+    const session = await db.get('sessions', sessionId);
+    if (!session) return null;
+
+    // Ensure questions array exists and index is valid
+    if (!session.questions || questionIndex < 0 || questionIndex >= session.questions.length) {
+      return null;
+    }
+
+    // Update the specific question's rightAnswerExplanation
+    session.questions[questionIndex] = {
+      ...session.questions[questionIndex],
+      rightAnswerExplanation
+    };
+
+    await db.put('sessions', session);
+    return session;
+  }
   
   /**
    * Delete all sample sessions (used when reloading samples)
