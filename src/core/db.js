@@ -167,3 +167,33 @@ export async function getAllTopics() {
     const key = await getOpenRouterKey();
     return !!key;
   }
+
+  // ========== DATA MANAGEMENT ==========
+
+  /**
+   * Clear all user data from IndexedDB.
+   * Preserves sample sessions but clears all user-created data.
+   * @returns {Promise<void>}
+   */
+  export async function clearAllUserData() {
+    const db = await getDB();
+
+    // Delete all non-sample sessions
+    const allSessions = await db.getAll('sessions');
+    for (const session of allSessions) {
+      if (!session.isSample) {
+        await db.delete('sessions', session.id);
+      }
+    }
+
+    // Clear all topics
+    const allTopics = await db.getAll('topics');
+    for (const topic of allTopics) {
+      await db.delete('topics', topic.id);
+    }
+
+    // Clear all settings
+    const tx = db.transaction('settings', 'readwrite');
+    await tx.store.clear();
+    await tx.done;
+  }

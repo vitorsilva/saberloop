@@ -13,6 +13,7 @@ import {
     getAllTopics,
     saveSession,
     getSession,
+    getAllSessions,
     getSessionsByTopic,
     getRecentSessions,
     updateSession,
@@ -22,6 +23,7 @@ import {
     getOpenRouterKey,
     removeOpenRouterKey,
     isOpenRouterConnected,
+    clearAllUserData,
     DB_NAME,
     DB_VERSION
   } from './db.js';
@@ -386,5 +388,116 @@ describe('Sessions CRUD Operations', () => {
 
         const key = await getOpenRouterKey();
         expect(key).toBe('sk-or-v1-new-key');
+      });
+    });
+
+    describe('getAllSessions', () => {
+      it('should return all sessions', async () => {
+        // Clear first using clearAllUserData, then add test data
+        await clearAllUserData();
+
+        await saveSession({ topicId: 'math', timestamp: Date.now(), score: 5 });
+        await saveSession({ topicId: 'science', timestamp: Date.now(), score: 8 });
+        await saveSession({ topicId: 'history', timestamp: Date.now(), score: 7 });
+
+        const sessions = await getAllSessions();
+        expect(sessions).toHaveLength(3);
+      });
+
+      it('should only contain sample sessions after clearAllUserData', async () => {
+        await clearAllUserData();
+        const sessions = await getAllSessions();
+        // After clearing, only sample sessions remain (if any from previous tests)
+        expect(sessions.every(s => s.isSample)).toBe(true);
+      });
+    });
+
+    describe('clearAllUserData', () => {
+      it('should clear all non-sample sessions', async () => {
+        // Clear any existing data first
+        await clearAllUserData();
+
+        // Create user sessions
+        await saveSession({ topicId: 'math', timestamp: Date.now(), score: 5 });
+        await saveSession({ topicId: 'science', timestamp: Date.now(), score: 8 });
+
+        // Create sample session
+        await saveSession({ topicId: 'sample', timestamp: Date.now(), score: 10, isSample: true });
+
+        // Verify sessions exist
+        let sessions = await getAllSessions();
+        expect(sessions).toHaveLength(3);
+
+        // Clear user data
+        await clearAllUserData();
+
+        // Verify only sample session remains
+        sessions = await getAllSessions();
+        expect(sessions).toHaveLength(1);
+        expect(sessions[0].isSample).toBe(true);
+      });
+
+      it('should clear all topics', async () => {
+        await clearAllUserData();
+
+        await saveTopic({ id: 'math', name: 'Mathematics' });
+        await saveTopic({ id: 'science', name: 'Science' });
+
+        let topics = await getAllTopics();
+        expect(topics).toHaveLength(2);
+
+        await clearAllUserData();
+
+        topics = await getAllTopics();
+        expect(topics).toHaveLength(0);
+      });
+
+      it('should clear all settings', async () => {
+        await saveSetting('apiKey', 'test-key');
+        await saveSetting('theme', 'dark');
+
+        expect(await getSetting('apiKey')).toBe('test-key');
+        expect(await getSetting('theme')).toBe('dark');
+
+        await clearAllUserData();
+
+        expect(await getSetting('apiKey')).toBeUndefined();
+        expect(await getSetting('theme')).toBeUndefined();
+      });
+
+      it('should preserve sample sessions', async () => {
+        await clearAllUserData();
+
+        // Count existing sample sessions
+        const beforeSamples = (await getAllSessions()).filter(s => s.isSample).length;
+
+        // Create new sample sessions
+        await saveSession({ topicId: 'sample1', timestamp: Date.now(), score: 10, isSample: true });
+        await saveSession({ topicId: 'sample2', timestamp: Date.now(), score: 8, isSample: true });
+
+        // Also create a non-sample session
+        await saveSession({ topicId: 'user-session', timestamp: Date.now(), score: 5 });
+
+        await clearAllUserData();
+
+        const sessions = await getAllSessions();
+        // Should have the new samples plus any existing ones
+        expect(sessions.length).toBe(beforeSamples + 2);
+        expect(sessions.every(s => s.isSample)).toBe(true);
+      });
+
+      it('should handle database with only samples gracefully', async () => {
+        // clearAllUserData preserves sample sessions, so after clearing
+        // we may still have samples from previous tests
+        await clearAllUserData();
+
+        // Should not throw
+        const sessions = await getAllSessions();
+        const topics = await getAllTopics();
+
+        // All remaining sessions should be samples (if any)
+        expect(sessions.every(s => s.isSample)).toBe(true);
+        // Topics should be empty
+        expect(topics).toEqual([]);
       });
     });
