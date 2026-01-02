@@ -1,8 +1,52 @@
 # Explanation Performance Improvement
 
-**Status:** Parked (Ready to Implement)
+**Status:** Ready to Implement
+**Priority:** Medium (Performance & UX)
+**Estimated Effort:** 2-3 sessions
 **Created:** 2025-12-28
-**Related:** Phase 40 Telemetry, ExplanationModal component
+**Updated:** 2025-12-30
+
+## Session Log
+
+| Date | Status | Notes |
+|------|--------|-------|
+| 2025-12-28 | **Plan Created** | Design complete with wireframes |
+| 2025-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+
+---
+
+## Overview
+
+Improve explanation feature performance by splitting explanations into cacheable and personalized parts. This enables instant display of cached content while still providing personalized feedback.
+
+**Key Improvement:** Show general explanation immediately (cached), generate user-specific feedback in parallel.
+
+---
+
+## What You'll Learn
+
+### New Technologies & Concepts
+
+1. **Structured LLM Responses** - Getting JSON from AI instead of plain text
+2. **Caching Strategies** - When to cache, what to cache, cache invalidation
+3. **Progressive UI Loading** - Showing partial content while loading rest
+4. **Lazy Loading Pattern** - Generate/cache only when needed (not upfront)
+5. **Schema Evolution** - Adding fields to existing data structures safely
+6. **Prompt Engineering** - Crafting prompts that return structured data
+7. **Offline Graceful Degradation** - Partial functionality without network
+
+---
+
+## Prerequisites
+
+Before starting this phase, you should have:
+
+- ✅ **Explanation feature** working (`ExplanationModal.js`)
+- ✅ **IndexedDB** for storing quiz sessions
+- ✅ **OpenRouter integration** for LLM calls
+- ✅ **Results page** displaying questions and answers
+- ✅ Understanding of async/await and Promise.all()
+- ✅ Understanding of JSON parsing and error handling
 
 ---
 

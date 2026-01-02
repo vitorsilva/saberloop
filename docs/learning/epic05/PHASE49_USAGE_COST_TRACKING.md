@@ -1,8 +1,19 @@
 # Phase 49: Usage & Cost Tracking
 
 **Status:** Research Complete / Ready to Implement
-**Estimated Sessions:** 3-4
+**Priority:** Medium (User Transparency)
+**Estimated Effort:** 3-4 sessions
 **Created:** December 27, 2024
+**Updated:** December 30, 2024
+
+## Session Log
+
+| Date | Status | Notes |
+|------|--------|-------|
+| 2024-12-27 | **Plan Created** | Research complete, OpenRouter API documented |
+| 2024-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+
+---
 
 ## Overview
 
@@ -14,6 +25,36 @@ Display LLM usage costs to users, helping them understand API spending. Even whe
 - Transparency builds trust
 
 **Key Insight:** For free models, show "Estimated cost: $0.00 (free model)" with what it *would* cost on an equivalent paid model.
+
+---
+
+## What You'll Learn
+
+### New Technologies & Concepts
+
+1. **OpenRouter Usage API** - Tracking tokens and costs via `usage: { include: true }`
+2. **Cost Calculation** - Computing estimated costs from token counts and pricing data
+3. **Model Pricing APIs** - Understanding per-token pricing across different LLM providers
+4. **Feature Flags** - Gradual rollout of new UI features
+5. **IndexedDB Schema Evolution** - Adding new fields to existing data structures
+6. **Cost Formatting** - Displaying micro-transactions ($0.0001) in user-friendly ways
+7. **Service Layer Design** - Creating specialized services for domain logic
+
+---
+
+## Prerequisites
+
+Before starting this phase, you should have:
+
+- ✅ **Phase 47** complete (Model Selection UI implemented)
+- ✅ **OpenRouter integration** working (`src/api/openrouter-client.js`)
+- ✅ **Quiz service** storing sessions in IndexedDB
+- ✅ **Model service** caching model list from OpenRouter
+- ✅ **Results page** displaying quiz results
+- ✅ **Topics page** displaying quiz history
+- ✅ **i18n system** for multi-language support
+- ✅ Understanding of async/await and API responses
+- ✅ Understanding of IndexedDB schema design
 
 ---
 
@@ -213,7 +254,12 @@ Show OpenRouter credits balance:
 
 ## Implementation Plan
 
+**Note:** Complete sub-phases in order. Each builds on the previous.
+
 ### 49.1 Enable Usage Tracking in API Calls
+
+**Q: Why add `usage: { include: true }` to the request?**
+A: By default, OpenRouter doesn't calculate costs (saves processing time). We explicitly request it so we can show users their spending.
 
 **Files:** `src/api/openrouter-client.js`
 
@@ -221,6 +267,9 @@ Show OpenRouter credits balance:
 - Add `usage: { include: true }` to request body
 - Parse `cost_usd` from response
 - Return usage data with response
+
+**Q: What's the tradeoff of enabling usage tracking?**
+A: Adds ~200-300ms latency to API responses (OpenRouter calculates costs after generation). Worth it for transparency!
 
 ```javascript
 // Updated response
@@ -241,6 +290,9 @@ return {
 ---
 
 ### 49.2 Calculate Estimated Cost for Free Models
+
+**Q: Why show estimated costs for free models?**
+A: Users should understand the "value" they're getting. If they later switch to a paid model, they won't be surprised by costs.
 
 **Files:** `src/services/cost-service.js` (new)
 

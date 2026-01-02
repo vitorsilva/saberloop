@@ -12,9 +12,16 @@ Live version available at [https://saberloop.com/app/](https://saberloop.com/app
 docs/
 ├── README.md (this file)
 ├── EPIC_TRANSITION_SUMMARY.md
-├── epic01_infrastructure/
-├── epic02_quizmaster_v1/
-└── epic03_quizmaster_v2/
+├── learning/
+│   ├── epic01_infrastructure/
+│   ├── epic02_quizmaster_v1/
+│   ├── epic03_quizmaster_v2/
+│   ├── epic04_saberloop_v1/
+│   ├── epic05/
+│   └── parking_lot/
+├── architecture/
+├── developer-guide/
+└── product-info/
 ```
 
 ---
@@ -23,20 +30,30 @@ docs/
 
 ### By Epic
 
-**📚 [Epic 01: PWA Infrastructure](./epic01_infrastructure/LEARNING_PLAN.md)**
+**📚 [Epic 01: PWA Infrastructure](./learning/epic01_infrastructure/LEARNING_PLAN.md)**
 - Status: ✅ Complete
 - Focus: PWA fundamentals, build tools, testing, deployment
 - Phases: 1-5 (all complete)
 
-**📚 [Epic 02: QuizMaster V1](./epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md)**
+**📚 [Epic 02: QuizMaster V1](./learning/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md)**
 - Status: ✅ Complete (Phases 1-9)
 - Focus: Feature development with mock API
 - Phases: 1-9 complete, 10-11 moved to Epic 03
 
-**📚 [Epic 03: QuizMaster V2](./epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)**
-- Status: 📝 Planned & Documented
+**📚 [Epic 03: QuizMaster V2](./learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)**
+- Status: ✅ Complete
 - Focus: Production readiness with real AI
-- Phases: 1-6 (ready to execute)
+- Phases: 1-9 (all complete)
+
+**📚 [Epic 04: Saberloop V1](./learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md)**
+- Status: ✅ Complete
+- Focus: Maintenance, enhancements, and new functionality
+- Key Phases: OpenRouter onboarding, i18n, architecture testing, telemetry, Maestro testing
+
+**📚 [Epic 05: Growth & Excellence](./learning/epic05/EPIC5_PLAN.md)**
+- Status: 📝 Planned
+- Focus: User experience polish, growth marketing, and testing excellence
+- Tracks: UX enhancements, growth & marketing, mutation testing
 
 ### Understanding the Transition
 
@@ -118,26 +135,14 @@ docs/
 
 ### Parking Lot (Ideas to Explore)
 
-**📦 [Parking Lot - Optional Ideas](./parking_lot/README.md)**
+**📦 [Parking Lot - Optional Ideas](./learning/parking_lot/README.md)**
 - Contains experimental and optional phases
 - Not required for core functionality
 - Can be revisited when relevant
-- Currently contains: Phase 7 (Azure) and Phase 8 (OAuth)
+- Recently moved 6 items to Epic 5 (Growth & Excellence)
+- Currently contains: 9 optional ideas including Azure, OAuth, iOS App Store, and more
 
-
-- [Phase 7: Azure Functions Migration](./parking_lot/PHASE7_AZURE_MIGRATION.md) ⭐ **Optional**
-  - Azure Functions deployment
-  - Alternative backend approach
-  - Application Insights monitoring
-  - Platform comparison
-  - *Nice to have: Azure experience*
-
-- [Phase 8: OAuth Integration](./parking_lot/PHASE8_OAUTH.md) ⭐ **Optional/Experimental**
-  - OAuth 2.0 authentication flow
-  - PKCE implementation
-  - Secure token storage (IndexedDB)
-  - Token refresh logic
-  - *Experimental: OAuth availability unconfirmed*
+**Note:** Several high-priority items from the parking lot have been promoted to [Epic 05: Growth & Excellence](./learning/epic05/EPIC5_PLAN.md)
 
 ---
 
@@ -170,7 +175,9 @@ See [EPIC_TRANSITION_SUMMARY.md](./EPIC_TRANSITION_SUMMARY.md) for detailed expl
 |------|--------|--------|------------|
 | Epic 01 | 5 phases | ✅ Complete | 100% |
 | Epic 02 | 9 executed, 2 deferred | ✅ Complete | 100% (of executed) |
-| Epic 03 | 8 phases (6 required + 2 optional) | 🚧 In Progress | 50% |
+| Epic 03 | 9 phases | ✅ Complete | 100% |
+| Epic 04 | Multiple phases | ✅ Complete | 100% |
+| Epic 05 | 7 phases (3 tracks) | 📝 Planned | 0% |
 
 ### Phase Mapping
 
@@ -244,5 +251,5 @@ If adding new learning notes:
 
 ---
 
-**Last Updated:** 2025-11-28
-**Current Status:** Epic 03 in progress (Phase 3.4 complete, Phase 3.5 next)
+**Last Updated:** 2025-12-30
+**Current Status:** Epic 05 planned (Epic 01-04 complete, Epic 05 ready to start)

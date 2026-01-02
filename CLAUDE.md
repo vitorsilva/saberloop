@@ -242,7 +242,8 @@ demo-pwa-app/
 │   │   ├── epic01_infrastructure/
 │   │   ├── epic02_quizmaster_v1/
 │   │   ├── epic03_quizmaster_v2/
-│   │   ├── epic04_saberloop_v1/  # Current epic
+│   │   ├── epic04_saberloop_v1/
+│   │   ├── epic05/            # Growth & Excellence
 │   │   └── parking_lot/       # Optional/deferred phases
 │   └── product-info/          # Product assets (mockups, logos)
 ├── src/
@@ -434,7 +435,7 @@ Located in `docs/learning/epic03_quizmaster_v2/`:
 - **PHASE5_PROJECT_STRUCTURE.md**: Repository organization (✅ Complete)
 - **PHASE9_PLAYSTORE_PUBLISHING.md**: Play Store publishing (✅ Complete - Closed Testing Live)
 
-### Epic 04: Saberloop V1 (Maintenance & Enhancement) ✅ Current
+### Epic 04: Saberloop V1 (Maintenance & Enhancement) ✅ Complete
 Located in `docs/learning/epic04_saberloop_v1/`:
 - **EPIC4_SABERLOOP_V1_PLAN.md**: Complete Epic 4 multi-phase plan
 - **PHASE5_EPIC03_PENDING.md**: Play Store production & validation (In Progress)
@@ -444,6 +445,17 @@ Located in `docs/learning/epic04_saberloop_v1/`:
 - **PHASE40_TELEMETRY.md**: Self-hosted observability solution
 - **PHASE50_MAESTRO_TESTING.md**: Expanded mobile UI testing
 - **PHASE60_MONETIZATION.md**: Google AdSense integration
+
+### Epic 05: Growth & Excellence ✅ Current
+Located in `docs/learning/epic05/`:
+- **EPIC5_PLAN.md**: Complete Epic 5 multi-track plan
+- **DATA_DELETION_FEATURE.md**: User data privacy and deletion
+- **PHASE49_USAGE_COST_TRACKING.md**: LLM API cost transparency
+- **EXPLANATION_PERFORMANCE_IMPROVEMENT.md**: Performance optimization via caching
+- **LANDING_PAGE_IMPROVEMENTS.md**: Conversion optimization
+- **GOOGLE_PLAY_STORE_UPDATE.md**: App store listing updates
+- **PHASE86_MUTATION_TESTING_EXPANSION.md**: Mutation testing wave 2 (core infrastructure)
+- **PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md**: Mutation testing wave 3 (API layer)
 
 When making changes, respect the learning-focused nature of the project. Keep code simple and well-commented rather than introducing complex patterns or dependencies.
 

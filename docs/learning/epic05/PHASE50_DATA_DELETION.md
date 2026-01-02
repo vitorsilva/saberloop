@@ -3,7 +3,56 @@
 **Status**: 📋 Planning
 **Created**: 2024-12-28
 **Updated**: 2024-12-30
-**Branch**: `claude/add-data-deletion-iZN2V`
+**Priority**: High (User Privacy)
+**Estimated Effort**: 3-4 sessions
+
+## Session Log
+
+| Date | Status | Notes |
+|------|--------|-------|
+| 2024-12-28 | **Plan Created** | Initial research and design complete |
+| 2024-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+
+---
+
+## Overview
+
+Provide users with complete control over their data through a "Delete All Data" feature in Settings. This addresses privacy concerns and enables users to completely remove their data before uninstalling the app.
+
+**Key Features:**
+- Storage usage display (see what you're storing)
+- One-click data deletion with confirmation
+- Preserves sample quizzes (so app stays functional)
+- Multi-language support across all 5 supported languages
+
+---
+
+## What You'll Learn
+
+### New Technologies & Concepts
+
+1. **Storage Manager API** - Using `navigator.storage.estimate()` to measure origin storage
+2. **IndexedDB Data Sizing** - Calculating database sizes by serializing to JSON
+3. **Byte Formatting** - Human-readable storage units (B, KB, MB, GB)
+4. **Service Layer Orchestration** - Coordinating deletion across multiple storage systems
+5. **Confirmation UX Patterns** - Modal workflows for destructive actions
+6. **Async Data Loading** - Progressive UI rendering with loading states
+7. **Data Lifecycle Management** - Complete CRUD operations (Delete completes the cycle)
+
+---
+
+## Prerequisites
+
+Before starting this phase, you should have:
+
+- ✅ **Epic 03 Phase 3** complete (Settings page exists)
+- ✅ **IndexedDB** implementation (`src/core/db.js`)
+- ✅ **i18n system** working (5 languages supported)
+- ✅ **Modal patterns** established (`ConnectModal.js` as reference)
+- ✅ **Service layer** architecture in place
+- ✅ **Unit testing** with Vitest set up
+- ✅ **E2E testing** with Playwright configured
+- ✅ Understanding of localStorage and sessionStorage APIs
 
 ---
 
@@ -231,22 +280,14 @@ db.js, settings.js, etc. (Core Layer)
 
 ---
 
-## Learning Objectives
-
-| Topic | What You'll Learn |
-|-------|-------------------|
-| **Storage Manager API** | Using `navigator.storage.estimate()` for total origin storage |
-| **IndexedDB Size Calculation** | Serializing data to JSON to measure store sizes |
-| **Byte Formatting** | Converting bytes to human-readable units (KB, MB, GB) |
-| **Async UI Updates** | Loading data after initial render with loading states |
-| **Data Cleanup Patterns** | Orchestrating deletion across multiple storage systems |
-| **Confirmation UX** | Modal patterns for destructive actions |
-
----
-
 ## Implementation Plan
 
+**Note:** Each phase builds on the previous. Complete them in order for a smooth learning progression.
+
 ### Phase 0: Storage Size Display
+
+**Q: Why show storage size before adding deletion?**
+A: Transparency! Users should see what they're deleting and understand the impact. It also helps users decide if deletion is necessary.
 
 #### 0.1 Create storage utility
 **File**: `src/utils/storage.js`
@@ -256,6 +297,9 @@ db.js, settings.js, etc. (Core Layer)
 - [ ] Calculate quizzes size: IndexedDB topics + sessions stores
 - [ ] Add JSDoc documentation
 - [ ] Add unit tests in `src/utils/storage.test.js`
+
+**Q: Why separate core and quizzes in the breakdown?**
+A: It helps users understand that most storage comes from quiz history (which they created), not app settings (which are small).
 
 #### 0.2 Add Storage Usage card to Settings
 **File**: `src/views/SettingsView.js`
@@ -282,6 +326,9 @@ db.js, settings.js, etc. (Core Layer)
 
 ### Phase 1: Core Infrastructure
 
+**Q: Why preserve sample quizzes?**
+A: The app would feel broken if users deleted all data and saw an empty state. Sample quizzes let users explore immediately after deletion.
+
 #### 1.1 Add database clear function
 **File**: `src/core/db.js`
 - [ ] Add `clearAllUserData()` function
@@ -290,6 +337,9 @@ db.js, settings.js, etc. (Core Layer)
   - Clears all settings (including API key)
 - [ ] Add JSDoc documentation
 - [ ] Add unit tests in `src/core/db.test.js`
+
+**Q: Why put this in `db.js` instead of a service?**
+A: `db.js` is the single source of truth for database operations. Services orchestrate, but core modules handle the actual data operations.
 
 #### 1.2 Create data service
 **File**: `src/services/data-service.js`
@@ -307,7 +357,13 @@ db.js, settings.js, etc. (Core Layer)
 - [ ] Add JSDoc documentation
 - [ ] Add unit tests in `src/services/data-service.test.js`
 
+**Q: Why is the deletion order important?**
+A: Start with IndexedDB (largest), then localStorage, then sessionStorage, then in-memory. This way if something fails midway, the most important data is already cleared.
+
 ### Phase 2: UI Components
+
+**Q: Why create a separate modal component instead of inline UI?**
+A: Modals force user focus and prevent accidental clicks. Destructive actions should always require confirmation through a dedicated UI pattern.
 
 #### 2.1 Create confirmation modal
 **File**: `src/components/DeleteDataModal.js`
