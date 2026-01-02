@@ -1,7 +1,7 @@
 # Phase 49: Usage & Cost Tracking - Learning Notes
 
 **Started:** January 2, 2026
-**Status:** In Progress (Sub-phase 49.4)
+**Status:** Complete
 
 ---
 
@@ -114,14 +114,120 @@ For free models (`:free` suffix), look up equivalent paid model to show estimate
 
 ---
 
-## Next Steps
+## Session 2 (January 2, 2026 - Continued)
 
-- [ ] 49.4 - Display cost on Results page
-- [ ] 49.5 - Display cost in Topics history
-- [ ] 49.6 - Credits balance in Settings (optional)
-- [ ] 49.7 - i18n translations
-- [ ] 49.8 - Unit tests
-- [ ] 49.9 - E2E tests (Playwright)
-- [ ] 49.10 - Maestro tests
-- [ ] 49.11 - Mutation testing
-- [ ] 49.12 - Documentation updates
+### What Was Built
+
+4. **49.4 - Display cost on Results page** (`3664ad8`)
+   - Added SHOW_USAGE_COSTS feature flag to `features.js`
+   - Added usage cost info card to ResultsView
+   - Shows token count, actual cost, and estimated cost for free models
+
+5. **49.5 - Display cost in Topics history** (`f9e1b48`)
+   - Updated TopicsView to show cost next to date
+   - Format: "Today • Free" or "Today • $0.02"
+
+6. **49.6 - Credits balance in Settings** (`3db7613`)
+   - Added `getCreditsBalance()` to openrouter-client.js (fetches /api/v1/auth/key)
+   - Exported from auth-service.js for views to consume
+   - Display credits in Settings page when connected
+   - Links to OpenRouter activity page for details
+
+7. **49.7 - i18n translations** (`eee1d68`)
+   - Added usage section with keys: thisQuizUsed, tokens, freeModel, onPaidModel
+   - Added settings keys: creditsBalance, remaining
+   - Translations for English (en) and Portuguese (pt-PT)
+
+8. **49.8 - Unit tests** (`e45a187`)
+   - Created `src/services/cost-service.test.js` with 21 tests:
+     - isFreeModel: free suffix detection
+     - getPaidEquivalent: strip :free suffix
+     - calculateEstimatedCost: token-based cost calculation
+     - formatCost: currency formatting
+     - getUsageSummary: complete usage summary
+   - Added 6 tests for getCreditsBalance in openrouter-client.test.js
+
+9. **49.9 - E2E tests** (`9f7d7f6`)
+   - Created `tests/e2e/usage-cost.spec.js` with 7 tests:
+     - Usage cost card on results page
+     - Free model indicator display
+     - Cost display in quiz history
+     - Credits balance in Settings
+     - OpenRouter activity link
+     - Zero balance handling
+     - API failure handling
+
+10. **49.10 - Maestro tests** (`a54b468`)
+    - Created `.maestro/flows/08-usage-cost.yaml`
+    - Tests usage cost card visibility on results
+    - Tests cost display in Topics history
+    - Tests credits balance in Settings (optional assertions)
+
+11. **49.11 - Mutation testing**
+    - Ran Stryker on cost-service.js
+    - **Mutation Score: 92.68%** (76 killed, 5 survived, 1 no coverage)
+    - Survivors are logger debug messages and defensive code (acceptable)
+
+### Testing Summary
+
+| Test Type | File | Tests | Status |
+|-----------|------|-------|--------|
+| Unit | cost-service.test.js | 21 | ✅ Pass |
+| Unit | openrouter-client.test.js | +6 | ✅ Pass |
+| E2E | usage-cost.spec.js | 7 | ✅ Pass |
+| Maestro | 08-usage-cost.yaml | 1 flow | ✅ Created |
+| Mutation | cost-service.js | 92.68% | ✅ Good |
+
+### Files Changed (Complete)
+
+| File | Changes |
+|------|---------|
+| `src/api/openrouter-client.js` | Added usage include, parse response, getCreditsBalance |
+| `src/api/openrouter-client.test.js` | Updated expectations, added credits tests |
+| `src/services/model-service.js` | Added pricing cache, getModelPricing() |
+| `src/services/cost-service.js` | **NEW** - Cost calculation service |
+| `src/services/cost-service.test.js` | **NEW** - Unit tests |
+| `src/services/auth-service.js` | Added getCreditsBalance export |
+| `src/api/api.real.js` | Return model + usage from generateQuestions |
+| `src/api/api.mock.js` | Simulate usage data |
+| `src/core/features.js` | Added SHOW_USAGE_COSTS flag |
+| `src/views/LoadingView.js` | Store model/usage in state |
+| `src/views/ResultsView.js` | Display usage cost card |
+| `src/views/TopicsView.js` | Display cost in history |
+| `src/views/SettingsView.js` | Display credits balance |
+| `public/locales/en.json` | Added usage & settings translations |
+| `public/locales/pt-PT.json` | Added usage & settings translations |
+| `tests/e2e/usage-cost.spec.js` | **NEW** - E2E tests |
+| `.maestro/flows/08-usage-cost.yaml` | **NEW** - Maestro test |
+
+---
+
+## Commits
+
+| Commit | Description |
+|--------|-------------|
+| `a27855a` | docs: start Phase 49 |
+| `f692c7d` | feat(api): enable usage tracking with cost_usd |
+| `7436848` | feat(services): add cost-service for usage calculations |
+| `c3e2326` | feat(db): store usage metrics with quiz sessions |
+| `3664ad8` | feat(ui): display usage cost in results page |
+| `f9e1b48` | feat(ui): display cost per quiz in history |
+| `3db7613` | feat(settings): display OpenRouter credits balance |
+| `eee1d68` | feat(i18n): add translations for usage cost display |
+| `e45a187` | test(unit): add tests for cost-service and getCreditsBalance |
+| `9f7d7f6` | test(e2e): add Playwright tests for usage cost display |
+| `a54b468` | test(maestro): add usage cost display test flow |
+
+---
+
+## Summary
+
+Phase 49 implemented complete usage and cost tracking for the SaberLoop quiz application:
+
+1. **API Integration**: OpenRouter now returns usage data (tokens, cost) with each quiz generation
+2. **Cost Service**: New service layer module for cost calculations and formatting
+3. **UI Display**: Cost info shown on Results page, Topics history, and Settings (credits balance)
+4. **i18n**: Full English and Portuguese translations
+5. **Testing**: 92.68% mutation score, 27+ new unit tests, 7 E2E tests, 1 Maestro flow
+
+The feature is gated behind the `SHOW_USAGE_COSTS` feature flag (currently ENABLED) for gradual rollout.

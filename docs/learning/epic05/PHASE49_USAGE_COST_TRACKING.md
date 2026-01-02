@@ -1,10 +1,10 @@
 # Phase 49: Usage & Cost Tracking
 
-**Status:** In Progress (Sub-phase 49.5)
+**Status:** ✅ Complete
 **Priority:** Medium (User Transparency)
 **Estimated Effort:** 3-4 sessions
 **Created:** December 27, 2024
-**Updated:** December 30, 2024
+**Updated:** January 2, 2026
 
 ## Session Log
 
@@ -16,6 +16,15 @@
 | 2026-01-02 | **49.1 Complete** | Usage tracking enabled in API, commit `f692c7d` |
 | 2026-01-02 | **49.2 Complete** | cost-service.js created, pricing cache added, commit `7436848` |
 | 2026-01-02 | **49.3 Complete** | Usage stored with quiz sessions, commit `c3e2326` |
+| 2026-01-02 | **49.4 Complete** | Display cost on Results page, commit `3664ad8` |
+| 2026-01-02 | **49.5 Complete** | Display cost in Topics history, commit `f9e1b48` |
+| 2026-01-02 | **49.6 Complete** | Credits balance in Settings, commit `3db7613` |
+| 2026-01-02 | **49.7 Complete** | i18n translations, commit `eee1d68` |
+| 2026-01-02 | **49.8 Complete** | Unit tests (27 new), commit `e45a187` |
+| 2026-01-02 | **49.9 Complete** | E2E tests (7 tests), commit `9f7d7f6` |
+| 2026-01-02 | **49.10 Complete** | Maestro test flow, commit `a54b468` |
+| 2026-01-02 | **49.11 Complete** | Mutation testing (92.68% score) |
+| 2026-01-02 | **Phase Complete** | All sub-phases done, ready for PR |
 
 ---
 

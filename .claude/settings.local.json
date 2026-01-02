@@ -123,7 +123,8 @@
       "Bash(git rm:*)",
       "Bash(ls:*)",
       "Bash(npm run deploy:telemetry:*)",
-      "Bash(gh pr checks:*)"
+      "Bash(gh pr checks:*)",
+      "Bash(npx stryker run:*)"
     ],
     "deny": [],
     "ask": []
