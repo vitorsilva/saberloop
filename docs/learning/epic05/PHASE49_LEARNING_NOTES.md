@@ -336,3 +336,39 @@ prefetchModelPricing(); // No await - runs in background
 - **Public endpoints**: OpenRouter's `/api/v1/models` doesn't require authentication, making it safe to prefetch without API key
 - **Background prefetch**: Don't block app startup - use fire-and-forget pattern for non-critical data
 - **Targeted caching**: Only cache what's needed (selected model + paid equivalent) instead of all ~400 models to minimize storage
+
+---
+
+## Final Summary
+
+**Phase 49 Status:** ✅ Complete and Deployed to Production
+
+### What Was Delivered
+
+1. **Usage Tracking API** - OpenRouter returns token counts and cost with each quiz
+2. **Cost Service** - New `cost-service.js` for calculations and formatting
+3. **Results Page** - Shows tokens used, actual cost, and estimated paid cost for free models
+4. **Topics History** - Shows cost per quiz (e.g., "Today • Free" or "Today • $0.02")
+5. **Settings Page** - Shows credits balance or "Free Tier" status
+6. **Pricing Prefetch** - Caches pricing during app init for immediate cost estimates
+7. **i18n** - Full English and Portuguese translations
+8. **Testing** - 92.68% mutation score, 27 unit tests, 7 E2E tests, 1 Maestro flow
+
+### Key Commits
+
+| Commit | Description |
+|--------|-------------|
+| `f692c7d` | Enable usage tracking in API |
+| `7436848` | Add cost-service for calculations |
+| `c3e2326` | Store usage with quiz sessions |
+| `3664ad8` | Display cost on Results page |
+| `f9e1b48` | Display cost in Topics history |
+| `3db7613` | Credits balance in Settings |
+| `eee1d68` | i18n translations |
+| `e45a187` | Unit tests |
+| `9f7d7f6` | E2E tests |
+| `a54b468` | Maestro test flow |
+| `eebcb96` | Pricing prefetch fix |
+
+### Production URL
+https://saberloop.com/app/
