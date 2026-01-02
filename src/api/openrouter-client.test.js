@@ -1,6 +1,6 @@
 
   import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-  import { callOpenRouter, testApiKey } from './openrouter-client.js';
+  import { callOpenRouter, testApiKey, getCreditsBalance } from './openrouter-client.js';
 
   describe('OpenRouter Client', () => {
     // Mock fetch globally
@@ -180,6 +180,84 @@
 
         const result = await testApiKey('sk-invalid-key');
         expect(result).toBe(false);
+      });
+    });
+
+    describe('getCreditsBalance', () => {
+      it('should fetch credits from /api/v1/auth/key', async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            data: { limit_remaining: 5.50 }
+          })
+        });
+
+        await getCreditsBalance('sk-test-key');
+
+        expect(mockFetch).toHaveBeenCalledWith(
+          'https://openrouter.ai/api/v1/auth/key',
+          expect.objectContaining({
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer sk-test-key' }
+          })
+        );
+      });
+
+      it('should return balance and formatted balance', async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            data: { limit_remaining: 5.50 }
+          })
+        });
+
+        const result = await getCreditsBalance('sk-test-key');
+
+        expect(result.balance).toBe(5.50);
+        expect(result.balanceFormatted).toBe('$5.50');
+      });
+
+      it('should handle zero balance', async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            data: { limit_remaining: 0 }
+          })
+        });
+
+        const result = await getCreditsBalance('sk-test-key');
+
+        expect(result.balance).toBe(0);
+        expect(result.balanceFormatted).toBe('$0.00');
+      });
+
+      it('should return null on API failure', async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: false,
+          status: 401
+        });
+
+        const result = await getCreditsBalance('sk-invalid-key');
+        expect(result).toBeNull();
+      });
+
+      it('should return null when limit_remaining is missing', async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            data: {}
+          })
+        });
+
+        const result = await getCreditsBalance('sk-test-key');
+        expect(result).toBeNull();
+      });
+
+      it('should return null on network error', async () => {
+        mockFetch.mockRejectedValueOnce(new Error('Network error'));
+
+        const result = await getCreditsBalance('sk-test-key');
+        expect(result).toBeNull();
       });
     });
 
