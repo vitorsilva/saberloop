@@ -10,7 +10,7 @@ import { logger } from '../utils/logger.js';
    * @param {Array<string>} [options.previousQuestions] - Questions to exclude (for continue feature)
    * @param {string} [options.language] - Language code (unused in mock, accepted for interface consistency)
    * @param {number} [options.questionCount] - Number of questions to generate (default: 5)
-   * @returns {Promise<{language: string, questions: Array}>} Object with language and questions array
+   * @returns {Promise<{language: string, questions: Array, model: string, usage: {promptTokens: number, completionTokens: number, totalTokens: number, costUsd: number}}>} Object with language, questions, model, and usage data
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', _apiKey, options = {}) {
     // Simulate network delay (real APIs take time)
@@ -92,9 +92,20 @@ import { logger } from '../utils/logger.js';
 
     logger.debug('Mock API questions generated', { count: mockQuestions.length, language: 'EN-US' });
 
+    // Simulate realistic usage data for mock API
+    const mockUsage = {
+      promptTokens: 150 + Math.floor(Math.random() * 50),
+      completionTokens: 400 + Math.floor(Math.random() * 200),
+      totalTokens: 0,
+      costUsd: 0  // Mock uses "free" model
+    };
+    mockUsage.totalTokens = mockUsage.promptTokens + mockUsage.completionTokens;
+
     return {
       language: 'EN-US',
-      questions: mockQuestions
+      questions: mockQuestions,
+      model: 'mock/demo-model:free',
+      usage: mockUsage
     };
   }
 

@@ -223,6 +223,8 @@ export default class ResultsView extends BaseView {
 
     const topic = state.get('currentTopic') || 'Unknown Topic';
     const gradeLevel = state.get('currentGradeLevel') || 'Unknown';
+    const model = state.get('quizModel');
+    const usage = state.get('quizUsage');
 
     const session = {
       topic,
@@ -231,7 +233,9 @@ export default class ResultsView extends BaseView {
       score: correctCount,
       totalQuestions,
       questions,
-      answers
+      answers,
+      model,
+      usage
     };
 
     try {

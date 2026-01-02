@@ -22,7 +22,7 @@
    * @param {Array<string>} [options.previousQuestions] - Questions to exclude (for continue feature)
    * @param {string} [options.language] - Language code for content generation (e.g., 'en', 'pt-PT')
    * @param {number} [options.questionCount] - Number of questions to generate (default: 5)
-   * @returns {Promise<{language: string, questions: Array}>} Object with language and questions array
+   * @returns {Promise<{language: string, questions: Array, model: string, usage: {promptTokens: number, completionTokens: number, totalTokens: number, costUsd: number}}>} Object with language, questions, model, and usage data
    */
   export async function generateQuestions(topic, gradeLevel = 'middle school', apiKey, options = {}) {
     const startTime = performance.now();
@@ -142,7 +142,9 @@ ${exclusionSection}
 
       return {
         language: data.language || 'EN-US',
-        questions: data.questions
+        questions: data.questions,
+        model: result.model,
+        usage: result.usage
       };
 
     } catch (error) {
