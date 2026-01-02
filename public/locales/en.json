@@ -72,7 +72,9 @@
     "loadingModels": "Loading available models...",
     "errorLoadingModels": "Failed to load models. Please try again.",
     "selectModel": "Select a model:",
-    "contextLength": "Context: {{length}}"
+    "contextLength": "Context: {{length}}",
+    "creditsBalance": "Credits Balance",
+    "remaining": "remaining"
   },
   "loading": {
     "preparing": "Preparing your questions...",

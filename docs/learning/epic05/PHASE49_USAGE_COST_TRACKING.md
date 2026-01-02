@@ -1,6 +1,6 @@
 # Phase 49: Usage & Cost Tracking
 
-**Status:** In Progress (Sub-phase 49.1)
+**Status:** In Progress (Sub-phase 49.5)
 **Priority:** Medium (User Transparency)
 **Estimated Effort:** 3-4 sessions
 **Created:** December 27, 2024
@@ -13,6 +13,9 @@
 | 2024-12-27 | **Plan Created** | Research complete, OpenRouter API documented |
 | 2024-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
 | 2026-01-02 | **Implementation Started** | Starting sub-phase 49.1 |
+| 2026-01-02 | **49.1 Complete** | Usage tracking enabled in API, commit `f692c7d` |
+| 2026-01-02 | **49.2 Complete** | cost-service.js created, pricing cache added, commit `7436848` |
+| 2026-01-02 | **49.3 Complete** | Usage stored with quiz sessions, commit `c3e2326` |
 
 ---
 

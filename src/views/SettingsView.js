@@ -1,11 +1,10 @@
   import BaseView from './BaseView.js';
   import { getSettings, saveSetting } from '../core/settings.js';
   import { APP_VERSION, BUILD_DATE } from '../version.js';
-  import { isConnected, disconnect } from '../services/auth-service.js';
+  import { isConnected, disconnect, getApiKey, getCreditsBalance } from '../services/auth-service.js';
   import { isFeatureEnabled } from '../core/features.js';
   import { t, changeLanguage, getCurrentLanguage, SUPPORTED_LANGUAGES } from '../core/i18n.js';
   import { getSelectedModel, getModelDisplayName, getAvailableModels, saveSelectedModel } from '../services/model-service.js';
-import { getApiKey } from '../services/auth-service.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -220,6 +219,28 @@ import { getApiKey } from '../services/auth-service.js';
           const currentModel = getSelectedModel();
           const modelName = getModelDisplayName(currentModel);
 
+          // Fetch credits balance if feature is enabled
+          const showCredits = isFeatureEnabled('SHOW_USAGE_COSTS');
+          let creditsHtml = '';
+          if (showCredits) {
+            const credits = await getCreditsBalance();
+            if (credits) {
+              creditsHtml = `
+            <!-- Credits Balance -->
+            <a href="https://openrouter.ai/activity" target="_blank" rel="noopener noreferrer"
+              class="bg-card-light dark:bg-card-dark rounded-xl p-4 flex items-center justify-between hover:bg-primary/10 transition-colors">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+                <div>
+                  <p class="text-text-light dark:text-text-dark text-base font-medium">${t('settings.creditsBalance')}</p>
+                  <p data-testid="credits-balance" class="text-subtext-light dark:text-subtext-dark text-sm">${credits.balanceFormatted} ${t('settings.remaining')}</p>
+                </div>
+              </div>
+              <span class="material-symbols-outlined text-subtext-light dark:text-subtext-dark">open_in_new</span>
+            </a>`;
+            }
+          }
+
           accountSection.innerHTML = `
             <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">
               <div class="flex items-center justify-between">
@@ -233,6 +254,8 @@ import { getApiKey } from '../services/auth-service.js';
                 </div>
               </div>
             </div>
+
+            ${creditsHtml}
 
             <!-- Model Selection -->
             <div class="bg-card-light dark:bg-card-dark rounded-xl p-4">

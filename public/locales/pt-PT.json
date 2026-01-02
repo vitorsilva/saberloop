@@ -72,7 +72,9 @@
     "loadingModels": "A carregar modelos disponíveis...",
     "errorLoadingModels": "Falha ao carregar modelos. Por favor, tenta novamente.",
     "selectModel": "Seleciona um modelo:",
-    "contextLength": "Contexto: {{length}}"
+    "contextLength": "Contexto: {{length}}",
+    "creditsBalance": "Saldo de Créditos",
+    "remaining": "restante"
   },
   "loading": {
     "preparing": "A preparar as tuas perguntas...",
