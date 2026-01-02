@@ -221,3 +221,45 @@ export function getModelPricing(modelId) {
   }
   return pricing[modelId] || null;
 }
+
+/**
+ * Prefetch model pricing data in background
+ * Called during app initialization to enable cost estimates
+ * Uses public endpoint (no auth required)
+ * Only caches pricing for the selected model and its paid equivalent
+ */
+export async function prefetchModelPricing() {
+  // Skip if cache already exists
+  const cached = getCachedPricing();
+  if (cached) {
+    logger.debug('Pricing cache already available');
+    return;
+  }
+
+  try {
+    // Get the model we need pricing for
+    const selectedModel = getSelectedModel();
+    const paidEquivalent = selectedModel.replace(/:free$/, '');
+    const modelsNeeded = new Set([selectedModel, paidEquivalent]);
+
+    logger.debug('Prefetching model pricing', { models: Array.from(modelsNeeded) });
+    const response = await fetch(OPENROUTER_MODELS_URL);
+
+    if (!response.ok) {
+      logger.debug('Failed to prefetch pricing', { status: response.status });
+      return;
+    }
+
+    const data = await response.json();
+    const allModels = data.data || [];
+
+    // Filter to only the models we need
+    const filteredModels = allModels.filter(model => modelsNeeded.has(model.id));
+
+    cachePricing(filteredModels);
+    logger.debug('Pricing prefetch complete', { modelCount: filteredModels.length });
+  } catch (error) {
+    // Silent fail - pricing will be fetched later when user opens model selector
+    logger.debug('Pricing prefetch error', { error: error.message });
+  }
+}

@@ -278,3 +278,61 @@ OpenRouter API behavior differs by account type:
 - JSDoc type definitions must be kept in sync when adding new API response fields
 - E2E tests can be environment-dependent; tests passing on main may fail on feature branches due to timing/state issues
 - When tests are flaky and unrelated to current changes, it's pragmatic to skip them with clear TODO comments rather than block the PR
+
+---
+
+## Session 5 (January 2, 2026 - Pricing Prefetch Fix)
+
+### Issue: Estimated Cost Not Showing on Results Page
+
+**Problem**: The "On a paid model, this would cost $X.XX" line wasn't showing on the Results page because the pricing cache was empty. The cache was only populated when the user opened the model selector in Settings, which most users never do before taking a quiz.
+
+**Root Cause**: `getModelPricing()` in cost-service.js returns `null` when pricing cache doesn't exist, causing `getUsageSummary()` to skip estimated cost calculation.
+
+**Solution**: Added `prefetchModelPricing()` function that:
+1. Fetches all models from OpenRouter's public `/api/v1/models` endpoint (no auth required)
+2. Caches pricing data in localStorage during app initialization
+3. Silent fails if network unavailable (pricing will be fetched later when user opens Settings)
+
+### Changes Made
+
+| File | Changes |
+|------|---------|
+| `src/services/model-service.js` | Added `prefetchModelPricing()` function |
+| `src/main.js` | Import and call `prefetchModelPricing()` during init |
+
+### Key Code
+
+```javascript
+// src/services/model-service.js
+export async function prefetchModelPricing() {
+  const cached = getCachedPricing();
+  if (cached) return; // Already have pricing
+
+  try {
+    // Only fetch pricing for selected model and its paid equivalent
+    const selectedModel = getSelectedModel();
+    const paidEquivalent = selectedModel.replace(/:free$/, '');
+    const modelsNeeded = new Set([selectedModel, paidEquivalent]);
+
+    const response = await fetch(OPENROUTER_MODELS_URL);
+    const data = await response.json();
+
+    // Filter to only the models we need (~30KB → few bytes)
+    const filteredModels = data.data.filter(m => modelsNeeded.has(m.id));
+    cachePricing(filteredModels);
+  } catch (error) {
+    // Silent fail - pricing fetched later when user opens Settings
+  }
+}
+
+// src/main.js (in init())
+prefetchModelPricing(); // No await - runs in background
+```
+
+### Key Learning
+
+- **Proactive caching**: Features that depend on cached data should prefetch during app init, not wait for user action
+- **Public endpoints**: OpenRouter's `/api/v1/models` doesn't require authentication, making it safe to prefetch without API key
+- **Background prefetch**: Don't block app startup - use fire-and-forget pattern for non-critical data
+- **Targeted caching**: Only cache what's needed (selected model + paid equivalent) instead of all ~400 models to minimize storage
