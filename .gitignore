@@ -34,3 +34,4 @@ telemetry-logs/
 # Maestro test artifacts (keep screenshots/)
 .maestro/tests/*
 !.maestro/tests/screenshots/
+.claude/settings.local.json
