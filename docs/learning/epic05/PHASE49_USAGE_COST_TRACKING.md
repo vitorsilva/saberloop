@@ -1,6 +1,6 @@
 # Phase 49: Usage & Cost Tracking
 
-**Status:** Research Complete / Ready to Implement
+**Status:** In Progress (Sub-phase 49.1)
 **Priority:** Medium (User Transparency)
 **Estimated Effort:** 3-4 sessions
 **Created:** December 27, 2024
@@ -12,6 +12,7 @@
 |------|--------|-------|
 | 2024-12-27 | **Plan Created** | Research complete, OpenRouter API documented |
 | 2024-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+| 2026-01-02 | **Implementation Started** | Starting sub-phase 49.1 |
 
 ---
 
@@ -256,6 +257,18 @@ Show OpenRouter credits balance:
 
 **Note:** Complete sub-phases in order. Each builds on the previous.
 
+### Branching Strategy
+
+Before starting implementation:
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/phase49-usage-cost-tracking
+```
+
+All commits go to this feature branch. Create PR when complete.
+
 ### 49.1 Enable Usage Tracking in API Calls
 
 **Q: Why add `usage: { include: true }` to the request?**
@@ -417,20 +430,54 @@ export function formatCost(costUsd, isFreeModel)
 - `quiz-service.test.js` - Usage data persistence
 - `openrouter-client.test.js` - Usage include flag
 
+**Commit:** `test: add usage tracking unit tests`
+
+---
+
+### 49.9 Add E2E Tests (Playwright)
+
 **E2E Tests:**
 - Cost displayed on results page
 - Cost displayed in quiz history
 - Free vs paid model display
 
-**Commit:** `test: add usage tracking tests`
+**Commit:** `test(e2e): add usage cost display tests`
 
 ---
 
-### 49.9 Update Documentation
+### 49.10 Add Maestro Tests (Parity)
 
-**Files:** `CLAUDE.md`, `EPIC4_SABERLOOP_V1_PLAN.md`
+**Purpose:** Maintain parity between Playwright and Maestro test coverage.
 
-**Commit:** `docs: add Phase 49 usage tracking`
+**Maestro Flows to Add/Update:**
+- Update `03-quiz-results.yaml` - Verify cost info card visible
+- Update `05-navigation.yaml` - Verify cost shown in history list
+
+**Commit:** `test(maestro): add usage cost display tests`
+
+---
+
+### 49.11 Run Mutation Testing
+
+**Purpose:** Verify test quality for new `cost-service.js` code.
+
+**Scope:** Run Stryker on `cost-service.js` only (new pure functions).
+
+```bash
+npx stryker run --mutate "src/services/cost-service.js"
+```
+
+**Target:** >80% mutation score (consistent with Phase 85 standards).
+
+**Commit:** `test(mutation): verify cost-service test quality`
+
+---
+
+### 49.12 Update Documentation
+
+**Files:** `CLAUDE.md`, `EPIC5_PLAN.md`
+
+**Commit:** `docs: mark Phase 49 usage tracking complete`
 
 ---
 
@@ -518,11 +565,19 @@ SHOW_USAGE_COSTS: true  // Enable by default, can disable if issues
 - [ ] `openrouter-client.test.js` - Usage include flag works
 - [ ] `quiz-service.test.js` - Usage data saved/retrieved
 
-### E2E Tests
+### E2E Tests (Playwright)
 - [ ] Results page shows cost card
 - [ ] Topics page shows cost per quiz
 - [ ] Free model shows estimated cost
 - [ ] Paid model shows actual cost
+
+### Maestro Tests (Parity)
+- [ ] `03-quiz-results.yaml` - Cost info card visible
+- [ ] `05-navigation.yaml` - Cost shown in history list
+
+### Mutation Testing
+- [ ] `cost-service.js` achieves >80% mutation score
+- [ ] All surviving mutants documented/justified
 
 ### Architecture Tests
 - [ ] `npm run arch:test` passes (no new violations)
@@ -536,8 +591,12 @@ SHOW_USAGE_COSTS: true  // Enable by default, can disable if issues
 - [ ] Cost displayed in Topics history
 - [ ] Free models show estimated paid cost
 - [ ] All unit tests pass
-- [ ] All E2E tests pass
+- [ ] All E2E tests pass (Playwright)
+- [ ] Maestro tests updated (parity maintained)
+- [ ] Mutation score >80% for `cost-service.js`
+- [ ] Architecture tests pass (no violations)
 - [ ] No performance regression (latency increase documented)
+- [ ] Feature branch merged via PR
 
 ---
 

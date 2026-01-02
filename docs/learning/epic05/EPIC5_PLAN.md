@@ -81,7 +81,7 @@ Before starting Epic 5, you should have completed:
 ## Phases
 
 ### Phase 49: Usage & Cost Tracking
-**Status:** Ready to Implement
+**Status:** In Progress (Sub-phase 49.1)
 **File:** [PHASE49_USAGE_COST_TRACKING.md](./PHASE49_USAGE_COST_TRACKING.md)
 
 Display LLM usage costs to users, helping them understand API spending. Show estimated costs even for free models to prepare users for potential paid usage.
