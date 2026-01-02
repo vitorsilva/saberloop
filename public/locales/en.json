@@ -211,5 +211,11 @@
     "challengeText": "Can you beat my score?",
     "shareSuccess": "Shared successfully!",
     "shareFailed": "Could not share. Try copying the link instead."
+  },
+  "usage": {
+    "thisQuizUsed": "This quiz used",
+    "tokens": "{{count}} tokens",
+    "freeModel": "Free model (no charge)",
+    "onPaidModel": "On a paid model, this would cost {{cost}}"
   }
 }
