@@ -27,6 +27,10 @@
     SHARE_FEATURE: {
       phase: 'ENABLED',  // Share quiz results to social media
       description: 'Share quiz results with text, link, and image'
+    },
+    SHOW_USAGE_COSTS: {
+      phase: 'ENABLED',  // Show LLM usage costs on results
+      description: 'Display token counts and costs after each quiz'
     }
   };
 
