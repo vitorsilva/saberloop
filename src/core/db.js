@@ -75,6 +75,15 @@ export async function getAllTopics() {
     return db.getAllFromIndex('sessions', 'byTopicId', topicId);
   }
 
+  /**
+   * Get all sessions from the database
+   * @returns {Promise<Array>} All session objects
+   */
+  export async function getAllSessions() {
+    const db = await getDB();
+    return db.getAll('sessions');
+  }
+
   export async function getRecentSessions(limit = 10) {
     const db = await getDB();
     const all = await db.getAllFromIndex('sessions', 'byTimestamp');

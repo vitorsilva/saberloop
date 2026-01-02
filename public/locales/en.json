@@ -76,7 +76,20 @@
     "creditsBalance": "Credits Balance",
     "remaining": "remaining",
     "freeTierStatus": "Free Tier",
-    "freeTierLimit": "Limited number of requests/day"
+    "freeTierLimit": "Limited number of requests/day",
+    "dataManagement": "Data Management",
+    "storageUsage": "Storage Usage",
+    "settingsData": "Settings & Preferences",
+    "quizzesData": "Quizzes & History",
+    "totalStorage": "Total",
+    "deleteAllData": "Delete All Data",
+    "deleteAllDataDesc": "Remove all quizzes, settings, and connections",
+    "deleteDataTitle": "Delete All Data?",
+    "deleteDataDescription": "This will permanently delete all your quiz history, OpenRouter connection, and preferences. Sample quizzes will be reloaded automatically.",
+    "deleteDataTip": "Tip: Use this before uninstalling the app to ensure complete data removal.",
+    "deleteDataConfirm": "Delete",
+    "deleteDataSuccess": "All data deleted successfully",
+    "deleting": "Deleting..."
   },
   "loading": {
     "preparing": "Preparing your questions...",
