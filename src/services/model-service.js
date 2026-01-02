@@ -7,6 +7,7 @@ import { logger } from '../utils/logger.js';
 
 const OPENROUTER_MODELS_URL = 'https://openrouter.ai/api/v1/models';
 const CACHE_KEY = 'openrouter_models_cache';
+const PRICING_CACHE_KEY = 'openrouter_pricing_cache';
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
@@ -73,9 +74,13 @@ export async function getAvailableModels(apiKey) {
   }
 
   const data = await response.json();
+  const allModels = data.data || [];
 
-  // Filter for free models only
-  const freeModels = (data.data || [])
+  // Cache ALL models with pricing for cost estimation
+  cachePricing(allModels);
+
+  // Filter for free models only (for UI selection)
+  const freeModels = allModels
     .filter(model => isFreeModel(model))
     .map(model => ({
       id: model.id,
@@ -85,9 +90,9 @@ export async function getAvailableModels(apiKey) {
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  logger.debug('Fetched free models', { count: freeModels.length });
+  logger.debug('Fetched models', { total: allModels.length, free: freeModels.length });
 
-  // Cache the results
+  // Cache free models for UI
   cacheModels(freeModels);
 
   return freeModels;
@@ -150,5 +155,69 @@ function cacheModels(models) {
  */
 export function clearModelCache() {
   localStorage.removeItem(CACHE_KEY);
+  localStorage.removeItem(PRICING_CACHE_KEY);
   logger.debug('Model cache cleared');
+}
+
+/**
+ * Cache all models with pricing data
+ * @param {Array} models - All models from OpenRouter API
+ */
+function cachePricing(models) {
+  try {
+    // Create a map of model ID to pricing
+    const pricingMap = {};
+    for (const model of models) {
+      pricingMap[model.id] = {
+        prompt: model.pricing?.prompt || '0',
+        completion: model.pricing?.completion || '0'
+      };
+    }
+    localStorage.setItem(PRICING_CACHE_KEY, JSON.stringify({
+      pricing: pricingMap,
+      timestamp: Date.now()
+    }));
+    logger.debug('Pricing cache updated', { modelCount: Object.keys(pricingMap).length });
+  } catch (error) {
+    logger.debug('Pricing cache write error', { error: error.message });
+  }
+}
+
+/**
+ * Get cached pricing data if still valid
+ * @returns {Object|null} Map of model ID to pricing, or null if cache expired/missing
+ */
+function getCachedPricing() {
+  try {
+    const cached = localStorage.getItem(PRICING_CACHE_KEY);
+    if (!cached) return null;
+
+    const { pricing, timestamp } = JSON.parse(cached);
+    const age = Date.now() - timestamp;
+
+    if (age < CACHE_DURATION_MS) {
+      return pricing;
+    }
+
+    // Cache expired
+    localStorage.removeItem(PRICING_CACHE_KEY);
+    return null;
+  } catch (error) {
+    logger.debug('Pricing cache read error', { error: error.message });
+    return null;
+  }
+}
+
+/**
+ * Get pricing for a specific model
+ * @param {string} modelId - Model ID (e.g., 'meta-llama/llama-3-8b-instruct')
+ * @returns {{prompt: string, completion: string}|null} Pricing per token, or null if not found
+ */
+export function getModelPricing(modelId) {
+  const pricing = getCachedPricing();
+  if (!pricing) {
+    logger.debug('Pricing cache not available');
+    return null;
+  }
+  return pricing[modelId] || null;
 }
