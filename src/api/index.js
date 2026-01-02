@@ -18,3 +18,4 @@ const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'false'
   export const { generateQuestions } = api;
   /** @public */
   export const { generateExplanation } = api;
+  export const { generateWrongAnswerExplanation } = api;
