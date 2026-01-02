@@ -125,7 +125,9 @@
       "Bash(npm run deploy:telemetry:*)",
       "Bash(gh pr checks:*)",
       "Bash(npx stryker run:*)",
-      "Bash(set DEPLOY_TARGET=staging)"
+      "Bash(set DEPLOY_TARGET=staging)",
+      "Bash(node scripts/generate-version.cjs:*)",
+      "Bash(node scripts/generate-version.js:*)"
     ],
     "deny": [],
     "ask": []
