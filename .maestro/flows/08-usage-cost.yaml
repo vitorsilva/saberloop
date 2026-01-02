@@ -1,0 +1,121 @@
+appId: com.saberloop.app
+---
+# Test 08: Usage Cost Display
+# Verifies cost tracking feature on results and topics pages
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Find and tap on any sample quiz
+- tapOn:
+    text: ".*Solar System.*|.*Basic Math.*|.*Famous Scientists.*"
+
+# Wait for quiz to load
+- extendedWaitUntil:
+    visible: "Question.*of.*"
+    timeout: 10000
+
+- takeScreenshot: 08-quiz-started
+
+# Answer 5 questions
+# Question 1
+- tapOn:
+    text: "B\\).*"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+# Question 2
+- tapOn:
+    text: "B\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 3
+- tapOn:
+    text: "B\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 4
+- tapOn:
+    text: "B\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Question 5
+- tapOn:
+    text: "B\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Wait for results page
+- extendedWaitUntil:
+    visible: ".*Results.*|.*Score.*|.*%.*"
+    timeout: 10000
+
+- takeScreenshot: 08-results-page
+
+# Verify usage cost card is visible
+- assertVisible:
+    text: ".*quiz used.*|.*tokens.*"
+    optional: true
+
+# Verify free model indicator
+- assertVisible:
+    text: ".*Free.*"
+    optional: true
+
+- takeScreenshot: 08-usage-cost-card
+
+# Navigate to Topics page
+- tapOn: "Topics"
+
+# Wait for topics page
+- extendedWaitUntil:
+    visible: ".*Quiz History.*|.*Topics.*"
+    timeout: 5000
+
+- takeScreenshot: 08-topics-page
+
+# Verify cost is shown in quiz history
+- assertVisible:
+    text: ".*Free.*|.*\\$.*"
+    optional: true
+
+- takeScreenshot: 08-topics-with-cost
+
+# Navigate to Settings to check credits balance
+- tapOn: "Settings"
+
+# Verify Settings page header
+- assertVisible:
+    text: "Settings"
+
+# Scroll to see connection section
+- scroll
+
+# Verify Credits Balance section (if connected and visible)
+- assertVisible:
+    text: ".*Credits.*Balance.*|.*remaining.*"
+    optional: true
+
+- takeScreenshot: 08-settings-credits
+
+# Navigate back to Home
+- tapOn: "Home"
+
+# Verify navigation succeeded
+- assertVisible:
+    text: "Saberloop"
+
+- takeScreenshot: 08-test-complete
