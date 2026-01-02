@@ -76,7 +76,20 @@
     "creditsBalance": "Saldo de Créditos",
     "remaining": "restante",
     "freeTierStatus": "Plano Gratuito",
-    "freeTierLimit": "Número limitado de pedidos/dia"
+    "freeTierLimit": "Número limitado de pedidos/dia",
+    "dataManagement": "Gestão de Dados",
+    "storageUsage": "Uso de Armazenamento",
+    "settingsData": "Definições e Preferências",
+    "quizzesData": "Quizzes e Histórico",
+    "totalStorage": "Total",
+    "deleteAllData": "Apagar Todos os Dados",
+    "deleteAllDataDesc": "Remover todos os quizzes, definições e conexões",
+    "deleteDataTitle": "Apagar Todos os Dados?",
+    "deleteDataDescription": "Isto irá apagar permanentemente todo o teu histórico de quizzes, conexão OpenRouter e preferências. Os quizzes de exemplo serão recarregados automaticamente.",
+    "deleteDataTip": "Dica: Usa isto antes de desinstalar a app para garantir a remoção completa dos dados.",
+    "deleteDataConfirm": "Apagar",
+    "deleteDataSuccess": "Todos os dados apagados com sucesso",
+    "deleting": "A apagar..."
   },
   "loading": {
     "preparing": "A preparar as tuas perguntas...",

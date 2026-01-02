@@ -6,6 +6,8 @@
   import { t, changeLanguage, getCurrentLanguage, SUPPORTED_LANGUAGES } from '../core/i18n.js';
   import { getSelectedModel, getModelDisplayName, getAvailableModels, saveSelectedModel } from '../services/model-service.js';
   import { getStorageBreakdown } from '../utils/storage.js';
+  import { showDeleteDataModal } from '../components/DeleteDataModal.js';
+  import { deleteAllUserData } from '../services/data-service.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -431,6 +433,44 @@
         // Re-render to apply new language
         await this.render();
       });
+
+      // Delete all data button
+      const deleteBtn = this.querySelector('#deleteAllDataBtn');
+      if (deleteBtn) {
+        this.addEventListener(deleteBtn, 'click', () => this.handleDeleteAllData());
+      }
+    }
+
+    async handleDeleteAllData() {
+      const confirmed = await showDeleteDataModal(async () => {
+        await deleteAllUserData();
+      });
+
+      if (confirmed) {
+        // Show success toast
+        this.showSuccessToast(t('settings.deleteDataSuccess'));
+
+        // Re-render to update storage display
+        await this.render();
+      }
+    }
+
+    showSuccessToast(message) {
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-fade-in';
+      toast.innerHTML = `
+        <span class="material-symbols-outlined">check_circle</span>
+        <span>${message}</span>
+      `;
+
+      document.body.appendChild(toast);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        toast.classList.add('animate-fade-out');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
 
     async toggleModelSelector() {
