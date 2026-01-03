@@ -141,11 +141,11 @@
           .rejects.toThrow('Insufficient credits');
       });
 
-      it('should throw error on empty response', async () => {
+      it('should throw error on empty response when both content and reasoning are empty', async () => {
         mockFetch.mockResolvedValueOnce({
           ok: true,
           json: () => Promise.resolve({
-            choices: [{ message: { content: '' } }],
+            choices: [{ message: { content: '', reasoning: '' } }],
             model: 'test-model',
             usage: {}
           })
@@ -153,6 +153,37 @@
 
         await expect(callOpenRouter('sk-test-key', 'Test'))
           .rejects.toThrow('Empty response from OpenRouter');
+      });
+
+      it('should use reasoning field when content is empty (reasoning models)', async () => {
+        // Some models like deepseek-r1t2-chimera return content in reasoning field
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            choices: [{ message: { content: '', reasoning: 'This is the actual response from reasoning model' } }],
+            model: 'deepseek-r1t2-chimera',
+            usage: { total_tokens: 100 }
+          })
+        });
+
+        const result = await callOpenRouter('sk-test-key', 'Test prompt');
+
+        expect(result.text).toBe('This is the actual response from reasoning model');
+      });
+
+      it('should prefer content over reasoning when both are present', async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            choices: [{ message: { content: 'Content response', reasoning: 'Reasoning response' } }],
+            model: 'test-model',
+            usage: {}
+          })
+        });
+
+        const result = await callOpenRouter('sk-test-key', 'Test prompt');
+
+        expect(result.text).toBe('Content response');
       });
     });
 
