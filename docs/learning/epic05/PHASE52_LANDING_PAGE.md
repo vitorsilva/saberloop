@@ -1266,10 +1266,10 @@ ffmpeg -i test-results/*/video.webm -vf "fps=10,scale=320:-1" -loop 0 docs/produ
 
 ### Phase 52.8: Demo Video & Additional Screenshots (Enhancement)
 
-**Status:** Ready to implement
+**Status:** In Progress
 **Added:** 2026-01-03
 
-This phase adds a demo video and expands the "See It In Action" section with more feature screenshots.
+This phase adds a demo video to the hero section and expands the "See It In Action" section with more feature screenshots.
 
 #### Screenshot Assessment
 
@@ -1277,7 +1277,13 @@ This phase adds a demo video and expands the "See It In Action" section with mor
 |------|---------------------|--------|-------|
 | **Share Results UX** | `03-results-page.png` | Ready | Shows Share Results button, 40% score, Continue button |
 | **Explanation Modal** | `phase27_explanation_modal.png` | Needs recapture | Shows "Failed to generate explanation" error |
-| **Usage Cost Tracking** | None found | Needs capture | Need screenshot showing token/cost info after quiz |
+| **Usage Cost Tracking** | Results page | Needs capture | Cost card shows tokens used, actual cost, estimated paid cost (see Phase 49) |
+
+#### Where Features Are Displayed (from Phase 49)
+
+- **Results Page**: Usage cost card with tokens used, actual cost, estimated paid cost for free models
+- **Topics History**: Cost per quiz (e.g., "Today • Free" or "Today • $0.02")
+- **Settings Page**: Credits balance or "Free Tier" status
 
 #### Screenshots to Capture
 
@@ -1287,28 +1293,28 @@ This phase adds a demo video and expands the "See It In Action" section with mor
    - Capture modal showing "Why it's [correct answer]" with actual explanation text
    - **Source:** Playwright test or manual capture
 
-2. **Usage Cost Tracking**
+2. **Usage Cost Card on Results Page**
    - Complete a quiz with OpenRouter connected
-   - Results page should show token usage (if visible) OR
-   - Settings page showing usage stats OR
-   - Need to verify where cost info is displayed in the app
+   - Results page shows usage cost card below the score
+   - Card shows: tokens used, actual cost, "On paid model would cost $X.XX"
+   - **Source:** Playwright test capturing Results page with cost card visible
 
 #### Implementation Checklist
 
 **Screenshots:**
 - [ ] Process `03-results-page.png` for Share UX → `landing-share-results.png`
 - [ ] Capture new explanation modal screenshot with actual explanation text
-- [ ] Capture usage cost tracking screenshot (verify location in app first)
+- [ ] Capture Results page screenshot showing usage cost card
 - [ ] Process new screenshots with device frames
 - [ ] Copy to `landing/images/`
 
 **Update Landing Page HTML:**
 - [ ] Add Share Results screenshot to "See It In Action" grid
 - [ ] Add Explanation Modal screenshot
-- [ ] Add Usage Cost screenshot (if captured)
-- [ ] Update grid CSS if needed (4 → 6 or 7 images)
+- [ ] Add Usage Cost Card screenshot
+- [ ] Update grid CSS if needed (4 → 7 images)
 
-**Demo Video:**
+**Demo Video (Option A - Hero Replacement):**
 - [ ] Create Playwright test for demo video (`tests/e2e/capture-demo-video.spec.js`)
 - [ ] Record ~30s user journey:
   1. Home screen (1s)
@@ -1316,26 +1322,30 @@ This phase adds a demo video and expands the "See It In Action" section with mor
   3. Select grade level (1s)
   4. Generate quiz (loading 2s)
   5. Answer questions (10s - mix of right/wrong)
-  6. View results (2s)
+  6. View results with cost card (2s)
   7. Click explanation button (2s)
   8. View explanation modal (3s)
   9. Close modal, show Continue button (2s)
 - [ ] Convert webm → mp4 (or gif for auto-play)
-- [ ] Add video/gif to hero section or "See It In Action"
+- [ ] Replace hero static image with auto-playing video/gif
+- [ ] Add fallback poster image for slow connections
 - [ ] **Commit:** `feat(landing): add demo video and additional screenshots`
 
-#### Video Options
+#### Video Placement Decision
 
-**Option A: Hero section replacement**
-Replace static hero image with auto-playing video/gif showing the app in action.
+**Selected: Option A - Hero section replacement**
 
-**Option B: Dedicated demo section**
-Add video between Screenshots and Share sections.
+Replace the static hero image with an auto-playing, muted, looping video showing the app in action. This provides maximum impact as the first thing visitors see.
 
-**Option C: Inline in Screenshots section**
-Replace one screenshot slot with the video.
-
-**Recommendation:** Option A (hero) for maximum impact, or Option B for less intrusive.
+**HTML Implementation:**
+```html
+<div class="hero-image">
+    <video autoplay muted loop playsinline poster="/app/icons/screenshot-mobile-1.png">
+        <source src="images/demo.mp4" type="video/mp4">
+        <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App">
+    </video>
+</div>
+```
 
 ---
 
