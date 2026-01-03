@@ -2,13 +2,19 @@
 /**
  * Telemetry Configuration
  *
- * This file contains configuration for the telemetry ingestion endpoint.
- * Copy to config.local.php and update the token for production.
+ * This file contains default configuration for the telemetry ingestion endpoint.
+ *
+ * For production deployment:
+ * 1. Copy config.local.example.php to config.local.php
+ * 2. Set your secure token in config.local.php
+ * 3. config.local.php is NOT committed to git (it's in .gitignore)
+ * 4. config.local.php is blocked from web access via .htaccess
  */
 
-return [
+// Default configuration
+$config = [
     // Auth token - must match VITE_TELEMETRY_TOKEN in frontend
-    // IMPORTANT: Change this to a secure random string in production!
+    // IMPORTANT: Override this in config.local.php for production!
     'token' => getenv('TELEMETRY_TOKEN') ?: 'change-this-to-secure-token',
 
     // Directory where log files are stored (relative to this file)
@@ -30,3 +36,15 @@ return [
         'http://localhost:8888',  // Development
     ],
 ];
+
+// Load local configuration overrides if present
+// This allows setting the token without relying on environment variables
+$localConfigPath = __DIR__ . '/config.local.php';
+if (file_exists($localConfigPath)) {
+    $localConfig = require $localConfigPath;
+    if (is_array($localConfig)) {
+        $config = array_merge($config, $localConfig);
+    }
+}
+
+return $config;
