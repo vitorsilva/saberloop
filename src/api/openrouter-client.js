@@ -50,7 +50,21 @@
 
     const data = await response.json();
 
-    const text = data.choices?.[0]?.message?.content;
+    // Get the actual response content
+    // Note: reasoning field is chain-of-thought, only use as fallback if it looks like an actual answer
+    const message = data.choices?.[0]?.message;
+    let text = message?.content;
+
+    // For reasoning models that hit token limit, reasoning may contain partial answer
+    // Only use reasoning if content is empty AND reasoning doesn't look like chain-of-thought
+    if (!text && message?.reasoning) {
+      const reasoning = message.reasoning.trim();
+      // Chain-of-thought typically starts with "Okay", "Let me", "First", etc.
+      const isChainOfThought = /^(okay|let me|let's|first|i need|the user|alright|so,)/i.test(reasoning);
+      if (!isChainOfThought) {
+        text = reasoning;
+      }
+    }
 
     if (!text) {
       throw new Error('Empty response from OpenRouter');

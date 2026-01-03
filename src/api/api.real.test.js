@@ -13,7 +13,7 @@ vi.mock('../utils/logger.js', () => ({
   }
 }));
 
-import { generateQuestions } from './api.real.js';
+import { generateQuestions, generateExplanation } from './api.real.js';
 import { callOpenRouter } from './openrouter-client.js';
 
 // Helper to generate mock questions of a specific count
@@ -179,5 +179,108 @@ describe('generateQuestions prompt', () => {
     const result = await generateQuestions('Test Topic', 'middle school', 'fake-api-key', { questionCount: 15 });
 
     expect(result.questions).toHaveLength(15);
+  });
+});
+
+describe('generateExplanation JSON parsing', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const validExplanation = {
+    rightAnswerExplanation: 'Paris is the capital of France.',
+    wrongAnswerExplanation: 'London is the capital of the UK, not France.'
+  };
+
+  it('should parse clean JSON response', async () => {
+    callOpenRouter.mockResolvedValue({
+      text: JSON.stringify(validExplanation)
+    });
+
+    const result = await generateExplanation('What is the capital?', 'London', 'Paris', 'middle school', 'fake-api-key');
+
+    expect(result.rightAnswerExplanation).toBe(validExplanation.rightAnswerExplanation);
+    expect(result.wrongAnswerExplanation).toBe(validExplanation.wrongAnswerExplanation);
+  });
+
+  it('should parse JSON wrapped in markdown code block', async () => {
+    callOpenRouter.mockResolvedValue({
+      text: '```json\n' + JSON.stringify(validExplanation) + '\n```'
+    });
+
+    const result = await generateExplanation('What is the capital?', 'London', 'Paris', 'middle school', 'fake-api-key');
+
+    expect(result.rightAnswerExplanation).toBe(validExplanation.rightAnswerExplanation);
+    expect(result.wrongAnswerExplanation).toBe(validExplanation.wrongAnswerExplanation);
+  });
+
+  it('should parse JSON with leading/trailing whitespace', async () => {
+    callOpenRouter.mockResolvedValue({
+      text: '  \n\n' + JSON.stringify(validExplanation) + '\n\n  '
+    });
+
+    const result = await generateExplanation('What is the capital?', 'London', 'Paris', 'middle school', 'fake-api-key');
+
+    expect(result.rightAnswerExplanation).toBe(validExplanation.rightAnswerExplanation);
+    expect(result.wrongAnswerExplanation).toBe(validExplanation.wrongAnswerExplanation);
+  });
+
+  it('should parse JSON with smart quotes by normalizing them', async () => {
+    // This test documents the bug - smart quotes cause JSON.parse to fail
+    // The current fallback returns raw JSON as rightAnswerExplanation
+    const jsonWithSmartQuotes = '{ "rightAnswerExplanation": "Paris is correct.", "wrongAnswerExplanation": "London is wrong." }';
+
+    callOpenRouter.mockResolvedValue({
+      text: jsonWithSmartQuotes
+    });
+
+    const result = await generateExplanation('What is the capital?', 'London', 'Paris', 'middle school', 'fake-api-key');
+
+    // BUG: Should parse the content, not return raw JSON
+    // Current behavior returns the raw JSON string as rightAnswerExplanation
+    expect(result.rightAnswerExplanation).not.toContain('{');
+    expect(result.rightAnswerExplanation).not.toContain('"rightAnswerExplanation"');
+    expect(result.rightAnswerExplanation).toBe('Paris is correct.');
+    expect(result.wrongAnswerExplanation).toBe('London is wrong.');
+  });
+
+  it('should parse JSON with extra text before it', async () => {
+    // Some LLMs add conversational text before the JSON
+    callOpenRouter.mockResolvedValue({
+      text: 'Here is the explanation:\n' + JSON.stringify(validExplanation)
+    });
+
+    const result = await generateExplanation('What is the capital?', 'London', 'Paris', 'middle school', 'fake-api-key');
+
+    // BUG: Should extract and parse the JSON
+    expect(result.rightAnswerExplanation).not.toContain('{');
+    expect(result.rightAnswerExplanation).toBe(validExplanation.rightAnswerExplanation);
+    expect(result.wrongAnswerExplanation).toBe(validExplanation.wrongAnswerExplanation);
+  });
+
+  it('should parse JSON with extra text after it', async () => {
+    callOpenRouter.mockResolvedValue({
+      text: JSON.stringify(validExplanation) + '\n\nI hope this helps!'
+    });
+
+    const result = await generateExplanation('What is the capital?', 'London', 'Paris', 'middle school', 'fake-api-key');
+
+    // BUG: Should extract and parse the JSON
+    expect(result.rightAnswerExplanation).not.toContain('{');
+    expect(result.rightAnswerExplanation).toBe(validExplanation.rightAnswerExplanation);
+    expect(result.wrongAnswerExplanation).toBe(validExplanation.wrongAnswerExplanation);
+  });
+
+  it('should handle JSON with BOM character', async () => {
+    // BOM (Byte Order Mark) can appear at the start of some text
+    const BOM = '\uFEFF';
+    callOpenRouter.mockResolvedValue({
+      text: BOM + JSON.stringify(validExplanation)
+    });
+
+    const result = await generateExplanation('What is the capital?', 'London', 'Paris', 'middle school', 'fake-api-key');
+
+    expect(result.rightAnswerExplanation).not.toContain('{');
+    expect(result.rightAnswerExplanation).toBe(validExplanation.rightAnswerExplanation);
   });
 });

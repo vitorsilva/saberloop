@@ -141,11 +141,11 @@
           .rejects.toThrow('Insufficient credits');
       });
 
-      it('should throw error on empty response', async () => {
+      it('should throw error on empty response when both content and reasoning are empty', async () => {
         mockFetch.mockResolvedValueOnce({
           ok: true,
           json: () => Promise.resolve({
-            choices: [{ message: { content: '' } }],
+            choices: [{ message: { content: '', reasoning: '' } }],
             model: 'test-model',
             usage: {}
           })
@@ -153,6 +153,52 @@
 
         await expect(callOpenRouter('sk-test-key', 'Test'))
           .rejects.toThrow('Empty response from OpenRouter');
+      });
+
+      it('should use reasoning field when content is empty and reasoning is not chain-of-thought', async () => {
+        // Some models may put actual answer in reasoning field
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            choices: [{ message: { content: '', reasoning: 'A resposta correta é 32 dentes.' } }],
+            model: 'deepseek-r1t2-chimera',
+            usage: { total_tokens: 100 }
+          })
+        });
+
+        const result = await callOpenRouter('sk-test-key', 'Test prompt');
+
+        expect(result.text).toBe('A resposta correta é 32 dentes.');
+      });
+
+      it('should reject chain-of-thought reasoning as answer', async () => {
+        // Chain-of-thought should not be used as the answer
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            choices: [{ message: { content: '', reasoning: 'Okay, let me think about this...' } }],
+            model: 'deepseek-r1t2-chimera',
+            usage: { total_tokens: 100 }
+          })
+        });
+
+        await expect(callOpenRouter('sk-test-key', 'Test prompt'))
+          .rejects.toThrow('Empty response from OpenRouter');
+      });
+
+      it('should prefer content over reasoning when both are present', async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            choices: [{ message: { content: 'Content response', reasoning: 'Reasoning response' } }],
+            model: 'test-model',
+            usage: {}
+          })
+        });
+
+        const result = await callOpenRouter('sk-test-key', 'Test prompt');
+
+        expect(result.text).toBe('Content response');
       });
     });
 
