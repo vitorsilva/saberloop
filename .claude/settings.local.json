@@ -127,7 +127,18 @@
       "Bash(npx stryker run:*)",
       "Bash(set DEPLOY_TARGET=staging)",
       "Bash(node scripts/generate-version.cjs:*)",
-      "Bash(node scripts/generate-version.js:*)"
+      "Bash(node scripts/generate-version.js:*)",
+      "Bash(timeout 90 npm run test:e2e:*)",
+      "Bash(git restore:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat\\(api\\): update generateExplanation to return structured JSON\n\n- Return {rightAnswerExplanation, wrongAnswerExplanation} object\n- Add generateWrongAnswerExplanation for partial generation\n- Add JSON parsing with fallback for malformed responses\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat\\(api\\): update mock API to return structured explanation\n\n- Return {rightAnswerExplanation, wrongAnswerExplanation} object\n- Add generateWrongAnswerExplanation mock function\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat\\(api\\): export generateWrongAnswerExplanation\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npm run test:mutation:*)",
+      "Bash(maestro:*)",
+      "Bash(adb devices:*)",
+      "Bash($env:LOCALAPPDATA/Android/Sdk/emulator/emulator -list-avds)",
+      "Bash(\"/c/Users/omeue/AppData/Local/Android/Sdk/emulator/emulator\" -list-avds)",
+      "Bash(adb install:*)"
     ],
     "deny": [],
     "ask": []
