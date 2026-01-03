@@ -204,6 +204,12 @@ Requirements:
     let data;
     try {
       let jsonText = result.text.trim();
+
+      // Remove BOM if present
+      if (jsonText.charCodeAt(0) === 0xFEFF) {
+        jsonText = jsonText.slice(1);
+      }
+
       // Handle markdown code blocks
       if (jsonText.startsWith('```json')) {
         jsonText = jsonText.slice(7);
@@ -214,12 +220,34 @@ Requirements:
       if (jsonText.endsWith('```')) {
         jsonText = jsonText.slice(0, -3);
       }
-      data = JSON.parse(jsonText.trim());
+      jsonText = jsonText.trim();
+
+      // Try to extract JSON if there's extra text before/after it
+      // Look for { ... } pattern that contains our expected fields
+      if (!jsonText.startsWith('{')) {
+        const jsonMatch = jsonText.match(/\{[\s\S]*"rightAnswerExplanation"[\s\S]*"wrongAnswerExplanation"[\s\S]*\}/);
+        if (jsonMatch) {
+          jsonText = jsonMatch[0];
+        }
+      } else if (!jsonText.endsWith('}')) {
+        // JSON starts correctly but has trailing text
+        const lastBrace = jsonText.lastIndexOf('}');
+        if (lastBrace > 0) {
+          jsonText = jsonText.slice(0, lastBrace + 1);
+        }
+      }
+
+      // Normalize smart quotes to straight quotes
+      jsonText = jsonText
+        .replace(/[\u201C\u201D]/g, '"')  // Smart double quotes
+        .replace(/[\u2018\u2019]/g, "'"); // Smart single quotes
+
+      data = JSON.parse(jsonText);
     } catch (parseError) {
-      logger.error('Failed to parse explanation JSON', { parseError: parseError.message });
-      // Fallback: return the raw text as rightAnswerExplanation
+      logger.error('Failed to parse explanation JSON', { parseError: parseError.message, rawText: result.text.substring(0, 200) });
+      // Fallback: return a user-friendly message instead of raw JSON
       return {
-        rightAnswerExplanation: result.text.trim(),
+        rightAnswerExplanation: '',
         wrongAnswerExplanation: ''
       };
     }
