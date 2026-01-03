@@ -143,8 +143,8 @@ await sharp(input).png({ quality: 85, compressionLevel: 9 }).toFile(output);
 - [x] Documentation & Learning Notes
 - [x] Phase 52.0: Setup (branch, learning notes)
 - [x] Phase 52.1: Screenshot Processing Tool
-- [ ] Phase 52.2: Visual Assets
-- [ ] Phase 52.3: Feature Cards & Hero
+- [x] Phase 52.2: Visual Assets
+- [x] Phase 52.3: Feature Cards & Hero
 - [ ] Phase 52.4: How It Works & Screenshots
 - [ ] Phase 52.5: Share & CTA Sections
 - [ ] Phase 52.6: Testing & Polish
