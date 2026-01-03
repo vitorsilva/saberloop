@@ -1264,10 +1264,78 @@ ffmpeg -i test-results/*/video.webm -vf "fps=10,scale=320:-1" -loop 0 docs/produ
 
 ---
 
-### Optional: Demo Video
-- [ ] Demo video: Complete user journey (~30s)
-- [ ] Convert video to MP4/GIF for landing page
-- [ ] **Commit:** `feat(landing): add demo video`
+### Phase 52.8: Demo Video & Additional Screenshots (Enhancement)
+
+**Status:** Ready to implement
+**Added:** 2026-01-03
+
+This phase adds a demo video and expands the "See It In Action" section with more feature screenshots.
+
+#### Screenshot Assessment
+
+| Need | Existing Screenshot | Status | Notes |
+|------|---------------------|--------|-------|
+| **Share Results UX** | `03-results-page.png` | Ready | Shows Share Results button, 40% score, Continue button |
+| **Explanation Modal** | `phase27_explanation_modal.png` | Needs recapture | Shows "Failed to generate explanation" error |
+| **Usage Cost Tracking** | None found | Needs capture | Need screenshot showing token/cost info after quiz |
+
+#### Screenshots to Capture
+
+1. **Explanation Modal with actual text**
+   - Run a quiz with real API connection (or mock with valid response)
+   - Click info button on wrong answer
+   - Capture modal showing "Why it's [correct answer]" with actual explanation text
+   - **Source:** Playwright test or manual capture
+
+2. **Usage Cost Tracking**
+   - Complete a quiz with OpenRouter connected
+   - Results page should show token usage (if visible) OR
+   - Settings page showing usage stats OR
+   - Need to verify where cost info is displayed in the app
+
+#### Implementation Checklist
+
+**Screenshots:**
+- [ ] Process `03-results-page.png` for Share UX → `landing-share-results.png`
+- [ ] Capture new explanation modal screenshot with actual explanation text
+- [ ] Capture usage cost tracking screenshot (verify location in app first)
+- [ ] Process new screenshots with device frames
+- [ ] Copy to `landing/images/`
+
+**Update Landing Page HTML:**
+- [ ] Add Share Results screenshot to "See It In Action" grid
+- [ ] Add Explanation Modal screenshot
+- [ ] Add Usage Cost screenshot (if captured)
+- [ ] Update grid CSS if needed (4 → 6 or 7 images)
+
+**Demo Video:**
+- [ ] Create Playwright test for demo video (`tests/e2e/capture-demo-video.spec.js`)
+- [ ] Record ~30s user journey:
+  1. Home screen (1s)
+  2. Enter topic "World History" (2s typing)
+  3. Select grade level (1s)
+  4. Generate quiz (loading 2s)
+  5. Answer questions (10s - mix of right/wrong)
+  6. View results (2s)
+  7. Click explanation button (2s)
+  8. View explanation modal (3s)
+  9. Close modal, show Continue button (2s)
+- [ ] Convert webm → mp4 (or gif for auto-play)
+- [ ] Add video/gif to hero section or "See It In Action"
+- [ ] **Commit:** `feat(landing): add demo video and additional screenshots`
+
+#### Video Options
+
+**Option A: Hero section replacement**
+Replace static hero image with auto-playing video/gif showing the app in action.
+
+**Option B: Dedicated demo section**
+Add video between Screenshots and Share sections.
+
+**Option C: Inline in Screenshots section**
+Replace one screenshot slot with the video.
+
+**Recommendation:** Option A (hero) for maximum impact, or Option B for less intrusive.
 
 ---
 
