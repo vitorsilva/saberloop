@@ -50,7 +50,9 @@
 
     const data = await response.json();
 
-    const text = data.choices?.[0]?.message?.content;
+    // Some models (like deepseek-r1t2-chimera) return content in reasoning field
+    const message = data.choices?.[0]?.message;
+    const text = message?.content || message?.reasoning;
 
     if (!text) {
       throw new Error('Empty response from OpenRouter');
