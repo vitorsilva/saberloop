@@ -155,12 +155,12 @@
           .rejects.toThrow('Empty response from OpenRouter');
       });
 
-      it('should use reasoning field when content is empty (reasoning models)', async () => {
-        // Some models like deepseek-r1t2-chimera return content in reasoning field
+      it('should use reasoning field when content is empty and reasoning is not chain-of-thought', async () => {
+        // Some models may put actual answer in reasoning field
         mockFetch.mockResolvedValueOnce({
           ok: true,
           json: () => Promise.resolve({
-            choices: [{ message: { content: '', reasoning: 'This is the actual response from reasoning model' } }],
+            choices: [{ message: { content: '', reasoning: 'A resposta correta é 32 dentes.' } }],
             model: 'deepseek-r1t2-chimera',
             usage: { total_tokens: 100 }
           })
@@ -168,7 +168,22 @@
 
         const result = await callOpenRouter('sk-test-key', 'Test prompt');
 
-        expect(result.text).toBe('This is the actual response from reasoning model');
+        expect(result.text).toBe('A resposta correta é 32 dentes.');
+      });
+
+      it('should reject chain-of-thought reasoning as answer', async () => {
+        // Chain-of-thought should not be used as the answer
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            choices: [{ message: { content: '', reasoning: 'Okay, let me think about this...' } }],
+            model: 'deepseek-r1t2-chimera',
+            usage: { total_tokens: 100 }
+          })
+        });
+
+        await expect(callOpenRouter('sk-test-key', 'Test prompt'))
+          .rejects.toThrow('Empty response from OpenRouter');
       });
 
       it('should prefer content over reasoning when both are present', async () => {

@@ -295,8 +295,9 @@ Be helpful and encouraging. Write in ${languageName} (${language}).
 Provide only the explanation, no other text.`;
 
   try {
+    // Use higher maxTokens for reasoning models that need tokens for chain-of-thought
     const result = await callOpenRouter(apiKey, prompt, {
-      maxTokens: 200,
+      maxTokens: 500,
       temperature: 0.7
     });
 
