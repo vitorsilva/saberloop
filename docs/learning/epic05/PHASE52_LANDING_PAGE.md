@@ -4,7 +4,7 @@
 **Priority:** Medium (User Acquisition)
 **Estimated Effort:** 2-3 sessions
 **Created:** 2025-12-28
-**Updated:** 2025-12-30
+**Updated:** 2026-01-03
 
 ## Session Log
 
@@ -12,6 +12,137 @@
 |------|--------|-------|
 | 2025-12-28 | **Plan Created** | Gap analysis and wireframes complete |
 | 2025-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+| 2026-01-03 | **Planning Complete** | Added Phase 49/50/51 features, screenshot assessment, Sharp script, subphases, branching strategy, Playwright/Maestro reference. Ready to implement. |
+
+---
+
+## Branching Strategy
+
+**Branch name:** `feature/phase52-landing-page`
+
+**Workflow:**
+1. Create branch from `main` before starting implementation
+2. Commit frequently with clear messages (one logical change per commit)
+3. Push to remote regularly for backup
+4. Create PR to `main` when complete
+
+**Branch commands:**
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/phase52-landing-page
+```
+
+**Commit Guidelines:**
+- One logical change per commit
+- Use conventional commit messages:
+  - `feat(landing): add multi-language feature card`
+  - `feat(landing): update hero subtitle`
+  - `feat(landing): add screenshot processing script`
+  - `style(landing): update feature grid to 3x2 layout`
+  - `docs(landing): update Phase 52 plan with progress`
+
+---
+
+## Subphase Progress Tracking
+
+**IMPORTANT:** When completing each subphase, update documentation before moving to the next:
+
+### 1. Update this plan document
+- Mark the subphase as complete in the checklist
+- Add a session log entry with date and notes
+
+### 2. Update learning notes (`PHASE52_LEARNING_NOTES.md`)
+- Document what was learned during the subphase
+- Note any challenges encountered and how they were resolved
+- Record any deviations from the original plan
+- Include code snippets or patterns worth remembering
+
+### 3. Commit the documentation updates
+```bash
+git add docs/learning/epic05/PHASE52_*.md
+git commit -m "docs: complete Phase 52.X - [description]"
+```
+
+This ensures we always know where we left off if resuming later and captures learning for future reference.
+
+---
+
+## Reference: Playwright & Maestro
+
+This phase may require capturing new screenshots using Playwright or Maestro. Reference these previous phases for guidance:
+
+### Related Documentation
+
+| Phase | Document | Content |
+|-------|----------|---------|
+| **Phase 4.4** | `docs/learning/epic01_infrastructure/PHASE4.4_E2E_TESTING.md` | Playwright setup, configuration, writing tests |
+| **Phase 60** | `docs/learning/epic04_saberloop_v1/PHASE60_MAESTRO_TESTING.md` | Maestro test strategy, CI integration |
+| **Phase 60 Notes** | `docs/learning/epic04_saberloop_v1/PHASE60_LEARNING_NOTES.md` | Common issues, gotchas, local testing commands |
+
+### Quick Reference: Playwright
+
+**Run E2E tests:**
+```bash
+npm run test:e2e              # Run all tests
+npm run test:e2e:ui           # Interactive UI mode
+```
+
+**Take screenshot in test:**
+```javascript
+await page.screenshot({ path: 'screenshot.png' });
+```
+
+**Common Pitfalls:**
+- Selectors must match HTML exactly (`#textInput` vs `#text-input`)
+- Use `.trim()` when comparing text content (whitespace from HTML formatting)
+- Service worker needs time to install - use `waitForTimeout` before offline tests
+- Tests are async - always `await` browser operations
+
+### Quick Reference: Maestro
+
+**Run tests locally (Windows):**
+```powershell
+# List available emulators
+& "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator" -list-avds
+
+# Start emulator
+Start-Process -FilePath "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator" -ArgumentList "-avd AVD_NAME -no-snapshot-load"
+
+# Install APK
+adb install "package/Saberloop - Google Play package/Saberloop.apk"
+
+# Run tests
+maestro test .maestro/flows/ --test-output-dir .maestro/tests
+
+# Run single test
+maestro test .maestro/flows/01-onboarding.yaml --test-output-dir .maestro/tests
+```
+
+**Take screenshot in flow:**
+```yaml
+- takeScreenshot: screenshot-name
+```
+
+**Screenshot location:** `.maestro/tests/screenshots/`
+
+**Common Pitfalls (Gotchas from Phase 60):**
+1. **Text matching** - Maestro uses regex; escape special chars
+2. **Timing** - TWA loads slower than web; may need waits
+3. **State persistence** - Can't clear app data easily in tests
+4. **Airplane mode** - Flaky in CI; excluded from workflow
+5. **APK path** - Spaces in path require proper handling
+6. **Windows vs WSL** - Use native Windows Maestro, NOT WSL
+7. **Output directory** - Use `--test-output-dir` flag, `config.yaml` setting is ignored
+8. **runScript NOT supported** - Requires file path, NOT inline script
+9. **runFlow with when** - Can hang; use `optional: true` on tapOn instead
+10. **Leave Quiz Dialog** - App shows confirmation dialog when navigating away; handle with `optional: true`
+
+### Existing Screenshots Available
+
+See "Existing Screenshots (Reusable Assets)" section below for full list of:
+- Maestro screenshots in `.maestro/tests/screenshots/`
+- Docs screenshots in `docs/product-info/screenshots/`
 
 ---
 
@@ -34,6 +165,7 @@ Increase visitor-to-user conversion by showcasing the full value of Saberloop's 
 5. **Visual Hierarchy** - Organizing content for scanning and comprehension
 6. **A/B Testing Setup** - Preparing for data-driven improvements
 7. **Responsive Design** - Mobile-first approach for landing pages
+8. **Image Processing Automation** - Using Sharp (Node.js) for batch resizing, framing, and optimization
 
 ---
 
@@ -60,17 +192,20 @@ Before starting this phase, you should have:
 4. Free to Use
 
 ### What's Actually Implemented (but hidden)
-| Feature | User Value | Priority |
-|---------|------------|----------|
-| **Multi-language support** (EN, PT, ES, FR, DE) | Global reach, native language learning | HIGH |
-| **AI explanations for wrong answers** | Deeper understanding, not just scores | HIGH |
-| **Adaptive difficulty (Continue Topic)** | Progressive learning, mastery path | HIGH |
-| **Share results to social** | Social proof, engagement | MEDIUM |
-| **AI model selection** | Choice, cost control | MEDIUM |
-| **Configurable question count** (5/10/15) | Flexibility, time control | MEDIUM |
-| **Full quiz history & replay** | Long-term tracking | MEDIUM |
-| **Grade level customization** | Age-appropriate content | HIGH |
-| **Progress tracking with score badges** | Motivation, gamification | MEDIUM |
+| Feature | User Value | Priority | Phase |
+|---------|------------|----------|-------|
+| **Multi-language support** (EN, PT, ES, FR, DE) | Global reach, native language learning | HIGH | 30 |
+| **AI explanations for wrong answers** | Deeper understanding, not just scores | HIGH | 27 |
+| **Adaptive difficulty (Continue Topic)** | Progressive learning, mastery path | HIGH | 28 |
+| **Share results to social** | Social proof, engagement | MEDIUM | 70 |
+| **AI model selection** | Choice, cost control | MEDIUM | 47 |
+| **Configurable question count** (5/10/15) | Flexibility, time control | MEDIUM | - |
+| **Full quiz history & replay** | Long-term tracking | MEDIUM | - |
+| **Grade level customization** | Age-appropriate content | HIGH | - |
+| **Progress tracking with score badges** | Motivation, gamification | MEDIUM | - |
+| **Usage & cost tracking** | Cost transparency, budget control | MEDIUM | 49 |
+| **Data deletion** | Privacy control, GDPR compliance | HIGH | 50 |
+| **Cached explanations** | Instant offline explanations | LOW | 51 |
 
 ---
 
@@ -132,6 +267,8 @@ Before starting this phase, you should have:
 
 ### AFTER: Improved Landing Page Structure
 
+*Updated 2026-01-03: Includes Phase 49 (Cost Tracking), Phase 50 (Data Deletion)*
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  [Logo] Saberloop                              [Try Free]       │
@@ -159,9 +296,9 @@ Before starting this phase, you should have:
 │  │  + expl  │ │ 🇺🇸🇧🇷🇪🇸🇫🇷🇩🇪│ │          │                        │
 │  └──────────┘ └──────────┘ └──────────┘                        │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐                        │
-│  │    🎓    │ │    📱    │ │    🔒    │                        │
-│  │   All    │ │  Works   │ │ Privacy  │                        │
-│  │  Levels  │ │ Offline  │ │  First   │                        │
+│  │    🎓    │ │    📱    │ │    🔒    │  ◀── UPDATED          │
+│  │   All    │ │  Works   │ │Your Data │                        │
+│  │  Levels  │ │ Offline  │ │Your Ctrl │  (Phase 50: Delete)   │
 │  └──────────┘ └──────────┘ └──────────┘                        │
 │       6 CARDS IN 2 ROWS (new layout)                           │
 ├─────────────────────────────────────────────────────────────────┤
@@ -204,7 +341,7 @@ Before starting this phase, you should have:
 │  │  • Sample quizzes   │  │  • Your OpenRouter  │              │
 │  │  • No account       │  │  • Choose AI model  │              │
 │  │  • Web app link     │  │  • Unlimited quizzes│              │
-│  │                     │  │                     │              │
+│  │                     │  │  • See token usage  │  ◀── Phase 49│
 │  │  [Try in Browser]   │  │  [Get on Play Store]│              │
 │  └─────────────────────┘  └─────────────────────┘              │
 │                                                                 │
@@ -240,10 +377,17 @@ Replace current cards with these 6:
 5. **📱 Works Offline** (keep)
    - "Review past quizzes and replay topics even without internet"
 
-6. **🔒 Privacy First** (keep)
-   - "All data stays on your device. No accounts, no tracking"
+6. **🔒 Your Data, Your Control** (enhance from "Privacy First")
+   - "All data stays on your device. Delete everything anytime with one tap"
+   - *Note: Updated to highlight the Data Deletion feature from Phase 50*
 
 **Remove:** "Free to Use" card (becomes part of CTA section messaging instead)
+
+**Alternative card to consider:**
+
+7. **💰 Cost Transparency** (optional, from Phase 49)
+   - "See exactly how many tokens each quiz uses. No surprise charges"
+   - *Could replace one of the above if cost is a key user concern*
 
 ---
 
@@ -338,6 +482,298 @@ docs/product-info/
 ```
 
 This structure was established in **Phase 3.5: Branding & Identity** (see `docs/learning/epic03_quizmaster_v2/PHASE3.5_BRANDING.md`).
+
+---
+
+## Existing Screenshots (Reusable Assets)
+
+**Review completed:** 2026-01-03
+
+### Screenshot Assessment
+
+| Landing Page Need | Source File | Status | Quality | Notes |
+|-------------------|-------------|--------|---------|-------|
+| **Quiz in action** | `.maestro/tests/screenshots/02-quiz-started.png` | ✅ Ready | Excellent | Shows "Famous Scientists Quiz", progress bar, 4 options, mobile frame with status bar |
+| **Results with Continue** | `.maestro/tests/screenshots/03-results-page.png` | ✅ Ready | Excellent | Shows 40% score, Share button, Continue button, wrong answer review |
+| **Settings/Customization** | `.maestro/tests/screenshots/06-settings-page.png` | ✅ Ready | Excellent | Shows Grade Level, Questions per Quiz, Language (with flag), OpenRouter connection |
+| **Usage Cost Card** | `.maestro/tests/screenshots/08-usage-cost-card.png` | ✅ Ready | Excellent | Shows 60% score, Share button, wrong/correct answers, Continue button |
+| **Explanation Modal** | `docs/product-info/screenshots/phase27_explanation_modal.png` | ⚠️ Needs update | Good layout | Shows "Failed to generate explanation" - need one with actual explanation text |
+| **Home with History** | `.maestro/tests/screenshots/01-home-with-samples.png` | ✅ Ready | Good | Shows offline banner, Recent Topics with scores, but shows offline state |
+| **Perfect Score** | `docs/product-info/screenshots/phase28_results_after.png` | ✅ Ready | Excellent | Desktop view, 100% score, Continue button visible |
+
+### Screenshots to Capture (Missing)
+
+| Need | Description | Suggested Test to Modify |
+|------|-------------|-------------------------|
+| **Explanation with text** | Modal showing actual AI explanation (not error state) | Add to `03-quiz-results.yaml` or create dedicated test |
+| **Home online state** | Home screen without offline banner | Modify `01-onboarding.yaml` |
+| **Data deletion modal** | Settings showing "Delete All Data" confirmation | Add to `06-settings.yaml` |
+
+### Format Notes
+
+- **Maestro screenshots**: Mobile format (720x1280), includes Android status bar and browser chrome - ideal for landing page
+- **Docs screenshots**: Desktop format (wider), good for showing full UI but need cropping for mobile display
+- **Recommendation**: Prefer Maestro screenshots for consistency; crop status bar if needed
+
+### Ready to Use (No Changes Needed)
+
+These 4 screenshots can be processed immediately:
+
+```javascript
+// Update CONFIG.includePatterns in process-screenshots.js
+includePatterns: [
+  '02-quiz-started.png',      // Quiz in action - READY
+  '03-results-page.png',      // Results with Continue - READY
+  '06-settings-page.png',     // Settings/customization - READY
+  '08-usage-cost-card.png',   // Alternative results view - READY
+],
+```
+
+---
+
+## Automated Image Processing Script
+
+A reusable Node.js script for processing marketing screenshots.
+
+### Setup
+
+```bash
+# Install Sharp (high-performance image processing)
+npm install --save-dev sharp
+```
+
+### Script: `scripts/process-screenshots.js`
+
+```javascript
+/**
+ * Automated screenshot processor for landing page assets.
+ *
+ * Features:
+ * - Resize to consistent dimensions
+ * - Add device frame overlay
+ * - Optimize file size
+ * - Batch process multiple images
+ *
+ * Usage:
+ *   node scripts/process-screenshots.js
+ *   node scripts/process-screenshots.js --input .maestro/tests/screenshots --output landing/images
+ *   node scripts/process-screenshots.js --no-frame  # Skip device frame
+ *
+ * @requires sharp
+ */
+
+const sharp = require('sharp');
+const fs = require('fs').promises;
+const path = require('path');
+
+// Configuration
+const CONFIG = {
+  // Input/output directories (can be overridden via CLI)
+  inputDir: '.maestro/tests/screenshots',
+  outputDir: 'docs/product-info/screenshots/landing',
+
+  // Target dimensions (mobile screenshot)
+  targetWidth: 280,
+  targetHeight: 560,
+
+  // Device frame settings
+  useDeviceFrame: true,
+  frameColor: '#1a1a2e', // Match landing page background
+  framePadding: 12,
+  frameRadius: 24,
+
+  // Optimization
+  quality: 85,
+
+  // Files to process (can specify specific files or use wildcard patterns)
+  includePatterns: [
+    '02-quiz-started.png',
+    '03-results-page.png',
+    '06-settings-page.png',
+    '08-usage-cost-card.png',
+  ],
+};
+
+/**
+ * Add a device frame around the screenshot
+ */
+async function addDeviceFrame(inputBuffer, options = {}) {
+  const {
+    padding = CONFIG.framePadding,
+    radius = CONFIG.frameRadius,
+    frameColor = CONFIG.frameColor
+  } = options;
+
+  const image = sharp(inputBuffer);
+  const metadata = await image.metadata();
+
+  const newWidth = metadata.width + (padding * 2);
+  const newHeight = metadata.height + (padding * 2);
+
+  // Create frame with rounded corners
+  const frame = Buffer.from(`
+    <svg width="${newWidth}" height="${newHeight}">
+      <rect x="0" y="0" width="${newWidth}" height="${newHeight}"
+            rx="${radius}" ry="${radius}" fill="${frameColor}"/>
+    </svg>
+  `);
+
+  // Composite: frame background + screenshot
+  return sharp(frame)
+    .composite([{
+      input: inputBuffer,
+      top: padding,
+      left: padding,
+    }])
+    .png()
+    .toBuffer();
+}
+
+/**
+ * Process a single screenshot
+ */
+async function processScreenshot(inputPath, outputPath, options = {}) {
+  const {
+    width = CONFIG.targetWidth,
+    height = CONFIG.targetHeight,
+    useFrame = CONFIG.useDeviceFrame,
+    quality = CONFIG.quality
+  } = options;
+
+  console.log(`Processing: ${path.basename(inputPath)}`);
+
+  // Read and resize
+  let buffer = await sharp(inputPath)
+    .resize(width, height, {
+      fit: 'cover',
+      position: 'top',
+    })
+    .png({ quality })
+    .toBuffer();
+
+  // Add device frame if enabled
+  if (useFrame) {
+    buffer = await addDeviceFrame(buffer);
+  }
+
+  // Optimize and save
+  await sharp(buffer)
+    .png({
+      quality,
+      compressionLevel: 9,
+    })
+    .toFile(outputPath);
+
+  const stats = await fs.stat(outputPath);
+  console.log(`  → ${path.basename(outputPath)} (${(stats.size / 1024).toFixed(1)} KB)`);
+}
+
+/**
+ * Process all screenshots in batch
+ */
+async function processAll() {
+  const args = process.argv.slice(2);
+
+  // Parse CLI arguments
+  const inputDir = args.includes('--input')
+    ? args[args.indexOf('--input') + 1]
+    : CONFIG.inputDir;
+  const outputDir = args.includes('--output')
+    ? args[args.indexOf('--output') + 1]
+    : CONFIG.outputDir;
+  const useFrame = !args.includes('--no-frame');
+
+  console.log('\n📸 Screenshot Processor');
+  console.log('========================');
+  console.log(`Input:  ${inputDir}`);
+  console.log(`Output: ${outputDir}`);
+  console.log(`Frame:  ${useFrame ? 'Yes' : 'No'}`);
+  console.log('');
+
+  // Ensure output directory exists
+  await fs.mkdir(outputDir, { recursive: true });
+
+  // Get list of files to process
+  const files = await fs.readdir(inputDir);
+  const toProcess = files.filter(f =>
+    CONFIG.includePatterns.some(pattern => f.includes(pattern.replace('.png', '')))
+  );
+
+  if (toProcess.length === 0) {
+    console.log('No matching files found. Check includePatterns in CONFIG.');
+    console.log('Available files:', files.filter(f => f.endsWith('.png')).join(', '));
+    return;
+  }
+
+  console.log(`Found ${toProcess.length} files to process:\n`);
+
+  // Process each file
+  for (const file of toProcess) {
+    const inputPath = path.join(inputDir, file);
+    const outputName = `landing-${file}`;
+    const outputPath = path.join(outputDir, outputName);
+
+    try {
+      await processScreenshot(inputPath, outputPath, { useFrame });
+    } catch (err) {
+      console.error(`  ✗ Error processing ${file}:`, err.message);
+    }
+  }
+
+  console.log('\n✅ Done!\n');
+}
+
+// Run if called directly
+if (require.main === module) {
+  processAll().catch(console.error);
+}
+
+module.exports = { processScreenshot, addDeviceFrame, processAll };
+```
+
+### NPM Script
+
+Add to `package.json`:
+
+```json
+{
+  "scripts": {
+    "screenshots:process": "node scripts/process-screenshots.js",
+    "screenshots:process:no-frame": "node scripts/process-screenshots.js --no-frame"
+  }
+}
+```
+
+### Usage Examples
+
+```bash
+# Process with default settings (Maestro screenshots → landing assets)
+npm run screenshots:process
+
+# Process without device frames
+npm run screenshots:process:no-frame
+
+# Custom input/output directories
+node scripts/process-screenshots.js --input docs/product-info/screenshots --output landing/images
+
+# Process specific Playwright test output
+node scripts/process-screenshots.js --input test-results --output landing/images
+```
+
+### Customization
+
+Edit `CONFIG.includePatterns` in the script to specify which screenshots to process:
+
+```javascript
+includePatterns: [
+  '02-quiz-started.png',      // Quiz in progress
+  '03-results-page.png',      // Results with score
+  '06-settings-page.png',     // Settings screen
+  '08-usage-cost-card.png',   // Cost tracking feature
+  'phase27_explanation',      // Explanation modal (partial match)
+  'phase28_results',          // Results with Continue button
+],
+```
 
 ---
 
@@ -731,28 +1167,107 @@ ffmpeg -i test-results/*/video.webm -vf "fps=10,scale=320:-1" -loop 0 docs/produ
 
 ## Implementation Checklist
 
-### Content Changes
-- [ ] Update feature cards (4 → 6)
+### Phase 52.0: Setup
+- [ ] Create branch: `git checkout -b feature/phase52-landing-page`
+- [ ] Create `PHASE52_LEARNING_NOTES.md` file
+- [ ] **Commit:** `docs: start Phase 52 - landing page improvements`
+
+---
+
+### Phase 52.1: Screenshot Processing Tool
+- [ ] Install Sharp: `npm install --save-dev sharp`
+- [ ] Create script: `scripts/process-screenshots.js`
+- [ ] Add npm scripts to `package.json`
+- [ ] Test script with existing Maestro screenshots
+- [ ] **Commit:** `feat(scripts): add screenshot processing tool`
+- [ ] Update documentation → move to Phase 52.2
+
+---
+
+### Phase 52.2: Visual Assets
+
+**Review existing screenshots** ✅ COMPLETE (2026-01-03)
+- [x] Review Maestro screenshots in `.maestro/tests/screenshots/`
+- [x] Review docs screenshots in `docs/product-info/screenshots/`
+
+**Findings:**
+| Screenshot | Source | Status |
+|------------|--------|--------|
+| Quiz in action | `02-quiz-started.png` | ✅ Ready |
+| Results + Continue | `03-results-page.png` | ✅ Ready |
+| Settings | `06-settings-page.png` | ✅ Ready |
+| Usage cost | `08-usage-cost-card.png` | ✅ Ready |
+| Explanation modal | `phase27_explanation_modal.png` | ⚠️ Shows error state, needs recapture |
+
+**Create missing screenshots:**
+- [x] Quiz question with progress bar → `02-quiz-started.png` ✅ EXISTS
+- [ ] Explanation modal with actual text → **NEEDS CAPTURE**
+- [x] Results page with Continue button → `03-results-page.png` ✅ EXISTS
+- [x] Settings page → `06-settings-page.png` ✅ EXISTS
+- [x] Usage cost card → `08-usage-cost-card.png` ✅ EXISTS
+- [ ] Optional: Home screen (online state, no offline banner)
+- [ ] Optional: Data deletion confirmation modal
+
+**Process screenshots:**
+- [ ] Run `npm run screenshots:process`
+- [ ] Verify output in `docs/product-info/screenshots/landing/`
+- [ ] Copy final assets to `landing/images/`
+- [ ] **Commit:** `feat(landing): add processed screenshots for landing page`
+- [ ] Update documentation → move to Phase 52.3
+
+---
+
+### Phase 52.3: Feature Cards & Hero
+- [ ] Update hero subtitle with enhanced copy
+- [ ] Update feature cards (4 → 6) with 3x2 grid layout
+- [ ] Add CSS for new grid layout
+- [ ] **Commit:** `feat(landing): update feature cards and hero section`
+- [ ] Update documentation → move to Phase 52.4
+
+---
+
+### Phase 52.4: How It Works & Screenshots
 - [ ] Update "How It Works" steps (3 → 4)
-- [ ] Revise hero subtitle
+- [ ] Update "See It In Action" with 4 screenshots
+- [ ] **Commit:** `feat(landing): update how-it-works and screenshots sections`
+- [ ] Update documentation → move to Phase 52.5
+
+---
+
+### Phase 52.5: Share & CTA Sections
 - [ ] Add "Share Your Progress" section
 - [ ] Enhance CTA section with two-column layout
+- [ ] Add CSS for two-column CTA
+- [ ] Update tracking data-attributes for new CTAs
+- [ ] **Commit:** `feat(landing): add share section and enhanced CTA`
+- [ ] Update documentation → move to Phase 52.6
 
-### Visual Assets Needed
-- [ ] Run Playwright screenshot script
-- [ ] Screenshot: Quiz question with progress bar
-- [ ] Screenshot: Explanation modal (bottom sheet)
-- [ ] Screenshot: Results page with Continue button visible
-- [ ] Screenshot: Settings page showing customization options
-- [ ] Optional: Share card mockup image
+---
+
+### Phase 52.6: Testing & Polish
+- [ ] Test on mobile viewport
+- [ ] Test on desktop viewport
+- [ ] Verify all links work
+- [ ] Verify GA tracking events fire
+- [ ] **Commit:** `fix(landing): polish and responsive fixes` (if needed)
+- [ ] Update documentation
+
+---
+
+### Phase 52.7: Release
+- [ ] Deploy to staging (if available) or test locally
+- [ ] Create PR to `main`
+- [ ] Merge after review
+- [ ] Deploy to production
+- [ ] Verify live site
+- [ ] **Commit:** `docs: complete Phase 52 - landing page improvements`
+
+---
+
+### Optional: Demo Video
 - [ ] Demo video: Complete user journey (~30s)
 - [ ] Convert video to MP4/GIF for landing page
-
-### Technical Changes
-- [ ] Add CSS for 6-column feature grid (or 3x2 layout)
-- [ ] Add CSS for two-column CTA section
-- [ ] Add new section HTML structure
-- [ ] Update tracking data-attributes for new CTAs
+- [ ] **Commit:** `feat(landing): add demo video`
 
 ---
 
