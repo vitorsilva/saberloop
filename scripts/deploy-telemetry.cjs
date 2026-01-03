@@ -13,7 +13,7 @@ const config = {
     secureOptions: { rejectUnauthorized: false },
     localRoot: './php-api/telemetry',
     remoteRoot: '/telemetry',  // saberloop.com/telemetry/
-    include: ['*.php', '.htaccess'],
+    include: ['*.php', '*.example.php', '.htaccess'],
     exclude: ['logs/**'],  // Never upload log files
     deleteRemote: false
 };
@@ -21,15 +21,22 @@ const config = {
 async function deploy() {
     try {
         console.log('📡 Deploying telemetry endpoint to saberloop.com/telemetry/...');
-        console.log('   Files: config.php, ingest.php, rotate-logs.php, .htaccess');
+        console.log('   Files: config.php, config.local.example.php, ingest.php, rotate-logs.php, .htaccess');
         await ftpDeploy.deploy(config);
         console.log('✅ Telemetry endpoint deployed!');
         console.log('🔗 Endpoint: https://saberloop.com/telemetry/ingest.php');
         console.log('');
-        console.log('⚠️  Remember to:');
-        console.log('   1. Set TELEMETRY_TOKEN environment variable on VPS');
-        console.log('   2. Create logs directory with write permissions');
-        console.log('   3. Set up cron job for rotate-logs.php');
+        console.log('⚠️  IMPORTANT - Create config.local.php on the server:');
+        console.log('   1. SSH into the server or use FTP');
+        console.log('   2. Navigate to /telemetry/ directory');
+        console.log('   3. Copy config.local.example.php to config.local.php');
+        console.log('   4. Edit config.local.php and set your token:');
+        console.log('      return [\'token\' => \'your-actual-VITE_TELEMETRY_TOKEN-value\'];');
+        console.log('   5. The token MUST match VITE_TELEMETRY_TOKEN in frontend .env');
+        console.log('');
+        console.log('📁 Also remember to:');
+        console.log('   - Create logs directory with write permissions (chmod 755)');
+        console.log('   - Set up cron job for rotate-logs.php');
     } catch (err) {
         console.error('❌ Deployment failed:', err);
         process.exit(1);

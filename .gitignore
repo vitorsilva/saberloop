@@ -20,6 +20,8 @@ docs/nul
 docs/api/
 # PHP dependencies
 php-api/vendor/
+# Local PHP config (contains secrets)
+php-api/**/config.local.php
 nul
 # Package folder (except APK for CI testing)
 package/*
