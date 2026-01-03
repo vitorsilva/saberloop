@@ -337,6 +337,46 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
 
+        /* Share Section */
+        .share-section {
+            padding: 100px 0;
+            background: var(--background-light);
+        }
+
+        .share-preview {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .share-card {
+            background: var(--background);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .share-card-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .share-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+
+        .share-card p {
+            color: var(--text-muted);
+        }
+
+        .share-cta {
+            margin-top: 24px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
         /* CTA */
         .cta {
             padding: 100px 0;
@@ -349,10 +389,47 @@
             margin-bottom: 16px;
         }
 
-        .cta p {
-            font-size: 1.25rem;
-            margin-bottom: 32px;
-            opacity: 0.9;
+        .cta-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            max-width: 800px;
+            margin: 40px auto 0;
+        }
+
+        .cta-column {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: left;
+        }
+
+        .cta-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        .cta-column ul {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .cta-column li {
+            margin-bottom: 8px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .cta-column li::before {
+            content: "\2713";
+            position: absolute;
+            left: 0;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .cta-column .btn {
+            width: 100%;
+            justify-content: center;
         }
 
         .cta .btn-secondary {
@@ -365,8 +442,19 @@
             background: rgba(255,255,255,0.9);
         }
 
+        .cta .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .cta .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .cta .web-link {
             color: rgba(255, 255, 255, 0.9);
+            margin-top: 32px;
         }
 
         .cta .web-link a {
@@ -445,6 +533,10 @@
 
             .screenshots-grid img {
                 max-width: 200px;
+            }
+
+            .cta-columns {
+                grid-template-columns: 1fr;
             }
 
             .section-title {
@@ -576,22 +668,48 @@
         </div>
     </section>
 
+    <!-- Share Section -->
+    <section class="share-section">
+        <div class="container">
+            <h2 class="section-title">Share Your Progress</h2>
+            <div class="share-preview">
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Challenge your friends and track your learning journey</p>
+                <div class="share-card">
+                    <div class="share-card-icon">🏆</div>
+                    <h4>I scored 80% on "World History"</h4>
+                    <p>quiz on Saberloop — the AI-powered learning app</p>
+                    <p class="share-cta">Can you beat my score?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA -->
     <section class="cta">
         <div class="container">
             <h2>Ready to Start Learning?</h2>
-            <p>No sign-up required. Get the app now.</p>
-            <div class="hero-buttons" style="justify-content: center;">
-                <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-secondary" target="_blank" rel="noopener" data-track="play_store_cta">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
-                    Get on Google Play
-                </a>
-                <a href="/downloads/saberloop-v1.0.0.apk" class="btn btn-secondary" download data-track="apk_download_cta">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-6 2h12v2H6v-2z"/></svg>
-                    Download APK
-                </a>
+            <div class="cta-columns">
+                <div class="cta-column">
+                    <h3>Try Free</h3>
+                    <ul>
+                        <li>Sample quizzes available immediately</li>
+                        <li>No account needed</li>
+                        <li>Works in your browser</li>
+                    </ul>
+                    <a href="/app/" class="btn btn-outline" data-track="web_app_cta_column">Try in Browser</a>
+                </div>
+                <div class="cta-column">
+                    <h3>Unlimited Learning</h3>
+                    <ul>
+                        <li>Connect your OpenRouter account</li>
+                        <li>Choose your AI model</li>
+                        <li>Generate unlimited quizzes</li>
+                        <li>See token usage costs</li>
+                    </ul>
+                    <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-secondary" target="_blank" rel="noopener" data-track="play_store_cta">Get on Google Play</a>
+                </div>
             </div>
-            <p class="web-link">Or <a href="/app/" data-track="web_app_cta">try in your browser</a> — no install needed</p>
+            <p class="web-link">Or <a href="/downloads/saberloop-v1.0.0.apk" download data-track="apk_download_cta">download the APK</a> directly</p>
         </div>
     </section>
 
