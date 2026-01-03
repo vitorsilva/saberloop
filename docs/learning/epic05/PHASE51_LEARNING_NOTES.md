@@ -203,7 +203,7 @@ Benefits:
 ## Deployment
 
 - **Staging:** https://saberloop.com/app-staging/ (deployed)
-- **Production:** Pending deployment
+- **Production:** https://saberloop.com/app/ (deployed January 3, 2026)
 
 ---
 
@@ -212,7 +212,7 @@ Benefits:
 1. ✅ Test on staging
 2. ✅ Create PR to main - PR #69
 3. ✅ Merged to main
-4. Deploy to production
+4. ✅ Deploy to production
 
 ---
 
