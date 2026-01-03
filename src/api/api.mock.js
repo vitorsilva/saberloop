@@ -110,33 +110,52 @@ import { logger } from '../utils/logger.js';
   }
 
   /**
-   * Mock explanation generation - returns fake but helpful explanations
-   * @param {string} question - The question text
+   * Mock explanation generation - returns structured explanation with both parts
+   * @param {string} _question - The question text
    * @param {string} userAnswer - The user's answer
    * @param {string} correctAnswer - The correct answer
-   * @param {string} gradeLevel - The grade level
+   * @param {string} _gradeLevel - The grade level
    * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
    * @param {string} _language - Language code (unused in mock, accepted for interface consistency)
-   * @returns {Promise<string>} The explanation text
+   * @returns {Promise<{rightAnswerExplanation: string, wrongAnswerExplanation: string}>} Structured explanation
    */
-  export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel =
+  export async function generateExplanation(_question, userAnswer, correctAnswer, _gradeLevel =
   'middle school', _apiKey, _language = 'en') {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    logger.debug('Mock API generating explanation');
+    logger.debug('Mock API generating structured explanation');
 
-    const mockExplanation =  `Your answer (${userAnswer}) wasn't quite right, but that's okay - this is how we learn!    
+    const result = {
+      rightAnswerExplanation: `The correct answer is ${correctAnswer}. This is because the concept works differently than you might have initially thought. Understanding the foundations helps everything else make sense.`,
+      wrongAnswerExplanation: `Your answer "${userAnswer}" wasn't quite right. This is a common misconception - keep practicing and you'll get it!`
+    };
 
+    logger.debug('Mock API structured explanation generated');
 
-  The correct answer is ${correctAnswer}. This is because the concept works differently than you       
-  might have initially thought. Think of it like this: imagine you're building with blocks - you       
-  need to understand how each piece fits together before you can build something complex.
+    return result;
+  }
 
-  The key thing to remember is that understanding the foundations helps everything else make sense.
-   Keep practicing, and you'll get it! 🌟`;
+  /**
+   * Mock wrong answer explanation generation - returns explanation for why user's answer was wrong
+   * @param {string} _question - The question text
+   * @param {string} userAnswer - The user's answer
+   * @param {string} _correctAnswer - The correct answer
+   * @param {string} _gradeLevel - The grade level
+   * @param {string} _apiKey - The API key (unused in mock, accepted for interface consistency)
+   * @param {string} _language - Language code (unused in mock, accepted for interface consistency)
+   * @returns {Promise<string>} Wrong answer explanation text
+   */
+  export async function generateWrongAnswerExplanation(_question, userAnswer, _correctAnswer, _gradeLevel =
+  'middle school', _apiKey, _language = 'en') {
+    // Simulate network delay (shorter since it's just partial generation)
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-   logger.debug('Mock API explanation generated');
+    logger.debug('Mock API generating wrong answer explanation only');
 
-   return mockExplanation;
+    const mockExplanation = `Your answer "${userAnswer}" wasn't quite right. This is a common misconception that many students have - keep practicing and you'll master this concept!`;
+
+    logger.debug('Mock API wrong answer explanation generated');
+
+    return mockExplanation;
   }

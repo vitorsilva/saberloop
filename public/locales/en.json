@@ -207,8 +207,12 @@
     "incorrect": "INCORRECT",
     "youSelected": "YOU SELECTED",
     "correctAnswer": "CORRECT ANSWER",
+    "title": "Explanation",
     "whyIts": "Why it's {{answer}}",
     "generating": "Generating explanation...",
+    "loadingPersonalized": "Loading personalized feedback...",
+    "connectToAI": "Connect to AI for personalized feedback on your answer",
+    "couldntLoad": "Couldn't load personalized feedback",
     "failed": "Failed to generate explanation.",
     "tryAgain": "Try again",
     "gotIt": "Got it!"

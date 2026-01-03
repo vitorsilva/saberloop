@@ -2,15 +2,19 @@ import { logger } from '../utils/logger.js';
 import { t } from '../core/i18n.js';
 
 /**
- * Show a bottom sheet modal with explanation for an incorrect answer
+ * Show a bottom sheet modal with explanation for an incorrect answer.
+ * Supports progressive loading: shows cached explanation instantly while loading personalized feedback.
  * @param {Object} options - Modal options
  * @param {string} options.question - The question text
  * @param {string} options.userAnswer - User's incorrect answer
  * @param {string} options.correctAnswer - The correct answer
- * @param {Function} options.onFetchExplanation - Async function to fetch explanation
+ * @param {string} [options.cachedExplanation] - Pre-cached rightAnswerExplanation (optional)
+ * @param {Function} options.onFetchExplanation - Async function to fetch explanation (returns {rightAnswerExplanation, wrongAnswerExplanation} or just wrongAnswerExplanation string if cached)
+ * @param {boolean} [options.isOffline] - Whether the app is currently offline
+ * @param {boolean} [options.hasApiKey] - Whether user has an API key connected
  * @returns {Promise<void>} Resolves when modal is closed
  */
-export function showExplanationModal({ question, userAnswer, correctAnswer, onFetchExplanation }) {
+export function showExplanationModal({ question, userAnswer, correctAnswer, cachedExplanation, onFetchExplanation, isOffline = false, hasApiKey = true }) {
   return new Promise((resolve) => {
     // Create modal backdrop
     const backdrop = document.createElement('div');
@@ -69,18 +73,44 @@ export function showExplanationModal({ question, userAnswer, correctAnswer, onFe
         <div class="px-4 mb-6" id="explanationContent">
           <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined text-primary">lightbulb</span>
-            <h3 class="text-text-light dark:text-text-dark font-bold text-lg">${t('explanation.whyIts', { answer: cleanCorrectAnswer })}</h3>
+            <h3 class="text-text-light dark:text-text-dark font-bold text-lg">${t('explanation.title')}</h3>
           </div>
-          <!-- Loading state -->
-          <div id="explanationLoading" class="flex items-center gap-2 text-subtext-light dark:text-subtext-dark">
-            <span class="material-symbols-outlined animate-spin">progress_activity</span>
-            <span>${t('explanation.generating')}</span>
+
+          <!-- Right answer explanation (cached or loading) -->
+          <div id="rightAnswerSection">
+            ${cachedExplanation ? `
+              <p id="rightAnswerText" class="text-subtext-light dark:text-subtext-dark leading-relaxed">${cachedExplanation}</p>
+            ` : `
+              <div id="rightAnswerLoading" class="flex items-center gap-2 text-subtext-light dark:text-subtext-dark">
+                <span class="material-symbols-outlined animate-spin">progress_activity</span>
+                <span>${t('explanation.generating')}</span>
+              </div>
+              <p id="rightAnswerText" class="text-subtext-light dark:text-subtext-dark leading-relaxed hidden"></p>
+            `}
           </div>
-          <!-- Explanation text (hidden initially) -->
-          <p id="explanationText" class="text-subtext-light dark:text-subtext-dark leading-relaxed hidden"></p>
+
+          <!-- Separator (shown when we have/expect both parts) -->
+          <hr id="explanationSeparator" class="border-border-light dark:border-border-dark my-4 ${isOffline && !hasApiKey ? 'hidden' : ''}">
+
+          <!-- Wrong answer explanation (personalized, loading) -->
+          <div id="wrongAnswerSection" class="${isOffline ? 'hidden' : ''}">
+            ${isOffline ? '' : hasApiKey ? `
+              <div id="wrongAnswerLoading" class="flex items-center gap-2 text-subtext-light dark:text-subtext-dark">
+                <span class="material-symbols-outlined animate-spin">progress_activity</span>
+                <span>${t('explanation.loadingPersonalized')}</span>
+              </div>
+              <p id="wrongAnswerText" class="text-subtext-light dark:text-subtext-dark leading-relaxed hidden"></p>
+            ` : `
+              <div id="connectToAI" class="flex items-center gap-2 text-subtext-light dark:text-subtext-dark">
+                <span class="material-symbols-outlined text-base">cloud</span>
+                <span>${t('explanation.connectToAI')}</span>
+              </div>
+            `}
+          </div>
+
           <!-- Error state (hidden initially) -->
           <div id="explanationError" class="hidden">
-            <p class="text-error mb-3">${t('explanation.failed')}</p>
+            <p class="text-error mb-3">${t('explanation.couldntLoad')}</p>
             <button id="retryBtn" class="text-primary font-medium hover:underline">${t('explanation.tryAgain')}</button>
           </div>
         </div>
@@ -116,28 +146,96 @@ export function showExplanationModal({ question, userAnswer, correctAnswer, onFe
 
     // Function to fetch and display explanation
     const fetchExplanation = async () => {
-      const loadingEl = backdrop.querySelector('#explanationLoading');
-      const textEl = backdrop.querySelector('#explanationText');
+      const rightAnswerLoadingEl = backdrop.querySelector('#rightAnswerLoading');
+      const rightAnswerTextEl = backdrop.querySelector('#rightAnswerText');
+      const wrongAnswerLoadingEl = backdrop.querySelector('#wrongAnswerLoading');
+      const wrongAnswerTextEl = backdrop.querySelector('#wrongAnswerText');
+      const wrongAnswerSectionEl = backdrop.querySelector('#wrongAnswerSection');
+      const separatorEl = backdrop.querySelector('#explanationSeparator');
       const errorEl = backdrop.querySelector('#explanationError');
 
-      loadingEl.classList.remove('hidden');
-      textEl.classList.add('hidden');
-      errorEl.classList.add('hidden');
+      // If offline and we have cache, we're done (no fetch needed)
+      if (isOffline && cachedExplanation) {
+        if (separatorEl) separatorEl.classList.add('hidden');
+        return;
+      }
+
+      // If offline and no cache, show error
+      if (isOffline && !cachedExplanation) {
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      // If no API key, we can't fetch personalized explanation
+      if (!hasApiKey) {
+        return;
+      }
 
       try {
-        const explanation = await onFetchExplanation();
-        loadingEl.classList.add('hidden');
-        textEl.textContent = explanation;
-        textEl.classList.remove('hidden');
+        const result = await onFetchExplanation();
+
+        // Handle structured response (full fetch)
+        if (typeof result === 'object' && result.rightAnswerExplanation !== undefined) {
+          // Update right answer section
+          if (rightAnswerLoadingEl) rightAnswerLoadingEl.classList.add('hidden');
+          if (rightAnswerTextEl) {
+            rightAnswerTextEl.textContent = result.rightAnswerExplanation;
+            rightAnswerTextEl.classList.remove('hidden');
+          }
+
+          // Update wrong answer section
+          if (wrongAnswerLoadingEl) wrongAnswerLoadingEl.classList.add('hidden');
+          if (wrongAnswerTextEl && result.wrongAnswerExplanation) {
+            wrongAnswerTextEl.textContent = result.wrongAnswerExplanation;
+            wrongAnswerTextEl.classList.remove('hidden');
+          } else if (wrongAnswerSectionEl && !result.wrongAnswerExplanation) {
+            // Hide wrong answer section if no personalized feedback
+            wrongAnswerSectionEl.classList.add('hidden');
+            if (separatorEl) separatorEl.classList.add('hidden');
+          }
+        }
+        // Handle string response (partial fetch - only wrong answer)
+        else if (typeof result === 'string') {
+          if (wrongAnswerLoadingEl) wrongAnswerLoadingEl.classList.add('hidden');
+          if (wrongAnswerTextEl) {
+            wrongAnswerTextEl.textContent = result;
+            wrongAnswerTextEl.classList.remove('hidden');
+          }
+        }
       } catch (error) {
         logger.error('Failed to fetch explanation', { error: error.message });
-        loadingEl.classList.add('hidden');
-        errorEl.classList.remove('hidden');
+
+        // Hide loading states
+        if (rightAnswerLoadingEl) rightAnswerLoadingEl.classList.add('hidden');
+        if (wrongAnswerLoadingEl) wrongAnswerLoadingEl.classList.add('hidden');
+
+        // If we have cached explanation, only show error for personalized part
+        if (cachedExplanation) {
+          if (wrongAnswerSectionEl) {
+            wrongAnswerSectionEl.innerHTML = `
+              <div class="flex items-center gap-2 text-subtext-light dark:text-subtext-dark">
+                <span class="material-symbols-outlined text-base text-warning">warning</span>
+                <span>${t('explanation.couldntLoad')}</span>
+                <button id="retryBtn" class="text-primary font-medium hover:underline ml-2">${t('explanation.tryAgain')}</button>
+              </div>
+            `;
+            // Re-attach retry listener
+            const newRetryBtn = wrongAnswerSectionEl.querySelector('#retryBtn');
+            if (newRetryBtn) {
+              newRetryBtn.addEventListener('click', fetchExplanation);
+            }
+          }
+        } else {
+          // No cache, show full error
+          errorEl.classList.remove('hidden');
+        }
       }
     };
 
-    // Start fetching explanation
-    fetchExplanation();
+    // Start fetching explanation (unless offline with cache)
+    if (!(isOffline && cachedExplanation)) {
+      fetchExplanation();
+    }
 
     // Handle "Got it" button
     const gotItBtn = backdrop.querySelector('#gotItBtn');

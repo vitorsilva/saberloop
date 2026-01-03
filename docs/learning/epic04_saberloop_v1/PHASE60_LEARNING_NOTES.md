@@ -138,10 +138,11 @@ All steps completed:
 
 **Prerequisites (already set up in Phase 9.5.5):**
 - Maestro 2.0.10 installed natively on Windows (NOT WSL)
-- Android Studio with emulator
+- Android Studio with emulator (AVD created)
 - JAVA_HOME = `C:\Program Files\Android\Android Studio\jbr`
 - PATH includes `%USERPROFILE%\maestro\maestro\bin`
 - PATH includes `%LOCALAPPDATA%\Android\Sdk\platform-tools` (for adb)
+- PATH includes `%LOCALAPPDATA%\Android\Sdk\emulator` (for emulator CLI)
 
 **If ADB not found**, add to PATH:
 ```powershell
@@ -152,23 +153,42 @@ $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:LOCALAPPDATA\Android\Sdk\platform-tools", "User")
 ```
 
+### Quick Start (Command Line)
+
+Run all Maestro tests from the command line (no Android Studio UI needed):
+
 ```powershell
-# 1. Start Android emulator via Android Studio Device Manager
+# 1. List available emulators
+& "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator" -list-avds
 
-# 2. Verify Maestro sees the device
-maestro --version
+# 2. Start emulator (replace AVD_NAME with your emulator name)
+Start-Process -FilePath "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator" -ArgumentList "-avd AVD_NAME -no-snapshot-load"
 
-# 3. Install the APK (if not already installed)
+# 3. Wait for emulator to boot, then verify it's connected
+adb devices
+# Should show: emulator-5554   device
+
+# 4. Install the APK (from project root)
 adb install "package/Saberloop - Google Play package/Saberloop.apk"
 
-# 4. Run individual flow (with proper output directory)
+# 5. Run all Maestro flows
+maestro test .maestro/flows/ --test-output-dir .maestro/tests
+```
+
+### Detailed Commands
+
+```powershell
+# Run individual flow
 maestro test .maestro/flows/01-onboarding.yaml --test-output-dir .maestro/tests
 
-# 5. Run all flows
+# Run all flows
 maestro test .maestro/flows/ --test-output-dir .maestro/tests
 
-# 6. Run with debug output
+# Run with debug output
 maestro test .maestro/flows/01-onboarding.yaml --debug-output .maestro/debug
+
+# Verify Maestro version
+maestro --version
 ```
 
 **Note:** The `--test-output-dir` flag is required because `config.yaml`'s `testOutputDir` is not respected by Maestro (discovered in Phase 9.5.5).

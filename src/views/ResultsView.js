@@ -1,6 +1,6 @@
 import BaseView from './BaseView.js';
 import state from '../core/state.js';
-import { saveQuizSession, updateQuizSession, generateExplanation } from '../services/quiz-service.js';
+import { saveQuizSession, updateQuizSession, generateExplanation, generateWrongAnswerExplanation, updateQuestionExplanation } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
 import { isFeatureEnabled } from '../core/features.js';
@@ -9,6 +9,7 @@ import { showShareModal } from '../components/ShareModal.js';
 import { calculateNextGradeLevel } from '../utils/gradeProgression.js';
 import { t, getCurrentLanguage } from '../core/i18n.js';
 import { getUsageSummary } from '../services/cost-service.js';
+import { isOnline } from '../utils/network.js';
 
 export default class ResultsView extends BaseView {
   render() {
@@ -233,7 +234,7 @@ export default class ResultsView extends BaseView {
     // Skip saving if this is a replay
     const replaySessionId = state.get('replaySessionId');
 
-    // If replay, update existing session
+    // If replay, update existing session and keep track of session ID for caching
     if (replaySessionId) {
       try {
         await updateQuizSession(replaySessionId, {
@@ -241,6 +242,8 @@ export default class ResultsView extends BaseView {
           answers,
           timestamp: Date.now()  // Update timestamp to show when last played
         });
+        // Store session ID for explanation caching
+        state.set('currentSessionId', replaySessionId);
         logger.debug('Replay session updated', { sessionId: replaySessionId });
       } catch (error) {
         logger.error('Failed to update session', { error: error.message });
@@ -267,8 +270,10 @@ export default class ResultsView extends BaseView {
     };
 
     try {
-      await saveQuizSession(session);
-      logger.debug('Quiz session saved', { topic: session.topic });
+      const sessionId = await saveQuizSession(session);
+      // Store session ID for explanation caching
+      state.set('currentSessionId', sessionId);
+      logger.debug('Quiz session saved', { topic: session.topic, sessionId });
     } catch (error) {
       logger.error('Failed to save session', { error: error.message });
     }
@@ -393,28 +398,58 @@ export default class ResultsView extends BaseView {
     const answers = state.get('currentAnswers');
     const gradeLevel = state.get('currentGradeLevel') || 'middle school';
     const topic = state.get('currentTopic') || 'Unknown';
+    const sessionId = state.get('currentSessionId');
 
     const question = questions[questionIndex];
     const userAnswer = question.options[Number(answers[questionIndex])];
     const correctAnswer = question.options[Number(question.correct)];
 
+    // Check for cached explanation
+    const cachedExplanation = question.rightAnswerExplanation;
+    const hasCache = !!cachedExplanation;
+
+    // Check network and API key status
+    const offline = !isOnline();
+    const apiKey = await getApiKey();
+    const hasApiKey = !!apiKey;
+
     // Track telemetry event
     logger.action('explanation_opened', {
       topic,
       questionIndex,
-      gradeLevel
+      gradeLevel,
+      cached: hasCache,
+      offline
     });
 
     await showExplanationModal({
       question: question.question,
       userAnswer,
       correctAnswer,
+      cachedExplanation,
+      isOffline: offline,
+      hasApiKey,
       onFetchExplanation: async () => {
-        const apiKey = await getApiKey();
         if (!apiKey) {
           throw new Error('No API key available');
         }
-        return generateExplanation(
+
+        // If we have cached explanation, only fetch wrong answer explanation
+        if (hasCache) {
+          logger.debug('Using cached rightAnswerExplanation, fetching wrongAnswerExplanation only');
+          return generateWrongAnswerExplanation(
+            question.question,
+            userAnswer,
+            correctAnswer,
+            gradeLevel,
+            apiKey,
+            getCurrentLanguage()
+          );
+        }
+
+        // No cache - fetch full explanation
+        logger.debug('No cached explanation, fetching full explanation');
+        const result = await generateExplanation(
           question.question,
           userAnswer,
           correctAnswer,
@@ -422,6 +457,22 @@ export default class ResultsView extends BaseView {
           apiKey,
           getCurrentLanguage()
         );
+
+        // Cache the rightAnswerExplanation for future use
+        if (result.rightAnswerExplanation && sessionId) {
+          try {
+            await updateQuestionExplanation(sessionId, questionIndex, result.rightAnswerExplanation);
+            // Also update the in-memory state
+            questions[questionIndex].rightAnswerExplanation = result.rightAnswerExplanation;
+            state.set('currentQuestions', questions);
+            logger.debug('Cached rightAnswerExplanation for question', { questionIndex });
+          } catch (cacheError) {
+            logger.error('Failed to cache explanation', { error: cacheError.message });
+            // Non-fatal - continue showing the explanation
+          }
+        }
+
+        return result;
       }
     });
   }

@@ -12,6 +12,51 @@
 |------|--------|-------|
 | 2025-12-28 | **Plan Created** | Design complete with wireframes |
 | 2025-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+| 2026-01-02 | **Plan Updated** | Added branching strategy, staging deploy, mutation testing |
+
+---
+
+## Branching Strategy
+
+**Branch name:** `feature/phase51-explanation-performance`
+
+**Workflow:**
+1. Create branch from `main` before starting implementation
+2. Commit frequently with clear messages (one logical change per commit)
+3. Push to remote regularly for backup
+4. Deploy to staging before creating PR
+5. Create PR to `main` when complete
+
+**Branch commands:**
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/phase51-explanation-performance
+```
+
+---
+
+## Subphase Progress Tracking
+
+**IMPORTANT:** When completing each subphase, update documentation before moving to the next:
+
+### 1. Update this plan document
+- Mark the subphase as complete in the checklist
+- Add a session log entry with date and notes
+
+### 2. Update learning notes (`PHASE51_LEARNING_NOTES.md`)
+- Document what was learned during the subphase
+- Note any challenges encountered and how they were resolved
+- Record any deviations from the original plan
+- Include code snippets or patterns worth remembering
+
+### 3. Commit the documentation updates
+```bash
+git add docs/learning/epic05/PHASE51_*.md
+git commit -m "docs: complete Phase 51.X - [description]"
+```
+
+This ensures we always know where we left off if resuming later and captures learning for future reference.
 
 ---
 
@@ -205,6 +250,31 @@ Split the explanation into two parts with a structured JSON response:
 
 ---
 
+## Integration with Usage Cost Tracking (Phase 49)
+
+This phase introduces new LLM API calls that must integrate with the existing cost tracking system.
+
+### Cost Tracking Requirements
+
+| Call Type | Track Cost? | Notes |
+|-----------|-------------|-------|
+| Full explanation (both parts) | ✅ Yes | First-time request, larger token usage |
+| Partial explanation (wrongAnswerExplanation only) | ✅ Yes | Cached hit, smaller token usage |
+
+### Implementation Considerations
+
+1. **Token counting** - Structured JSON response may have slightly different token counts than plain text
+2. **Cost attribution** - Both full and partial explanation costs should be attributed to the explanation feature
+3. **Cost savings visibility** - Consider showing users when cached explanation saved them tokens/cost
+4. **Telemetry** - Log whether explanation was served from cache vs generated
+
+### Files Affected
+
+- `src/api/api.real.js` - Ensure `generateExplanation()` and new `generateWrongAnswerExplanation()` both call cost tracking
+- `src/services/quiz-service.js` - Pass through cost data from API layer
+
+---
+
 ## Implementation Steps
 
 ### Phase 1: API Layer Changes
@@ -291,6 +361,8 @@ Split the explanation into two parts with a structured JSON response:
 |------|-------------|
 | `api.real.test.js` | Test JSON parsing of new structured response |
 | `api.real.test.js` | Test partial generation (wrongAnswerExplanation only) |
+| `api.real.test.js` | Test cost tracking called for full explanation |
+| `api.real.test.js` | Test cost tracking called for partial explanation |
 | `db.test.js` | Test `updateQuestionExplanation()` function |
 | `ExplanationModal.test.js` | Test rendering with/without cached content |
 | `ExplanationModal.test.js` | Test all UI states (loading, loaded, offline, error) |
@@ -305,6 +377,36 @@ Split the explanation into two parts with a structured JSON response:
 | `explanation.spec.js` | Error state shows cached content + retry button |
 | `explanation.spec.js` | Quiz retake uses cached explanation from session |
 
+### E2E Tests (Maestro)
+
+| Test | Description |
+|------|-------------|
+| `explanation-caching.yaml` | First explanation shows both parts with separator |
+| `explanation-caching.yaml` | Cached explanation displays instantly on repeat view |
+| `explanation-offline.yaml` | Offline mode shows cached content gracefully |
+
+**Note:** Maestro tests focus on mobile-specific UX (touch interactions, modal behavior on smaller screens).
+
+### Mutation Testing (Stryker)
+
+New test files must pass mutation testing with >80% mutation score:
+
+| File | Target Score |
+|------|--------------|
+| `src/api/api.real.test.js` (new tests) | >80% |
+| `src/core/db.test.js` (new tests) | >80% |
+| `src/components/ExplanationModal.test.js` (new tests) | >80% |
+
+**Run mutation tests:**
+```bash
+# Update stryker.config.json to include new test files, then:
+npx stryker run
+```
+
+**Note:** Focus mutation testing on the new functions added in this phase, not the entire files.
+
+---
+
 ### Manual Testing Checklist
 
 - [ ] First explanation request: shows loading, then both parts with separator
@@ -316,6 +418,8 @@ Split the explanation into two parts with a structured JSON response:
 - [ ] Retry button works and loads personalized content
 - [ ] Old session (no cache): behaves like first-time request
 - [ ] All languages display correctly (en, pt-PT, es, fr, de)
+- [ ] Cost tracking: full explanation cost appears in usage stats
+- [ ] Cost tracking: partial explanation (cached hit) shows reduced cost
 
 ---
 
@@ -429,20 +533,37 @@ All new/modified functions should have JSDoc comments:
 
 ## Checklist
 
-- [ ] Create plan document (this file)
+### Setup
+- [x] Create plan document (this file)
+- [ ] Create feature branch (`feature/phase51-explanation-performance`)
 - [ ] Capture "before" screenshots
+
+### Implementation
 - [ ] Write failing tests (unit + E2E)
 - [ ] Phase 1: API layer changes
+  - [ ] Update documentation when complete
 - [ ] Phase 2: Data layer changes
+  - [ ] Update documentation when complete
 - [ ] Phase 3: UI layer changes
+  - [ ] Update documentation when complete
 - [ ] Phase 4: Network state handling
+  - [ ] Update documentation when complete
 - [ ] Phase 5: i18n translations
+  - [ ] Update documentation when complete
+
+### Validation
 - [ ] Run archtest (must pass)
-- [ ] Run all tests (must pass)
+- [ ] Run all unit tests (must pass)
+- [ ] Run all E2E tests (must pass)
+- [ ] Run mutation tests on new code (>80% score)
 - [ ] Capture "after" screenshots
 - [ ] Manual testing checklist complete
-- [ ] Commit and push
-- [ ] Create PR
+
+### Release
+- [ ] Deploy to staging (`npm run build && npm run deploy` with staging target)
+- [ ] Verify on staging environment
+- [ ] Create PR to main
+- [ ] Merge after approval
 
 ---
 

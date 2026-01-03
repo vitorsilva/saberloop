@@ -2,8 +2,8 @@
  * Quiz Service - Business logic for quiz operations
  * Views should use this instead of importing db or api directly
  */
-import { getRecentSessions, getSession, saveSession, updateSession } from '../core/db.js';
-import { generateQuestions as apiGenerateQuestions, generateExplanation as apiGenerateExplanation } from '../api/index.js';
+import { getRecentSessions, getSession, saveSession, updateSession, updateQuestionExplanation as dbUpdateQuestionExplanation } from '../core/db.js';
+import { generateQuestions as apiGenerateQuestions, generateExplanation as apiGenerateExplanation, generateWrongAnswerExplanation as apiGenerateWrongAnswerExplanation } from '../api/index.js';
 
 /**
  * Get quiz history (recent sessions)
@@ -51,22 +51,49 @@ export async function updateQuizSession(id, updates) {
  * @param {Array<string>} [options.previousQuestions] - Questions to exclude (for continue feature)
  * @param {string} [options.language] - Language code for content generation (e.g., 'en', 'pt-PT')
  * @param {number} [options.questionCount] - Number of questions to generate (default: 5)
- * @returns {Promise<{questions: Array, language: string}>}
+ * @returns {Promise<{language: string, questions: Array, model: string, usage: {promptTokens: number, completionTokens: number, totalTokens: number, costUsd: number}}>}
  */
 export async function generateQuestions(topic, gradeLevel, apiKey, options = {}) {
   return apiGenerateQuestions(topic, gradeLevel, apiKey, options);
 }
 
 /**
- * Generate an explanation for an incorrect answer
+ * Generate a structured explanation for an incorrect answer.
+ * Returns both the general explanation (cacheable) and personalized feedback.
  * @param {string} question - The question text
  * @param {string} userAnswer - User's incorrect answer
  * @param {string} correctAnswer - The correct answer
  * @param {string} gradeLevel - Education level
  * @param {string} apiKey - OpenRouter API key
  * @param {string} language - Language code for the explanation (e.g., 'en', 'pt-PT')
- * @returns {Promise<string>} Explanation text
+ * @returns {Promise<{rightAnswerExplanation: string, wrongAnswerExplanation: string}>} Structured explanation
  */
 export async function generateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey, language = 'en') {
   return apiGenerateExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey, language);
+}
+
+/**
+ * Generate only the wrong answer explanation (when right answer explanation is already cached).
+ * @param {string} question - The question text
+ * @param {string} userAnswer - User's incorrect answer
+ * @param {string} correctAnswer - The correct answer
+ * @param {string} gradeLevel - Education level
+ * @param {string} apiKey - OpenRouter API key
+ * @param {string} language - Language code for the explanation (e.g., 'en', 'pt-PT')
+ * @returns {Promise<string>} Wrong answer explanation text
+ */
+export async function generateWrongAnswerExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey, language = 'en') {
+  return apiGenerateWrongAnswerExplanation(question, userAnswer, correctAnswer, gradeLevel, apiKey, language);
+}
+
+/**
+ * Update a question's cached explanation in a session.
+ * Used to cache the rightAnswerExplanation for performance.
+ * @param {number} sessionId - The session ID
+ * @param {number} questionIndex - Index of the question in the session's questions array
+ * @param {string} rightAnswerExplanation - The explanation to cache
+ * @returns {Promise<Object|null>} Updated session or null if not found
+ */
+export async function updateQuestionExplanation(sessionId, questionIndex, rightAnswerExplanation) {
+  return dbUpdateQuestionExplanation(sessionId, questionIndex, rightAnswerExplanation);
 }
