@@ -45,6 +45,43 @@ Update the landing page to showcase all implemented features (13+) and increase 
 2. Phase 52.1: Create screenshot processing script
 3. Phase 52.2: Process visual assets
 
+### Session 2: Implementation (January 3, 2026)
+
+**What was accomplished:**
+- Implemented all subphases (52.0-52.7)
+- Created PR #73
+
+**Things That Didn't Work & How They Were Fixed:**
+
+1. **CommonJS vs ES Modules confusion**
+   - **Problem:** Plan showed `require('sharp')` but project uses `"type": "module"` in package.json
+   - **Tried:** Initially considered using ES module syntax
+   - **Fix:** Checked existing scripts, found project uses `.cjs` extension for CommonJS scripts (like `deploy-ftp.cjs`). Created `process-screenshots.cjs` to match the pattern.
+
+2. **Screenshot path mismatch**
+   - **Problem:** Processed screenshots saved to `docs/product-info/screenshots/landing/` but landing page HTML referenced `images/` relative path
+   - **Fix:** Had to copy processed screenshots to `landing/images/` folder so relative paths would work when deployed
+
+3. **File:// protocol breaks absolute paths**
+   - **Problem:** When testing with Playwright using `file:///` protocol, images with absolute paths like `/app/icons/` showed broken image icons (alt text visible)
+   - **Learning:** This is expected - absolute paths resolve to `file:///C:/app/icons/` which doesn't exist. In production on the web server, these paths work correctly. The new screenshots in `images/` folder use relative paths and loaded fine.
+
+4. **Missing responsive breakpoint for 4-column grid**
+   - **Problem:** Changed "How It Works" from 3 to 4 steps, but original CSS only had responsive rules for 3 columns
+   - **Fix:** Added `@media (max-width: 1024px)` rule to make steps 2x2 on tablet before going to single column on mobile
+
+5. **Sharp PNG quality parameter**
+   - **Tried:** `sharp().png({ quality: 85 })`
+   - **Learning:** Sharp's PNG quality option works differently than JPEG - PNG is lossless. The `quality` affects zlib compression, not visual quality. Used `compressionLevel: 9` for best file size.
+
+**Key Implementation Decisions:**
+
+1. **Device frames via SVG composite** - Created SVG rectangles with rounded corners as background, then composited screenshots on top. Simple and effective.
+
+2. **Skipped explanation modal recapture** - Existing screenshot shows error state, but decided to proceed with 4 good screenshots rather than block on capturing a new one. Can be added later.
+
+3. **Two-column CTA with feature differentiation** - "Try Free" emphasizes no-commitment browser experience, "Unlimited Learning" emphasizes power user features including cost tracking.
+
 ---
 
 ## New Skills & Concepts
@@ -116,11 +153,24 @@ await sharp(input).png({ quality: 85, compressionLevel: 9 }).toFile(output);
 2. **Existing explanation modal screenshot shows error state** - needs to be recaptured with actual explanation text
 3. **Maestro output directory** - Use `--test-output-dir` flag, config.yaml setting is ignored
 
-### For Implementation
+### From Implementation
+
+1. **Use `.cjs` extension for CommonJS scripts** - Project has `"type": "module"` so regular `.js` files are ES modules. Use `.cjs` for scripts that need `require()`.
+
+2. **Landing page paths are relative to `landing/`** - When deployed, the landing page is at the root. Assets should be in `landing/images/` not `docs/`.
+
+3. **Test with both desktop and mobile viewports** - CSS grid changes significantly between breakpoints. Use Playwright's `setViewportSize()` to test both.
+
+4. **Sharp's PNG compression** - For PNGs, use `compressionLevel` (0-9) not `quality`. Higher = smaller file but slower encoding.
+
+5. **SVG strings in Sharp** - Can create device frames by passing SVG as a Buffer: `Buffer.from('<svg>...</svg>')`. Works great for simple shapes with rounded corners.
+
+### For Future Reference
 
 1. **Create branch first** before any code changes
 2. **Commit after each subphase** - don't batch multiple changes
 3. **Update documentation** before moving to next subphase
+4. **Test locally with file:// has limitations** - Absolute paths won't work. Deploy to staging for full testing.
 
 ---
 
