@@ -288,7 +288,7 @@
 
         .steps {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 40px;
             margin-top: 60px;
         }
@@ -402,6 +402,12 @@
             }
         }
 
+        @media (max-width: 1024px) {
+            .steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .hero .container {
                 grid-template-columns: 1fr;
@@ -435,6 +441,10 @@
 
             .steps {
                 grid-template-columns: 1fr;
+            }
+
+            .screenshots-grid img {
+                max-width: 200px;
             }
 
             .section-title {
@@ -532,17 +542,22 @@
                 <div class="step">
                     <div class="step-number">1</div>
                     <h3>Enter Any Topic</h3>
-                    <p>Type any subject you want to learn about - history, science, coding, languages, anything!</p>
+                    <p>Type any subject you want to learn about — history, science, coding, languages, anything!</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>Get Quiz Questions</h3>
-                    <p>AI generates 5 unique multiple-choice questions tailored to your topic instantly.</p>
+                    <h3>Customize Your Quiz</h3>
+                    <p>Choose your skill level, language, and number of questions to match your needs.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Learn & Improve</h3>
-                    <p>Answer questions and get detailed explanations to reinforce your learning.</p>
+                    <h3>Take the Quiz</h3>
+                    <p>AI generates unique multiple-choice questions tailored to your topic instantly.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Learn From Mistakes</h3>
+                    <p>Get AI explanations for wrong answers. Continue to master the topic at higher levels.</p>
                 </div>
             </div>
         </div>
@@ -553,8 +568,10 @@
         <div class="container">
             <h2 class="section-title">See It In Action</h2>
             <div class="screenshots-grid">
-                <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop Welcome Screen" width="280" height="560" loading="lazy">
-                <img src="/app/icons/screenshot-mobile-2.png" alt="Saberloop Home Screen with quiz topics" width="280" height="560" loading="lazy">
+                <img src="images/landing-02-quiz-started.png" alt="Quiz in progress with multiple choice options" width="304" height="584" loading="lazy">
+                <img src="images/landing-03-results-page.png" alt="Results page with score and Continue button" width="304" height="584" loading="lazy">
+                <img src="images/landing-06-settings-page.png" alt="Settings screen with language and level options" width="304" height="584" loading="lazy">
+                <img src="images/landing-08-usage-cost-card.png" alt="Quiz results showing usage cost tracking" width="304" height="584" loading="lazy">
             </div>
         </div>
     </section>
