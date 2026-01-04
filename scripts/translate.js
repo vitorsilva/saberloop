@@ -32,6 +32,7 @@ const LANGUAGE_NAMES = {
   'ko': 'Korean',
   'zh': 'Chinese (Simplified)',
   'nl': 'Dutch',
+  'no': 'Norwegian (Bokmål)',
   'ru': 'Russian',
   'ar': 'Arabic',
   'hi': 'Hindi',

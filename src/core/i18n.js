@@ -26,7 +26,10 @@ export const SUPPORTED_LANGUAGES = [
     { code: 'pt-PT', name: 'Português', flag: '🇵🇹' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+    { code: 'no', name: 'Norsk', flag: '🇳🇴' },
+    { code: 'ru', name: 'Русский', flag: '🇷🇺' }
 ];
 
 // Default/fallback language
