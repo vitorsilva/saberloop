@@ -40,10 +40,15 @@ const CONFIG = {
 
   // Files to process (can specify specific files or use wildcard patterns)
   includePatterns: [
+    // Maestro screenshots
     '02-quiz-started.png',
     '03-results-page.png',
     '06-settings-page.png',
     '08-usage-cost-card.png',
+    // Playwright-captured screenshots (Phase 52.8)
+    'landing-explanation-modal.png',
+    'landing-share-results.png',
+    'landing-usage-cost.png',
   ],
 };
 
@@ -171,7 +176,8 @@ async function processAll() {
   // Process each file
   for (const file of toProcess) {
     const inputPath = path.join(inputDir, file);
-    const outputName = `landing-${file}`;
+    // Avoid double-prefixing files that already have "landing-" prefix
+    const outputName = file.startsWith('landing-') ? file : `landing-${file}`;
     const outputPath = path.join(outputDir, outputName);
 
     try {
