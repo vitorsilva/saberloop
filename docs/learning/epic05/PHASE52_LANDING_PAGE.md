@@ -1266,8 +1266,9 @@ ffmpeg -i test-results/*/video.webm -vf "fps=10,scale=320:-1" -loop 0 docs/produ
 
 ### Phase 52.8: Demo Video & Additional Screenshots (Enhancement)
 
-**Status:** In Progress
+**Status:** Complete
 **Added:** 2026-01-03
+**Completed:** 2026-01-04
 
 This phase adds a demo video to the hero section and expands the "See It In Action" section with more feature screenshots.
 
@@ -1302,21 +1303,21 @@ This phase adds a demo video to the hero section and expands the "See It In Acti
 #### Implementation Checklist
 
 **Screenshots:**
-- [ ] Process `03-results-page.png` for Share UX → `landing-share-results.png`
-- [ ] Capture new explanation modal screenshot with actual explanation text
-- [ ] Capture Results page screenshot showing usage cost card
-- [ ] Process new screenshots with device frames
-- [ ] Copy to `landing/images/`
+- [x] Process `03-results-page.png` for Share UX → `landing-share-results.png`
+- [x] Capture new explanation modal screenshot with actual explanation text
+- [x] Capture Results page screenshot showing usage cost card
+- [x] Process new screenshots with device frames
+- [x] Copy to `landing/images/`
 
 **Update Landing Page HTML:**
-- [ ] Add Share Results screenshot to "See It In Action" grid
-- [ ] Add Explanation Modal screenshot
-- [ ] Add Usage Cost Card screenshot
-- [ ] Update grid CSS if needed (4 → 7 images)
+- [x] Add Share Results screenshot to "See It In Action" grid
+- [x] Add Explanation Modal screenshot
+- [x] Add Usage Cost Card screenshot
+- [x] Update grid CSS if needed (4 → 5 images)
 
 **Demo Video (Option A - Hero Replacement):**
-- [ ] Create Playwright test for demo video (`tests/e2e/capture-demo-video.spec.js`)
-- [ ] Record ~30s user journey:
+- [x] Create Playwright test for demo video (`tests/e2e/capture-landing-assets.spec.js`)
+- [x] Record ~30s user journey:
   1. Home screen (1s)
   2. Enter topic "World History" (2s typing)
   3. Select grade level (1s)
@@ -1326,10 +1327,10 @@ This phase adds a demo video to the hero section and expands the "See It In Acti
   7. Click explanation button (2s)
   8. View explanation modal (3s)
   9. Close modal, show Continue button (2s)
-- [ ] Convert webm → mp4 (or gif for auto-play)
-- [ ] Replace hero static image with auto-playing video/gif
-- [ ] Add fallback poster image for slow connections
-- [ ] **Commit:** `feat(landing): add demo video and additional screenshots`
+- [x] ~~Convert webm → mp4~~ Used webm directly (good browser support)
+- [x] Replace hero static image with auto-playing video
+- [x] Add fallback poster image for slow connections
+- [x] **Commit:** `feat(landing): add demo video and additional screenshots`
 
 #### Video Placement Decision
 

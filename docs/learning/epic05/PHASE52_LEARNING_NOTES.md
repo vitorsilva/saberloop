@@ -1,7 +1,7 @@
 # Phase 52: Landing Page Improvements - Learning Notes
 
 **Started:** January 3, 2026
-**Status:** Complete (PR #73 created)
+**Status:** Phase 52.8 complete - Demo video and additional screenshots added
 
 ---
 
@@ -199,3 +199,53 @@ await sharp(input).png({ quality: 85, compressionLevel: 9 }).toFile(output);
 - [x] Phase 52.5: Share & CTA Sections
 - [x] Phase 52.6: Testing & Polish
 - [x] Phase 52.7: Release (PR #73 created)
+- [x] Phase 52.8: Demo Video & Additional Screenshots
+
+### Session 3: Phase 52.8 Enhancement (January 4, 2026)
+
+**What was accomplished:**
+- Captured 3 new screenshots with Playwright: explanation modal, share results, usage cost
+- Recorded demo video (~30s user journey walkthrough)
+- Added demo video to hero section (replaces static image)
+- Expanded "See It In Action" to 5 screenshots
+- Updated process-screenshots.cjs to handle new screenshot patterns
+
+**Things That Didn't Work & How They Were Fixed:**
+
+1. **Explanation modal test failing on "Loading" check**
+   - **Problem:** Test waited for explanation content by checking `not.toContainText('Loading')`, but the modal shows both explanations and a "Loading personalized feedback..." spinner simultaneously
+   - **Tried:** `await expect(page.locator('#explanationContent')).not.toContainText('Loading');`
+   - **Fix:** Changed to wait for actual explanation text instead: `await expect(page.locator('text=The correct answer is')).toBeVisible({ timeout: 10000 });`
+
+2. **Test results cleaned up between test runs**
+   - **Problem:** Ran explanation modal test after demo video test, and Playwright cleaned up the video file
+   - **Learning:** Playwright deletes test-results folder on each run. Need to copy video immediately after capture, or re-run the video test.
+   - **Fix:** Re-ran demo video test after all other tests completed
+
+3. **ffmpeg not available for video conversion**
+   - **Problem:** Plan called for converting webm to mp4 using ffmpeg, but ffmpeg not installed
+   - **Tried:** `where ffmpeg` - not found
+   - **Fix:** Used webm directly - modern browsers (Chrome, Firefox, Edge, Safari 15+) all support webm. Added fallback poster image for older browsers.
+
+4. **Screenshot patterns not matching new files**
+   - **Problem:** process-screenshots.cjs was looking for Maestro patterns like `02-quiz-started.png` but new files were `landing-*.png`
+   - **Fix:** Updated CONFIG.includePatterns to include both Maestro and Playwright-captured patterns. Also added logic to avoid double-prefixing files already named `landing-*.png`.
+
+5. **Video not styled correctly**
+   - **Problem:** CSS selector `.hero-image img` didn't apply to video element
+   - **Fix:** Updated selector to `.hero-image img, .hero-image video` in both main styles and responsive breakpoint
+
+**Key Implementation Decisions:**
+
+1. **Use webm video directly** - No conversion to mp4 needed. WebM has excellent browser support and smaller file size. Added poster attribute for fallback.
+
+2. **Video attributes for auto-play** - Used `autoplay muted loop playsinline` - all required for auto-playing video on mobile without user interaction.
+
+3. **Screenshot order in grid** - Reorganized to: Quiz → Explanation → Share → Usage Cost → Settings. This follows the user journey flow.
+
+**New Files Created:**
+- `tests/e2e/capture-landing-assets.spec.js` - Playwright tests for capturing screenshots and video
+- `landing/images/demo.webm` - Demo video (~695KB)
+- `landing/images/landing-explanation-modal.png` - Explanation modal screenshot
+- `landing/images/landing-share-results.png` - Share results screenshot
+- `landing/images/landing-usage-cost.png` - Usage cost screenshot
