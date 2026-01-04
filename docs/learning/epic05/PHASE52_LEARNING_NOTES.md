@@ -256,3 +256,9 @@ await sharp(input).png({ quality: 85, compressionLevel: 9 }).toFile(output);
    - **Fix:** Added explicit `video: { mode: 'on', size: MOBILE_VIEWPORT }` in `test.use()` at top level of test file. Re-recorded video at exactly 375x667 pixels.
    - **Learning:** Playwright's `test.use({ video })` cannot be inside a `describe()` block - it forces a new worker. Must be at file top level.
    - **File size:** New video is ~1MB (was ~695KB) because app content now fills entire frame
+
+7. **Explanation modal showing loading state in video**
+   - **Problem:** Demo video was clicking explain button but not waiting for actual content to load
+   - **Tried:** Original code just waited 2.5 seconds after clicking
+   - **Fix:** Added `await expect(page.locator('text=The correct answer is')).toBeVisible({ timeout: 10000 });` to wait for actual explanation text, then increased viewing time to 3.5s
+   - **Tip:** To verify video content at specific timestamps, use JavaScript to pause: `video.currentTime = 21; video.pause();`
