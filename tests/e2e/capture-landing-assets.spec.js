@@ -261,7 +261,10 @@ test.describe('Capture Landing Page Assets', () => {
     // Click explain button to show modal
     await page.locator('.explain-btn').click();
     await expect(page.locator('#explanationModal')).toBeVisible();
-    await page.waitForTimeout(2500); // Let user read explanation
+
+    // Wait for actual explanation text to load (not just the modal)
+    await expect(page.locator('text=The correct answer is')).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(3500); // Give viewers time to read the explanation
 
     // Close modal
     await page.locator('#gotItBtn').click();
