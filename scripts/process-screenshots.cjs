@@ -1,16 +1,22 @@
 /**
- * Automated screenshot processor for landing page assets.
+ * Automated screenshot processor for landing page and Play Store assets.
  *
  * Features:
  * - Resize to consistent dimensions
- * - Add device frame overlay
+ * - Add device frame overlay (optional)
  * - Optimize file size
  * - Batch process multiple images
+ * - Preset configurations for different use cases
  *
  * Usage:
- *   node scripts/process-screenshots.cjs
- *   node scripts/process-screenshots.cjs --input .maestro/tests/screenshots --output landing/images
- *   node scripts/process-screenshots.cjs --no-frame  # Skip device frame
+ *   node scripts/process-screenshots.cjs                    # Uses 'landing' preset
+ *   node scripts/process-screenshots.cjs --preset playstore # Uses 'playstore' preset (1080x1920)
+ *   node scripts/process-screenshots.cjs --input DIR --output DIR
+ *   node scripts/process-screenshots.cjs --no-frame         # Skip device frame
+ *
+ * Presets:
+ *   - landing:   280x560, with device frame (for landing page)
+ *   - playstore: 1080x1920, no frame (for Google Play Store)
  *
  * @requires sharp
  */
@@ -19,37 +25,59 @@ const sharp = require('sharp');
 const fs = require('fs').promises;
 const path = require('path');
 
-// Configuration
+// Configuration presets
+const PRESETS = {
+  // Landing page preset (Phase 52)
+  landing: {
+    inputDir: '.maestro/tests/screenshots',
+    outputDir: 'docs/product-info/screenshots/landing',
+    targetWidth: 280,
+    targetHeight: 560,
+    useDeviceFrame: true,
+    frameColor: '#1a1a2e',
+    framePadding: 12,
+    frameRadius: 24,
+    quality: 85,
+    includePatterns: [
+      '02-quiz-started.png',
+      '03-results-page.png',
+      '06-settings-page.png',
+      '08-usage-cost-card.png',
+      'landing-explanation-modal.png',
+      'landing-share-results.png',
+      'landing-usage-cost.png',
+    ],
+  },
+
+  // Play Store preset (Phase 53)
+  playstore: {
+    inputDir: 'docs/product-info/screenshots/playstore',
+    outputDir: 'docs/product-info/screenshots/playstore/processed',
+    targetWidth: 1080,
+    targetHeight: 1920,
+    useDeviceFrame: false, // Play Store doesn't need device frames
+    quality: 90,
+    includePatterns: [
+      '01-quiz-question.png',
+      '02-explanation-modal.png',
+      '03-results-continue.png',
+      '04-settings.png',
+      '05-home-history.png',
+      '06-share-results.png',
+      '07-topic-input.png',
+      '08-portuguese-quiz.png',
+    ],
+  },
+};
+
+// Default to landing preset, can be overridden via --preset CLI arg
+const args = process.argv.slice(2);
+const presetName = args.includes('--preset')
+  ? args[args.indexOf('--preset') + 1]
+  : 'landing';
+
 const CONFIG = {
-  // Input/output directories (can be overridden via CLI)
-  inputDir: '.maestro/tests/screenshots',
-  outputDir: 'docs/product-info/screenshots/landing',
-
-  // Target dimensions (mobile screenshot)
-  targetWidth: 280,
-  targetHeight: 560,
-
-  // Device frame settings
-  useDeviceFrame: true,
-  frameColor: '#1a1a2e', // Match landing page background
-  framePadding: 12,
-  frameRadius: 24,
-
-  // Optimization
-  quality: 85,
-
-  // Files to process (can specify specific files or use wildcard patterns)
-  includePatterns: [
-    // Maestro screenshots
-    '02-quiz-started.png',
-    '03-results-page.png',
-    '06-settings-page.png',
-    '08-usage-cost-card.png',
-    // Playwright-captured screenshots (Phase 52.8)
-    'landing-explanation-modal.png',
-    'landing-share-results.png',
-    'landing-usage-cost.png',
-  ],
+  ...PRESETS[presetName] || PRESETS.landing,
 };
 
 /**
@@ -130,21 +158,23 @@ async function processScreenshot(inputPath, outputPath, options = {}) {
  * Process all screenshots in batch
  */
 async function processAll() {
-  const args = process.argv.slice(2);
+  const cliArgs = process.argv.slice(2);
 
   // Parse CLI arguments
-  const inputDir = args.includes('--input')
-    ? args[args.indexOf('--input') + 1]
+  const inputDir = cliArgs.includes('--input')
+    ? cliArgs[cliArgs.indexOf('--input') + 1]
     : CONFIG.inputDir;
-  const outputDir = args.includes('--output')
-    ? args[args.indexOf('--output') + 1]
+  const outputDir = cliArgs.includes('--output')
+    ? cliArgs[cliArgs.indexOf('--output') + 1]
     : CONFIG.outputDir;
-  const useFrame = !args.includes('--no-frame');
+  const useFrame = cliArgs.includes('--no-frame') ? false : CONFIG.useDeviceFrame;
 
   console.log('\nScreenshot Processor');
   console.log('========================');
+  console.log(`Preset: ${presetName}`);
   console.log(`Input:  ${inputDir}`);
   console.log(`Output: ${outputDir}`);
+  console.log(`Size:   ${CONFIG.targetWidth}x${CONFIG.targetHeight}`);
   console.log(`Frame:  ${useFrame ? 'Yes' : 'No'}`);
   console.log('');
 
