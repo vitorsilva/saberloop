@@ -249,3 +249,10 @@ await sharp(input).png({ quality: 85, compressionLevel: 9 }).toFile(output);
 - `landing/images/landing-explanation-modal.png` - Explanation modal screenshot
 - `landing/images/landing-share-results.png` - Share results screenshot
 - `landing/images/landing-usage-cost.png` - Usage cost screenshot
+
+6. **Video displaying with gray space around app content**
+   - **Problem:** Playwright recorded the entire browser window (larger than 375x667 viewport), leaving gray space around the app content in the video
+   - **Tried:** CSS changes (`object-fit: cover`, `max-height`) - didn't help because gray space is baked into video file
+   - **Fix:** Added explicit `video: { mode: 'on', size: MOBILE_VIEWPORT }` in `test.use()` at top level of test file. Re-recorded video at exactly 375x667 pixels.
+   - **Learning:** Playwright's `test.use({ video })` cannot be inside a `describe()` block - it forces a new worker. Must be at file top level.
+   - **File size:** New video is ~1MB (was ~695KB) because app content now fills entire frame
