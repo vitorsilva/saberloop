@@ -14,6 +14,15 @@ import { setupAuthenticatedState, clearSessions } from './helpers.js';
 const MOBILE_VIEWPORT = { width: 375, height: 667 };
 const SCREENSHOT_DIR = 'docs/product-info/screenshots';
 
+// Set viewport AND video size to match exactly - eliminates gray space in video
+test.use({
+  viewport: MOBILE_VIEWPORT,
+  video: {
+    mode: 'on',
+    size: MOBILE_VIEWPORT,
+  },
+});
+
 test.describe('Capture Landing Page Assets', () => {
 
   test.beforeEach(async ({ page }) => {
