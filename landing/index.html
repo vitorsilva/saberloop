@@ -234,7 +234,8 @@
             justify-content: center;
         }
 
-        .hero-image img {
+        .hero-image img,
+        .hero-image video {
             max-width: 300px;
             border-radius: 24px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
@@ -519,7 +520,8 @@
                 order: -1;
             }
 
-            .hero-image img {
+            .hero-image img,
+            .hero-image video {
                 max-width: 250px;
             }
 
@@ -582,7 +584,10 @@
 
             </div>
             <div class="hero-image">
-                <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App Screenshot showing the quiz interface" width="300" height="600" loading="eager">
+                <video autoplay muted loop playsinline poster="/app/icons/screenshot-mobile-1.png" width="300" height="600">
+                    <source src="images/demo.webm" type="video/webm">
+                    <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App Screenshot showing the quiz interface" width="300" height="600">
+                </video>
             </div>
         </div>
     </section>
@@ -661,9 +666,10 @@
             <h2 class="section-title">See It In Action</h2>
             <div class="screenshots-grid">
                 <img src="images/landing-02-quiz-started.png" alt="Quiz in progress with multiple choice options" width="304" height="584" loading="lazy">
-                <img src="images/landing-03-results-page.png" alt="Results page with score and Continue button" width="304" height="584" loading="lazy">
+                <img src="images/landing-explanation-modal.png" alt="AI explanation for wrong answers" width="304" height="584" loading="lazy">
+                <img src="images/landing-share-results.png" alt="Share your quiz results with friends" width="304" height="584" loading="lazy">
+                <img src="images/landing-usage-cost.png" alt="Track your AI usage costs" width="304" height="584" loading="lazy">
                 <img src="images/landing-06-settings-page.png" alt="Settings screen with language and level options" width="304" height="584" loading="lazy">
-                <img src="images/landing-08-usage-cost-card.png" alt="Quiz results showing usage cost tracking" width="304" height="584" loading="lazy">
             </div>
         </div>
     </section>
