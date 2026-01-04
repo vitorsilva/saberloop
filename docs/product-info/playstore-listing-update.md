@@ -103,16 +103,33 @@ Upload in this order (priority):
 
 ## Play Console Steps
 
+### Navigation (Portuguese UI)
+
 1. Go to https://play.google.com/console
 2. Select **Saberloop** app
-3. Navigate to **Grow > Store presence > Main store listing**
-4. Update **Short description** (paste from above)
-5. Update **Full description** (paste from above)
-6. Go to **Phone screenshots** section
-7. Delete old screenshots
-8. Upload 8 new screenshots from `processed/` folder
-9. Click **Save**
-10. Changes typically go live within hours (no full review needed)
+3. In the left sidebar, click **"Aumentar número de utilizadores"** (Grow)
+4. Click **"Presença na loja"** (Store presence) to expand submenu
+5. Click **"Fichas da loja"** (Store listings)
+6. Click **"Editar →"** on the "Ficha da loja predefinida" row
+
+### Navigation (English UI)
+
+1. Go to https://play.google.com/console
+2. Select **Saberloop** app
+3. In the left sidebar, click **"Grow"**
+4. Click **"Store presence"** to expand submenu
+5. Click **"Store listings"**
+6. Click **"Edit →"** on the "Default store listing" row
+
+### Update Content
+
+7. Find **"Descrição breve"** / **"Short description"** field - paste short description
+8. Find **"Descrição completa"** / **"Full description"** field - paste full description
+9. Scroll to **"Capturas de ecrã do telemóvel"** / **"Phone screenshots"** section
+10. Delete old screenshots (click X on each)
+11. Upload 8 new screenshots from `processed/` folder (in order 01-08)
+12. Click **"Guardar"** / **"Save"**
+13. Changes typically go live within hours (no full review needed)
 
 ---
 
