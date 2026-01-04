@@ -38,6 +38,7 @@ const PRESETS = {
     framePadding: 12,
     frameRadius: 24,
     quality: 85,
+    outputPrefix: 'landing-', // Prefix for landing page files
     includePatterns: [
       '02-quiz-started.png',
       '03-results-page.png',
@@ -57,6 +58,7 @@ const PRESETS = {
     targetHeight: 1920,
     useDeviceFrame: false, // Play Store doesn't need device frames
     quality: 90,
+    outputPrefix: '', // No prefix for Play Store (keep original names)
     includePatterns: [
       '01-quiz-question.png',
       '02-explanation-modal.png',
@@ -204,10 +206,11 @@ async function processAll() {
   console.log(`Found ${toProcess.length} files to process:\n`);
 
   // Process each file
+  const prefix = CONFIG.outputPrefix || '';
   for (const file of toProcess) {
     const inputPath = path.join(inputDir, file);
-    // Avoid double-prefixing files that already have "landing-" prefix
-    const outputName = file.startsWith('landing-') ? file : `landing-${file}`;
+    // Apply prefix from config, avoid double-prefixing
+    const outputName = file.startsWith(prefix) ? file : `${prefix}${file}`;
     const outputPath = path.join(outputDir, outputName);
 
     try {

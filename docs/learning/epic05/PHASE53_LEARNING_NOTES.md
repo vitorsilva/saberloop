@@ -36,8 +36,8 @@ Update Play Store listing to reflect new features added since initial publicatio
 
 - [x] Phase 53.1: Setup (branch, directory, learning notes)
 - [ ] Phase 53.2: Text Updates (Play Console - manual)
-- [ ] Phase 53.3: Screenshot Capture (Playwright)
-- [ ] Phase 53.4: Screenshot Processing (Sharp)
+- [x] Phase 53.3: Screenshot Capture (Playwright) - 8 screenshots captured
+- [x] Phase 53.4: Screenshot Processing (Sharp) - Upscaled to 1080x1920
 - [ ] Phase 53.5: Upload to Play Console (manual)
 - [ ] Phase 53.6: Release (PR, documentation)
 
@@ -60,7 +60,11 @@ Update Play Store listing to reflect new features added since initial publicatio
 
 ## Things That Didn't Work & How They Were Fixed
 
-(To be updated during implementation)
+1. **Output file naming with hardcoded prefix**
+   - **Problem:** Processing script had hardcoded `landing-` prefix for output files, which was applied to Play Store screenshots too
+   - **Tried:** Original code: `const outputName = file.startsWith('landing-') ? file : \`landing-${file}\`;`
+   - **Fix:** Added `outputPrefix` to preset configuration. Landing preset uses `'landing-'`, Play Store uses `''` (empty string). Updated processAll to use `CONFIG.outputPrefix || ''`
+   - **Learning:** When adding presets/configurations, consider ALL output behaviors, not just dimensions and input paths. File naming conventions can differ between use cases.
 
 ---
 
