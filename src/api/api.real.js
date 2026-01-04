@@ -10,7 +10,9 @@
     'pt-PT': 'Portuguese (European)',
     'es': 'Spanish',
     'fr': 'French',
-    'de': 'German'
+    'de': 'German',
+    'no': 'Norwegian (Bokmål)',
+    'ru': 'Russian'
   };
 
   /**
