@@ -1,0 +1,42 @@
+Month,MAU,Free Users,Paid Users (10%),Quizzes/User,Total Pageviews,AdSense Revenue (€0.02/view),Package Revenue (€9.99 avg),Total Revenue,Monthly Cost,Profit/Loss,Status
+0,5,5,0,3,15,0.30,0.00,0.30,31.25,-30.95,Launch
+1,10,9,1,4,40,0.80,9.99,10.79,31.25,-20.46,Growing
+2,20,18,2,4,80,1.60,19.98,21.58,31.25,-9.67,Growing
+3,30,27,3,5,150,3.00,29.97,32.97,31.25,1.72,Break-even! ✅
+4,40,36,4,5,200,4.00,39.96,43.96,31.25,12.71,Profitable
+5,50,45,5,5,250,5.00,49.95,54.95,31.25,23.70,Profitable
+6,50,45,5,5,250,5.00,49.95,54.95,31.25,23.70,Stable
+
+Scenario: 5% Conversion Rate
+Month,MAU,Free Users,Paid Users (5%),Quizzes/User,Total Pageviews,AdSense Revenue,Package Revenue,Total Revenue,Monthly Cost,Profit/Loss,Status
+0,5,5,0,3,15,0.30,0.00,0.30,31.25,-30.95,Launch
+1,10,10,0,4,40,0.80,0.00,0.80,31.25,-30.45,Growing
+2,20,19,1,4,80,1.60,9.99,11.59,31.25,-19.66,Growing
+3,30,29,1,5,150,3.00,9.99,12.99,31.25,-18.26,Not enough
+4,40,38,2,5,200,4.00,19.98,23.98,31.25,-7.27,Close
+5,50,48,2,5,250,5.00,19.98,24.98,31.25,-6.27,Still short ❌
+6,50,48,2,5,250,5.00,19.98,24.98,31.25,-6.27,Need growth
+
+Scenario: 15% Conversion Rate
+Month,MAU,Free Users,Paid Users (15%),Quizzes/User,Total Pageviews,AdSense Revenue,Package Revenue,Total Revenue,Monthly Cost,Profit/Loss,Status
+0,5,4,1,3,15,0.30,9.99,10.29,31.25,-20.96,Launch
+1,10,9,1,4,40,0.80,9.99,10.79,31.25,-20.46,Growing
+2,20,17,3,4,80,1.60,29.97,31.57,31.25,0.32,Break-even! ✅
+3,30,26,4,5,150,3.00,39.96,42.96,31.25,11.71,Profitable
+4,40,34,6,5,200,4.00,59.94,63.94,31.25,32.69,Strong
+5,50,43,7,5,250,5.00,69.93,74.93,31.25,43.68,Strong
+6,50,43,7,5,250,5.00,69.93,74.93,31.25,43.68,Very profitable ✅
+
+Key Assumptions:
+- AdSense RPM: €20 per 1000 pageviews (conservative)
+- Average package price: €9.99 (one-time purchase)
+- Quizzes per user: Grows from 3 to 5 as users get engaged
+- Growth: 5 MAU month 0 → 50 MAU month 6 (linear)
+- Paid users make ONE purchase in their first month (conservative)
+
+Break-Even Analysis:
+- 10% conversion: Break-even at Month 3 (30 MAU)
+- 5% conversion: Never break-even at 50 MAU (need 65+ MAU)
+- 15% conversion: Break-even at Month 2 (20 MAU)
+
+Target: Achieve 10-15% conversion rate to hit €31.25/month by Month 3-4
