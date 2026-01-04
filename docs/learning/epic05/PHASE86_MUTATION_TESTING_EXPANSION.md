@@ -4,13 +4,14 @@
 **Priority:** Medium (Code Quality)
 **Estimated Effort:** 3-4 sessions
 **Created:** 2024-12-XX
-**Updated:** 2024-12-30
+**Updated:** 2026-01-04
 
 ## Session Log
 
 | Date | Status | Notes |
 |------|--------|-------|
 | 2024-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+| 2026-01-04 | **Plan Updated** | Added branching strategy, commit points, and learning notes reminders |
 
 ---
 
@@ -47,6 +48,68 @@ Before starting this phase, you should have:
 
 ---
 
+## Branching Strategy
+
+### Branch Naming
+```
+feature/phase86-mutation-testing-wave2
+```
+
+### Workflow
+1. Create branch from `main`
+2. Make small, focused commits (see Commit Strategy below)
+3. Push regularly to remote
+4. Create PR when phase complete
+5. Merge to `main` after review
+
+### Commands
+```bash
+# Start the phase
+git checkout main
+git pull origin main
+git checkout -b feature/phase86-mutation-testing-wave2
+
+# During work (after each logical change)
+git add <files>
+git commit -m "type(scope): description"
+
+# Push to remote regularly
+git push -u origin feature/phase86-mutation-testing-wave2
+
+# When complete
+gh pr create --title "Phase 86: Mutation Testing Wave 2" --body "..."
+```
+
+---
+
+## Commit Strategy
+
+### Principles
+- **Small commits**: One logical change per commit
+- **Atomic**: Each commit should leave the codebase in a working state
+- **Descriptive**: Clear commit messages following conventional commits
+
+### Commit Points (Recommended)
+
+| Step | Commit Message |
+|------|----------------|
+| Update Stryker config for Wave 2 | `chore(test): add core modules to mutation testing config` |
+| Add tests for state.js mutants | `test(core): add tests to kill state.js mutants` |
+| Add tests for db.js mutants | `test(core): add tests to kill db.js mutants` |
+| Add tests for settings.js mutants | `test(core): add tests to kill settings.js mutants` |
+| Add tests for features.js mutants | `test(core): add tests to kill features.js mutants` |
+| Update Stryker config for Wave 3 | `chore(test): add API modules to mutation testing config` |
+| Add tests for openrouter-auth.js | `test(api): add tests to kill openrouter-auth.js mutants` |
+| Add tests for api.real.js | `test(api): add tests to kill api.real.js mutants` |
+| Final documentation | `docs: add Phase 86 learning notes` |
+
+### Commit Frequency
+- Commit after completing each module's test improvements
+- Commit before switching to a different file
+- Commit when mutation score improves significantly
+
+---
+
 ## Objective
 
 Expand mutation testing coverage to include core infrastructure modules, building on the foundation established in Phase 85.
@@ -75,11 +138,19 @@ Expand mutation testing coverage to include core infrastructure modules, buildin
 
 ## Implementation Plan
 
+> **Important Reminders:**
+> - 📝 Update `PHASE86_LEARNING_NOTES.md` after completing each step
+> - ✅ Update step status in this file (change `[ ]` to `[x]`)
+> - 💾 Commit after each logical change (see Commit Strategy above)
+> - 🔄 Push to remote regularly to avoid losing work
+
 ### Phase 86A: Wave 2 - Core Infrastructure (2 sessions)
 
-#### Step 1: Update Stryker Configuration
+#### Step 1: Setup Branch and Initial Config
+**Status:** [ ] Not Started
 
-Expand `stryker.config.json` to include Wave 2 files:
+1. Create feature branch from main
+2. Expand `stryker.config.json` to include Wave 2 files:
 
 ```json
 {
@@ -95,7 +166,15 @@ Expand `stryker.config.json` to include Wave 2 files:
 }
 ```
 
-#### Step 2: Run Mutation Testing on Wave 2
+**After completing:**
+- [ ] Commit: `chore(test): add core modules to mutation testing config`
+- [ ] Update learning notes with initial setup details
+- [ ] Mark this step complete
+
+---
+
+#### Step 2: Run Baseline Mutation Testing
+**Status:** [ ] Not Started
 
 ```bash
 npm run test:mutation
@@ -103,7 +182,17 @@ npm run test:mutation
 
 **Expected mutant count increase:** ~80-120 additional mutants
 
+**After completing:**
+- [ ] Record baseline mutation scores in learning notes
+- [ ] Document total mutants and initial survival rate per module
+- [ ] Mark this step complete
+
+---
+
 #### Step 3: Analyze Core Module Mutations
+**Status:** [ ] Not Started
+
+Review the mutation report and identify surviving mutants per module:
 
 **state.js - Key mutation targets:**
 - State transition logic (`set()`, `reset()`)
@@ -124,9 +213,17 @@ npm run test:mutation
 - Flag evaluation logic (`isEnabled()`)
 - Default values for unknown flags
 
-#### Step 4: Strengthen Tests for Surviving Mutants
+**After completing:**
+- [ ] Document top 10 surviving mutants in learning notes
+- [ ] Categorize mutants by type (boundary, conditional, etc.)
+- [ ] Mark this step complete
 
-Common patterns for core modules:
+---
+
+#### Step 4: Strengthen Tests for state.js
+**Status:** [ ] Not Started
+
+Add tests to kill surviving mutants in `state.js`:
 
 ```javascript
 // Example: Testing state transitions
@@ -138,7 +235,35 @@ test('should notify subscribers on state change', () => {
   expect(callback).toHaveBeenCalledWith({ key: 'value' });
   // ^ This assertion kills mutations that remove the notify call
 });
+```
 
+**After completing:**
+- [ ] Commit: `test(core): add tests to kill state.js mutants`
+- [ ] Document which mutants were killed in learning notes
+- [ ] Run mutation testing to verify improvement
+- [ ] Mark this step complete
+
+---
+
+#### Step 5: Strengthen Tests for db.js
+**Status:** [ ] Not Started
+
+Add tests to kill surviving mutants in `db.js`.
+
+**After completing:**
+- [ ] Commit: `test(core): add tests to kill db.js mutants`
+- [ ] Document which mutants were killed in learning notes
+- [ ] Run mutation testing to verify improvement
+- [ ] Mark this step complete
+
+---
+
+#### Step 6: Strengthen Tests for settings.js
+**Status:** [ ] Not Started
+
+Add tests to kill surviving mutants in `settings.js`:
+
+```javascript
 // Example: Testing boundary conditions
 test('should use default when setting undefined', () => {
   settings.set('theme', undefined);
@@ -147,11 +272,50 @@ test('should use default when setting undefined', () => {
 });
 ```
 
+**After completing:**
+- [ ] Commit: `test(core): add tests to kill settings.js mutants`
+- [ ] Document which mutants were killed in learning notes
+- [ ] Run mutation testing to verify improvement
+- [ ] Mark this step complete
+
+---
+
+#### Step 7: Strengthen Tests for features.js
+**Status:** [ ] Not Started
+
+Add tests to kill surviving mutants in `features.js`.
+
+**After completing:**
+- [ ] Commit: `test(core): add tests to kill features.js mutants`
+- [ ] Document which mutants were killed in learning notes
+- [ ] Run mutation testing to verify improvement
+- [ ] Mark this step complete
+
+---
+
+#### Step 8: Wave 2 Checkpoint
+**Status:** [ ] Not Started
+
+Run full mutation testing and verify Wave 2 target achieved:
+
+```bash
+npm run test:mutation
+```
+
+**Target:** >75% mutation score on core modules
+
+**After completing:**
+- [ ] Record final Wave 2 scores in learning notes
+- [ ] Push all commits to remote
+- [ ] Update CLAUDE.md status if Wave 2 complete
+- [ ] Mark this step complete
+
 ---
 
 ### Phase 86B: Wave 3 - API Layer (2 sessions)
 
-#### Step 1: Update Configuration for Wave 3
+#### Step 9: Update Configuration for Wave 3
+**Status:** [ ] Not Started
 
 Add API files to `stryker.config.json`:
 
@@ -171,7 +335,29 @@ Add API files to `stryker.config.json`:
 }
 ```
 
-#### Step 2: API Module Analysis
+**After completing:**
+- [ ] Commit: `chore(test): add API modules to mutation testing config`
+- [ ] Update learning notes with Wave 3 setup
+- [ ] Mark this step complete
+
+---
+
+#### Step 10: Run Baseline for Wave 3
+**Status:** [ ] Not Started
+
+```bash
+npm run test:mutation
+```
+
+**After completing:**
+- [ ] Record baseline mutation scores for API modules in learning notes
+- [ ] Document total mutants and initial survival rate
+- [ ] Mark this step complete
+
+---
+
+#### Step 11: Analyze API Module Mutations
+**Status:** [ ] Not Started
 
 **openrouter-auth.js - High-value mutations:**
 - PKCE verifier/challenge generation
@@ -185,7 +371,15 @@ Add API files to `stryker.config.json`:
 - Response parsing
 - Error categorization
 
-#### Step 3: API-Specific Testing Patterns
+**After completing:**
+- [ ] Document surviving mutants in learning notes
+- [ ] Identify which are "equivalent mutants" (can't be killed)
+- [ ] Mark this step complete
+
+---
+
+#### Step 12: Strengthen Tests for openrouter-auth.js
+**Status:** [ ] Not Started
 
 ```javascript
 // Testing OAuth URL construction
@@ -197,7 +391,20 @@ test('auth URL should include required parameters', async () => {
   expect(window.location.href).toContain('response_type=code');
   // ^ Each assertion kills mutations that remove parameters
 });
+```
 
+**After completing:**
+- [ ] Commit: `test(api): add tests to kill openrouter-auth.js mutants`
+- [ ] Document which mutants were killed in learning notes
+- [ ] Run mutation testing to verify improvement
+- [ ] Mark this step complete
+
+---
+
+#### Step 13: Strengthen Tests for api.real.js
+**Status:** [ ] Not Started
+
+```javascript
 // Testing prompt construction
 test('quiz prompt should include language', () => {
   const prompt = buildQuizPrompt('science', 5, 'pt-PT');
@@ -207,6 +414,31 @@ test('quiz prompt should include language', () => {
   // ^ Kills mutations that change prompt templates
 });
 ```
+
+**After completing:**
+- [ ] Commit: `test(api): add tests to kill api.real.js mutants`
+- [ ] Document which mutants were killed in learning notes
+- [ ] Run mutation testing to verify improvement
+- [ ] Mark this step complete
+
+---
+
+#### Step 14: Final Verification and Documentation
+**Status:** [ ] Not Started
+
+Run full mutation testing and finalize:
+
+```bash
+npm run test:mutation
+```
+
+**After completing:**
+- [ ] Record final combined scores in learning notes
+- [ ] Commit: `docs: add Phase 86 learning notes`
+- [ ] Create PR for review
+- [ ] Update CLAUDE.md with Phase 86 ✅
+- [ ] Update Epic 5 plan with Phase 86 ✅
+- [ ] Mark this step complete
 
 ---
 
@@ -301,25 +533,41 @@ test('should send correct API payload', async () => {
 
 ## Deliverables
 
-### Wave 2 (Core)
-- [ ] `stryker.config.json` updated with Wave 2 files
-- [ ] Mutation report generated for Wave 2
-- [ ] Surviving mutants analyzed (document top 10)
-- [ ] Tests added to kill surviving mutants
-- [ ] Wave 2 mutation score >75%
+### Initial Setup (Before Starting)
+- [ ] Create `PHASE86_LEARNING_NOTES.md` file
+- [ ] Create feature branch `feature/phase86-mutation-testing-wave2`
 
-### Wave 3 (API)
-- [ ] `stryker.config.json` updated with Wave 3 files
-- [ ] Mutation report generated for full scope
-- [ ] API-specific surviving mutants addressed
-- [ ] Full scope mutation score >75%
+### Wave 2 (Core) - Steps 1-8
+- [ ] `stryker.config.json` updated with Wave 2 files (Step 1)
+- [ ] Baseline mutation report generated (Step 2)
+- [ ] Surviving mutants analyzed and documented (Step 3)
+- [ ] Tests added for state.js (Step 4)
+- [ ] Tests added for db.js (Step 5)
+- [ ] Tests added for settings.js (Step 6)
+- [ ] Tests added for features.js (Step 7)
+- [ ] Wave 2 mutation score >75% (Step 8)
 
-### Documentation
-- [ ] `PHASE86_LEARNING_NOTES.md` with:
+### Wave 3 (API) - Steps 9-14
+- [ ] `stryker.config.json` updated with Wave 3 files (Step 9)
+- [ ] Baseline mutation report for API modules (Step 10)
+- [ ] Surviving mutants analyzed (Step 11)
+- [ ] Tests added for openrouter-auth.js (Step 12)
+- [ ] Tests added for api.real.js (Step 13)
+- [ ] Full scope mutation score >75% (Step 14)
+
+### Documentation (Ongoing)
+- [ ] `PHASE86_LEARNING_NOTES.md` updated after each step with:
+  - Progress and completion status
+  - Mutation scores at each checkpoint
   - Patterns that helped kill mutants
   - Challenging mutations and solutions
   - Performance observations
-  - Recommendations for ongoing use
+  - Any difficulties encountered and how they were resolved
+
+### Final
+- [ ] PR created and merged
+- [ ] CLAUDE.md updated with Phase 86 ✅
+- [ ] Epic 5 plan updated with Phase 86 ✅
 
 ---
 

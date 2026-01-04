@@ -145,7 +145,8 @@
       "Bash(node scripts/process-screenshots.cjs:*)",
       "Bash(copy \"test-results\\\\capture-landing-assets-Cap-418e0--Complete-user-journey-30s--chromium\\\\video.webm\" \"landing\\\\images\\\\demo.webm\")",
       "Bash(powershell -Command \"& { Start-Sleep -Milliseconds 3000 }\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(OPENROUTER_API_KEY=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 npm run translate:*)"
     ],
     "deny": [],
     "ask": []
