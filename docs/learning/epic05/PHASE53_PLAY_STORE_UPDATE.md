@@ -1,10 +1,11 @@
 # Google Play Store Listing Update
 
-**Status:** Planning
+**Status:** ✅ Complete (automation ready, manual upload pending)
 **Priority:** Medium (User Acquisition)
-**Estimated Effort:** 1-2 sessions
+**Estimated Effort:** 1 session (reduced due to reusable assets from Phase 52)
 **Created:** 2025-12-29
-**Updated:** 2025-12-30
+**Updated:** 2026-01-04
+**Completed:** 2026-01-04
 
 ## Session Log
 
@@ -12,6 +13,7 @@
 |------|--------|-------|
 | 2025-12-29 | **Plan Created** | Gap analysis and copy drafts complete |
 | 2025-12-30 | **Moved to Epic 5** | Promoted from parking lot to active epic |
+| 2026-01-04 | **Plan Updated** | Identified reusable assets from Phase 52, simplified implementation |
 
 ---
 
@@ -45,9 +47,75 @@ Before starting this phase, you should have:
 - ✅ **Phase 30** complete (i18n - multi-language support)
 - ✅ **Phase 70** complete (Share feature)
 - ✅ **Phase 47** complete (Model selection)
+- ✅ **Phase 52** complete (Landing page improvements - provides reusable assets)
 - ✅ Access to Google Play Console
-- ✅ New feature screenshots prepared
 - ✅ Understanding of Play Store policies
+
+---
+
+## Reusable Assets from Phase 52
+
+Phase 52 (Landing Page Improvements) created several assets we can leverage:
+
+### Playwright Screenshot Capture Script
+**File:** `tests/e2e/capture-landing-assets.spec.js`
+
+Already captures these scenarios:
+| Scenario | Status | Reusable for Play Store? |
+|----------|--------|--------------------------|
+| Explanation modal with actual text | ✅ Working | Yes - key differentiator |
+| Results page with usage cost card | ✅ Working | Yes - shows transparency |
+| Results page with share button | ✅ Working | Yes - social feature |
+| Demo video (~30s journey) | ✅ Working | Maybe - for promo video |
+
+### Screenshot Processing Script
+**File:** `scripts/process-screenshots.cjs`
+
+- Handles resize, frame overlay, optimization
+- Already configured for both Maestro and Playwright patterns
+- **Needs adaptation:** Play Store requires 1080x1920 px (vs 280x560 for landing)
+
+### Existing Processed Screenshots
+**Location:** `docs/product-info/screenshots/landing/`
+- `landing-02-quiz-started.png` - Quiz in action
+- `landing-03-results-page.png` - Results with Continue button
+- `landing-06-settings-page.png` - Settings (language, model)
+- `landing-08-usage-cost-card.png` - Usage cost card
+- `landing-explanation-modal.png` - AI explanation
+- `landing-share-results.png` - Share feature
+
+### Raw Maestro Screenshots (34 files)
+**Location:** `.maestro/tests/screenshots/`
+- Higher resolution source images
+- Full device frames included
+
+---
+
+## Key Differences: Landing Page vs Play Store
+
+| Aspect | Landing Page (Phase 52) | Play Store (Phase 53) |
+|--------|------------------------|----------------------|
+| **Dimensions** | 280x560 px | 1080x1920 px |
+| **Device frame** | Yes (dark overlay) | No (clean app content) |
+| **Capture viewport** | 375x667 | 360x640 (9:16 ratio) |
+| **Image count** | 5 | Up to 8 |
+| **Quality** | Optimized for web | High-res for store |
+
+---
+
+## Implementation Strategy
+
+### What We Reuse (saves ~50% effort)
+1. **Playwright test scenarios** - Extend `capture-landing-assets.spec.js`
+2. **Processing script** - Add Play Store config to `process-screenshots.cjs`
+3. **Test flow logic** - Quiz generation, answering, modal interactions
+
+### What We Add (new work)
+1. **Play Store capture test** - New test file or extend existing
+2. **Multi-language screenshot** - Portuguese or Spanish quiz (not in Phase 52)
+3. **Topic input page** - Not captured in Phase 52
+4. **Home with history** - Not captured in Phase 52
+5. **Upscaling to 1080x1920** - New processing config
 
 ---
 
@@ -173,16 +241,18 @@ Download now and start your learning journey!
 
 #### Required Screenshots (Priority Order)
 
-| # | Screen | What to Show | Why |
-|---|--------|--------------|-----|
-| 1 | Quiz in Action | Question with progress bar | Core experience |
-| 2 | Explanation Modal | AI explanation for wrong answer | Key differentiator |
-| 3 | Results + Continue | Score with "Continue on Topic" button | Adaptive learning |
-| 4 | Settings | Language selector, model choice | Customization |
-| 5 | Home with History | Quiz history with scores | Progress tracking |
-| 6 | Share Modal | Share to social options | Social feature |
-| 7 | Topic Input | Language/level selection | Customization |
-| 8 | Multi-language | Quiz in Portuguese or Spanish | Language support |
+| # | Screen | What to Show | Source | Status |
+|---|--------|--------------|--------|--------|
+| 1 | Quiz in Action | Question with progress bar | Phase 52 | ✅ Reuse `capture-landing-assets.spec.js` logic |
+| 2 | Explanation Modal | AI explanation for wrong answer | Phase 52 | ✅ Reuse test #1 |
+| 3 | Results + Continue | Score with "Continue on Topic" button | Phase 52 | ✅ Reuse test #3 |
+| 4 | Settings | Language selector, model choice | Phase 52 | ✅ Reuse (Maestro) |
+| 5 | Home with History | Quiz history with scores | **NEW** | ⚠️ Add new test |
+| 6 | Share Results | Share button visible on results | Phase 52 | ✅ Reuse test #3 |
+| 7 | Topic Input | Language/level selection | **NEW** | ⚠️ Add new test |
+| 8 | Multi-language | Quiz in Portuguese or Spanish | **NEW** | ⚠️ Add new test |
+
+**Summary:** 5 reusable from Phase 52, 3 new tests needed
 
 **Note:** Play Store allows up to 8 screenshots. We should use all 8 slots.
 
@@ -190,189 +260,58 @@ Download now and start your learning journey!
 
 ### 4. Automated Screenshot Capture (Playwright)
 
-Screenshots must be **1080x1920 pixels** (or 2:3.5 aspect ratio) for Play Store.
+Screenshots must be **1080x1920 pixels** (or 9:16 aspect ratio) for Play Store.
 
-#### Playwright Script
+#### Strategy: Extend Existing Script
 
-Create file: `tests/e2e/capture-playstore-screenshots.spec.js`
+Rather than creating a new script from scratch, we'll **extend** the existing `tests/e2e/capture-landing-assets.spec.js` to add Play Store-specific tests.
+
+**Existing file:** `tests/e2e/capture-landing-assets.spec.js`
+- Already has helper functions (`setupAuthenticatedState`, `clearSessions`)
+- Already captures 4 scenarios we can reuse
+- Uses 375x667 viewport (close to 360x640 for Play Store)
+
+#### New Tests to Add (3 scenarios)
+
+Add these tests to a new file: `tests/e2e/capture-playstore-screenshots.spec.js`
 
 ```javascript
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { setupAuthenticatedState, clearSessions } from './helpers.js';
 
 /**
- * Automated screenshot capture for Google Play Store.
+ * Capture screenshots for Google Play Store.
  *
- * Run with: npx playwright test tests/e2e/capture-playstore-screenshots.spec.js
+ * Run with: npx playwright test tests/e2e/capture-playstore-screenshots.spec.js --headed
  *
- * Screenshots saved to: docs/product-info/screenshots/playstore/
+ * These complement the existing capture-landing-assets.spec.js tests.
+ * Play Store requires 1080x1920 pixels (9:16 ratio).
+ * We capture at 360x640 and upscale during post-processing.
  */
 
-// Play Store requires 1080x1920 (9:16 ratio) or similar
-// Using 360x640 viewport and scaling up, or direct 1080x1920
 const PLAYSTORE_VIEWPORT = { width: 360, height: 640 };
 const SCREENSHOT_DIR = 'docs/product-info/screenshots/playstore';
 
-// Helper to set up authenticated state
-async function setupAuthenticatedState(page) {
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
+test.use({ viewport: PLAYSTORE_VIEWPORT });
 
-  await page.evaluate(async () => {
-    const dbName = 'quizmaster';
-    const dbVersion = 1;
-
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(dbName, dbVersion);
-      request.onerror = () => reject(request.error);
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains('settings')) {
-          db.createObjectStore('settings', { keyPath: 'key' });
-        }
-        if (!db.objectStoreNames.contains('sessions')) {
-          const sessionStore = db.createObjectStore('sessions', { keyPath: 'id', autoIncrement: true });
-          sessionStore.createIndex('byTopicId', 'topicId');
-          sessionStore.createIndex('byTimestamp', 'timestamp');
-        }
-        if (!db.objectStoreNames.contains('topics')) {
-          const topicStore = db.createObjectStore('topics', { keyPath: 'id' });
-          topicStore.createIndex('byName', 'name');
-        }
-      };
-
-      request.onsuccess = () => {
-        const db = request.result;
-        const transaction = db.transaction(['settings'], 'readwrite');
-        const store = transaction.objectStore('settings');
-
-        store.put({
-          key: 'openrouter_api_key',
-          value: { key: 'sk-or-v1-test-key-for-screenshots', storedAt: new Date().toISOString() }
-        });
-        store.put({ key: 'welcomeScreenVersion', value: '999.0.0' });
-
-        transaction.oncomplete = () => { db.close(); resolve(); };
-        transaction.onerror = () => reject(transaction.error);
-      };
-    });
-  });
-
-  await page.goto('/#/');
-  await page.waitForSelector('[data-testid="welcome-heading"]', { timeout: 15000 });
-}
-
-test.describe('Capture Play Store Screenshots', () => {
+test.describe('Capture Play Store Screenshots - New Scenarios', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(PLAYSTORE_VIEWPORT);
   });
 
-  test('01. Quiz in action - Question with answers', async ({ page }) => {
-    await setupAuthenticatedState(page);
-    await page.goto('/#/topic-input');
-    await page.fill('#topicInput', 'World History');
-    await page.selectOption('#gradeLevelSelect', 'high school');
-    await page.click('#generateBtn');
-
-    await page.waitForURL(/#\/quiz/, { timeout: 15000 });
-    await page.waitForTimeout(500);
-
-    await page.screenshot({
-      path: `${SCREENSHOT_DIR}/01-quiz-question.png`,
-      fullPage: false
-    });
-    console.log('✓ 01: Quiz question');
-  });
-
-  test('02. Explanation modal - AI explanation', async ({ page }) => {
-    await setupAuthenticatedState(page);
-    await page.goto('/#/topic-input');
-    await page.fill('#topicInput', 'Science');
-    await page.click('#generateBtn');
-    await page.waitForURL(/#\/quiz/, { timeout: 15000 });
-
-    // Answer first wrong, rest correct
-    await page.locator('.option-btn').nth(0).click();
-    await page.click('#submitBtn');
-    for (let i = 1; i < 5; i++) {
-      await page.locator('.option-btn').nth(1).click();
-      await page.waitForTimeout(200);
-      await page.click('#submitBtn');
-      await page.waitForTimeout(300);
-    }
-
-    await page.waitForURL(/#\/results/);
-    await page.locator('.explain-btn').click();
-    await page.waitForSelector('#explanationModal', { state: 'visible' });
-    await page.waitForTimeout(800);
-
-    await page.screenshot({
-      path: `${SCREENSHOT_DIR}/02-explanation-modal.png`,
-      fullPage: false
-    });
-    console.log('✓ 02: Explanation modal');
-  });
-
-  test('03. Results with Continue button', async ({ page }) => {
-    await setupAuthenticatedState(page);
-    await page.goto('/#/topic-input');
-    await page.fill('#topicInput', 'Geography');
-    await page.selectOption('#gradeLevelSelect', 'middle school');
-    await page.click('#generateBtn');
-    await page.waitForURL(/#\/quiz/, { timeout: 15000 });
-
-    for (let i = 0; i < 5; i++) {
-      await page.locator('.option-btn').nth(1).click();
-      await page.waitForTimeout(200);
-      await page.click('#submitBtn');
-      await page.waitForTimeout(300);
-    }
-
-    await page.waitForURL(/#\/results/);
-    await page.waitForTimeout(500);
-
-    await page.screenshot({
-      path: `${SCREENSHOT_DIR}/03-results-continue.png`,
-      fullPage: false
-    });
-    console.log('✓ 03: Results with Continue');
-  });
-
-  test('04. Settings - Language and model selection', async ({ page }) => {
-    await page.route('**/api/v1/models', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          data: [
-            { id: 'google/gemma-2-9b-it:free', name: 'Gemma 2 9B', context_length: 8192, pricing: { prompt: '0', completion: '0' } },
-            { id: 'tngtech/deepseek-r1t2-chimera:free', name: 'DeepSeek R1T2', context_length: 65536, pricing: { prompt: '0', completion: '0' } }
-          ]
-        })
-      });
-    });
-
-    await setupAuthenticatedState(page);
-    await page.goto('/#/settings');
-    await page.waitForSelector('[data-testid="settings-title"]');
-    await page.waitForTimeout(500);
-
-    await page.screenshot({
-      path: `${SCREENSHOT_DIR}/04-settings.png`,
-      fullPage: false
-    });
-    console.log('✓ 04: Settings');
-  });
-
   test('05. Home with quiz history', async ({ page }) => {
     await setupAuthenticatedState(page);
+    await clearSessions(page);
+    await page.reload();
 
-    // Create a quiz for history
+    // Create a quiz to populate history
     await page.goto('/#/topic-input');
     await page.fill('#topicInput', 'Mathematics');
     await page.click('#generateBtn');
-    await page.waitForURL(/#\/quiz/, { timeout: 15000 });
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
 
+    // Answer all questions
     for (let i = 0; i < 5; i++) {
       await page.locator('.option-btn').nth(1).click();
       await page.waitForTimeout(200);
@@ -380,6 +319,7 @@ test.describe('Capture Play Store Screenshots', () => {
       await page.waitForTimeout(300);
     }
 
+    // Go back to home to show history
     await page.goto('/#/');
     await page.waitForSelector('[data-testid="welcome-heading"]');
     await page.waitForTimeout(500);
@@ -391,42 +331,12 @@ test.describe('Capture Play Store Screenshots', () => {
     console.log('✓ 05: Home with history');
   });
 
-  test('06. Share modal', async ({ page }) => {
-    await setupAuthenticatedState(page);
-    await page.goto('/#/topic-input');
-    await page.fill('#topicInput', 'Art History');
-    await page.click('#generateBtn');
-    await page.waitForURL(/#\/quiz/, { timeout: 15000 });
-
-    for (let i = 0; i < 5; i++) {
-      await page.locator('.option-btn').nth(1).click();
-      await page.waitForTimeout(200);
-      await page.click('#submitBtn');
-      await page.waitForTimeout(300);
-    }
-
-    await page.waitForURL(/#\/results/);
-
-    // Click share button (if exists)
-    const shareBtn = page.locator('#shareBtn');
-    if (await shareBtn.isVisible()) {
-      await shareBtn.click();
-      await page.waitForTimeout(500);
-    }
-
-    await page.screenshot({
-      path: `${SCREENSHOT_DIR}/06-share-modal.png`,
-      fullPage: false
-    });
-    console.log('✓ 06: Share modal');
-  });
-
   test('07. Topic input with options', async ({ page }) => {
     await setupAuthenticatedState(page);
     await page.goto('/#/topic-input');
     await page.waitForTimeout(500);
 
-    // Show the customization options
+    // Fill in topic to show the form
     await page.fill('#topicInput', 'Learn Spanish');
 
     await page.screenshot({
@@ -449,11 +359,11 @@ test.describe('Capture Play Store Screenshots', () => {
       await page.waitForTimeout(300);
     }
 
-    // Generate quiz
+    // Generate quiz in Portuguese
     await page.goto('/#/topic-input');
     await page.fill('#topicInput', 'História de Portugal');
     await page.click('#generateBtn');
-    await page.waitForURL(/#\/quiz/, { timeout: 15000 });
+    await expect(page).toHaveURL(/#\/quiz/, { timeout: 15000 });
     await page.waitForTimeout(500);
 
     await page.screenshot({
@@ -465,6 +375,15 @@ test.describe('Capture Play Store Screenshots', () => {
 
 });
 ```
+
+#### Reusing Existing Tests
+
+For tests 01-04 and 06, modify the existing `capture-landing-assets.spec.js`:
+1. Change `SCREENSHOT_DIR` to `'docs/product-info/screenshots/playstore'`
+2. Change `MOBILE_VIEWPORT` to `{ width: 360, height: 640 }`
+3. Run tests and collect screenshots
+
+**OR** create a shared config and run both landing + playstore captures.
 
 #### Run Commands
 
@@ -528,22 +447,45 @@ done
 
 ## Implementation Checklist
 
-### Text Updates (No Review Required)
-- [ ] Update short description (80 chars)
-- [ ] Update full description with new features
-- [ ] Add language keywords for discoverability
-
-### Screenshot Updates
+### Phase 53.1: Setup
+- [ ] Create branch: `feature/phase53-playstore-update`
 - [ ] Create `docs/product-info/screenshots/playstore/` directory
-- [ ] Run Playwright screenshot script
-- [ ] Scale to 1080x1920 if needed
-- [ ] Upload 8 screenshots to Play Console
-- [ ] Order screenshots strategically (best first)
+- [ ] Create learning notes file
 
-### Optional Updates
+### Phase 53.2: Text Updates (No Review Required)
+- [ ] Choose short description option (A, B, or C)
+- [ ] Update short description in Play Console (80 chars)
+- [ ] Update full description with new features
+- [ ] Verify character count is within limit
+
+### Phase 53.3: Screenshot Capture
+- [ ] Create `capture-playstore-screenshots.spec.js` (3 new tests)
+- [ ] Modify existing tests for Play Store viewport (360x640)
+- [ ] Run Playwright tests to capture 8 screenshots
+- [ ] Verify all screenshots captured successfully
+
+### Phase 53.4: Screenshot Processing
+- [ ] Update `process-screenshots.cjs` with Play Store config
+- [ ] Scale screenshots to 1080x1920 pixels
+- [ ] Remove device frames (Play Store doesn't need them)
+- [ ] Optimize file sizes
+
+### Phase 53.5: Upload to Play Console
+- [ ] Login to Play Console
+- [ ] Navigate to Store Listing
+- [ ] Delete old screenshots
+- [ ] Upload 8 new screenshots in priority order
+- [ ] Save and verify preview
+
+### Phase 53.6: Release
+- [ ] Merge branch to main
+- [ ] Update CLAUDE.md status
+- [ ] Create learning notes
+
+### Optional Enhancements (Future)
 - [ ] Update feature graphic with language badges
-- [ ] Create new promotional video
 - [ ] Add localized store listings (PT, ES, FR, DE)
+- [ ] Create new promotional video from demo.webm
 
 ---
 
