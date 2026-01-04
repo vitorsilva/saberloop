@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Saberloop - Learn any topic with AI-powered quizzes. Free, offline-capable, and privacy-first.">
+    <meta name="description" content="Saberloop - AI-powered quizzes on any topic in 5 languages. Get explanations for wrong answers, adaptive difficulty, and works offline.">
     <meta name="theme-color" content="#FF6B35">
     <meta name="robots" content="index, follow">
     <title>Saberloop - Learn Anything, Practice Anything</title>
@@ -15,7 +15,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://saberloop.com/">
     <meta property="og:title" content="Saberloop - Learn Anything with AI Quizzes">
-    <meta property="og:description" content="AI-powered quizzes on any topic. Free, offline-capable, and privacy-first.">
+    <meta property="og:description" content="AI-powered quizzes on any topic in 5 languages. Get explanations for wrong answers, adaptive difficulty, and works offline.">
     <meta property="og:image" content="https://saberloop.com/app/icons/og-image.png">
     <meta property="og:image:alt" content="Saberloop app showing AI-powered quiz interface">
     <meta property="og:site_name" content="Saberloop">
@@ -23,7 +23,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Saberloop - Learn Anything with AI Quizzes">
-    <meta name="twitter:description" content="AI-powered quizzes on any topic. Free, offline-capable, and privacy-first.">
+    <meta name="twitter:description" content="AI-powered quizzes on any topic in 5 languages. Get explanations for wrong answers, adaptive difficulty, and works offline.">
     <meta name="twitter:image" content="https://saberloop.com/app/icons/og-image.png">
 
     <!-- Favicon -->
@@ -240,6 +240,12 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
 
+        .hero-image video {
+            max-height: 600px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
         /* Features */
         .features {
             padding: 100px 0;
@@ -254,7 +260,7 @@
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 32px;
         }
 
@@ -288,7 +294,7 @@
 
         .steps {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 40px;
             margin-top: 60px;
         }
@@ -337,6 +343,46 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
 
+        /* Share Section */
+        .share-section {
+            padding: 100px 0;
+            background: var(--background-light);
+        }
+
+        .share-preview {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .share-card {
+            background: var(--background);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .share-card-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .share-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+
+        .share-card p {
+            color: var(--text-muted);
+        }
+
+        .share-cta {
+            margin-top: 24px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
         /* CTA */
         .cta {
             padding: 100px 0;
@@ -349,10 +395,47 @@
             margin-bottom: 16px;
         }
 
-        .cta p {
-            font-size: 1.25rem;
-            margin-bottom: 32px;
-            opacity: 0.9;
+        .cta-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            max-width: 800px;
+            margin: 40px auto 0;
+        }
+
+        .cta-column {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: left;
+        }
+
+        .cta-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        .cta-column ul {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .cta-column li {
+            margin-bottom: 8px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .cta-column li::before {
+            content: "\2713";
+            position: absolute;
+            left: 0;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .cta-column .btn {
+            width: 100%;
+            justify-content: center;
         }
 
         .cta .btn-secondary {
@@ -365,8 +448,19 @@
             background: rgba(255,255,255,0.9);
         }
 
+        .cta .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .cta .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .cta .web-link {
             color: rgba(255, 255, 255, 0.9);
+            margin-top: 32px;
         }
 
         .cta .web-link a {
@@ -402,6 +496,12 @@
             }
         }
 
+        @media (max-width: 1024px) {
+            .steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .hero .container {
                 grid-template-columns: 1fr;
@@ -429,11 +529,23 @@
                 max-width: 250px;
             }
 
+            .hero-image video {
+                max-height: 400px;
+            }
+
             .features-grid {
                 grid-template-columns: 1fr;
             }
 
             .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshots-grid img {
+                max-width: 200px;
+            }
+
+            .cta-columns {
                 grid-template-columns: 1fr;
             }
 
@@ -464,7 +576,7 @@
         <div class="container">
             <div class="hero-content">
                 <h1>Learn <span>Anything</span>,<br>Practice <span>Anything</span></h1>
-                <p>AI-powered quizzes on any topic you want to master. Free, works offline, and your data stays private.</p>
+                <p>AI-powered quizzes on any topic, in 5 languages, with explanations that help you truly understand. Free to try, works offline.</p>
 
                 <div class="hero-buttons">
                     <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-primary" target="_blank" rel="noopener" data-track="play_store_hero">
@@ -480,7 +592,10 @@
 
             </div>
             <div class="hero-image">
-                <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App Screenshot showing the quiz interface" width="300" height="600" loading="eager">
+                <video autoplay muted loop playsinline poster="/app/icons/screenshot-mobile-1.png" width="300" height="600">
+                    <source src="images/demo.webm" type="video/webm">
+                    <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App Screenshot showing the quiz interface" width="300" height="600">
+                </video>
             </div>
         </div>
     </section>
@@ -492,23 +607,33 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">🧠</div>
-                    <h3>AI-Generated Questions</h3>
-                    <p>Get unique quiz questions on any topic, powered by advanced AI models.</p>
+                    <h3>AI-Powered Learning</h3>
+                    <p>Unique questions on any topic, with detailed explanations when you get it wrong.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Learn in Your Language</h3>
+                    <p>Quizzes in English, Portuguese, Spanish, French, or German.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Adaptive Difficulty</h3>
+                    <p>Continue on any topic with increasing difficulty. Master subjects step by step.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>All Skill Levels</h3>
+                    <p>From elementary to college level — questions adapted to your knowledge.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📱</div>
                     <h3>Works Offline</h3>
-                    <p>Review past quizzes and try sample topics even without internet.</p>
+                    <p>Review past quizzes and replay topics even without internet.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🔒</div>
-                    <h3>Privacy First</h3>
-                    <p>Your quiz history and data stay on your device. No tracking.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🆓</div>
-                    <h3>Free to Use</h3>
-                    <p>Try sample quizzes free. Connect your own API key for unlimited access.</p>
+                    <h3>Your Data, Your Control</h3>
+                    <p>All data stays on your device. Delete everything anytime with one tap.</p>
                 </div>
             </div>
         </div>
@@ -522,17 +647,22 @@
                 <div class="step">
                     <div class="step-number">1</div>
                     <h3>Enter Any Topic</h3>
-                    <p>Type any subject you want to learn about - history, science, coding, languages, anything!</p>
+                    <p>Type any subject you want to learn about — history, science, coding, languages, anything!</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>Get Quiz Questions</h3>
-                    <p>AI generates 5 unique multiple-choice questions tailored to your topic instantly.</p>
+                    <h3>Customize Your Quiz</h3>
+                    <p>Choose your skill level, language, and number of questions to match your needs.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Learn & Improve</h3>
-                    <p>Answer questions and get detailed explanations to reinforce your learning.</p>
+                    <h3>Take the Quiz</h3>
+                    <p>AI generates unique multiple-choice questions tailored to your topic instantly.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Learn From Mistakes</h3>
+                    <p>Get AI explanations for wrong answers. Continue to master the topic at higher levels.</p>
                 </div>
             </div>
         </div>
@@ -543,8 +673,27 @@
         <div class="container">
             <h2 class="section-title">See It In Action</h2>
             <div class="screenshots-grid">
-                <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop Welcome Screen" width="280" height="560" loading="lazy">
-                <img src="/app/icons/screenshot-mobile-2.png" alt="Saberloop Home Screen with quiz topics" width="280" height="560" loading="lazy">
+                <img src="images/landing-02-quiz-started.png" alt="Quiz in progress with multiple choice options" width="304" height="584" loading="lazy">
+                <img src="images/landing-explanation-modal.png" alt="AI explanation for wrong answers" width="304" height="584" loading="lazy">
+                <img src="images/landing-share-results.png" alt="Share your quiz results with friends" width="304" height="584" loading="lazy">
+                <img src="images/landing-usage-cost.png" alt="Track your AI usage costs" width="304" height="584" loading="lazy">
+                <img src="images/landing-06-settings-page.png" alt="Settings screen with language and level options" width="304" height="584" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- Share Section -->
+    <section class="share-section">
+        <div class="container">
+            <h2 class="section-title">Share Your Progress</h2>
+            <div class="share-preview">
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Challenge your friends and track your learning journey</p>
+                <div class="share-card">
+                    <div class="share-card-icon">🏆</div>
+                    <h4>I scored 80% on "World History"</h4>
+                    <p>quiz on Saberloop — the AI-powered learning app</p>
+                    <p class="share-cta">Can you beat my score?</p>
+                </div>
             </div>
         </div>
     </section>
@@ -553,18 +702,28 @@
     <section class="cta">
         <div class="container">
             <h2>Ready to Start Learning?</h2>
-            <p>No sign-up required. Get the app now.</p>
-            <div class="hero-buttons" style="justify-content: center;">
-                <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-secondary" target="_blank" rel="noopener" data-track="play_store_cta">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
-                    Get on Google Play
-                </a>
-                <a href="/downloads/saberloop-v1.0.0.apk" class="btn btn-secondary" download data-track="apk_download_cta">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-6 2h12v2H6v-2z"/></svg>
-                    Download APK
-                </a>
+            <div class="cta-columns">
+                <div class="cta-column">
+                    <h3>Try Free</h3>
+                    <ul>
+                        <li>Sample quizzes available immediately</li>
+                        <li>No account needed</li>
+                        <li>Works in your browser</li>
+                    </ul>
+                    <a href="/app/" class="btn btn-outline" data-track="web_app_cta_column">Try in Browser</a>
+                </div>
+                <div class="cta-column">
+                    <h3>Unlimited Learning</h3>
+                    <ul>
+                        <li>Connect your OpenRouter account</li>
+                        <li>Choose your AI model</li>
+                        <li>Generate unlimited quizzes</li>
+                        <li>See token usage costs</li>
+                    </ul>
+                    <a href="https://play.google.com/store/apps/details?id=com.saberloop.app" class="btn btn-secondary" target="_blank" rel="noopener" data-track="play_store_cta">Get on Google Play</a>
+                </div>
             </div>
-            <p class="web-link">Or <a href="/app/" data-track="web_app_cta">try in your browser</a> — no install needed</p>
+            <p class="web-link">Or <a href="/downloads/saberloop-v1.0.0.apk" download data-track="apk_download_cta">download the APK</a> directly</p>
         </div>
     </section>
 

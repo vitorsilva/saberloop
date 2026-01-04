@@ -1264,10 +1264,89 @@ ffmpeg -i test-results/*/video.webm -vf "fps=10,scale=320:-1" -loop 0 docs/produ
 
 ---
 
-### Optional: Demo Video
-- [ ] Demo video: Complete user journey (~30s)
-- [ ] Convert video to MP4/GIF for landing page
-- [ ] **Commit:** `feat(landing): add demo video`
+### Phase 52.8: Demo Video & Additional Screenshots (Enhancement)
+
+**Status:** Complete
+**Added:** 2026-01-03
+**Completed:** 2026-01-04
+
+This phase adds a demo video to the hero section and expands the "See It In Action" section with more feature screenshots.
+
+#### Screenshot Assessment
+
+| Need | Existing Screenshot | Status | Notes |
+|------|---------------------|--------|-------|
+| **Share Results UX** | `03-results-page.png` | Ready | Shows Share Results button, 40% score, Continue button |
+| **Explanation Modal** | `phase27_explanation_modal.png` | Needs recapture | Shows "Failed to generate explanation" error |
+| **Usage Cost Tracking** | Results page | Needs capture | Cost card shows tokens used, actual cost, estimated paid cost (see Phase 49) |
+
+#### Where Features Are Displayed (from Phase 49)
+
+- **Results Page**: Usage cost card with tokens used, actual cost, estimated paid cost for free models
+- **Topics History**: Cost per quiz (e.g., "Today • Free" or "Today • $0.02")
+- **Settings Page**: Credits balance or "Free Tier" status
+
+#### Screenshots to Capture
+
+1. **Explanation Modal with actual text**
+   - Run a quiz with real API connection (or mock with valid response)
+   - Click info button on wrong answer
+   - Capture modal showing "Why it's [correct answer]" with actual explanation text
+   - **Source:** Playwright test or manual capture
+
+2. **Usage Cost Card on Results Page**
+   - Complete a quiz with OpenRouter connected
+   - Results page shows usage cost card below the score
+   - Card shows: tokens used, actual cost, "On paid model would cost $X.XX"
+   - **Source:** Playwright test capturing Results page with cost card visible
+
+#### Implementation Checklist
+
+**Screenshots:**
+- [x] Process `03-results-page.png` for Share UX → `landing-share-results.png`
+- [x] Capture new explanation modal screenshot with actual explanation text
+- [x] Capture Results page screenshot showing usage cost card
+- [x] Process new screenshots with device frames
+- [x] Copy to `landing/images/`
+
+**Update Landing Page HTML:**
+- [x] Add Share Results screenshot to "See It In Action" grid
+- [x] Add Explanation Modal screenshot
+- [x] Add Usage Cost Card screenshot
+- [x] Update grid CSS if needed (4 → 5 images)
+
+**Demo Video (Option A - Hero Replacement):**
+- [x] Create Playwright test for demo video (`tests/e2e/capture-landing-assets.spec.js`)
+- [x] Record ~30s user journey:
+  1. Home screen (1s)
+  2. Enter topic "World History" (2s typing)
+  3. Select grade level (1s)
+  4. Generate quiz (loading 2s)
+  5. Answer questions (10s - mix of right/wrong)
+  6. View results with cost card (2s)
+  7. Click explanation button (2s)
+  8. View explanation modal (3s)
+  9. Close modal, show Continue button (2s)
+- [x] ~~Convert webm → mp4~~ Used webm directly (good browser support)
+- [x] Replace hero static image with auto-playing video
+- [x] Add fallback poster image for slow connections
+- [x] **Commit:** `feat(landing): add demo video and additional screenshots`
+
+#### Video Placement Decision
+
+**Selected: Option A - Hero section replacement**
+
+Replace the static hero image with an auto-playing, muted, looping video showing the app in action. This provides maximum impact as the first thing visitors see.
+
+**HTML Implementation:**
+```html
+<div class="hero-image">
+    <video autoplay muted loop playsinline poster="/app/icons/screenshot-mobile-1.png">
+        <source src="images/demo.mp4" type="video/mp4">
+        <img src="/app/icons/screenshot-mobile-1.png" alt="Saberloop App">
+    </video>
+</div>
+```
 
 ---
 
