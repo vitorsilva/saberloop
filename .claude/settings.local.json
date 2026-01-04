@@ -138,7 +138,14 @@
       "Bash(adb devices:*)",
       "Bash($env:LOCALAPPDATA/Android/Sdk/emulator/emulator -list-avds)",
       "Bash(\"/c/Users/omeue/AppData/Local/Android/Sdk/emulator/emulator\" -list-avds)",
-      "Bash(adb install:*)"
+      "Bash(adb install:*)",
+      "Bash(npm run screenshots:process:*)",
+      "Bash(powershell -Command \"& { Start-Sleep -Milliseconds 100 }\")",
+      "mcp__playwright__browser_press_key",
+      "Bash(node scripts/process-screenshots.cjs:*)",
+      "Bash(copy \"test-results\\\\capture-landing-assets-Cap-418e0--Complete-user-journey-30s--chromium\\\\video.webm\" \"landing\\\\images\\\\demo.webm\")",
+      "Bash(powershell -Command \"& { Start-Sleep -Milliseconds 3000 }\")",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

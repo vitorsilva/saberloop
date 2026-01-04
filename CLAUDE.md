@@ -105,11 +105,16 @@ Claude: "Let's install Playwright"
 
 ### Exception: Documentation
 
-The ONLY time Claude should write files is:
-- Updating learning notes (docs/PHASE*_LEARNING_NOTES.md)
-- When user explicitly says "you write the learning notes" or similar
+Claude may write documentation files in these cases:
+- **Learning notes** (`docs/learning/epic0X_*/PHASE*_LEARNING_NOTES.md`) - Captured during implementation to document difficulties, errors, fixes, and progress. See "Learning Notes: What to Capture" section for details.
+- When user explicitly requests documentation
 
-Even then, ask for confirmation first.
+**When to write learning notes:**
+- **Incrementally during implementation** - at minimum, when completing each task/step before moving to the next
+- **When encountering and solving problems** - capture the error, cause, and fix while it's fresh
+- **At session end** ("that's a wrap") - finalize and ensure nothing was missed
+
+This applies to both teaching mode and autonomous execution mode. Ask for confirmation first when in teaching mode.
 
 ### Exception: Issue Resolution Mode
 
@@ -222,13 +227,75 @@ When the user says **"that's a wrap"**, **"let's call it a day"**, **"let's paus
    - **Epic 02**: Create/update learning notes in `docs/learning/epic02_quizmaster_v1/`
    - **Epic 03**: `docs/learning/epic03_quizmaster_v2/PHASE*_LEARNING_NOTES.md` ✅ Complete
    - **Epic 04**: `docs/learning/epic04_saberloop_v1/PHASE*_LEARNING_NOTES.md` ✅ Current
-   - What was just completed in this session
-   - Current phase and specific step/task
-   - What's next when they resume
-   - Any relevant notes, blockers, or context needed for next session
-2. Ensure all recent work is properly documented so progress can be easily resumed
+   - **Epic 05**: `docs/learning/epic05/PHASE*_LEARNING_NOTES.md` ✅ Current
+2. Follow the structure in "Learning Notes: What to Capture" section - include progress, difficulties, errors, fixes, and learnings
+3. Ensure all recent work is properly documented so progress can be easily resumed
 
 This is a learning-focused project with a structured progression - respect this flow and help the user advance through it systematically.
+
+### Learning Notes: What to Capture
+
+Learning notes are **implementation documentation** that capture the real experience of building features, not just progress tracking. They should be written **incrementally during implementation**, not just at the end. This applies regardless of whether:
+- The user is implementing step-by-step (teaching mode)
+- Claude is executing autonomously after user has reviewed and approved the plan
+
+**When to update learning notes:**
+- At minimum: when completing each task/step before moving to the next
+- Ideally: immediately when encountering and resolving problems (while context is fresh)
+- Always: at session end to finalize and ensure nothing was missed
+
+**Learning notes MUST capture:**
+
+1. **Progress**
+   - What was completed
+   - Current phase and step
+   - What's next when resuming
+
+2. **Difficulties encountered**
+   - What was confusing or challenging
+   - Unexpected complexity or edge cases
+   - Concepts that required deeper understanding
+
+3. **Problems and errors**
+   - Specific error messages encountered
+   - Unexpected behaviors or bugs
+   - Things that broke during implementation
+   - Test failures and their causes
+
+4. **Fixes and solutions**
+   - How each problem was resolved
+   - The root cause (not just the symptom)
+   - Why the fix works
+   - Alternative approaches considered
+
+5. **Learnings and insights**
+   - Key takeaways from the implementation
+   - Patterns discovered or reinforced
+   - Gotchas for future reference
+   - Connections to previous phases/concepts
+
+**Example structure:**
+```markdown
+## Session: [Date]
+
+### Completed
+- Implemented X feature
+- Added tests for Y
+
+### Difficulties & Solutions
+- **Problem**: Got error "Cannot read property 'x' of undefined"
+- **Cause**: Was calling function before DOM loaded
+- **Fix**: Added DOMContentLoaded listener
+- **Learning**: Always ensure DOM is ready before manipulation
+
+### Gotchas for Future Reference
+- The API returns dates in UTC, need to convert for display
+
+### Next Steps
+- Continue with Z...
+```
+
+**Location**: `docs/learning/epic0X_*/PHASE*_LEARNING_NOTES.md` for the active epic.
 
 ## Architecture
 
