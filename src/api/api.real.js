@@ -12,6 +12,7 @@
     'fr': 'French',
     'de': 'German',
     'it': 'Italian',
+    'nl': 'Dutch',
     'no': 'Norwegian (Bokmål)',
     'ru': 'Russian'
   };
