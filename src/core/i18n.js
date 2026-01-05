@@ -28,6 +28,7 @@ export const SUPPORTED_LANGUAGES = [
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
     { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
     { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+    { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
     { code: 'no', name: 'Norsk', flag: '🇳🇴' },
     { code: 'ru', name: 'Русский', flag: '🇷🇺' }
 ];
