@@ -14,7 +14,7 @@
 | 2 | Run Baseline Mutation Testing | ✅ Complete |
 | 3 | Analyze Core Module Mutations | ✅ Complete |
 | 4 | Strengthen Tests for state.js | ✅ Complete |
-| 5 | Strengthen Tests for db.js | ⬜ Not Started |
+| 5 | Strengthen Tests for db.js | ✅ Complete |
 | 6 | Strengthen Tests for settings.js | ⬜ Not Started |
 | 7 | Strengthen Tests for features.js | ⬜ Not Started |
 | 8 | Wave 2 Checkpoint | ⬜ Not Started |
@@ -48,12 +48,22 @@
 
 **Crossed 75% target!**
 
+### Scores After db.js Tests (Step 5)
+
+| Module | Before | After | Change |
+|--------|--------|-------|--------|
+| db.js | 58.33% | 81.98% | +23.65% |
+| **Overall** | 76.90% | 82.48% | +5.58% |
+
 ### Difficulties & Solutions
 
-(None so far)
+1. **Test isolation with fake-indexeddb** - New test suites were getting leftover sessions from previous tests. `indexedDB.deleteDatabase()` wasn't sufficient because the db module caches connections.
+   - **Fix**: Use `clearAllUserData()` + `deleteSampleSessions()` in `beforeEach` for clean slate.
 
 ### Learnings
 
 1. **No-coverage files have the highest impact** - Adding tests to state.js (which had 0% coverage) gave us +7% overall improvement in one step.
 
 2. **Singleton testing pattern** - When testing a singleton, must reset state in `beforeEach` to avoid test pollution. Also need to clear listeners array manually since there's no `unsubscribe` method.
+
+3. **Find uncovered functions first** - The mutation report's "NoCoverage" mutants point directly to untested code. Adding tests for `updateQuestionExplanation` and `deleteSampleSessions` boosted db.js from 58% to 82%.
