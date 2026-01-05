@@ -16,7 +16,7 @@
 | 4 | Strengthen Tests for state.js | ✅ Complete |
 | 5 | Strengthen Tests for db.js | ✅ Complete |
 | 6 | Strengthen Tests for settings.js | ✅ Complete |
-| 7 | Strengthen Tests for features.js | ⬜ Not Started |
+| 7 | Strengthen Tests for features.js | ✅ Complete |
 | 8 | Wave 2 Checkpoint | ⬜ Not Started |
 
 ### Baseline Scores (Step 2)
@@ -61,6 +61,15 @@
 |--------|--------|-------|--------|
 | settings.js | 64.29% | 87.50% | +23.21% |
 | **Overall** | 82.48% | 84.02% | +1.54% |
+
+### Scores After features.js Tests (Step 7)
+
+| Module | Before | After | Change |
+|--------|--------|-------|--------|
+| features.js | 54.55% | 59.57% | +5.02% |
+| **Overall** | 84.02% | 84.59% | +0.57% |
+
+NoCoverage mutants eliminated (2 → 0). Remaining survivors are string literals in `FEATURE_FLAGS` object (descriptions) which aren't worth testing.
 
 ### Difficulties & Solutions
 
