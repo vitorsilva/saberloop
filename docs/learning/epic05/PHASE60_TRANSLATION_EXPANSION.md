@@ -2,9 +2,9 @@
 
 ## Overview
 
-Expand Saberloop's language support by adding Norwegian and Russian translations, and completing the missing translations for Spanish, French, and German that are listed in the code but don't have translation files.
+Expand Saberloop's language support by adding Norwegian, Russian, Italian, and Dutch translations, and completing the missing translations for Spanish, French, and German that are listed in the code but don't have translation files.
 
-**Goal:** Full translation coverage for 7 languages (en, pt-PT, es, fr, de, no, ru)
+**Goal:** Full translation coverage for 9 languages (en, pt-PT, es, fr, de, it, no, ru, nl)
 
 ---
 
@@ -16,11 +16,13 @@ Expand Saberloop's language support by adding Norwegian and Russian translations
 |----------|------|------------------|---------|--------------|-------------|--------|
 | English | en | `en.json` ✅ | ✅ | N/A | ✅ | Complete |
 | Portuguese | pt-PT | `pt-PT.json` ✅ | ✅ | N/A | ✅ | Complete |
-| Spanish | es | ❌ Missing | ✅ | ✅ | ✅ | Broken - listed but no file |
-| French | fr | ❌ Missing | ✅ | ✅ | ✅ | Broken - listed but no file |
-| German | de | ❌ Missing | ✅ | ✅ | ✅ | Broken - listed but no file |
-| Norwegian | no | ❌ Missing | ❌ | ❌ | ❌ | New language |
-| Russian | ru | ❌ Missing | ❌ | ✅ | ❌ | New language (CLI ready) |
+| Spanish | es | `es.json` ✅ | ✅ | ✅ | ✅ | ✅ Complete |
+| French | fr | `fr.json` ✅ | ✅ | ✅ | ✅ | ✅ Complete |
+| German | de | `de.json` ✅ | ✅ | ✅ | ✅ | ✅ Complete |
+| Italian | it | `it.json` ✅ | ✅ | ✅ | ✅ | ✅ Complete |
+| Norwegian | no | `no.json` ✅ | ✅ | ✅ | ✅ | ✅ Complete |
+| Russian | ru | `ru.json` ✅ | ✅ | ✅ | ✅ | ✅ Complete |
+| Dutch | nl | ❌ Missing | ❌ | ❌ | ❌ | New language |
 
 ### Key Files
 
@@ -66,16 +68,20 @@ git checkout -b feature/phase60-translation-expansion
 
 Small, focused commits in logical order:
 
-| # | Commit Message | Files Changed |
-|---|----------------|---------------|
-| 1 | `feat(i18n): add Norwegian to translate CLI` | `scripts/translate.js` |
-| 2 | `feat(i18n): add Norwegian and Russian to supported languages` | `src/core/i18n.js` |
-| 3 | `feat(api): add Norwegian and Russian to LLM language names` | `src/api/api.real.js` |
-| 4 | `feat(i18n): add Spanish translations` | `public/locales/es.json` |
-| 5 | `feat(i18n): add French translations` | `public/locales/fr.json` |
-| 6 | `feat(i18n): add German translations` | `public/locales/de.json` |
-| 7 | `feat(i18n): add Norwegian translations` | `public/locales/no.json` |
-| 8 | `feat(i18n): add Russian translations` | `public/locales/ru.json` |
+| # | Commit Message | Files Changed | Status |
+|---|----------------|---------------|--------|
+| 1 | `feat(i18n): add Norwegian to translate CLI` | `scripts/translate.js` | ✅ |
+| 2 | `feat(i18n): add Norwegian and Russian to supported languages` | `src/core/i18n.js` | ✅ |
+| 3 | `feat(api): add Norwegian and Russian to LLM language names` | `src/api/api.real.js` | ✅ |
+| 4 | `feat(i18n): add Spanish translations` | `public/locales/es.json` | ✅ |
+| 5 | `feat(i18n): add French translations` | `public/locales/fr.json` | ✅ |
+| 6 | `feat(i18n): add German translations` | `public/locales/de.json` | ✅ |
+| 7 | `feat(i18n): add Norwegian translations` | `public/locales/no.json` | ✅ |
+| 8 | `feat(i18n): add Russian translations` | `public/locales/ru.json` | ✅ |
+| 9 | `feat(i18n): add Italian to supported languages` | `src/core/i18n.js`, `src/api/api.real.js` | ✅ |
+| 10 | `feat(i18n): add Italian translations` | `public/locales/it.json` | ✅ |
+| 11 | `feat(i18n): add Dutch to supported languages` | `src/core/i18n.js`, `src/api/api.real.js`, `scripts/translate.js` | ⬜ |
+| 12 | `feat(i18n): add Dutch translations` | `public/locales/nl.json` | ⬜ |
 
 ### Rationale
 
@@ -171,24 +177,53 @@ Single PR with all commits, or can be split into:
 
 ---
 
-### Task 4: Verify Language Selector UI
+### Task 4: Add Dutch Support
+
+**Files to update:**
+
+1. **`scripts/translate.js`** - Add Dutch to `LANGUAGE_NAMES`:
+   ```javascript
+   'nl': 'Dutch',
+   ```
+
+2. **`src/core/i18n.js`** - Add Dutch to `SUPPORTED_LANGUAGES`:
+   ```javascript
+   { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
+   ```
+
+3. **`src/api/api.real.js`** - Add Dutch to `LANGUAGE_NAMES`:
+   ```javascript
+   'nl': 'Dutch',
+   ```
+
+4. **Generate translation file:**
+   ```bash
+   npm run translate -- nl
+   ```
+
+5. Review and commit `public/locales/nl.json`
+
+---
+
+### Task 5: Verify Language Selector UI
 
 The language selector in `SettingsView.js` should automatically display all languages from `SUPPORTED_LANGUAGES`. Verify:
 
-1. All 7 languages appear in the dropdown
+1. All 9 languages appear in the dropdown
 2. Selecting each language updates the UI
 3. Language preference persists across sessions
 4. Fallback to English works for missing keys
 
 ---
 
-### Task 5: Test LLM Language Integration
+### Task 6: Test LLM Language Integration
 
 Verify that quiz generation uses the selected language:
 
 1. Select Norwegian → Generate quiz → Questions should be in Norwegian
 2. Select Russian → Generate quiz → Questions should be in Russian
-3. Explanations should also be in the selected language
+3. Select Dutch → Generate quiz → Questions should be in Dutch
+4. Explanations should also be in the selected language
 
 **Note:** The `api.real.js` already has a `languageNames` map that may need updating for Norwegian and Russian.
 
@@ -210,29 +245,37 @@ ru: 'Russian'
 ## Validation Checklist
 
 ### Translation Files
-- [ ] `public/locales/es.json` exists and has all keys
-- [ ] `public/locales/fr.json` exists and has all keys
-- [ ] `public/locales/de.json` exists and has all keys
-- [ ] `public/locales/no.json` exists and has all keys
-- [ ] `public/locales/ru.json` exists and has all keys
+- [x] `public/locales/es.json` exists and has all keys
+- [x] `public/locales/fr.json` exists and has all keys
+- [x] `public/locales/de.json` exists and has all keys
+- [x] `public/locales/no.json` exists and has all keys
+- [x] `public/locales/ru.json` exists and has all keys
+- [x] `public/locales/it.json` exists and has all keys
+- [ ] `public/locales/nl.json` exists and has all keys
 
 ### Code Updates
-- [ ] `scripts/translate.js` - LANGUAGE_NAMES includes `no` (ru already present)
-- [ ] `src/core/i18n.js` - SUPPORTED_LANGUAGES includes `no` and `ru`
-- [ ] `src/api/api.real.js` - LANGUAGE_NAMES includes `no` and `ru`
+- [x] `scripts/translate.js` - LANGUAGE_NAMES includes `no`, `ru`, `it`
+- [x] `src/core/i18n.js` - SUPPORTED_LANGUAGES includes `no`, `ru`, `it`
+- [x] `src/api/api.real.js` - LANGUAGE_NAMES includes `no`, `ru`, `it`
+- [ ] `scripts/translate.js` - LANGUAGE_NAMES includes `nl`
+- [ ] `src/core/i18n.js` - SUPPORTED_LANGUAGES includes `nl`
+- [ ] `src/api/api.real.js` - LANGUAGE_NAMES includes `nl`
 
 ### UI Testing
-- [ ] Language selector shows all 7 languages
-- [ ] Selecting Spanish updates UI to Spanish
-- [ ] Selecting French updates UI to French
-- [ ] Selecting German updates UI to German
-- [ ] Selecting Norwegian updates UI to Norwegian
-- [ ] Selecting Russian updates UI to Russian
+- [ ] Language selector shows all 9 languages
+- [x] Selecting Spanish updates UI to Spanish
+- [x] Selecting French updates UI to French
+- [x] Selecting German updates UI to German
+- [x] Selecting Norwegian updates UI to Norwegian
+- [x] Selecting Russian updates UI to Russian
+- [x] Selecting Italian updates UI to Italian
+- [ ] Selecting Dutch updates UI to Dutch
 - [ ] Language preference persists after app restart
 
 ### Quiz Generation Testing
-- [ ] Quiz generated in Norwegian when Norwegian selected
-- [ ] Quiz generated in Russian when Russian selected
+- [x] Quiz generated in Norwegian when Norwegian selected
+- [x] Quiz generated in Russian when Russian selected
+- [ ] Quiz generated in Dutch when Dutch selected
 - [ ] Explanations generated in selected language
 
 ### Edge Cases
@@ -244,16 +287,18 @@ ru: 'Russian'
 
 ## Files Changed Summary
 
-| File | Change |
-|------|--------|
-| `scripts/translate.js` | Add `no` to LANGUAGE_NAMES (ru already present) |
-| `src/core/i18n.js` | Add `no` and `ru` to SUPPORTED_LANGUAGES |
-| `src/api/api.real.js` | Add `no` and `ru` to LANGUAGE_NAMES |
-| `public/locales/es.json` | NEW - Spanish translations (~240 lines) |
-| `public/locales/fr.json` | NEW - French translations (~240 lines) |
-| `public/locales/de.json` | NEW - German translations (~240 lines) |
-| `public/locales/no.json` | NEW - Norwegian translations (~240 lines) |
-| `public/locales/ru.json` | NEW - Russian translations (~240 lines) |
+| File | Change | Status |
+|------|--------|--------|
+| `scripts/translate.js` | Add `no`, `it`, `nl` to LANGUAGE_NAMES | ✅ (nl pending) |
+| `src/core/i18n.js` | Add `no`, `ru`, `it`, `nl` to SUPPORTED_LANGUAGES | ✅ (nl pending) |
+| `src/api/api.real.js` | Add `no`, `ru`, `it`, `nl` to LANGUAGE_NAMES | ✅ (nl pending) |
+| `public/locales/es.json` | Spanish translations (~240 lines) | ✅ |
+| `public/locales/fr.json` | French translations (~240 lines) | ✅ |
+| `public/locales/de.json` | German translations (~240 lines) | ✅ |
+| `public/locales/no.json` | Norwegian translations (~240 lines) | ✅ |
+| `public/locales/ru.json` | Russian translations (~240 lines) | ✅ |
+| `public/locales/it.json` | Italian translations (~240 lines) | ✅ |
+| `public/locales/nl.json` | Dutch translations (~240 lines) | ⬜ Pending |
 
 ---
 
@@ -281,7 +326,7 @@ Norwegian has two written standards: Bokmål and Nynorsk. This implementation us
 
 ## Success Criteria
 
-1. **7 languages fully supported**: en, pt-PT, es, fr, de, no, ru
+1. **9 languages fully supported**: en, pt-PT, es, fr, de, it, no, ru, nl
 2. **No broken language options**: All listed languages have translation files
 3. **Consistent experience**: UI and quiz generation use the same language
 4. **Graceful degradation**: Missing keys fall back to English
@@ -290,14 +335,15 @@ Norwegian has two written standards: Bokmål and Nynorsk. This implementation us
 
 ## Estimated Effort
 
-| Task | Effort |
-|------|--------|
-| Task 1: Create es, fr, de translations | 15 min (CLI) + 30 min (review) |
-| Task 2: Add Norwegian | 10 min (code) + 15 min (CLI) + 20 min (review) |
-| Task 3: Add Russian | 10 min (code) + 15 min (CLI) + 20 min (review) |
-| Task 4: Verify UI | 10 min |
-| Task 5: Test LLM integration | 15 min |
-| **Total** | ~2-3 hours |
+| Task | Effort | Status |
+|------|--------|--------|
+| Task 1: Create es, fr, de translations | 15 min (CLI) + 30 min (review) | ✅ |
+| Task 2: Add Norwegian | 10 min (code) + 15 min (CLI) + 20 min (review) | ✅ |
+| Task 3: Add Russian | 10 min (code) + 15 min (CLI) + 20 min (review) | ✅ |
+| Task 4: Add Dutch | 10 min (code) + 15 min (CLI) + 20 min (review) | ⬜ |
+| Task 5: Verify UI | 10 min | ⬜ |
+| Task 6: Test LLM integration | 15 min | ⬜ |
+| **Total** | ~3 hours |
 
 ---
 
