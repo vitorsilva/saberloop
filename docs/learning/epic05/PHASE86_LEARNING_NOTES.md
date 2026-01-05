@@ -12,8 +12,8 @@
 |------|-------------|--------|
 | 1 | Setup Branch and Initial Config | ✅ Complete |
 | 2 | Run Baseline Mutation Testing | ✅ Complete |
-| 3 | Analyze Core Module Mutations | ⏳ In Progress |
-| 4 | Strengthen Tests for state.js | ⬜ Not Started |
+| 3 | Analyze Core Module Mutations | ✅ Complete |
+| 4 | Strengthen Tests for state.js | ✅ Complete |
 | 5 | Strengthen Tests for db.js | ⬜ Not Started |
 | 6 | Strengthen Tests for settings.js | ⬜ Not Started |
 | 7 | Strengthen Tests for features.js | ⬜ Not Started |
@@ -39,10 +39,21 @@
 | shuffle.js | 93.55% |
 | storage.js | 83.33% |
 
+### Scores After state.js Tests (Step 4)
+
+| Module | Before | After | Change |
+|--------|--------|-------|--------|
+| state.js | 0.00% | 88.89% | +88.89% |
+| **Overall** | 69.71% | 76.90% | +7.19% |
+
+**Crossed 75% target!**
+
 ### Difficulties & Solutions
 
-(To be filled as we encounter issues)
+(None so far)
 
 ### Learnings
 
-(To be filled as we progress)
+1. **No-coverage files have the highest impact** - Adding tests to state.js (which had 0% coverage) gave us +7% overall improvement in one step.
+
+2. **Singleton testing pattern** - When testing a singleton, must reset state in `beforeEach` to avoid test pollution. Also need to clear listeners array manually since there's no `unsubscribe` method.
