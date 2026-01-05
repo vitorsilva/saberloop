@@ -163,7 +163,7 @@ Update Play Store listing to reflect new features added since initial publicatio
 ---
 
 ### Phase 60: Translation Expansion
-**Status:** Planning
+**Status:** ✅ Complete
 **File:** [PHASE60_TRANSLATION_EXPANSION.md](./PHASE60_TRANSLATION_EXPANSION.md)
 
 Expand language support by adding Norwegian and Russian translations, and completing missing translations for Spanish, French, and German.
@@ -179,7 +179,7 @@ Expand language support by adding Norwegian and Russian translations, and comple
 ---
 
 ### Phase 86: Mutation Testing Expansion (Wave 2)
-**Status:** Ready (after Phase 85)
+**Status:** ✅ Complete
 **File:** [PHASE86_MUTATION_TESTING_EXPANSION.md](./PHASE86_MUTATION_TESTING_EXPANSION.md)
 
 Expand mutation testing to core infrastructure modules (state, db, settings, features).
@@ -191,7 +191,7 @@ Expand mutation testing to core infrastructure modules (state, db, settings, fea
 ---
 
 ### Phase 87: Mutation Testing E2E Exploration (Wave 3)
-**Status:** Ready (after Phase 86)
+**Status:** Ready
 **File:** [PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md](./PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md)
 
 Expand mutation testing to API layer and explore E2E mutation testing feasibility.
@@ -212,10 +212,10 @@ Expand mutation testing to API layer and explore E2E mutation testing feasibilit
 ### Track 2: Growth (User Acquisition)
 4. **Phase 52**: Landing Page Improvements ✅
 5. **Phase 53**: Google Play Store Update ✅
-6. **Phase 60**: Translation Expansion (Norwegian, Russian + complete missing)
+6. **Phase 60**: Translation Expansion ✅ (9 languages now supported)
 
 ### Track 3: Testing Excellence (Long-term Quality)
-7. **Phase 86**: Mutation Testing Wave 2 (Core Infrastructure)
+7. **Phase 86**: Mutation Testing Wave 2 ✅ (Core Infrastructure)
 8. **Phase 87**: Mutation Testing Wave 3 (API Layer)
 
 **Note:** Tracks can be executed in parallel by different team members, or sequentially based on priority.
