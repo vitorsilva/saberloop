@@ -45,6 +45,30 @@
         FEATURE_FLAGS.OPENROUTER_GUIDE.phase = originalPhase;
       });
 
+      it('should return false when phase has an unknown value (default case)', () => {
+        const originalPhase = FEATURE_FLAGS.OPENROUTER_GUIDE.phase;
+        FEATURE_FLAGS.OPENROUTER_GUIDE.phase = 'INVALID_PHASE';
+
+        expect(isFeatureEnabled('OPENROUTER_GUIDE', 'settings')).toBe(false);
+        expect(isFeatureEnabled('OPENROUTER_GUIDE', 'welcome')).toBe(false);
+
+        FEATURE_FLAGS.OPENROUTER_GUIDE.phase = originalPhase;
+      });
+
+      it('should use default context when not provided', () => {
+        const originalPhase = FEATURE_FLAGS.OPENROUTER_GUIDE.phase;
+
+        // ENABLED should return true regardless of context
+        FEATURE_FLAGS.OPENROUTER_GUIDE.phase = 'ENABLED';
+        expect(isFeatureEnabled('OPENROUTER_GUIDE')).toBe(true);
+
+        // SETTINGS_ONLY should return false for default context
+        FEATURE_FLAGS.OPENROUTER_GUIDE.phase = 'SETTINGS_ONLY';
+        expect(isFeatureEnabled('OPENROUTER_GUIDE')).toBe(false);
+
+        FEATURE_FLAGS.OPENROUTER_GUIDE.phase = originalPhase;
+      });      
+
     });
 
     describe('getFeaturePhase', () => {
@@ -58,6 +82,18 @@
         const phase = getFeaturePhase('UNKNOWN_FEATURE');
         expect(phase).toBe('UNKNOWN');
       });
+
+      it('should return the exact current phase for known feature', () => {
+        const originalPhase = FEATURE_FLAGS.OPENROUTER_GUIDE.phase;
+
+        FEATURE_FLAGS.OPENROUTER_GUIDE.phase = 'DISABLED';
+        expect(getFeaturePhase('OPENROUTER_GUIDE')).toBe('DISABLED');
+
+        FEATURE_FLAGS.OPENROUTER_GUIDE.phase = 'ENABLED';
+        expect(getFeaturePhase('OPENROUTER_GUIDE')).toBe('ENABLED');
+
+        FEATURE_FLAGS.OPENROUTER_GUIDE.phase = originalPhase;
+      });      
 
     });
 
