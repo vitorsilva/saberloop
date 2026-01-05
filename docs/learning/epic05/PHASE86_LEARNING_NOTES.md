@@ -10,8 +10,8 @@
 
 | Step | Description | Status |
 |------|-------------|--------|
-| 1 | Setup Branch and Initial Config | ⏳ In Progress |
-| 2 | Run Baseline Mutation Testing | ⬜ Not Started |
+| 1 | Setup Branch and Initial Config | ✅ Complete |
+| 2 | Run Baseline Mutation Testing | ⏳ In Progress |
 | 3 | Analyze Core Module Mutations | ⬜ Not Started |
 | 4 | Strengthen Tests for state.js | ⬜ Not Started |
 | 5 | Strengthen Tests for db.js | ⬜ Not Started |
