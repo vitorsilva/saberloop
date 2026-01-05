@@ -294,7 +294,7 @@ Add tests to kill surviving mutants in `features.js`.
 ---
 
 #### Step 8: Wave 2 Checkpoint
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 
 Run full mutation testing and verify Wave 2 target achieved:
 
@@ -305,10 +305,10 @@ npm run test:mutation
 **Target:** >75% mutation score on core modules
 
 **After completing:**
-- [ ] Record final Wave 2 scores in learning notes
-- [ ] Push all commits to remote
-- [ ] Update CLAUDE.md status if Wave 2 complete
-- [ ] Mark this step complete
+- [x] Record final Wave 2 scores in learning notes
+- [x] Push all commits to remote
+- [x] Update CLAUDE.md status if Wave 2 complete
+- [x] Mark this step complete
 
 ---
 

@@ -17,6 +17,8 @@ import {
     getSessionsByTopic,
     getRecentSessions,
     updateSession,
+    updateQuestionExplanation,  
+    deleteSampleSessions,
     getSetting,
     saveSetting,
     storeOpenRouterKey,
@@ -500,4 +502,141 @@ describe('Sessions CRUD Operations', () => {
         // Topics should be empty
         expect(topics).toEqual([]);
       });
-    });
+  }); 
+
+      describe('updateQuestionExplanation', () => {
+        beforeEach(async () => {
+          indexedDB.deleteDatabase(DB_NAME);
+        });
+
+        it('should update a question explanation', async () => {
+          // Create session with questions
+          const sessionId = await saveSession({
+            topicId: 'math',
+            timestamp: Date.now(),
+            score: 3,
+            totalQuestions: 2,
+            questions: [
+              { question: 'What is 2+2?', options: ['3', '4', '5', '6'], correct: 1 },
+              { question: 'What is 3+3?', options: ['5', '6', '7', '8'], correct: 1 }
+            ]
+          });
+
+          // Update first question's explanation
+          const updated = await updateQuestionExplanation(sessionId, 0, 'Because 2+2=4');
+
+          expect(updated).not.toBeNull();
+          expect(updated.questions[0].rightAnswerExplanation).toBe('Because 2+2=4');
+          expect(updated.questions[1].rightAnswerExplanation).toBeUndefined();
+        });
+
+        it('should return null for non-existent session', async () => {
+          const result = await updateQuestionExplanation(99999, 0, 'Explanation');
+          expect(result).toBeNull();
+        });
+
+        it('should return null for invalid question index (negative)', async () => {
+          const sessionId = await saveSession({
+            topicId: 'math',
+            timestamp: Date.now(),
+            score: 1,
+            totalQuestions: 1,
+            questions: [{ question: 'Q1', options: ['A'], correct: 0 }]
+          });
+
+          const result = await updateQuestionExplanation(sessionId, -1, 'Explanation');
+          expect(result).toBeNull();
+        });
+
+        it('should return null for invalid question index (out of bounds)', async () => {
+          const sessionId = await saveSession({
+            topicId: 'math',
+            timestamp: Date.now(),
+            score: 1,
+            totalQuestions: 1,
+            questions: [{ question: 'Q1', options: ['A'], correct: 0 }]
+          });
+
+          const result = await updateQuestionExplanation(sessionId, 5, 'Explanation');
+          expect(result).toBeNull();
+        });
+
+        it('should return null when session has no questions array', async () => {
+          const sessionId = await saveSession({
+            topicId: 'math',
+            timestamp: Date.now(),
+            score: 0,
+            totalQuestions: 0
+            // No questions array
+          });
+
+          const result = await updateQuestionExplanation(sessionId, 0, 'Explanation');
+          expect(result).toBeNull();
+        });
+
+        it('should preserve other question properties when adding explanation', async () => {
+          const sessionId = await saveSession({
+            topicId: 'science',
+            timestamp: Date.now(),
+            score: 1,
+            totalQuestions: 1,
+            questions: [{
+              question: 'What is H2O?',
+              options: ['Water', 'Air', 'Fire', 'Earth'],
+              correct: 0,
+              userAnswer: 0
+            }]
+          });
+
+          await updateQuestionExplanation(sessionId, 0, 'H2O is the chemical formula for water');        
+
+          const session = await getSession(sessionId);
+          expect(session.questions[0].question).toBe('What is H2O?');
+          expect(session.questions[0].correct).toBe(0);
+          expect(session.questions[0].userAnswer).toBe(0);
+          expect(session.questions[0].rightAnswerExplanation).toBe('H2O is the chemical formula for water');
+        });
+      });
+
+      describe('deleteSampleSessions', () => {
+        beforeEach(async () => {
+          // Clear everything including samples for a clean slate
+          await clearAllUserData();
+          await deleteSampleSessions();
+        });
+
+        it('should delete all sample sessions', async () => {
+          // Create mix of sample and non-sample sessions
+          await saveSession({ topicId: 'user1', timestamp: Date.now(), score: 5 });
+          await saveSession({ topicId: 'sample1', timestamp: Date.now(), score: 10, isSample: true });   
+          await saveSession({ topicId: 'sample2', timestamp: Date.now(), score: 8, isSample: true });    
+          await saveSession({ topicId: 'user2', timestamp: Date.now(), score: 7 });
+
+          let sessions = await getAllSessions();
+          expect(sessions).toHaveLength(4);
+
+          await deleteSampleSessions();
+
+          sessions = await getAllSessions();
+          expect(sessions).toHaveLength(2);
+          expect(sessions.every(s => !s.isSample)).toBe(true);
+        });
+
+        it('should do nothing when no sample sessions exist', async () => {
+          await saveSession({ topicId: 'user1', timestamp: Date.now(), score: 5 });
+          await saveSession({ topicId: 'user2', timestamp: Date.now(), score: 7 });
+
+          await deleteSampleSessions();
+
+          const sessions = await getAllSessions();
+          expect(sessions).toHaveLength(2);
+        });
+
+        it('should handle empty database', async () => {
+          // Should not throw
+          await deleteSampleSessions();
+
+          const sessions = await getAllSessions();
+          expect(sessions).toHaveLength(0);
+        });
+      });

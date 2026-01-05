@@ -9,7 +9,11 @@
     "src/utils/shuffle.js",
     "src/utils/formatters.js",
     "src/utils/storage.js",
-    "src/services/data-service.js"
+    "src/services/data-service.js",
+    "src/core/state.js",
+    "src/core/db.js",
+    "src/core/settings.js",
+    "src/core/features.js"
   ],
   "thresholds": {
     "high": 80,
