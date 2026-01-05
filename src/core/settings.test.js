@@ -1,5 +1,6 @@
   import { describe, it, expect, beforeEach, vi } from 'vitest';
-  import { getSettings, getSetting, saveSetting, saveSettings, DEFAULT_MODEL } from './settings.js';       
+  import { getSettings, getSetting, saveSetting, saveSettings, DEFAULT_MODEL } from './settings.js';
+  import { logger } from '../utils/logger.js';
 
   describe('Settings Utilities', () => {
 
@@ -82,6 +83,26 @@
         expect(stored.difficulty).toBe('easy');
         expect(stored.questionsPerQuiz).toBe('5');
       });
+
+      it('should handle localStorage errors gracefully and log the error', () => {
+        localStorage.clear();
+
+        const errorSpy = vi.spyOn(logger, 'error');
+
+        // Mock on Storage.prototype - this works in jsdom/happy-dom
+        const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+          throw new Error('QuotaExceededError');
+        });
+
+        expect(() => saveSetting('testKey', 'testValue')).not.toThrow();
+
+        expect(errorSpy).toHaveBeenCalledWith(
+          'Error saving setting',
+          { key: 'testKey', error: 'QuotaExceededError' }
+        );
+
+        setItemSpy.mockRestore();
+      });
     });
 
     describe('saveSettings', () => {
@@ -94,6 +115,25 @@
         const stored = JSON.parse(localStorage.getItem('quizmaster_settings'));
         expect(stored.defaultGradeLevel).toBe('high school');
         expect(stored.difficulty).toBe('hard');
+      });
+
+      it('should handle localStorage errors gracefully and log the error', () => {
+        localStorage.clear();
+
+        const errorSpy = vi.spyOn(logger, 'error');
+
+        const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+          throw new Error('QuotaExceededError');
+        });
+
+        expect(() => saveSettings({ theme: 'dark' })).not.toThrow();
+
+        expect(errorSpy).toHaveBeenCalledWith(
+          'Error saving settings',
+          { error: 'QuotaExceededError' }
+        );
+
+        setItemSpy.mockRestore();
       });
     });
 
