@@ -107,3 +107,8 @@ NoCoverage mutants eliminated (2 → 0). Remaining survivors are string literals
 4. **Know when to stop** - Some mutants (string literals in error messages, object shapes in logs) aren't worth killing. Testing that `logger.error('exact message')` was called is testing implementation, not behavior. Added error path tests to settings.js but didn't chase logging details.
 
 5. **Mock at the prototype level** - For browser APIs like `localStorage`, use `vi.spyOn(Storage.prototype, 'setItem')` instead of direct method replacement. This properly intercepts all calls through the prototype chain.
+
+6. **Not all surviving string mutants indicate problems** - Distinguish between:
+   - **Internal identifiers** (db store names, index names) - should NOT be i18n'd, surviving mutants are acceptable
+   - **Developer documentation** (feature flag descriptions) - not user-facing, surviving mutants are acceptable
+   - **User-facing strings** - SHOULD use i18n keys, surviving mutants would indicate a real gap
