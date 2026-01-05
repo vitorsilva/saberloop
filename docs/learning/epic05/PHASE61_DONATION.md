@@ -11,6 +11,7 @@
 | Date | Status | Notes |
 |------|--------|-------|
 | 2026-01-05 | **Plan Created** | Quick-win donation support for RevOps strategy |
+| 2026-01-05 | **Updated** | Switched to Liberapay (EU-based, EUR-native, 0% fees) |
 
 ---
 
@@ -38,7 +39,7 @@ Add a simple donation button to allow users to support Saberloop's development. 
 
 ### New Technologies & Concepts
 
-1. **Donation Platforms** - Ko-fi, Buy Me a Coffee, GitHub Sponsors comparison
+1. **Donation Platforms** - Liberapay, EU payment processing, SEPA transfers
 2. **Call-to-Action Design** - Non-intrusive support requests
 3. **Attribution Tracking** - Understanding which users donate (optional)
 4. **Community Building** - Engaging users beyond product usage
@@ -58,69 +59,93 @@ Before starting this phase, you should have:
 
 ## Platform Comparison
 
-### Ko-fi (Recommended)
+### Liberapay ⭐ (Recommended for EU)
 
 | Feature | Details |
 |---------|---------|
-| **Fees** | 0% for one-time donations, 5% for memberships |
-| **Setup time** | 5 minutes |
-| **Payment methods** | PayPal, Stripe (cards) |
-| **Minimum payout** | None (instant to PayPal) |
-| **Features** | One-time donations, memberships, shop |
+| **Based in** | France (EU) |
+| **Currency** | EUR native (no conversion!) |
+| **Fees** | 0% platform fee |
+| **Setup time** | 5-10 minutes |
+| **Payment methods** | SEPA transfer, credit card (Stripe) |
+| **Minimum payout** | None |
+| **Payout method** | SEPA transfer to EU bank (free!), PayPal, Stripe |
+| **Features** | Recurring donations, one-time tips, open-source friendly |
+| **Link format** | `https://liberapay.com/saberloop` |
+
+**Pros:**
+- **Zero fees** (completely free, funded by donations to Liberapay itself)
+- **EUR-native** (no USD conversion or foreign exchange fees)
+- **SEPA transfers** (cheap for EU users, free bank transfers)
+- Weekly payouts
+- Open-source, privacy-focused
+- Supports both recurring and one-time donations
+
+**Cons:**
+- Less popular than Ko-fi (smaller user base)
+- Requires EU bank account for SEPA payouts
+
+---
+
+### Alternative: Ko-fi (If you prefer popularity)
+
+| Feature | Details |
+|---------|---------|
+| **Currency** | USD-based (conversion to EUR) |
+| **Fees** | 0% for donations, 5% for memberships |
+| **Payment methods** | PayPal, Stripe |
 | **Link format** | `https://ko-fi.com/yourusername` |
 
-**Pros:** Zero fees on donations, easy setup, supports both one-time and recurring
-**Cons:** Requires PayPal for instant payout
+**Cons for EU:** Processes in USD, then converts to EUR (FX fees)
 
-### Buy Me a Coffee
+---
 
-| Feature | Details |
-|---------|---------|
-| **Fees** | 5% platform fee |
-| **Setup time** | 5 minutes |
-| **Payment methods** | Stripe (cards), PayPal |
-| **Minimum payout** | €30 |
-| **Features** | One-time donations, memberships, extras |
-| **Link format** | `https://buymeacoffee.com/yourusername` |
-
-**Pros:** Clean branding, popular platform
-**Cons:** 5% fee on all transactions, €30 minimum payout
-
-### GitHub Sponsors (If open-source)
+### Alternative: GitHub Sponsors (If open-source)
 
 | Feature | Details |
 |---------|---------|
 | **Fees** | 0% (GitHub covers fees) |
-| **Setup time** | 10 minutes (requires approval) |
-| **Payment methods** | Credit card, PayPal |
+| **Currency** | USD-based |
 | **Minimum payout** | $100 |
-| **Features** | Recurring only, tiers |
-| **Link format** | `https://github.com/sponsors/yourusername` |
 
-**Pros:** Zero fees, professional, GitHub integration
-**Cons:** Requires public repo, $100 minimum, approval process
+**Cons for EU:** USD conversion, high minimum payout
 
-**Recommendation:** **Ko-fi** for fastest setup with zero fees.
+---
+
+**Recommendation:** **Liberapay** for EU-based operation with EUR and zero fees.
 
 ---
 
 ## Implementation Plan
 
-### 61.1 Create Donation Platform Account
+### 61.1 Create Liberapay Account
 
 **Time:** 5-10 minutes
 
 **Steps:**
 
-1. Go to https://ko-fi.com (or chosen platform)
-2. Sign up with email
-3. Choose username: `saberloop` (or similar)
-4. Set up payment method (PayPal recommended for Ko-fi)
-5. Customize profile:
-   - Name: "Saberloop"
-   - Description: "Support the development of Saberloop, a free quiz app"
-   - Add logo/icon
-6. Get your donation link: `https://ko-fi.com/saberloop`
+1. **Go to https://liberapay.com**
+2. **Sign up** with email or GitHub account
+3. **Choose username:** `saberloop` (or similar)
+4. **Set up receiving method:**
+   - Add your Portuguese bank account (IBAN) for SEPA transfers
+   - Or add PayPal/Stripe as alternative
+   - **Recommended:** SEPA (free transfers, EUR-native)
+5. **Customize profile:**
+   - Display name: "Saberloop"
+   - Description: "Support the development of Saberloop, a free AI-powered quiz app"
+   - Add logo/avatar (use Saberloop icon)
+   - Set currency: **EUR**
+6. **Configure donation options:**
+   - Enable both recurring and one-time donations
+   - Suggested amounts: €1, €3, €5, €10 per week/month
+7. **Get your donation link:** `https://liberapay.com/saberloop`
+
+**Why SEPA?**
+- Free bank transfers within EU
+- EUR-native (no conversion)
+- Weekly payouts
+- No PayPal fees
 
 **No commit needed** (external platform)
 
@@ -150,13 +175,13 @@ Add a new section at the bottom of settings:
     </p>
 
     <a
-      href="https://ko-fi.com/saberloop"
+      href="https://liberapay.com/saberloop"
       target="_blank"
       rel="noopener noreferrer"
       class="btn btn-support"
       data-testid="donation-link"
     >
-      <span class="btn-icon">☕</span>
+      <span class="btn-icon">💝</span>
       ${t('settings.support.button')}
     </a>
 
@@ -189,7 +214,7 @@ Add a new section at the bottom of settings:
     "support": {
       "title": "Support Development",
       "message": "Saberloop is free and open to all. If you find it helpful, consider supporting its development.",
-      "button": "Buy Me a Coffee",
+      "button": "Support on Liberapay",
       "note": "Your support helps cover hosting and development costs. Thank you! ❤️"
     }
   }
@@ -203,7 +228,7 @@ Add a new section at the bottom of settings:
     "support": {
       "title": "Apoiar o Desenvolvimento",
       "message": "O Saberloop é gratuito e aberto a todos. Se achar útil, considere apoiar o seu desenvolvimento.",
-      "button": "Oferecer um Café",
+      "button": "Apoiar no Liberapay",
       "note": "O seu apoio ajuda a cobrir custos de hospedagem e desenvolvimento. Obrigado! ❤️"
     }
   }
@@ -295,8 +320,8 @@ Add a small mention at the bottom:
 <footer class="help-footer">
   <p>
     Enjoying Saberloop?
-    <a href="https://ko-fi.com/saberloop" target="_blank" rel="noopener">
-      Support development ☕
+    <a href="https://liberapay.com/saberloop" target="_blank" rel="noopener">
+      Support development 💝
     </a>
   </p>
 </footer>
@@ -327,7 +352,7 @@ test('donation link is visible in settings', async ({ page }) => {
 
   const donationLink = page.locator('[data-testid="donation-link"]');
   await expect(donationLink).toBeVisible();
-  await expect(donationLink).toHaveAttribute('href', /ko-fi\.com/);
+  await expect(donationLink).toHaveAttribute('href', /liberapay\.com/);
   await expect(donationLink).toHaveAttribute('target', '_blank');
 });
 ```
@@ -371,10 +396,10 @@ test('donation link is visible in settings', async ({ page }) => {
 If you want to encourage donations without being pushy:
 
 1. **Update landing page footer:**
-   - Small text: "Support this project ☕"
+   - Small text: "Support this project 💝"
 
 2. **Add to GitHub README:**
-   - "Like this project? [Buy me a coffee](https://ko-fi.com/saberloop)"
+   - "Like this project? [Support on Liberapay](https://liberapay.com/saberloop)"
 
 3. **Celebrate milestones:**
    - "Thanks to 10 supporters, we've covered hosting costs this month!"
@@ -382,14 +407,25 @@ If you want to encourage donations without being pushy:
 4. **Show impact:**
    - In Settings: "5 supporters this month → Hosting costs covered ✅"
 
+5. **Add Liberapay badge to README:**
+   ```markdown
+   [![Liberapay](https://img.shields.io/liberapay/receives/saberloop.svg?logo=liberapay)](https://liberapay.com/saberloop/)
+   ```
+
 ---
 
 ## Revenue Tracking
 
 **How to track:**
-1. Ko-fi dashboard shows donations
-2. Export monthly reports
-3. Add to RevOps spreadsheet manually
+1. Liberapay dashboard shows all donations
+2. Weekly email summaries
+3. Export data via Liberapay API (optional)
+4. Add to RevOps spreadsheet manually
+
+**SEPA Benefits:**
+- No fees on EUR transfers
+- Direct to Portuguese bank account
+- Weekly payouts (Fridays)
 
 **Expected performance:**
 - Month 1-2: €0-5 (slow start)
@@ -419,7 +455,7 @@ A: Not if done tastefully. Keep it in Settings/About only, never interrupt user 
 A: Not necessary. Premium features should be via license key (Phase 62). Donations are pure support.
 
 **Q: How much should I suggest?**
-A: Ko-fi defaults to €3-5 "coffees". This is appropriate for a free app.
+A: Liberapay allows custom amounts. Suggest €1, €3, €5, €10 per week or month. Start with €3/month as default.
 
 **Q: What if no one donates?**
 A: That's OK! It's zero effort to maintain, and even €5/month helps. Focus on Phase 62 for reliable revenue.
@@ -428,16 +464,18 @@ A: That's OK! It's zero effort to maintain, and even €5/month helps. Focus on 
 
 ## Future Enhancements (Out of Scope)
 
-1. **Donor Recognition** - Optional "Supporters" page
-2. **Progress Bar** - "€15/€31 monthly goal reached"
-3. **Donation Tiers** - Different support levels with recognition
-4. **Recurring Donations** - Monthly supporters (Ko-fi memberships)
+1. **Donor Recognition** - Optional "Supporters" page (Liberapay provides public supporter list)
+2. **Progress Bar** - "€15/€31 monthly goal reached" (can embed Liberapay widget)
+3. **Donation Tiers** - Liberapay supports different recurring amounts
+4. **Team Account** - Share donations with contributors (if you add team members)
 
 ---
 
 ## References
 
-- [Ko-fi Documentation](https://help.ko-fi.com/)
+- [Liberapay Documentation](https://liberapay.com/about/)
+- [Liberapay for Teams](https://liberapay.com/about/teams)
+- [SEPA Transfers Explained](https://www.europeanpaymentscouncil.eu/what-we-do/sepa-instant-credit-transfer)
 - [Ethical Donation Requests](https://www.indiehackers.com/post/asking-for-donations-without-being-annoying)
 - [Open Source Sustainability](https://opensource.guide/getting-paid/)
 

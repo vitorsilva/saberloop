@@ -11,12 +11,13 @@
 | Date | Status | Notes |
 |------|--------|-------|
 | 2026-01-05 | **Plan Created** | No-backend premium unlock via license keys for RevOps break-even |
+| 2026-01-05 | **Updated** | Switched to Paddle (EU VAT handling, EUR-native, lower fees) |
 
 ---
 
 ## Overview
 
-Implement a premium tier using license keys that users purchase externally (via Gumroad/Lemon Squeezy) and enter in the app to unlock features. This approach requires **ZERO backend infrastructure** - everything is validated client-side.
+Implement a premium tier using license keys that users purchase externally (via Paddle) and enter in the app to unlock features. This approach requires **ZERO backend infrastructure** - everything is validated client-side.
 
 **Motivation:**
 - Primary revenue driver for €31.25/month break-even goal
@@ -40,7 +41,7 @@ Implement a premium tier using license keys that users purchase externally (via 
 
 ### New Technologies & Concepts
 
-1. **External Payment Processors** - Gumroad/Lemon Squeezy for no-backend payments
+1. **External Payment Processors** - Paddle for EU-friendly payments with automatic VAT handling
 2. **License Key Generation** - Creating validation algorithms without backend
 3. **Client-Side Validation** - Secure-enough validation in browser
 4. **Feature Gating** - Conditional rendering based on premium status
@@ -58,7 +59,7 @@ Before starting this phase, you should have:
 - ✅ **Settings view** implemented
 - ✅ **Feature flags system** in place
 - ✅ Understanding of localStorage API
-- ✅ Decision on external payment platform (Gumroad recommended)
+- ✅ Decision on external payment platform (Paddle recommended for EU)
 
 ---
 
@@ -125,89 +126,176 @@ function calculateChecksum(data) {
 
 ## Payment Platform Comparison
 
-### Gumroad (Recommended)
+### Paddle ⭐ (Recommended for EU)
 
 | Feature | Details |
 |---------|---------|
-| **Fees** | 10% + payment processing (~3%) |
+| **Based in** | UK (serves EU) |
+| **Currency** | EUR native (no conversion!) |
+| **Fees** | 5% + payment processing (~2%) |
+| **Setup time** | 15-20 minutes |
+| **Payout** | EUR directly to Portuguese bank (SEPA) |
+| **Minimum payout** | €500 first time, then €50 |
+| **Features** | License keys, webhooks, EU VAT handling (Merchant of Record) |
+| **Dashboard** | Professional, detailed analytics |
+
+**Pros:**
+- **Merchant of Record** - Paddle handles ALL EU VAT compliance (huge win!)
+- **EUR-native** - No USD conversion, no FX fees
+- **Lower total fees** - 5% + ~2% processing = ~7% total (vs Gumroad 13%)
+- **SEPA payouts** - Direct to Portuguese bank in EUR
+- Built-in license key generation
+- Professional checkout experience
+- Webhooks for automation (future)
+
+**Cons:**
+- €500 minimum for first payout (but then €50)
+- Slightly more complex setup than Gumroad
+
+**Why Paddle for EU:**
+```
+Sale: €9.99
+- Paddle fee (5%): -€0.50
+- Payment processing: -€0.25
+- VAT handling: FREE (included)
+- Currency conversion: €0 (EUR native)
+= You receive: ~€9.24 (92.5%)
+
+vs Gumroad:
+Sale: €9.99
+- Gumroad fee (10%): -€1.00
+- Payment processing: -€0.30
+- USD → EUR FX: -€0.20
+= You receive: ~€8.49 (85%)
+
+Paddle advantage: +€0.75 per sale (9% more revenue!)
+```
+
+---
+
+### Alternative: Stripe Payment Links (DIY)
+
+| Feature | Details |
+|---------|---------|
+| **Currency** | EUR if configured |
+| **Fees** | 1.5% + €0.25 (EU cards) |
+| **Setup time** | 30 minutes |
+| **Payout** | Direct SEPA transfer |
+
+**Pros:** Lowest fees
+**Cons:** You handle VAT yourself (complex for EU), no built-in license key system
+
+---
+
+### Alternative: Gumroad (If you prefer simplicity)
+
+| Feature | Details |
+|---------|---------|
+| **Currency** | USD-based |
+| **Fees** | 10% + payment processing |
 | **Setup time** | 10 minutes |
-| **Payout** | Weekly or monthly |
-| **Features** | License keys, email delivery, EU VAT handling |
-| **Dashboard** | Simple, sales tracking |
 
-**Pros:**
-- Automatic license key generation
-- Handles EU VAT automatically
-- Email delivery to customers
-- No monthly fees
+**Cons for EU:** Higher fees, USD conversion, less professional
 
-**Cons:**
-- 10% platform fee
-- Less control over checkout
+---
 
-### Lemon Squeezy
-
-| Feature | Details |
-|---------|---------|
-| **Fees** | 5% + payment processing |
-| **Setup time** | 15 minutes |
-| **Payout** | Bi-weekly |
-| **Features** | License keys, webhooks, affiliate program |
-| **Dashboard** | Advanced, analytics |
-
-**Pros:**
-- Lower fees (5% vs 10%)
-- Better API/webhooks
-- More professional
-
-**Cons:**
-- More complex setup
-- Stricter requirements
-
-**Recommendation:** **Gumroad** for simplicity and automatic VAT handling.
+**Recommendation:** **Paddle** for EU operation - automatic VAT handling + EUR + lower fees.
 
 ---
 
 ## Implementation Plan
 
-### 62.1 Set Up Payment Platform
+### 62.1 Set Up Paddle Account
 
 **Time:** 15-30 minutes
 
 **Steps:**
 
-1. **Create Gumroad account**
-   - Go to https://gumroad.com
-   - Sign up with email
-   - Complete profile
+1. **Create Paddle account**
+   - Go to https://www.paddle.com
+   - Sign up as a seller
+   - Choose "Paddle Billing" (modern platform)
 
-2. **Create product: "Saberloop Premium"**
+2. **Complete seller verification**
+   - Business details (can use personal if sole trader)
+   - Tax information (Portuguese NIF)
+   - Bank account (Portuguese IBAN for SEPA payouts)
+   - Identity verification (passport/ID)
+
+3. **Configure payout settings**
+   - Currency: **EUR**
+   - Payout method: SEPA bank transfer
+   - Frequency: Monthly (once you hit €500, then €50 minimum)
+
+4. **Set up tax settings**
+   - Paddle handles EU VAT automatically (Merchant of Record)
+   - Confirm your country: Portugal
+   - No action needed - Paddle does VAT for you!
+
+**Wait time:** 1-2 business days for account approval
+
+**No commit needed** (external platform)
+
+---
+
+### 62.2 Create Product in Paddle
+
+**Time:** 15-20 minutes
+
+**Steps:**
+
+1. **Create product: "Saberloop Premium"**
+   - Go to Paddle Dashboard → Products → New Product
    - Name: "Saberloop Premium"
-   - Price: €9.99 (one-time)
    - Description:
      ```
      Unlock the full Saberloop experience:
 
-     ✨ No ads
+     ✨ Ad-free experience
      🎯 Advanced quiz features (coming soon)
      📊 Detailed analytics (coming soon)
      🚀 Priority support
 
      One-time payment, lifetime access.
-
-     After purchase, you'll receive a license key to enter in the app.
+     After purchase, you'll receive a license key via email.
      ```
 
+2. **Set pricing**
+   - Price: €9.99
+   - Currency: EUR
+   - Type: One-time purchase (not subscription)
+
 3. **Enable license key generation**
-   - In product settings → License keys
-   - Enable "Generate a unique license key"
-   - Format: `SABER-[random]-[random]-[random]`
+   - In product settings → License Management
+   - Enable "Generate license keys"
+   - Format: Custom format `SABER-XXXX-YYYY-ZZZZ`
+   - Or use Paddle's default (you'll validate format client-side anyway)
 
-4. **Configure email delivery**
-   - Gumroad automatically sends key to customer email
-   - Customize email template (optional)
+4. **Configure email notifications**
+   - Paddle automatically emails license key to customer
+   - Customize email template:
+     ```
+     Thank you for purchasing Saberloop Premium!
 
-5. **Test purchase** (use test mode)
+     Your license key: [LICENSE_KEY]
+
+     To activate:
+     1. Open Saberloop app
+     2. Go to Settings
+     3. Scroll to "Premium" section
+     4. Enter your license key
+
+     Questions? Reply to this email.
+     ```
+
+5. **Create checkout link**
+   - Generate checkout URL for the product
+   - Example: `https://buy.paddle.com/product/saberloop-premium`
+   - You'll use this link in the app
+
+6. **Test purchase** (use Paddle's test mode)
+   - Switch to sandbox environment
+   - Make test purchase
    - Verify license key is generated
    - Verify email is sent
 
@@ -215,7 +303,7 @@ function calculateChecksum(data) {
 
 ---
 
-### 62.2 Create License Key Validator
+### 62.3 Create License Key Validator
 
 **Time:** 1-2 hours
 
@@ -353,7 +441,7 @@ export function getPremiumStatus() {
 
 ---
 
-### 62.3 Add License Key Input to Settings
+### 62.4 Add License Key Input to Settings
 
 **Time:** 1-2 hours
 
@@ -417,7 +505,7 @@ import { isPremium, activatePremium, getPremiumStatus } from '../services/licens
       </div>
 
       <a
-        href="https://gumroad.com/l/saberloop-premium"
+        href="https://buy.paddle.com/product/saberloop-premium"
         target="_blank"
         rel="noopener noreferrer"
         class="btn btn-primary btn-premium"
@@ -425,6 +513,11 @@ import { isPremium, activatePremium, getPremiumStatus } from '../services/licens
       >
         ${t('settings.premium.upgrade.button')}
       </a>
+
+      <p class="secure-payment-note">
+        <span class="secure-icon">🔒</span>
+        Secure checkout by Paddle. VAT included for EU customers.
+      </p>
 
       <div class="divider">
         <span>${t('settings.premium.divider')}</span>
@@ -489,7 +582,7 @@ if (!isPremium()) {
 
 ---
 
-### 62.4 Implement Feature Gating
+### 62.5 Implement Feature Gating
 
 **Time:** 1-2 hours
 
@@ -551,7 +644,7 @@ export function hasFeature(featureName) {
 
 ---
 
-### 62.5 Add i18n Translations
+### 62.6 Add i18n Translations
 
 **Time:** 30 minutes
 
@@ -635,7 +728,7 @@ export function hasFeature(featureName) {
 
 ---
 
-### 62.6 Add Premium Styles
+### 62.7 Add Premium Styles
 
 **Time:** 30-45 minutes
 
@@ -860,7 +953,7 @@ export function hasFeature(featureName) {
 
 ---
 
-### 62.7 Testing
+### 62.8 Testing
 
 **Unit Tests** (1-2 hours)
 
@@ -1026,18 +1119,29 @@ test.describe('Premium License', () => {
 
 **How to track sales:**
 
-1. **Gumroad Dashboard**
+1. **Paddle Dashboard**
    - Shows all sales in real-time
-   - Export monthly reports (CSV)
+   - Detailed analytics (conversion, revenue, geography)
+   - Export monthly reports (CSV, API)
 
-2. **Manual tracking**
+2. **Paddle Webhooks** (optional, future)
+   - Real-time notifications of purchases
+   - Can auto-update RevOps spreadsheet
+
+3. **Manual tracking**
    - Add sales to RevOps spreadsheet
    - Track conversion rate: sales / MAU
 
-3. **Key metrics to watch**
+4. **Key metrics to watch**
    - Conversion rate (target: 10-15%)
    - Average revenue per user (ARPU)
    - Monthly recurring revenue (from new users)
+   - VAT collected (handled by Paddle, FYI only)
+
+**Payout schedule:**
+- First payout: When you reach €500
+- Subsequent payouts: Monthly, minimum €50
+- Direct SEPA transfer to Portuguese bank (free, EUR)
 
 ---
 
@@ -1045,9 +1149,10 @@ test.describe('Premium License', () => {
 
 ### Issue: Users can't find license key after purchase
 **Solution:**
-- Check Gumroad email delivery settings
-- Add "Check your email" message in app
+- Check Paddle email delivery settings
+- Add "Check your email" message in app after purchase
 - Provide support email for manual key resend
+- Paddle dashboard shows all issued keys (can resend manually)
 
 ### Issue: Key validation too strict/loose
 **Solution:**
@@ -1057,9 +1162,10 @@ test.describe('Premium License', () => {
 
 ### Issue: Users want refunds
 **Solution:**
-- Gumroad handles refunds automatically
-- Deactivated keys still in localStorage (acceptable)
-- Consider grace period for genuine issues
+- Paddle handles refunds (14-day money-back guarantee recommended)
+- Configure refund policy in Paddle dashboard
+- Deactivated keys still in localStorage (acceptable at small scale)
+- Paddle's Merchant of Record status simplifies refunds (they handle disputes)
 
 ---
 
@@ -1085,17 +1191,24 @@ This phase is **Part 3** (PRIMARY DRIVER) of the hybrid monetization strategy:
 **Combined target:** €36-70/month (exceeds €31.25 break-even)
 
 **With 10% conversion at 50 MAU:**
-- 5 premium users × €9.99 = €50/month
+- 5 premium users × €9.24 (after Paddle fees) = €46.20/month
 - AdSense: €5/month
-- Donations: €5/month
-- **Total: €60/month** ✅ Break-even achieved + 92% margin
+- Donations (Liberapay): €5/month
+- **Total: €56.20/month** ✅ Break-even achieved + 80% margin
+
+**Fee comparison:**
+- Paddle (EUR): €9.99 → €9.24 (92.5% to you)
+- vs Gumroad (USD): €9.99 → €8.49 (85% to you)
+- **Extra €0.75 per sale with Paddle** = €3.75/month more with 5 sales
 
 ---
 
 ## References
 
-- [Gumroad Documentation](https://help.gumroad.com/)
-- [Lemon Squeezy Docs](https://docs.lemonsqueezy.com/)
+- [Paddle Documentation](https://developer.paddle.com/getting-started/overview)
+- [Paddle License Management](https://developer.paddle.com/concepts/sell/licenses)
+- [EU VAT & Merchant of Record](https://www.paddle.com/resources/merchant-of-record)
+- [SEPA Transfers](https://www.paddle.com/resources/sepa)
 - [License Key Best Practices](https://www.gamasutra.com/blogs/DavidStaack/20180515/317925/License_key_generation_and_validation.php)
 - [Client-Side Validation Tradeoffs](https://stackoverflow.com/questions/6567869/what-is-the-best-way-to-validate-a-license-key)
 
