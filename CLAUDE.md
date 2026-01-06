@@ -10,11 +10,12 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 - **Epic 02: QuizMaster V1** - Initial AI-powered quiz application with mock API
 - **Epic 03: QuizMaster V2** - Production-ready version with real backend integration ✅ **Complete**
 - **Epic 04: Saberloop V1** - Maintenance, enhancements, and new functionality ✅ **Complete**
-- **Epic 05: Growth & Excellence** - User acquisition, testing excellence ✅ **Current**
+- **Epic 05: Growth & Excellence** - User acquisition, testing excellence ✅ **Complete**
+- **Epic 06: Sharing Features** - Learning & Party modes with social quiz sharing ⏳ **Current**
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 05 | Phase 5 ⏳ (Play Store - waiting 5 days for production) | Phase 10 ✅ | Phase 15 ✅ | Phase 20 ✅ | Phase 25 ✅ | Phase 30 ✅ | Phase 40 ✅ | Phase 45 ✅ | Phase 46 ✅ | Phase 47 ✅ | Phase 48 ✅ | Phase 49 ✅ | Phase 50 ✅ | Phase 51 ✅ | Phase 52 ✅ | Phase 53 ✅ | Phase 60 ✅ | Phase 80 ✅ | Phase 85 ✅ | Phase 86 ✅ | Phase 87 ✅
+**Current Status:** Epic 06 | Phase 1 ⏳ (Quiz Sharing) | Phase 2 (Mode Toggle) | Phase 3 (Party Session)
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
@@ -166,7 +167,9 @@ When user says "what's next" or similar:
    - Epic 01 (Infrastructure): `docs/learning/epic01_infrastructure/LEARNING_PLAN.md` and `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - Epic 02 (QuizMaster V1): `docs/learning/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and phase files
    - Epic 03 (QuizMaster V2): `docs/learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and phase files ✅ Complete
-   - Epic 04 (Saberloop V1): `docs/learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md` and `docs/learning/epic04_saberloop_v1/PHASE*_*.md` files ✅ Current
+   - Epic 04 (Saberloop V1): `docs/learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md` and phase files ✅ Complete
+   - Epic 05 (Growth & Excellence): `docs/learning/epic05/EPIC5_PLAN.md` and phase files ✅ Complete
+   - Epic 06 (Sharing Features): `docs/learning/epic06_sharing/EPIC6_SHARING_PLAN.md` and phase files ⏳ Current
 2. Identify current phase and next step
 3. **Present the next topic and ask if they want to proceed**
 4. Once confirmed, **teach it step-by-step** (don't execute autonomously)
@@ -214,7 +217,9 @@ When the user asks **"what's next"** or similar phrases (e.g., "what should I do
    - **Epic 01 (Infrastructure)**: Read `docs/learning/epic01_infrastructure/LEARNING_PLAN.md` and check `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - **Epic 02 (QuizMaster V1)**: Read `docs/learning/epic02_quizmaster_v1/QUIZMASTER_V1_LEARNING_PLAN.md` and related phase files
    - **Epic 03 (QuizMaster V2)**: Read `docs/learning/epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md` and related phase files ✅ Complete
-   - **Epic 04 (Saberloop V1)**: Read `docs/learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md` and related phase files ✅ Current
+   - **Epic 04 (Saberloop V1)**: Read `docs/learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md` and related phase files ✅ Complete
+   - **Epic 05 (Growth & Excellence)**: Read `docs/learning/epic05/EPIC5_PLAN.md` and related phase files ✅ Complete
+   - **Epic 06 (Sharing Features)**: Read `docs/learning/epic06_sharing/EPIC6_SHARING_PLAN.md` and phase files ⏳ Current
 2. Identify the current phase and next steps in the learning progression
 3. Guide the user through the next appropriate task or learning objective
 
@@ -226,8 +231,9 @@ When the user says **"that's a wrap"**, **"let's call it a day"**, **"let's paus
    - **Epic 01**: `docs/learning/epic01_infrastructure/PHASE*_LEARNING_NOTES.md`
    - **Epic 02**: Create/update learning notes in `docs/learning/epic02_quizmaster_v1/`
    - **Epic 03**: `docs/learning/epic03_quizmaster_v2/PHASE*_LEARNING_NOTES.md` ✅ Complete
-   - **Epic 04**: `docs/learning/epic04_saberloop_v1/PHASE*_LEARNING_NOTES.md` ✅ Current
-   - **Epic 05**: `docs/learning/epic05/PHASE*_LEARNING_NOTES.md` ✅ Current
+   - **Epic 04**: `docs/learning/epic04_saberloop_v1/PHASE*_LEARNING_NOTES.md` ✅ Complete
+   - **Epic 05**: `docs/learning/epic05/PHASE*_LEARNING_NOTES.md` ✅ Complete
+   - **Epic 06**: `docs/learning/epic06_sharing/PHASE*_LEARNING_NOTES.md` ⏳ Current
 2. Follow the structure in "Learning Notes: What to Capture" section - include progress, difficulties, errors, fixes, and learnings
 3. Ensure all recent work is properly documented so progress can be easily resumed
 
@@ -312,6 +318,7 @@ demo-pwa-app/
 │   │   ├── epic03_quizmaster_v2/
 │   │   ├── epic04_saberloop_v1/
 │   │   ├── epic05/            # Growth & Excellence
+│   │   ├── epic06_sharing/    # Learning & Party Modes (current)
 │   │   └── parking_lot/       # Optional/deferred phases
 │   └── product-info/          # Product assets (mockups, logos)
 ├── src/
@@ -514,7 +521,7 @@ Located in `docs/learning/epic04_saberloop_v1/`:
 - **PHASE50_MAESTRO_TESTING.md**: Expanded mobile UI testing
 - **PHASE60_MONETIZATION.md**: Google AdSense integration
 
-### Epic 05: Growth & Excellence ✅ Current
+### Epic 05: Growth & Excellence ✅ Complete
 Located in `docs/learning/epic05/`:
 - **EPIC5_PLAN.md**: Complete Epic 5 multi-track plan
 - **DATA_DELETION_FEATURE.md**: User data privacy and deletion
@@ -524,6 +531,14 @@ Located in `docs/learning/epic05/`:
 - **GOOGLE_PLAY_STORE_UPDATE.md**: App store listing updates
 - **PHASE86_MUTATION_TESTING_EXPANSION.md**: Mutation testing wave 2 (core infrastructure)
 - **PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md**: Mutation testing wave 3 (API layer)
+
+### Epic 06: Sharing Features ⏳ Current
+Located in `docs/learning/epic06_sharing/`:
+- **EPIC6_SHARING_PLAN.md**: Complete Epic 6 plan with development standards
+- **EXPLORATION.md**: Initial exploration and research
+- **PHASE1_QUIZ_SHARING.md**: Share quiz via URL (P0 - Core enabler)
+- **PHASE2_MODE_TOGGLE.md**: Learning/Party mode toggle + theming (P1)
+- **PHASE3_PARTY_SESSION.md**: Real-time party sessions with WebRTC (P2)
 
 When making changes, respect the learning-focused nature of the project. Keep code simple and well-commented rather than introducing complex patterns or dependencies.
 
