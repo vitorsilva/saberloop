@@ -43,6 +43,7 @@ From the user's initial brainstorming:
 
 ## Related Documentation
 
+- [Quiz Generator Exploration](../../product-info/quiz-generator-exploration.md) - Initial product vision and feature ideas
 - [Decentralized Storage Investigation](./investigation_decentralized_storage.md) - P2P approaches including IPFS, Pears/Hypercore, and "Pear Lite" hybrid
 - [Phase 70 V2: Sharing Features](./PHASE70_V2_SHARING_FEATURES.md) - Challenge a Friend, Achievement Levels, etc.
 
