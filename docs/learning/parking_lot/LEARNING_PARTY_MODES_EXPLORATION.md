@@ -174,7 +174,105 @@ All devices calculate independently → same result
 
 **Date:** 2026-01-06
 
-*(To be filled during iteration)*
+#### Technical Feasibility Matrix
+
+| Component | Difficulty | Risk | Notes |
+|-----------|------------|------|-------|
+| Mode toggle + color themes | Low | Low | CSS variables, simple state |
+| Q&A mode labeling | Low | Low | Schema addition to IndexedDB |
+| Cryptographic ID generation | Low | Low | Web Crypto API, store in IndexedDB |
+| QR code for ID sharing | Low | Low | Libraries exist (qrcode.js) |
+| **WebRTC data channels** | Medium | Medium | Browser support good, NAT traversal tricky |
+| Signaling server (VPS) | Medium | Low | PHP/WebSocket on LAMP stack |
+| Time sync across devices | Medium | Medium | Clock drift, need consensus mechanism |
+| Hypercore in browser | High | High | Limited browser support, may need polyfills |
+| Group state consensus | High | High | Distributed systems are hard |
+
+---
+
+#### Deep Dive: WebRTC Data Channels
+
+**What is WebRTC?**
+
+WebRTC (Web Real-Time Communication) is a browser API for direct peer-to-peer connections. Originally for video/audio, it also supports data channels (arbitrary data like quiz state).
+
+```
+Traditional HTTP:              WebRTC (after connection):
+Phone A ──► Server ──► Phone B    Phone A ◄──────► Phone B
+       (all data via server)            (direct, no server)
+```
+
+**Browser Support:**
+
+| Browser | Support |
+|---------|---------|
+| Chrome/Edge | Excellent |
+| Firefox | Excellent |
+| Safari/iOS | Good (some quirks) |
+| Android WebView | Good |
+
+~95% of users have WebRTC support. Browser support is NOT the risk.
+
+**The NAT Traversal Problem (The Real Risk):**
+
+Phones are behind routers/firewalls with private IPs. WebRTC uses ICE to solve this:
+
+- **STUN server** - Discovers public IP (free, Google provides these)
+- **TURN server** - Relays data if direct fails (costs money)
+
+| Scenario | Success Rate |
+|----------|--------------|
+| Same WiFi network | ~99% |
+| Different networks, good NAT | ~85% |
+| Symmetric NAT (strict routers) | ~60% |
+| Corporate firewalls | ~40% |
+
+**Good news**: Party mode on same WiFi = very high success rate.
+
+---
+
+#### WebRTC vs P2P vs Pears - Clarification
+
+| Technology | What It Is | Layer |
+|------------|------------|-------|
+| **P2P** | A concept/pattern | Architecture pattern |
+| **WebRTC** | Browser API for P2P connections | Transport layer |
+| **Pears/Hypercore** | P2P data sync protocol | Application layer |
+
+**Relationship:**
+```
+┌─────────────────────────────────────────────────┐
+│  YOUR APP LOGIC (quiz sync, scoring, groups)   │
+├─────────────────────────────────────────────────┤
+│  PEARS/HYPERCORE (optional)                    │
+│  - Append-only logs, conflict resolution       │
+├─────────────────────────────────────────────────┤
+│  TRANSPORT: WebRTC | hyperswarm | WebSocket    │
+└─────────────────────────────────────────────────┘
+```
+
+| Aspect | WebRTC | Pears/Hypercore |
+|--------|--------|-----------------|
+| Purpose | Transport bytes | Structure and sync data |
+| Built into browser? | Yes | No (needs library) |
+| Handles offline? | No | Yes |
+| Conflict resolution? | No | Yes |
+| Maturity in browsers | Excellent | Experimental |
+
+**Implication for Pear Lite:**
+- WebRTC for real-time party sync (proven, works today)
+- Hypercore for async content sharing (add later)
+- VPS fallback for reliability
+
+---
+
+#### Open Questions (Q10, Q11)
+
+- **Q10**: Start with WebRTC-only for party mode, add Hypercore later?
+- **Q11**: TURN server strategy for ~15% connection failures?
+  - a) VPS as TURN relay
+  - b) Free/cheap TURN service (Twilio, Metered.ca)
+  - c) Accept failures, show "couldn't connect"
 
 ---
 
