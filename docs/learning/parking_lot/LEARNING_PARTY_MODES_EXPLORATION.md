@@ -353,6 +353,49 @@ Phone C clock: 11:59:58.200  (1.8 sec behind)
 
 ---
 
+#### Deep Dive: Hypercore & Group State Consensus
+
+**Hypercore in Browser:**
+
+Hypercore = append-only log (like blockchain but simpler). Each entry cryptographically linked.
+
+| Library | Status |
+|---------|--------|
+| `hypercore` (Node.js) | Mature |
+| `hyperswarm-web` | Experimental |
+| `hypercore-web` | Early, not production-ready |
+
+**Decision**: Defer Hypercore to later phase. Use simple JSON sync over WebRTC for MVP.
+
+**Group State Consensus:**
+
+The hard problem: In P2P without central server, how do peers agree on scores, current question, who's in the group?
+
+| Approach | Complexity | Notes |
+|----------|------------|-------|
+| Coordinator is source of truth | Medium | Session creator holds official state |
+| CRDT | High | True decentralization |
+| Blockchain-style | Very High | Overkill |
+
+**Decisions (Q16, Q17):**
+
+| Question | Decision | Rationale |
+|----------|----------|-----------|
+| **Q16**: Coordinator as source of truth for MVP? | Yes | Simple, works; coordinator disconnect = session ends |
+| **Q17**: Future direction? | Plan true P2P later | MVP uses coordinator; explore CRDTs/Hypercore in future |
+
+**MVP Architecture Summary:**
+
+```
+Session Creator = Coordinator
+├── Holds official state (scores, current question)
+├── Peers send answers TO coordinator
+├── Coordinator broadcasts updates TO all peers
+└── If coordinator disconnects → session ends (acceptable for MVP)
+```
+
+---
+
 ### Iteration 4: Contrarian Thinking
 
 **Date:** 2026-01-06
