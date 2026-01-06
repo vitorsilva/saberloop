@@ -285,6 +285,34 @@ The "parking lot" is a place to document ideas, experimental features, and optio
 
 ---
 
+### [Phase 88: Knip Configuration Enhancements](./PHASE88_KNIP_ENHANCEMENTS.md) ⭐ **Ready to Implement**
+
+**Status:** Parked (moved from Epic 5 on 2026-01-06)
+
+**What it is:**
+- Fix false positives in Knip (src/types.js, start binary)
+- Add CI integration with GitHub Actions annotations
+- Enable caching for faster runs (10-40% improvement)
+- Add production mode for stricter analysis
+
+**Why it's optional:**
+- ✅ Current Knip setup works (just has minor warnings)
+- ⚠️ Low priority enhancement
+- ⚠️ Not blocking any features
+
+**Why you might want it:**
+- 🔧 **Zero false positives** - Clean lint runs
+- 🚀 **Faster CI** - Caching speeds up runs
+- 📝 **Better PR feedback** - Inline GitHub annotations
+- 🔒 **Stricter prod analysis** - Production mode
+
+**When to revisit:**
+- Want cleaner CI output
+- Improving developer experience
+- Before onboarding contributors
+
+---
+
 ## How to Use This Folder
 
 ### If You're Planning Epic 3
@@ -362,7 +390,7 @@ If you have ideas for optional features:
 - 🅿️ Features that **might be revisited later**
 - 🅿️ Experiments that **depend on external factors**
 
-**Current count:** 9 ideas remaining (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection)
+**Current count:** 10 ideas remaining (Azure Functions, Architecture Testing, OAuth, OpenRouter Migration, PHP VPS, iOS App Store, Internationalization, OpenRouter Onboarding UX, Dead Code Detection, Knip Enhancements)
 
 **Status:** All documented and ready to implement when desired
 
@@ -381,7 +409,7 @@ The following items have been promoted from parking lot to **Epic 5: Growth & Ex
 
 ---
 
-**Last Updated:** 2025-12-30
+**Last Updated:** 2026-01-06
 **Location:** `docs/parking_lot/`
 **Related:**
 - [Epic 3 Plan](../epic03_quizmaster_v2/EPIC3_QUIZMASTER_V2_PLAN.md)

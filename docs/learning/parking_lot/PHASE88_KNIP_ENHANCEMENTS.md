@@ -4,9 +4,10 @@
 
 Enhance Knip (dead code detection) configuration to leverage more of its capabilities, improving CI feedback, developer experience, and code quality enforcement.
 
-**Status:** Planning Complete
+**Status:** Parked (moved from Epic 5 on 2026-01-06)
 **Priority:** Low (Developer Experience)
 **Estimated Effort:** Small (~1-2 hours)
+**Reason Parked:** Low priority, not blocking any features
 
 ---
 
