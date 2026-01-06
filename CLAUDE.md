@@ -12,6 +12,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 - **Epic 04: Saberloop V1** - Maintenance, enhancements, and new functionality ✅ **Complete**
 - **Epic 05: Growth & Excellence** - User acquisition, testing excellence ✅ **Complete**
 - **Epic 06: Sharing Features** - Learning & Party modes with social quiz sharing ⏳ **Current**
+- **Epic 07: Monetization** - Revenue streams (AdSense, donations, premium features)
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
@@ -170,6 +171,7 @@ When user says "what's next" or similar:
    - Epic 04 (Saberloop V1): `docs/learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md` and phase files ✅ Complete
    - Epic 05 (Growth & Excellence): `docs/learning/epic05/EPIC5_PLAN.md` and phase files ✅ Complete
    - Epic 06 (Sharing Features): `docs/learning/epic06_sharing/EPIC6_SHARING_PLAN.md` and phase files ⏳ Current
+   - Epic 07 (Monetization): `docs/learning/epic07_monetization/EPIC7_MONETIZATION_PLAN.md` and phase files
 2. Identify current phase and next step
 3. **Present the next topic and ask if they want to proceed**
 4. Once confirmed, **teach it step-by-step** (don't execute autonomously)
@@ -220,6 +222,7 @@ When the user asks **"what's next"** or similar phrases (e.g., "what should I do
    - **Epic 04 (Saberloop V1)**: Read `docs/learning/epic04_saberloop_v1/EPIC4_SABERLOOP_V1_PLAN.md` and related phase files ✅ Complete
    - **Epic 05 (Growth & Excellence)**: Read `docs/learning/epic05/EPIC5_PLAN.md` and related phase files ✅ Complete
    - **Epic 06 (Sharing Features)**: Read `docs/learning/epic06_sharing/EPIC6_SHARING_PLAN.md` and phase files ⏳ Current
+   - **Epic 07 (Monetization)**: Read `docs/learning/epic07_monetization/EPIC7_MONETIZATION_PLAN.md` and related phase files
 2. Identify the current phase and next steps in the learning progression
 3. Guide the user through the next appropriate task or learning objective
 
@@ -234,6 +237,7 @@ When the user says **"that's a wrap"**, **"let's call it a day"**, **"let's paus
    - **Epic 04**: `docs/learning/epic04_saberloop_v1/PHASE*_LEARNING_NOTES.md` ✅ Complete
    - **Epic 05**: `docs/learning/epic05/PHASE*_LEARNING_NOTES.md` ✅ Complete
    - **Epic 06**: `docs/learning/epic06_sharing/PHASE*_LEARNING_NOTES.md` ⏳ Current
+   - **Epic 07**: `docs/learning/epic07_monetization/PHASE*_LEARNING_NOTES.md`
 2. Follow the structure in "Learning Notes: What to Capture" section - include progress, difficulties, errors, fixes, and learnings
 3. Ensure all recent work is properly documented so progress can be easily resumed
 
@@ -319,6 +323,7 @@ demo-pwa-app/
 │   │   ├── epic04_saberloop_v1/
 │   │   ├── epic05/            # Growth & Excellence
 │   │   ├── epic06_sharing/    # Learning & Party Modes (current)
+│   │   ├── epic07_monetization/ # Revenue streams (AdSense, donations, premium)
 │   │   └── parking_lot/       # Optional/deferred phases
 │   └── product-info/          # Product assets (mockups, logos)
 ├── src/
@@ -519,7 +524,6 @@ Located in `docs/learning/epic04_saberloop_v1/`:
 - **PHASE30_I18N.md**: Internationalization (multi-language support)
 - **PHASE40_TELEMETRY.md**: Self-hosted observability solution
 - **PHASE50_MAESTRO_TESTING.md**: Expanded mobile UI testing
-- **PHASE60_MONETIZATION.md**: Google AdSense integration
 
 ### Epic 05: Growth & Excellence ✅ Complete
 Located in `docs/learning/epic05/`:
@@ -539,6 +543,14 @@ Located in `docs/learning/epic06_sharing/`:
 - **PHASE1_QUIZ_SHARING.md**: Share quiz via URL (P0 - Core enabler)
 - **PHASE2_MODE_TOGGLE.md**: Learning/Party mode toggle + theming (P1)
 - **PHASE3_PARTY_SESSION.md**: Real-time party sessions with WebRTC (P2)
+
+### Epic 07: Monetization
+Located in `docs/learning/epic07_monetization/`:
+- **EPIC7_MONETIZATION_PLAN.md**: Complete Epic 7 plan for revenue streams
+- **PHASE60_ADSENSE_MONETIZATION.md**: Google AdSense integration (primary spec)
+- **PHASE60_MONETIZATION_REFERENCE.md**: Detailed code reference for AdSense
+- **PHASE61_DONATION.md**: User donation support
+- **PHASE62_LICENSE_KEY_PREMIUM.md**: Premium features with license keys
 
 When making changes, respect the learning-focused nature of the project. Keep code simple and well-commented rather than introducing complex patterns or dependencies.
 
