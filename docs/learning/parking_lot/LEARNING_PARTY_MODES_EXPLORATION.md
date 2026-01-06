@@ -400,7 +400,53 @@ Session Creator = Coordinator
 
 **Date:** 2026-01-06
 
-*(To be filled during iteration)*
+#### Risks Identified
+
+| Risk | Why It Could Fail | Severity |
+|------|-------------------|----------|
+| **Feature creep** | Two modes + P2P + groups + scoring = massive scope | High |
+| **No one gathers to play** | Unvalidated demand | High |
+| **P2P is overkill** | Most parties = same WiFi | Medium |
+| **Kahoot brand power** | Teachers already know Kahoot | Medium |
+| **AI content quality** | Party questions may not be fun enough | High |
+| **Coordinator disconnect** | Game ends abruptly | Medium |
+
+#### Decisions (Q18, Q19, Q20)
+
+| Question | Answer |
+|----------|--------|
+| **Q18**: Which risk concerns most? | Feature creep - building for no one |
+| **Q19**: Validated party demand? | Yes, some users mentioned it |
+| **Q20**: MVP feature priority? | 1) Share quiz via URL (async), 2) Real-time party |
+
+#### Key Insight: Collaborative Content Creation
+
+> "Generating quizzes takes ~1 min with free LLMs. If a group of users each generates 1 quiz and shares with the group, we make 1 min an acceptable time."
+
+**This reframes the value proposition:**
+
+```
+Old thinking: One person generates all content (slow)
+New thinking: Each person contributes one quiz (distributed effort)
+
+5 friends × 1 quiz each × 1 min = 5 quizzes ready in parallel
+vs
+1 person × 5 quizzes × 1 min = 5 minutes of waiting
+```
+
+**Implication for MVP:**
+- URL sharing is MORE important than real-time sync
+- Enables content pooling before party starts
+- Real-time play can use pre-shared content
+
+#### MVP Roadmap (Prioritized)
+
+| Phase | Feature | Why |
+|-------|---------|-----|
+| **1** | Share quiz via URL | Enables collaborative content creation |
+| **2** | Mode toggle + theming | Visual identity for party mode |
+| **3** | Real-time party session | Synchronous play with shared content |
+| **4** | Friend discovery + groups | Persistent social features |
 
 ---
 
