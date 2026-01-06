@@ -47,21 +47,52 @@ Transform Saberloop from a solo learning tool into a social quiz platform with t
 
 ### Technical Approach
 
-**Option A: Stateless URL (Base64 encoded)**
+**Decision**: Option A - Stateless URL (Base64 encoded)
+
 ```
 https://saberloop.com/app/quiz#eyJxdWVzdGlvbnMiOlsuLi5dfQ==
 ```
-- Pros: No server storage, works offline, simple
-- Cons: URL can get long for large quizzes
 
-**Option B: Server-stored with short ID**
-```
-https://saberloop.com/app/quiz/ABC123
-```
-- Pros: Short URLs, analytics possible
-- Cons: Requires VPS storage, data retention policy
+**Feasibility Analysis (based on real quiz data):**
 
-**Recommendation**: Start with Option A (stateless). Add Option B later if URLs are too long.
+| Data Scenario | JSON Size | Compressed | Base64 URL | Feasible? |
+|---------------|-----------|------------|------------|-----------|
+| 5 questions WITH explanations | ~3,200 bytes | ~1,800 bytes | ~2,400 chars | ⚠️ Borderline |
+| 5 questions WITHOUT explanations | ~1,200 bytes | ~700 bytes | ~1,000 chars | ✅ Good |
+| 10 questions WITHOUT explanations | ~2,200 bytes | ~1,300 bytes | ~1,800 chars | ✅ Good |
+
+**URL Length Limits:**
+- Chrome: ~2MB (no practical limit)
+- Safari: ~80,000 chars
+- WhatsApp: ~65,000 chars
+- Safe universal limit: ~2,000 chars
+
+**Decisions (Q24, Q25):**
+
+| Question | Decision | Rationale |
+|----------|----------|-----------|
+| Include explanations? | No - exclude from share payload | Keeps URLs short; recipient can play without them |
+| If URL too long? | Show error + track via telemetry | MVP simplicity; measure to inform future decisions |
+
+### Share Payload Schema (Minimal)
+
+```javascript
+// What gets encoded in URL (explanations EXCLUDED)
+{
+  t: "topic string",           // topic (shortened key)
+  g: "middle school",          // gradeLevel
+  q: [                         // questions
+    {
+      q: "Question text?",     // question
+      o: ["A", "B", "C", "D"], // options
+      c: 2,                    // correct answer index
+      d: "easy"                // difficulty (optional)
+    }
+  ]
+}
+```
+
+**Key optimization**: Use short property names (t, g, q, o, c, d) to reduce JSON size.
 
 ### Data Model Change
 
@@ -73,6 +104,8 @@ Add to existing quiz schema in IndexedDB:
   mode: "learning" | "party" | "both",  // NEW
   shareId: "abc123",                     // NEW (optional, for tracking)
   sharedAt: timestamp,                   // NEW (optional)
+  isImported: boolean,                   // NEW - true if from shared URL
+  originalCreator: "string",             // NEW (optional) - who shared it
 }
 ```
 
@@ -80,20 +113,25 @@ Add to existing quiz schema in IndexedDB:
 
 1. [ ] Add `mode` field to quiz schema
 2. [ ] Create quiz serialization (JSON → compressed Base64)
+   - Use short property names
+   - Exclude explanations
+   - Use LZ-string compression
 3. [ ] Create quiz deserialization (URL → quiz object)
 4. [ ] Add "Share" button to quiz results screen
 5. [ ] Create `/quiz#data` route handler
 6. [ ] Handle quiz import (save to local IndexedDB)
-7. [ ] Add sharing telemetry events
-8. [ ] Test URL length limits across platforms
+7. [ ] Add size validation with error message
+8. [ ] Add sharing telemetry events
+9. [ ] Test URL length limits across platforms
 
 ### Telemetry Events
 
 - `quiz_share_initiated` - user clicked share
 - `quiz_share_completed` - share dialog closed (with method if available)
+- `quiz_share_failed_too_large` - quiz exceeded URL size limit (**important for measuring**)
 - `quiz_import_started` - opened shared URL
 - `quiz_import_completed` - quiz saved locally
-- `quiz_import_failed` - error during import
+- `quiz_import_failed` - error during import (with reason)
 
 ---
 
