@@ -124,6 +124,43 @@ describe('shuffleQuestionOptions', () => {
     // Running 20 times should produce at least 2 different orderings
     expect(orderings.size).toBeGreaterThan(1);
   });
+
+  // Issue #79: Answer labels should always be A, B, C, D in order after shuffle
+  describe('label normalization (Issue #79)', () => {
+    it('should have options with sequential A, B, C, D labels after shuffle', () => {
+      const question = {
+        question: 'What is the capital of France?',
+        options: ['A) London', 'B) Paris', 'C) Berlin', 'D) Madrid'],
+        correct: 1 // B) Paris is correct
+      };
+
+      // Run multiple times to ensure labels are always sequential
+      for (let i = 0; i < 10; i++) {
+        const shuffled = shuffleQuestionOptions(question);
+
+        // Labels should always be A, B, C, D in order
+        expect(shuffled.options[0]).toMatch(/^A\)/);
+        expect(shuffled.options[1]).toMatch(/^B\)/);
+        expect(shuffled.options[2]).toMatch(/^C\)/);
+        expect(shuffled.options[3]).toMatch(/^D\)/);
+      }
+    });
+
+    it('should preserve correct answer content after label normalization', () => {
+      const question = {
+        question: 'What is 2 + 2?',
+        options: ['A) 3', 'B) 4', 'C) 5', 'D) 6'],
+        correct: 1 // B) 4 is correct (answer text is "4")
+      };
+
+      for (let i = 0; i < 10; i++) {
+        const shuffled = shuffleQuestionOptions(question);
+
+        // The correct answer should still contain "4" (the actual answer)
+        expect(shuffled.options[shuffled.correct]).toContain('4');
+      }
+    });
+  });
 });
 
 describe('shuffleAllQuestions', () => {
