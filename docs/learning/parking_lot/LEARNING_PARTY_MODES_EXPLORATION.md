@@ -281,6 +281,43 @@ Phones are behind routers/firewalls with private IPs. WebRTC uses ICE to solve t
 
 ---
 
+#### Deep Dive: Signaling Server (VPS)
+
+**What is Signaling?**
+
+WebRTC needs peers to exchange connection info before connecting directly. This happens via a signaling server.
+
+```
+1. Phone A: "I want to start session" → VPS stores offer
+2. Phone B: "I want to join" → VPS returns offer, stores answer
+3. Phone A: polls → receives answer
+4. DIRECT CONNECTION (VPS no longer needed)
+```
+
+**Approach for LAMP Stack:**
+
+| Option | Chosen? | Notes |
+|--------|---------|-------|
+| Polling (PHP) | ✅ Yes | Simple, works, 500ms latency acceptable |
+| WebSocket (Node.js) | No | Would need to add Node alongside Apache |
+| External service | No | Adds dependency |
+
+**Why polling is acceptable:**
+- Signaling happens once per session (not continuous)
+- 500ms delay is fine for "starting a game"
+- Can upgrade to WebSocket later if needed
+
+**Room Code Options:**
+
+| Option | Use Case |
+|--------|----------|
+| Short codes "ABC123" | Easy verbal sharing at parties |
+| Cryptographic ID | Consistent with friend discovery system |
+
+**Decision**: Support both options.
+
+---
+
 ### Iteration 4: Contrarian Thinking
 
 **Date:** 2026-01-06
