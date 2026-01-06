@@ -54,11 +54,33 @@ From the user's initial brainstorming:
 
 **Date:** 2026-01-06
 
-#### Questions to Answer:
+#### Key Decisions Made:
 
-1. What specific problems does each mode solve?
-2. Who is the target user for each mode?
-3. What makes this better than alternatives?
+| Question | Decision | Rationale |
+|----------|----------|-----------|
+| **Host vs P2P?** | P2P - everyone sees questions simultaneously without a leader | Aligns with decentralized philosophy; more egalitarian experience |
+| **Infrastructure complexity?** | Complex: True P2P sync via Pears/WebRTC | No central server dependency; experiments with cutting-edge tech |
+| **Question pool sharing?** | Same structure, tagged with "learning"/"party"/"both" | Maximizes content reuse; single data model |
+
+#### Architecture Implications:
+
+1. **No host = distributed consensus** - Need mechanism to synchronize "current question" across peers
+2. **P2P sync = WebRTC/Pears** - Must handle NAT traversal, peer discovery, connection management
+3. **Same structure + labels** - Simple schema change: add `mode: "learning" | "party" | "both"` field
+
+#### Problem/User/Value Matrix:
+
+| Mode | Problem Solved | Target User | Why Saberloop? |
+|------|----------------|-------------|----------------|
+| **Learning (Solo)** | "I want to test my knowledge" | Student, professional, curious person | AI generates questions instantly |
+| **Learning (Group)** | "We want to study together" | Study groups, classrooms | Shared content, async or sync |
+| **Party** | "We want fun entertainment now" | Friends at parties, family gatherings | No prep time, spontaneous topics |
+
+---
+
+### Iteration 2: UI/UX Concepts & Tech Stack
+
+**Date:** 2026-01-06
 
 *(To be filled during iteration)*
 
