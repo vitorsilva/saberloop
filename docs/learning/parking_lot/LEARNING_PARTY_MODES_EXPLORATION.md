@@ -318,6 +318,41 @@ WebRTC needs peers to exchange connection info before connecting directly. This 
 
 ---
 
+#### Deep Dive: Time Sync Across Devices
+
+**The Problem:**
+
+For time-based deterministic sync, all devices need to agree on "what time is it?"
+
+```
+Phone A clock: 12:00:00.000
+Phone B clock: 12:00:01.500  (1.5 sec ahead)
+Phone C clock: 11:59:58.200  (1.8 sec behind)
+
+→ Different phones might show different questions!
+```
+
+**Reality check**: Most smartphones sync via NTP. Drift is usually < 1 second.
+
+**Solution: Coordinator + Generous Timing**
+
+```
+1. Session creator becomes "time coordinator"
+2. Coordinator broadcasts: { startTime: 1704567890000 }
+3. All peers calculate question index from this startTime
+4. Use 30+ seconds per question → 1-2 sec drift doesn't matter
+5. Show countdown timer to mask small differences
+```
+
+**Decisions (Q14, Q15):**
+
+| Question | Decision | Rationale |
+|----------|----------|-----------|
+| **Q14**: Coordinator broadcasts startTime? | Yes | Simple, effective |
+| **Q15**: Question timing? | Configurable, default 30 sec | Balance excitement with sync tolerance |
+
+---
+
 ### Iteration 4: Contrarian Thinking
 
 **Date:** 2026-01-06
