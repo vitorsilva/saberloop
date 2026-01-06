@@ -191,7 +191,7 @@ Expand mutation testing to core infrastructure modules (state, db, settings, fea
 ---
 
 ### Phase 87: Mutation Testing E2E Exploration (Wave 3)
-**Status:** Ready
+**Status:** ✅ Complete
 **File:** [PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md](./PHASE87_MUTATION_TESTING_E2E_EXPLORATION.md)
 
 Expand mutation testing to API layer and explore E2E mutation testing feasibility.
@@ -216,7 +216,7 @@ Expand mutation testing to API layer and explore E2E mutation testing feasibilit
 
 ### Track 3: Testing Excellence (Long-term Quality)
 7. **Phase 86**: Mutation Testing Wave 2 ✅ (Core Infrastructure)
-8. **Phase 87**: Mutation Testing Wave 3 (API Layer)
+8. **Phase 87**: Mutation Testing Wave 3 ✅ (E2E Exploration - concluded: not valuable)
 
 **Note:** Tracks can be executed in parallel by different team members, or sequentially based on priority.
 

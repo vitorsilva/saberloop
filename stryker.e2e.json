@@ -1,0 +1,14 @@
+{
+    "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",       
+    "packageManager": "npm",
+    "reporters": ["clear-text", "progress"],
+    "testRunner": "command",
+    "commandRunner": {
+        "command": "npx playwright test tests/e2e/app.spec.js --reporter=dot"
+    },
+    "mutate": [
+        "src/utils/shuffle.js"
+    ],
+    "timeoutMS": 60000,
+    "concurrency": 1
+}
