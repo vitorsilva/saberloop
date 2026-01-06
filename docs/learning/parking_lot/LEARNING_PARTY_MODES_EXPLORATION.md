@@ -266,13 +266,18 @@ Phones are behind routers/firewalls with private IPs. WebRTC uses ICE to solve t
 
 ---
 
-#### Open Questions (Q10, Q11)
+#### Decisions (Q10, Q11)
 
-- **Q10**: Start with WebRTC-only for party mode, add Hypercore later?
-- **Q11**: TURN server strategy for ~15% connection failures?
-  - a) VPS as TURN relay
-  - b) Free/cheap TURN service (Twilio, Metered.ca)
-  - c) Accept failures, show "couldn't connect"
+| Question | Decision | Rationale |
+|----------|----------|-----------|
+| **Q10**: Start WebRTC-only? | Yes | Proven tech, works today; add Hypercore later for async |
+| **Q11**: TURN server strategy? | Accept failures + telemetry | Start simple; track failure rate to inform future decision |
+
+**Telemetry events to add:**
+- `p2p_connection_attempt` - started WebRTC connection
+- `p2p_connection_success` - direct connection established
+- `p2p_connection_failed` - connection failed (with reason if available)
+- `p2p_fallback_used` - had to use VPS fallback (future)
 
 ---
 
