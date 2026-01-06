@@ -82,6 +82,114 @@ From the user's initial brainstorming:
 
 **Date:** 2026-01-06
 
+#### Key Decisions Made:
+
+| Question | Decision | Rationale |
+|----------|----------|-----------|
+| **Mode selection UI?** | Toggle in header (persistent) | Always accessible, mode context visible |
+| **P2P approach?** | Hybrid "Pear Lite" | WebRTC for real-time, VPS for signaling/fallback, Hypercore when possible |
+| **Party sync mechanism?** | Time-based deterministic | All peers derive current question from shared start time + elapsed time |
+
+#### UI Concept: Header Toggle
+
+```
+┌─────────────────────────────────┐
+│ SABERLOOP    [📚 Learn|🎉 Party]│
+│─────────────────────────────────│
+│                                 │
+│   (app adapts colors to mode)   │
+│                                 │
+└─────────────────────────────────┘
+```
+
+#### Color Schemes:
+
+| Element | Learning Mode | Party Mode |
+|---------|---------------|------------|
+| Primary | Blue (#3B82F6) | Orange (#F97316) |
+| Background | Light/calm | Darker/vibrant |
+| Vibe | Focused, professional | Energetic, playful |
+
+#### Technical Architecture: Pear Lite Hybrid
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    PEAR LITE HYBRID                     │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  Real-time Sync (Party Mode):                          │
+│  ┌──────────┐  WebRTC  ┌──────────┐                    │
+│  │ Phone A  │◄────────►│ Phone B  │                    │
+│  └────┬─────┘          └────┬─────┘                    │
+│       │                     │                          │
+│       └──────────┬──────────┘                          │
+│                  │ signaling only                      │
+│           ┌──────▼──────┐                              │
+│           │   Your VPS  │                              │
+│           └─────────────┘                              │
+│                                                         │
+│  Content Sharing (Async):                              │
+│  - Hypercore when peers online                         │
+│  - VPS fallback when peers offline                     │
+│  - Local IndexedDB cache always                        │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+#### Friend Discovery (No Login):
+
+```
+┌─────────────────────────────────────────────┐
+│ Your Saberloop ID:                          │
+│                                             │
+│  SL-7x9k-m2p4-q8r3                          │
+│                                             │
+│  [📋 Copy]  [📱 QR Code]  [📤 Share]        │
+│                                             │
+│  Share via WhatsApp, text, or QR code       │
+└─────────────────────────────────────────────┘
+```
+
+- Cryptographic keypair generated on first launch
+- Public key truncated = user ID
+- No server account needed
+
+#### Party Sync: Time-Based Deterministic
+
+```
+Quiz Session = {
+  questions: [...],
+  startTime: 1704567890000,  // agreed timestamp
+  secondsPerQuestion: 30
+}
+
+Current Question Index = floor((now - startTime) / secondsPerQuestion)
+
+All devices calculate independently → same result
+```
+
+---
+
+### Iteration 3: Feasibility Assessment
+
+**Date:** 2026-01-06
+
+*(To be filled during iteration)*
+
+---
+
+### Iteration 4: Contrarian Thinking
+
+**Date:** 2026-01-06
+
+*(To be filled during iteration)*
+
+---
+
+### Iteration 5: Outside-the-Box Ideas
+
+**Date:** 2026-01-06
+
 *(To be filled during iteration)*
 
 ---
