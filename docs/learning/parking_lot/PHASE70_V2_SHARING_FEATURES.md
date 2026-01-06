@@ -57,23 +57,11 @@ Display user progress level on share cards based on quiz completion count.
 
 ---
 
-### 2. Share TO Functionality (iOS)
+### ~~2. Share TO Functionality (iOS)~~ → Epic 8
 
-Receive shared content to create quizzes. Required for iOS App Store submission.
+**Status:** Moved to [Epic 8: iOS](../epic08_ios/SHARE_TO_FUNCTIONALITY.md)
 
-**User Flow:**
-1. User sees interesting article/content
-2. Taps Share → Saberloop
-3. Saberloop opens with content as topic suggestion
-4. User generates quiz based on shared content
-
-**Technical Requirements:**
-- `share_target` in web manifest
-- Handle incoming share data
-- Parse shared text/URL for topic extraction
-- iOS-specific considerations
-
-**Reference:** [IOS_APP_STORE.md](./IOS_APP_STORE.md)
+This iOS-specific feature is now part of the dedicated iOS epic.
 
 ---
 
@@ -111,7 +99,7 @@ The basic share events are being implemented in Epic 6 Phase 1. This parked feat
 
 1. Epic 6 Phase 1 complete (Quiz Sharing) - provides foundation
 2. User base established (worth tracking analytics)
-3. iOS App Store submission (for Share TO)
+3. ~~iOS App Store submission (for Share TO)~~ → Moved to Epic 8
 
 ---
 
@@ -120,7 +108,7 @@ The basic share events are being implemented in Epic 6 Phase 1. This parked feat
 | Feature | Sessions | Dependencies |
 |---------|----------|--------------|
 | Achievement Levels | 1-2 | Quiz history tracking |
-| Share TO (iOS) | 2-3 | iOS App Store prep |
+| ~~Share TO (iOS)~~ | ~~2-3~~ | Moved to Epic 8 |
 | Social Optimization | 2-3 | Platform APIs |
 | Analytics Dashboard | 1-2 | Epic 6 Phase 1 telemetry |
 
