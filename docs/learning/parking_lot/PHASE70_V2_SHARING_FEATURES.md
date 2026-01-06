@@ -8,7 +8,7 @@
 
 ## Overview
 
-These features were identified during Phase 70 planning but deferred to a future version to keep V1 scope manageable.
+These features were identified during Phase 70 (epic04_saberloop_v1) and planning but deferred to a future version to keep V1 scope manageable.
 
 ---
 
