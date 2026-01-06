@@ -101,13 +101,24 @@ Add to existing quiz schema in IndexedDB:
 ```javascript
 {
   // existing fields...
-  mode: "learning" | "party" | "both",  // NEW
-  shareId: "abc123",                     // NEW (optional, for tracking)
-  sharedAt: timestamp,                   // NEW (optional)
-  isImported: boolean,                   // NEW - true if from shared URL
-  originalCreator: "string",             // NEW (optional) - who shared it
+  mode: "learning" | "party" | "both",  // NEW - required, default "learning"
+  isImported: boolean,                   // NEW - required, default false
+  shareId: "abc123",                     // NEW - required when shared (generated on share)
+  sharedAt: timestamp,                   // NEW - required when shared (set on share)
+  importedAt: timestamp,                 // NEW - required when imported (set on import)
+  originalCreator: "string",             // NEW - required when imported (from URL or "Anonymous")
 }
 ```
+
+**Field Requirements:**
+| Field | When Required | Default | Notes |
+|-------|---------------|---------|-------|
+| `mode` | Always | `"learning"` | Set by user or inherited from import |
+| `isImported` | Always | `false` | `true` if quiz came from shared URL |
+| `shareId` | When shared | N/A | Generated unique ID on first share |
+| `sharedAt` | When shared | N/A | Timestamp of first share |
+| `importedAt` | When imported | N/A | Timestamp when imported from URL |
+| `originalCreator` | When imported | N/A | Creator name from URL or "Anonymous" |
 
 ### Implementation Tasks
 
@@ -426,6 +437,8 @@ Each phase must include wireframes before implementation:
 ```
 
 **Phase 3 - Party Session:**
+
+*Screen 1: Create Party Session (Host)*
 ```
 ┌─────────────────────────────────────────┐
 │ Create Party Session                    │
@@ -448,7 +461,10 @@ Each phase must include wireframes before implementation:
 │  └─────────────────────────────────┘   │
 │                                         │
 └─────────────────────────────────────────┘
+```
 
+*Screen 2: Join Party (Guest Entry)*
+```
 ┌─────────────────────────────────────────┐
 │ Join Party                              │
 ├─────────────────────────────────────────┤
@@ -463,8 +479,41 @@ Each phase must include wireframes before implementation:
 │  │  [Join]                         │   │
 │  └─────────────────────────────────┘   │
 │                                         │
+│  ─────────────────────────────────────  │
+│  or scan QR code                        │
+│                                         │
 └─────────────────────────────────────────┘
+```
 
+*Screen 3: Waiting Room (Guest View)*
+```
+┌─────────────────────────────────────────┐
+│ Party: ABC123                           │
+├─────────────────────────────────────────┤
+│                                         │
+│            ⏳                            │
+│                                         │
+│     Waiting for host to start...        │
+│                                         │
+│  ─────────────────────────────────────  │
+│                                         │
+│  Participants (3):                      │
+│  • Maria (host)                         │
+│  • You                                  │
+│  • João                                 │
+│                                         │
+│  Quiz: "History of Portugal"            │
+│  10 questions • 30 sec each             │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [Leave Party]                  │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+*Screen 4: Quiz Playing (All Players)*
+```
 ┌─────────────────────────────────────────┐
 │ Party Quiz - Question 3/10     ⏱️ 0:24  │
 ├─────────────────────────────────────────┤
@@ -477,11 +526,130 @@ Each phase must include wireframes before implementation:
 │  ┌─────────────────────────────────┐   │
 │  │ B) 1500                         │   │
 │  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │ C) 1512                         │   │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │ D) 1520                         │   │
+│  └─────────────────────────────────┘   │
 │                                         │
 │  Live Scores:                           │
 │  1. Maria: 25 pts                       │
 │  2. You: 20 pts                         │
 │  3. João: 15 pts                        │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+*Screen 5: Answer Feedback (After Selection)*
+```
+┌─────────────────────────────────────────┐
+│ Party Quiz - Question 3/10     ⏱️ 0:12  │
+├─────────────────────────────────────────┤
+│                                         │
+│  What year did...?                      │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │ A) 1492                         │   │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │ B) 1500  ✅ +10 pts             │   │ ← Green highlight
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │ C) 1512                         │   │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │ D) 1520                         │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  Waiting for others...                  │
+│  João answered • Maria thinking         │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+*Screen 6: Final Results (Session End)*
+```
+┌─────────────────────────────────────────┐
+│ 🎉 Party Complete!                      │
+├─────────────────────────────────────────┤
+│                                         │
+│          🏆 WINNER 🏆                   │
+│             Maria                        │
+│            85 points                     │
+│                                         │
+│  ─────────────────────────────────────  │
+│                                         │
+│  Final Standings:                       │
+│                                         │
+│  🥇 1. Maria     85 pts   (8/10)        │
+│  🥈 2. You       70 pts   (7/10)        │
+│  🥉 3. João      55 pts   (5/10)        │
+│                                         │
+│  ─────────────────────────────────────  │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [📤 Share Results]             │   │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │  [🔄 Play Again]                │   │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │  [🏠 Home]                      │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+*Screen 7: Connection Error / Disconnection*
+```
+┌─────────────────────────────────────────┐
+│ ⚠️ Connection Issue                     │
+├─────────────────────────────────────────┤
+│                                         │
+│            📡                            │
+│                                         │
+│     Lost connection to party            │
+│                                         │
+│  ─────────────────────────────────────  │
+│                                         │
+│  Attempting to reconnect...             │
+│  ████████░░░░░░░░ 50%                   │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [🔄 Retry Now]                 │   │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │  [❌ Leave Party]               │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  Your score: 45 pts (saved locally)     │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+*Screen 8: Host Left (Guest View)*
+```
+┌─────────────────────────────────────────┐
+│ Party Ended                             │
+├─────────────────────────────────────────┤
+│                                         │
+│            👋                            │
+│                                         │
+│     Host has left the party             │
+│                                         │
+│  ─────────────────────────────────────  │
+│                                         │
+│  Your progress:                         │
+│  • Score: 45 points                     │
+│  • Answered: 5/10 questions             │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [💾 Save Quiz Locally]         │   │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │  [🏠 Home]                      │   │
+│  └─────────────────────────────────┘   │
 │                                         │
 └─────────────────────────────────────────┘
 ```
@@ -493,11 +661,14 @@ Each phase must include wireframes before implementation:
 | Requirement | Phase 1 | Phase 2 | Phase 3 |
 |-------------|---------|---------|---------|
 | Unit tests for new services | ✅ | ✅ | ✅ |
-| E2E tests for user flows | ✅ | ✅ | ✅ |
+| E2E tests for user flows (Playwright) | ✅ | ✅ | ✅ |
+| Maestro tests for mobile (parity) | ✅ | ✅ | ✅ |
 | Coverage ≥80% on new code | ✅ | ✅ | ✅ |
 | Mutation testing on new code | ✅ | ✅ | ✅ |
 | JSDoc on public functions | ✅ | ✅ | ✅ |
 | Architecture tests (dependency-cruiser) | ✅ | ✅ | ✅ |
+| Deploy to staging + test | ✅ | ✅ | ✅ |
+| Deploy to production | ✅ | ✅ | ✅ |
 
 **Phase 1 Tests:**
 ```
@@ -618,6 +789,165 @@ All new public functions must have JSDoc:
  */
 export function serializeQuiz(quiz) { ... }
 ```
+
+### Maestro Testing (Mobile E2E)
+
+**Parity with Playwright:** All E2E tests must have Maestro equivalents for mobile testing.
+
+**Phase 1 Maestro Tests:**
+```yaml
+# share-quiz.yaml
+- launchApp
+- completeQuiz:
+    topic: "Test Topic"
+- assertVisible: "Share Quiz"
+- tapOn: "Share Quiz"
+- assertVisible: "Copy"
+- tapOn: "Copy"
+- assertVisible: "Link copied"
+
+# import-quiz.yaml
+- launchApp:
+    link: "https://saberloop.com/app/quiz#encodedData"
+- assertVisible: "Quiz shared with you"
+- tapOn: "Play Now"
+- assertVisible: "Question 1"
+```
+
+**Phase 2 Maestro Tests:**
+```yaml
+# mode-toggle.yaml
+- launchApp
+- assertVisible: "Learn"
+- tapOn: "Party"
+- assertVisible: "Party mode active"  # Visual theme change
+- restart
+- assertVisible: "Party"  # Persisted
+
+# quiz-with-mode.yaml
+- launchApp
+- tapOn: "Party"
+- generateQuiz:
+    topic: "Fun Trivia"
+- assertVisible: "party"  # Mode indicator on quiz
+```
+
+**Phase 3 Maestro Tests:**
+```yaml
+# create-party.yaml
+- launchApp
+- tapOn: "Create Party"
+- assertVisible: "Room Code"
+- copyText: "roomCode"
+
+# join-party.yaml
+- launchApp
+- tapOn: "Join Party"
+- inputText:
+    id: "roomCode"
+    text: "ABC123"
+- tapOn: "Join"
+- assertVisible: "Waiting for host"
+
+# party-gameplay.yaml
+- launchApp
+- createAndStartParty
+- assertVisible: "Question 1"
+- assertVisible: "Live Scores"
+- selectAnswer: 0
+- assertVisible: "Points"
+```
+
+**Test Organization:**
+```
+tests/
+├── e2e/                    # Playwright (web)
+│   ├── share-quiz.spec.js
+│   ├── import-quiz.spec.js
+│   ├── mode-toggle.spec.js
+│   └── party-session.spec.js
+└── maestro/                # Maestro (mobile)
+    ├── share-quiz.yaml
+    ├── import-quiz.yaml
+    ├── mode-toggle.yaml
+    └── party-session.yaml
+```
+
+### Deployment Strategy
+
+**Deployment follows existing Saberloop pattern:**
+
+| Environment | URL | Purpose |
+|-------------|-----|---------|
+| Local | `localhost:8888` | Development |
+| Staging | `staging.saberloop.com/app/` | Pre-production testing |
+| Production | `saberloop.com/app/` | Live users |
+
+**Per-Phase Deployment Process:**
+
+```
+1. Feature Development (local)
+   └── npm run dev:php
+   └── Run unit tests: npm test
+   └── Run E2E tests: npm run test:e2e
+   └── Run Maestro tests: maestro test tests/maestro/
+
+2. Deploy to Staging
+   └── npm run build
+   └── npm run deploy:staging  # FTP to staging.saberloop.com
+   └── Manual testing on staging
+   └── Test on real devices (Android/iOS)
+   └── Run Maestro tests on staging URL
+
+3. Deploy to Production
+   └── npm run deploy  # FTP to saberloop.com
+   └── Verify feature flag is disabled
+   └── Smoke test critical paths
+   └── Enable feature flag for internal testing
+
+4. Gradual Rollout
+   └── Monitor telemetry
+   └── Enable for 10% of users
+   └── Monitor for issues
+   └── Enable for 100% of users
+   └── Remove feature flag (after stable)
+```
+
+**VPS Deployment (Phase 3 only):**
+
+Phase 3 requires PHP backend changes for room management and signaling:
+
+```
+1. VPS Development
+   └── Test locally with PHP built-in server
+   └── Unit test PHP endpoints
+
+2. Deploy to Staging VPS
+   └── FTP php-api/ changes to staging server
+   └── Test signaling flow end-to-end
+   └── Test WebRTC connections
+
+3. Deploy to Production VPS
+   └── FTP php-api/ changes to production server
+   └── Run database migrations (rooms table)
+   └── Verify cleanup cron job
+
+4. Monitor
+   └── Track room creation/cleanup
+   └── Monitor signaling latency
+   └── Alert on error rates
+```
+
+**Pre-Deployment Checklist:**
+
+- [ ] All tests passing (unit, E2E, Maestro)
+- [ ] Coverage ≥80% on new code
+- [ ] Mutation testing passed
+- [ ] Feature flag configured (disabled by default)
+- [ ] Telemetry events verified
+- [ ] Staging tested manually
+- [ ] Real device testing completed
+- [ ] Rollback plan documented
 
 ### Architecture Tests (dependency-cruiser)
 
@@ -778,18 +1108,28 @@ docs/learning/epic06_social_features/
 
 - [ ] **Quality**
   - [ ] Unit tests (≥80% coverage)
-  - [ ] E2E tests for all user flows
+  - [ ] E2E tests for all user flows (Playwright)
+  - [ ] Maestro tests for mobile (parity with Playwright)
   - [ ] Mutation testing passed
   - [ ] JSDoc on all public functions
   - [ ] Architecture tests passing
+
+- [ ] **Deployment**
+  - [ ] Deploy to staging (npm run deploy:staging)
+  - [ ] Manual testing on staging
+  - [ ] Test on real devices (Android/iOS)
+  - [ ] Run Maestro tests on staging
+  - [ ] Deploy to production (npm run deploy)
+  - [ ] Verify feature flag is disabled
 
 - [ ] **Release**
   - [ ] Feature flag created (disabled)
   - [ ] Branch merged to main
   - [ ] Learning notes documented
   - [ ] Status updated in CLAUDE.md
-  - [ ] Flag enabled for testing
-  - [ ] Gradual rollout begun
+  - [ ] Flag enabled for internal testing
+  - [ ] Monitor telemetry
+  - [ ] Gradual rollout begun (10% → 100%)
 
 ### Phase 2 Complete Checklist
 
@@ -807,23 +1147,33 @@ docs/learning/epic06_social_features/
 
 - [ ] **Quality**
   - [ ] Unit tests (≥80% coverage)
-  - [ ] E2E tests for all user flows
+  - [ ] E2E tests for all user flows (Playwright)
+  - [ ] Maestro tests for mobile (parity with Playwright)
   - [ ] Mutation testing passed
   - [ ] JSDoc on all public functions
   - [ ] Architecture tests passing
+
+- [ ] **Deployment**
+  - [ ] Deploy to staging (npm run deploy:staging)
+  - [ ] Manual testing on staging
+  - [ ] Test on real devices (Android/iOS)
+  - [ ] Run Maestro tests on staging
+  - [ ] Deploy to production (npm run deploy)
+  - [ ] Verify feature flag is disabled
 
 - [ ] **Release**
   - [ ] Feature flag created (disabled)
   - [ ] Branch merged to main
   - [ ] Learning notes documented
   - [ ] Status updated in CLAUDE.md
-  - [ ] Flag enabled for testing
-  - [ ] Gradual rollout begun
+  - [ ] Flag enabled for internal testing
+  - [ ] Monitor telemetry
+  - [ ] Gradual rollout begun (10% → 100%)
 
 ### Phase 3 Complete Checklist
 
 - [ ] **Design**
-  - [ ] Wireframes reviewed and approved
+  - [ ] Wireframes reviewed and approved (8 screens)
   - [ ] VPS API design documented
   - [ ] i18n strings defined
 
@@ -836,25 +1186,46 @@ docs/learning/epic06_social_features/
 - [ ] **Implementation (App)**
   - [ ] P2P service
   - [ ] Party session manager
-  - [ ] Host UI
-  - [ ] Guest UI
-  - [ ] Live scoreboard
+  - [ ] Host UI (create session, manage participants)
+  - [ ] Guest UI (join, waiting room)
+  - [ ] Quiz playing UI (answer feedback, live scores)
+  - [ ] Final results screen
+  - [ ] Connection error handling
+  - [ ] Host left handling
   - [ ] Telemetry events
 
 - [ ] **Quality**
   - [ ] Unit tests (≥80% coverage)
-  - [ ] E2E tests for all user flows
+  - [ ] E2E tests for all user flows (Playwright)
+  - [ ] Maestro tests for mobile (parity with Playwright)
   - [ ] Mutation testing passed
   - [ ] JSDoc on all public functions
   - [ ] Architecture tests passing
+
+- [ ] **Deployment (App)**
+  - [ ] Deploy to staging (npm run deploy:staging)
+  - [ ] Manual testing on staging
+  - [ ] Test on real devices (Android/iOS)
+  - [ ] Run Maestro tests on staging
+  - [ ] Deploy to production (npm run deploy)
+  - [ ] Verify feature flag is disabled
+
+- [ ] **Deployment (VPS)**
+  - [ ] Deploy PHP changes to staging VPS
+  - [ ] Test signaling flow end-to-end
+  - [ ] Test WebRTC connections
+  - [ ] Deploy to production VPS
+  - [ ] Run database migrations
+  - [ ] Verify cleanup cron job
 
 - [ ] **Release**
   - [ ] Feature flag created (disabled)
   - [ ] Branch merged to main
   - [ ] Learning notes documented
   - [ ] Status updated in CLAUDE.md
-  - [ ] Flag enabled for testing
-  - [ ] Gradual rollout begun
+  - [ ] Flag enabled for internal testing
+  - [ ] Monitor telemetry
+  - [ ] Gradual rollout begun (10% → 100%)
 
 ---
 
