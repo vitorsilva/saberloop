@@ -454,7 +454,48 @@ vs
 
 **Date:** 2026-01-06
 
-*(To be filled during iteration)*
+#### Ideas Explored
+
+| # | Idea | Description | User Feedback |
+|---|------|-------------|---------------|
+| 1 | **Quiz Potluck** | Everyone brings a quiz on their topic | Love it! Schedule dinner → friends install app → each generates quiz. Marketing/promotion via mouth-to-mouth |
+| 2 | **Burst Mode** | Pre-generate content in background | Interesting but may spend credits user doesn't want to spend |
+| 3 | **Voice-First Party** | One device reads aloud, players answer on phones | Nice! Also considered: voice input for creating quizzes |
+| 4 | **Asymmetric Knowledge** | Each player quizzes others on their expertise | Great! Similar to #1 |
+| 5 | **Content Mining** | Generate quiz from WhatsApp exports | Most unique but privacy concern: exposes personal data to LLMs |
+| 6 | **Leaderboard Without Login** | Persistent scores via cryptographic IDs | Important for groups feature |
+
+#### Technical Note: WhatsApp Content Mining (#5)
+
+> "Is it really possible? How would we connect to WhatsApp?"
+
+**Answer**: No direct API access. Would work via:
+- User exports chat (WhatsApp → Export Chat → .txt file)
+- User uploads/pastes into Saberloop
+- AI processes locally visible text only
+
+**Privacy concern is valid**: Even with user consent, sending chat history to LLM raises questions about:
+- Third-party data (other people in chat didn't consent)
+- LLM training data policies
+- GDPR implications
+
+**Recommendation**: Park this idea. If pursued, needs careful privacy design.
+
+#### Decisions (Q21, Q22, Q23)
+
+| Question | Answer |
+|----------|--------|
+| **Q21**: Most resonant idea? | #5 Content Mining (unique but privacy concerns) |
+| **Q22**: Change MVP priorities? | No. Consider #6 Leaderboard after MVP |
+| **Q23**: Next steps? | Complete exploration, draft MVP plan |
+
+---
+
+## Exploration Complete
+
+**Status**: First exploration session complete (2026-01-06)
+
+**Next**: See [MVP Plan](./LEARNING_PARTY_MODES_MVP_PLAN.md)
 
 ---
 
