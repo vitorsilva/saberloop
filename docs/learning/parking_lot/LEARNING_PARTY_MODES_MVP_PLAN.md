@@ -314,6 +314,512 @@ Each phase is independently valuable. Stop if metrics don't justify continuation
 
 ---
 
+## Development Standards
+
+### Mockups & Wireframes
+
+Each phase must include wireframes before implementation:
+
+**Phase 1 - Share Quiz via URL:**
+```
+┌─────────────────────────────────────────┐
+│ Quiz Results                            │
+├─────────────────────────────────────────┤
+│                                         │
+│  Score: 8/10                            │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [📤 Share Quiz]                │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  Share with friends so they can play!  │
+│                                         │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ Share Modal                             │
+├─────────────────────────────────────────┤
+│                                         │
+│  Share this quiz:                       │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │ https://saberloop.com/app/qu... │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  [📋 Copy] [📱 QR] [📤 Native Share]   │
+│                                         │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ Import Quiz (from shared URL)           │
+├─────────────────────────────────────────┤
+│                                         │
+│  Quiz shared with you:                  │
+│                                         │
+│  "History of Portugal"                  │
+│  10 questions • by Friend               │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [▶️ Play Now]                  │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  [💾 Save for Later]                   │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+**Phase 2 - Mode Toggle:**
+```
+┌─────────────────────────────────────────┐
+│ SABERLOOP        [📚 Learn | 🎉 Party]  │
+├─────────────────────────────────────────┤
+│                                         │
+│  (Learning mode - blue theme)           │
+│                                         │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ SABERLOOP        [📚 Learn | 🎉 Party]  │
+├─────────────────────────────────────────┤
+│                                         │
+│  (Party mode - orange/dark theme)       │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+**Phase 3 - Party Session:**
+```
+┌─────────────────────────────────────────┐
+│ Create Party Session                    │
+├─────────────────────────────────────────┤
+│                                         │
+│  Room Code:                             │
+│                                         │
+│     ┌───────────────────┐               │
+│     │     ABC123        │               │
+│     └───────────────────┘               │
+│                                         │
+│  Share this code with friends           │
+│                                         │
+│  Participants (2):                      │
+│  • You (host)                           │
+│  • João                                 │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [▶️ Start Quiz]                │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ Join Party                              │
+├─────────────────────────────────────────┤
+│                                         │
+│  Enter room code:                       │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │ A B C 1 2 3                     │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [Join]                         │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ Party Quiz - Question 3/10     ⏱️ 0:24  │
+├─────────────────────────────────────────┤
+│                                         │
+│  What year did...?                      │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │ A) 1492                         │   │
+│  └─────────────────────────────────┘   │
+│  ┌─────────────────────────────────┐   │
+│  │ B) 1500                         │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  Live Scores:                           │
+│  1. Maria: 25 pts                       │
+│  2. You: 20 pts                         │
+│  3. João: 15 pts                        │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+### Testing Requirements
+
+**Per Phase Checklist:**
+
+| Requirement | Phase 1 | Phase 2 | Phase 3 |
+|-------------|---------|---------|---------|
+| Unit tests for new services | ✅ | ✅ | ✅ |
+| E2E tests for user flows | ✅ | ✅ | ✅ |
+| Coverage ≥80% on new code | ✅ | ✅ | ✅ |
+| Mutation testing on new code | ✅ | ✅ | ✅ |
+| JSDoc on public functions | ✅ | ✅ | ✅ |
+| Architecture tests (dependency-cruiser) | ✅ | ✅ | ✅ |
+
+**Phase 1 Tests:**
+```
+Unit Tests:
+- quiz-serializer.test.js
+  - serialize() produces valid Base64
+  - deserialize() recovers original quiz
+  - handles empty quiz
+  - handles maximum size quiz
+  - compression reduces size
+
+E2E Tests:
+- share-quiz.spec.js
+  - user can share quiz after completing
+  - share modal displays correct URL
+  - copy button works
+  - native share opens (if supported)
+- import-quiz.spec.js
+  - shared URL opens import screen
+  - user can play imported quiz
+  - user can save imported quiz
+  - invalid URL shows error
+```
+
+**Phase 2 Tests:**
+```
+Unit Tests:
+- theme-manager.test.js
+  - switches theme correctly
+  - persists preference
+  - applies CSS variables
+
+E2E Tests:
+- mode-toggle.spec.js
+  - toggle switches visual theme
+  - mode persists across sessions
+  - quiz generation respects mode
+```
+
+**Phase 3 Tests:**
+```
+Unit Tests:
+- p2p-service.test.js
+  - creates WebRTC connection
+  - handles signaling
+  - sends/receives messages
+- party-session.test.js
+  - host can create session
+  - guest can join session
+  - time sync works
+  - score calculation correct
+
+E2E Tests:
+- party-session.spec.js
+  - host creates room, gets code
+  - guest joins with code
+  - quiz plays synchronously
+  - scores update live
+  - session ends gracefully
+```
+
+### i18n (Internationalization)
+
+All user-facing strings must be internationalized:
+
+**New translation keys per phase:**
+
+```javascript
+// Phase 1
+"share.button": "Share Quiz",
+"share.modal.title": "Share this quiz",
+"share.copy": "Copy",
+"share.qr": "QR Code",
+"share.native": "Share",
+"import.title": "Quiz shared with you",
+"import.play": "Play Now",
+"import.save": "Save for Later",
+"import.error": "Could not load quiz",
+
+// Phase 2
+"mode.learn": "Learn",
+"mode.party": "Party",
+"mode.switch.learn": "Switch to Learning Mode",
+"mode.switch.party": "Switch to Party Mode",
+
+// Phase 3
+"party.create": "Create Party",
+"party.join": "Join Party",
+"party.code": "Room Code",
+"party.share_code": "Share this code with friends",
+"party.participants": "Participants",
+"party.start": "Start Quiz",
+"party.waiting": "Waiting for host...",
+"party.scores": "Live Scores",
+"party.time_remaining": "Time remaining",
+"party.host_left": "Host disconnected. Session ended.",
+```
+
+### JSDoc Requirements
+
+All new public functions must have JSDoc:
+
+```javascript
+/**
+ * Serializes a quiz object to a URL-safe string.
+ * Uses LZ-string compression and Base64 encoding.
+ *
+ * @param {Object} quiz - The quiz object to serialize
+ * @param {string} quiz.id - Unique quiz identifier
+ * @param {Array<Object>} quiz.questions - Array of question objects
+ * @param {string} quiz.mode - Quiz mode: "learning" | "party" | "both"
+ * @returns {string} URL-safe Base64 encoded string
+ * @throws {Error} If quiz is invalid or too large
+ *
+ * @example
+ * const encoded = serializeQuiz(myQuiz);
+ * const url = `https://saberloop.com/app/quiz#${encoded}`;
+ */
+export function serializeQuiz(quiz) { ... }
+```
+
+### Architecture Tests (dependency-cruiser)
+
+Add rules for new modules:
+
+```javascript
+// New rules for Phase 1-3
+{
+  name: "p2p-service-isolation",
+  comment: "P2P service should not depend on UI components",
+  from: { path: "^src/services/p2p" },
+  to: { path: "^src/(views|components)" },
+  severity: "error"
+},
+{
+  name: "party-session-uses-p2p",
+  comment: "Party session must use P2P service, not raw WebRTC",
+  from: { path: "^src/services/party-session" },
+  to: { path: "RTCPeerConnection" },
+  severity: "error"
+}
+```
+
+### Feature Flag Strategy
+
+All new features behind flags for gradual rollout:
+
+```javascript
+// src/core/feature-flags.js
+
+export const FEATURE_FLAGS = {
+  // Phase 1
+  QUIZ_SHARING: {
+    key: 'quiz_sharing',
+    default: false,
+    description: 'Enable quiz sharing via URL',
+  },
+
+  // Phase 2
+  MODE_TOGGLE: {
+    key: 'mode_toggle',
+    default: false,
+    description: 'Enable Learning/Party mode toggle',
+  },
+
+  // Phase 3
+  PARTY_SESSION: {
+    key: 'party_session',
+    default: false,
+    description: 'Enable real-time party sessions',
+  },
+};
+
+// Usage in code:
+if (isFeatureEnabled(FEATURE_FLAGS.QUIZ_SHARING)) {
+  showShareButton();
+}
+```
+
+**Rollout Strategy:**
+1. Feature ships disabled (flag = false)
+2. Enable for internal testing
+3. Enable for 10% of users
+4. Monitor telemetry
+5. Gradual rollout to 100%
+6. Remove flag after stable
+
+### Branch & Commit Strategy
+
+**Branch Naming:**
+```
+feature/phase1-quiz-sharing
+feature/phase2-mode-toggle
+feature/phase3-party-session
+```
+
+**Sub-branches for large phases:**
+```
+feature/phase1-quiz-sharing
+├── feature/phase1-serialization
+├── feature/phase1-share-ui
+├── feature/phase1-import-flow
+└── feature/phase1-telemetry
+```
+
+**Commit Message Format:**
+```
+feat(sharing): add quiz serialization with LZ compression
+
+- Implement serializeQuiz() and deserializeQuiz()
+- Add LZ-string compression for smaller URLs
+- Handle edge cases (empty quiz, max size)
+- Add unit tests with 95% coverage
+```
+
+**Commit Prefixes:**
+- `feat(scope)`: New feature
+- `fix(scope)`: Bug fix
+- `test(scope)`: Tests only
+- `docs(scope)`: Documentation
+- `refactor(scope)`: Code refactoring
+- `style(scope)`: Formatting, CSS
+- `chore(scope)`: Build, dependencies
+
+### Learning Notes & Status Updates
+
+**Learning Notes Location:**
+```
+docs/learning/epic06_social_features/
+├── EPIC6_SOCIAL_FEATURES_PLAN.md  (this plan, moved from parking_lot)
+├── PHASE1_QUIZ_SHARING_NOTES.md
+├── PHASE2_MODE_TOGGLE_NOTES.md
+└── PHASE3_PARTY_SESSION_NOTES.md
+```
+
+**Status Update Cadence:**
+- Update CLAUDE.md status after each phase completion
+- Update learning notes after each session
+- Track difficulties, errors, fixes, and learnings
+
+**Learning Notes Template:**
+```markdown
+## Session: [Date]
+
+### Completed
+- [ ] Task 1
+- [ ] Task 2
+
+### Difficulties & Solutions
+- **Problem**: Description
+- **Cause**: Root cause
+- **Fix**: How it was fixed
+- **Learning**: Key takeaway
+
+### Gotchas for Future Reference
+- Important note 1
+- Important note 2
+
+### Next Steps
+- [ ] Continue with...
+```
+
+---
+
+## Phase Implementation Checklists
+
+### Phase 1 Complete Checklist
+
+- [ ] **Design**
+  - [ ] Wireframes reviewed and approved
+  - [ ] i18n strings defined
+
+- [ ] **Implementation**
+  - [ ] Quiz serializer service
+  - [ ] Share button and modal
+  - [ ] Import flow and route
+  - [ ] Telemetry events
+
+- [ ] **Quality**
+  - [ ] Unit tests (≥80% coverage)
+  - [ ] E2E tests for all user flows
+  - [ ] Mutation testing passed
+  - [ ] JSDoc on all public functions
+  - [ ] Architecture tests passing
+
+- [ ] **Release**
+  - [ ] Feature flag created (disabled)
+  - [ ] Branch merged to main
+  - [ ] Learning notes documented
+  - [ ] Status updated in CLAUDE.md
+  - [ ] Flag enabled for testing
+  - [ ] Gradual rollout begun
+
+### Phase 2 Complete Checklist
+
+- [ ] **Design**
+  - [ ] Wireframes reviewed and approved
+  - [ ] Color schemes finalized
+  - [ ] i18n strings defined
+
+- [ ] **Implementation**
+  - [ ] Theme manager service
+  - [ ] CSS custom properties
+  - [ ] Toggle component
+  - [ ] Mode persistence
+  - [ ] Telemetry events
+
+- [ ] **Quality**
+  - [ ] Unit tests (≥80% coverage)
+  - [ ] E2E tests for all user flows
+  - [ ] Mutation testing passed
+  - [ ] JSDoc on all public functions
+  - [ ] Architecture tests passing
+
+- [ ] **Release**
+  - [ ] Feature flag created (disabled)
+  - [ ] Branch merged to main
+  - [ ] Learning notes documented
+  - [ ] Status updated in CLAUDE.md
+  - [ ] Flag enabled for testing
+  - [ ] Gradual rollout begun
+
+### Phase 3 Complete Checklist
+
+- [ ] **Design**
+  - [ ] Wireframes reviewed and approved
+  - [ ] VPS API design documented
+  - [ ] i18n strings defined
+
+- [ ] **Implementation (VPS)**
+  - [ ] Room management API
+  - [ ] Signaling API
+  - [ ] Cleanup cron job
+  - [ ] Rate limiting
+
+- [ ] **Implementation (App)**
+  - [ ] P2P service
+  - [ ] Party session manager
+  - [ ] Host UI
+  - [ ] Guest UI
+  - [ ] Live scoreboard
+  - [ ] Telemetry events
+
+- [ ] **Quality**
+  - [ ] Unit tests (≥80% coverage)
+  - [ ] E2E tests for all user flows
+  - [ ] Mutation testing passed
+  - [ ] JSDoc on all public functions
+  - [ ] Architecture tests passing
+
+- [ ] **Release**
+  - [ ] Feature flag created (disabled)
+  - [ ] Branch merged to main
+  - [ ] Learning notes documented
+  - [ ] Status updated in CLAUDE.md
+  - [ ] Flag enabled for testing
+  - [ ] Gradual rollout begun
+
+---
+
 ## Next Steps
 
 1. Review this plan
