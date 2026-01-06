@@ -4,6 +4,47 @@
  */
 
 /**
+ * Standard answer option labels (A, B, C, D)
+ * @type {readonly string[]}
+ */
+const OPTION_LABELS = ['A', 'B', 'C', 'D'];
+
+/**
+ * Regex pattern to match answer option prefixes
+ * Handles formats: "A) text", "A. text", "a) text", "a. text"
+ * @type {RegExp}
+ */
+const PREFIX_PATTERN = /^[A-Da-d][).]\s*/;
+
+/**
+ * Strip letter prefix from an option string
+ * @param {string} option - Option text potentially with prefix
+ * @returns {string} - Option text without prefix
+ * @example
+ * stripPrefix('A) Paris') // returns 'Paris'
+ * stripPrefix('b. London') // returns 'London'
+ * stripPrefix('Berlin') // returns 'Berlin'
+ */
+export function stripPrefix(option) {
+  if (typeof option !== 'string') return option;
+  return option.replace(PREFIX_PATTERN, '');
+}
+
+/**
+ * Add letter prefix to an option based on its position
+ * @param {string} option - Clean option text (without prefix)
+ * @param {number} index - Position index (0=A, 1=B, 2=C, 3=D)
+ * @returns {string} - Option with prefix like "A) text"
+ * @example
+ * addPrefix('Paris', 0) // returns 'A) Paris'
+ * addPrefix('London', 1) // returns 'B) London'
+ */
+export function addPrefix(option, index) {
+  const label = OPTION_LABELS[index] || String.fromCharCode(65 + index);
+  return `${label}) ${option}`;
+}
+
+/**
  * Fisher-Yates shuffle algorithm
  * Creates a new shuffled array without mutating the original
  * @param {Array} array - Array to shuffle
@@ -20,7 +61,8 @@ function fisherYatesShuffle(array) {
 
 /**
  * Shuffle answer options for a question
- * Returns a new question object with shuffled options and updated correct index
+ * Returns a new question object with shuffled options and updated correct index.
+ * Labels are normalized to sequential A, B, C, D after shuffling (fixes Issue #79).
  *
  * @param {Object} question - Question object with options and correct index
  * @param {string} question.question - The question text
@@ -41,12 +83,17 @@ export function shuffleQuestionOptions(question) {
     return question;
   }
 
+  // Strip existing prefixes to get clean answer text
+  const cleanOptions = options.map(opt => stripPrefix(opt));
+
   // Create indices array and shuffle it
   const indices = options.map((_, i) => i);
   const shuffledIndices = fisherYatesShuffle(indices);
 
-  // Reorder options based on shuffled indices
-  const shuffledOptions = shuffledIndices.map(i => options[i]);
+  // Reorder clean options based on shuffled indices, then add sequential labels
+  const shuffledOptions = shuffledIndices.map((originalIndex, newIndex) =>
+    addPrefix(cleanOptions[originalIndex], newIndex)
+  );
 
   // Find new position of correct answer
   const newCorrectIndex = shuffledIndices.indexOf(correct);
