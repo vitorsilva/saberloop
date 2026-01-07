@@ -25,6 +25,27 @@
   - Telemetry events for import flow
 - [x] Unit tests for serializer (18 tests passing)
 - [x] Unit tests for import service (10 tests passing)
+- [x] Created quiz share service (`src/services/quiz-share.js`)
+  - `generateShareUrl()` - creates shareable URL
+  - `copyShareUrl()` - clipboard with fallback
+  - `nativeShare()` - Web Share API integration
+  - `isNativeShareSupported()` - feature detection
+- [x] Unit tests for share service (12 tests passing)
+- [x] Updated router to detect `/quiz/<data>` shared URLs
+- [x] Created ImportView (`src/views/ImportView.js`)
+  - Loading, preview, error, and success states
+  - "Play Now" and "Save for Later" actions
+- [x] Registered `/import` route in main.js
+- [x] Added i18n strings for import UI in all 9 languages
+- [x] Created ShareQuizModal component (`src/components/ShareQuizModal.js`)
+  - Bottom sheet modal with quiz info, copy link, native share
+  - Error state for oversized quizzes
+- [x] Added i18n strings for shareQuiz in all 9 languages
+- [x] Added SHARE_QUIZ feature flag (`src/core/features.js`)
+- [x] Added Share Quiz button to ResultsView
+  - Imports showShareQuizModal
+  - New button alongside existing Share Results button
+  - handleShareQuizClick handler
 
 ### Difficulties & Solutions
 
@@ -51,16 +72,18 @@
 4. `test(sharing): add unit tests for quiz serializer`
 5. `feat(sharing): add quiz import service`
 6. `test(sharing): add unit tests for quiz import service`
+7. `feat(sharing): add quiz share service with tests`
+8. `docs(sharing): add Phase 1 learning notes`
+9. `feat(sharing): add import view and route handler`
 
 ### Next Steps
 
-- [ ] Create share service (`src/services/quiz-share.js`) for generating share URLs
-- [ ] Add share UI components (Share Modal)
-- [ ] Create `/quiz#data` route handler for imports
-- [ ] Add i18n strings for share/import UI
+- [ ] Add share button to quiz history/topics list
+- [ ] Add QR code generation (install `qrcode` library)
 - [ ] Write E2E tests (Playwright)
 - [ ] Write Maestro tests (mobile)
 - [ ] Deploy to staging and test
+- [ ] Manual testing on real devices
 
 ---
 
