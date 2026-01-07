@@ -293,3 +293,7 @@ Full ad container testing is covered by E2E tests which can mock the loading sta
 
 ### Remaining Phases
 - [ ] 60.11 (Post-approval) Add real ad unit IDs - waiting for Google approval (1-7 days)
+
+### Future Enhancements (Out of Scope)
+- **Ads on quiz replay:** Currently ads only show during NEW quiz generation. Users who only replay existing quizzes (from cache) never see ads. Consider adding a brief loading screen with ad when replaying cached quizzes.
+- **Additional ad placements:** Home page, between questions (careful with UX)
