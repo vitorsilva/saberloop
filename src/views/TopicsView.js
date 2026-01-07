@@ -7,6 +7,7 @@
   import { formatCost, isFreeModel } from '../services/cost-service.js';
   import { showShareQuizModal } from '../components/ShareQuizModal.js';
   import { logger } from '../utils/logger.js';
+  import { createModeToggle } from '../components/ModeToggle.js';
 
   export default class TopicsView extends BaseView {
     async render() {
@@ -21,8 +22,11 @@
   bg-background-light dark:bg-background-dark">
             <h1 data-testid="topics-title" class="text-text-light dark:text-text-dark text-lg
   font-bold leading-tight tracking-[-0.015em]">${t('topics.title')}</h1>
-            <span data-testid="quiz-count" class="text-subtext-light dark:text-subtext-dark
+            <div class="flex items-center gap-2">
+              <div id="modeToggleContainer"></div>
+              <span data-testid="quiz-count" class="text-subtext-light dark:text-subtext-dark
   text-sm">${t('topics.quizCount', { count: sessions.length })}</span>
+            </div>
           </header>
 
           <!-- Main Content -->
@@ -61,6 +65,14 @@
           </div>
         </div>
       `);
+
+      // Mount mode toggle (behind feature flag)
+      if (isFeatureEnabled('MODE_TOGGLE')) {
+        const toggleContainer = this.querySelector('#modeToggleContainer');
+        if (toggleContainer) {
+          toggleContainer.appendChild(createModeToggle());
+        }
+      }
 
       this.attachListeners();
     }

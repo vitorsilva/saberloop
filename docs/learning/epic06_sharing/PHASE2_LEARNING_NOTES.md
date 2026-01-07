@@ -33,6 +33,8 @@
   - Updates UI on click, calls setMode()
   - Accessible with ARIA roles
 - [x] Added mode toggle to HomeView header
+- [x] Added mode toggle to TopicsView header
+- [x] Added mode toggle to SettingsView header
 - [x] Added MODE_TOGGLE feature flag (DISABLED by default)
 
 ### Key Decisions
@@ -46,7 +48,6 @@
 
 ### Next Steps
 
-- [ ] Add mode toggle to other views (TopicsView, TopicInputView, etc.)
 - [ ] Write unit tests for theme-manager.js
 - [ ] Write unit tests for ModeToggle component
 - [ ] Write E2E tests (Playwright)
