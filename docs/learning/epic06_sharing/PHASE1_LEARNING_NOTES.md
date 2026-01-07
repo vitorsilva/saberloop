@@ -1,8 +1,9 @@
 # Phase 1: Quiz Sharing - Learning Notes
 
-**Status:** In Progress
+**Status:** PR Ready (#84)
 **Branch:** `feature/phase1-quiz-sharing`
 **Started:** 2026-01-07
+**PR:** https://github.com/vitorsilva/saberloop/pull/84
 
 ---
 
