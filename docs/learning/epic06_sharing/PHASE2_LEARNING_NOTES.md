@@ -57,9 +57,39 @@
 
 ### Next Steps
 
-- [ ] Write E2E tests (Playwright)
+- [x] Write E2E tests (Playwright) ✅
 - [ ] Write Maestro tests (mobile)
 - [ ] Deploy and test
+
+---
+
+## Session: 2026-01-07 (continued)
+
+### Completed
+
+- [x] E2E tests for mode toggle feature (10 tests)
+  - Feature flag disabled test (toggle not visible by default)
+  - Feature flag enabled tests via localStorage override
+  - Toggle visibility on home page
+  - Default to learning mode
+  - Switch to party mode (click, UI update, CSS class)
+  - Switch back to learning mode
+  - Persist mode across page navigation
+  - Persist mode across page refresh
+  - Toggle visible on Topics view
+  - Toggle visible on Settings view
+  - Dark theme applied in party mode
+
+### Key Implementation Details
+
+- **E2E Feature Flag Testing**: Uses localStorage override `__test_feature_MODE_TOGGLE` to enable the feature during tests without changing production code
+- **Test Helper**: `setupWithModeToggleEnabled(page)` sets up authenticated state + enables feature flag + reloads page
+- **Assertions**: Using `aria-selected` attribute for accessibility and CSS class checks for theming
+
+### Test Results
+
+- Unit tests: 529 passed
+- E2E tests: 10 passed (mode-toggle.spec.js)
 
 ---
 

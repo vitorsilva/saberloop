@@ -53,6 +53,11 @@
    * @returns {boolean}
    */
   export function isFeatureEnabled(featureName, context = 'default') {
+    // Check for test override in localStorage (for E2E testing)
+    const override = localStorage.getItem(`__test_feature_${featureName}`);
+    if (override === 'ENABLED') return true;
+    if (override === 'DISABLED') return false;
+
     const feature = FEATURE_FLAGS[featureName];
 
     if (!feature) {
