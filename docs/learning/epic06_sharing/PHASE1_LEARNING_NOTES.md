@@ -53,6 +53,14 @@
 - [x] Added QR code generation (`qrcode` library)
   - Only generates QR for URLs ≤300 characters (longer URLs create unscannable dense QR codes)
   - Uses error correction level 'H' for better scanning reliability
+- [x] Test validation completed
+  - Unit tests: 455 passing
+  - Architecture tests: passing
+  - Mutation testing scores:
+    - quiz-serializer.js: 65.57% (most survivors are equivalent mutants for optional fields)
+    - quiz-import.js: 56.10% (most survivors are telemetry mutations)
+    - quiz-share.js: 52.94% (most survivors are telemetry mutations)
+  - Added targeted tests to kill important mutations
 
 ### Difficulties & Solutions
 
@@ -80,6 +88,23 @@
 - **Fix**: Only generate QR codes when URL length ≤300 characters; longer quizzes just use Copy Link/Share buttons
 - **Learning**: QR codes work best for short URLs (<300 chars). For data-heavy URLs, provide alternative sharing methods
 
+- **Finding**: Mutation testing scores for telemetry code are inherently low
+- **Cause**: Telemetry calls are "fire and forget" - they don't affect return values or observable behavior
+- **Decision**: Accept lower mutation scores for telemetry mutations since they're observability, not business logic
+- **Learning**: When reviewing mutation test results, categorize survivors into: (1) business logic bugs - must fix, (2) equivalent mutants - can ignore, (3) observability/telemetry - acceptable to ignore
+
+- **Problem**: E2E test `locator('text=Share Quiz')` matched 2 elements (button + modal heading)
+- **Cause**: Both the Share Quiz button and modal title contain the same text
+- **Fix**: Use `getByRole('heading', { name: 'Share Quiz' })` to specifically target the modal heading
+- **Learning**: Prefer semantic locators (getByRole, getByTestId) over text locators when text appears multiple times
+
+- **Problem**: E2E tests expected URL to change to `/import` when navigating to shared quiz URL
+- **Cause**: Router renders ImportView without changing URL (URL stays at `/quiz/<data>`)
+- **Fix**: Check for visible content (e.g., "Play Now" button) instead of URL change
+- **Learning**: When testing SPA routing, the URL may not always change even when the view changes. Test for visible content, not just URL patterns
+
+- **Tip**: When generating test data for E2E tests (like encoded quiz URLs), pre-generate and hardcode the value rather than trying to generate dynamically in the browser context
+
 ### Commits Made
 
 1. `docs(sharing): add QuizSession type definitions for sharing fields`
@@ -95,7 +120,8 @@
 ### Next Steps
 
 - [x] Add QR code generation (install `qrcode` library)
-- [ ] Write E2E tests (Playwright)
+- [x] Test validation (unit tests, arch tests, mutation testing)
+- [x] Write E2E tests (Playwright) - 9 tests covering share flow, import flow, clipboard
 - [ ] Write Maestro tests (mobile)
 - [ ] Deploy to staging and test
 - [ ] Manual testing on real devices
