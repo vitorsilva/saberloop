@@ -18,7 +18,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 06 | Phase 1 ✅ PR #84 (Quiz Sharing) | Phase 2 (Mode Toggle) | Phase 3 (Party Session)
+**Current Status:** Epic 06 | Phase 1 ✅ Merged | Phase 2 ✅ Complete (flag: DISABLED) | Phase 3 (Party Session)
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
