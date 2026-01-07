@@ -3,7 +3,7 @@
 ## Overview
 Add donation support via Liberapay to allow users to support Saberloop development.
 
-## Status: In Progress
+## Status: PR Ready (#85)
 
 ## Session: 2026-01-07
 
@@ -26,6 +26,12 @@ Add donation support via Liberapay to allow users to support Saberloop developme
 - Styled with purple-to-pink gradient and heart emoji
 - Security attributes: target="_blank", rel="noopener noreferrer"
 - Test ID: data-testid="donation-link"
+
+#### 61.2b Donation Link on Landing Page ✅
+- Added "💝 Support" link in landing page footer
+- Consistent with other footer links (GitHub, Report Issue, Privacy)
+- GA tracking: data-track="donate_footer"
+- Security attributes: target="_blank", rel="noopener noreferrer"
 
 #### 61.3 i18n Translations ✅
 - Added `settings.support` translations to all 9 locales:
@@ -56,14 +62,17 @@ Add donation support via Liberapay to allow users to support Saberloop developme
 1. `dc20d77` - feat(i18n): add donation support translations for 9 languages
 2. `aa7bf79` - feat(settings): add donation support section with Liberapay link
 3. `8dded59` - test(e2e): add donation link tests
+4. `f89fb6a` - docs: add Phase 61 learning notes
+5. `7ab0f79` - feat(landing): add donation link to footer
 
 ### Skipped
 - 61.5 Help page link (optional, can add later if desired)
 
 ### Pending
-- [ ] Run E2E tests to verify
-- [ ] Run all tests (unit + E2E)
-- [ ] Create PR
+- [x] Run E2E tests to verify ✅
+- [x] Run all tests (unit + E2E) ✅
+- [x] Create PR ✅ #85
+- [ ] Merge PR after CI passes
 
 ### Learnings
 
