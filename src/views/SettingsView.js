@@ -194,6 +194,29 @@
               </div>
             </div>
 
+            <!-- Support Section -->
+            <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold
+   leading-tight tracking-[-0.015em] pb-3 pt-8">${t('settings.support.title')}</h2>
+
+            <div class="flex flex-col gap-3">
+              <div class="bg-card-light dark:bg-card-dark rounded-xl p-4 text-center">
+                <p class="text-subtext-light dark:text-subtext-dark text-sm mb-4">
+                  ${t('settings.support.message')}
+                </p>
+                <a href="https://liberapay.com/vitormrsilva"
+                  target="_blank" rel="noopener noreferrer"
+                  data-testid="donation-link"
+                  class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500
+                  text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity">
+                  <span>💝</span>
+                  <span>${t('settings.support.button')}</span>
+                </a>
+                <p class="text-subtext-light dark:text-subtext-dark text-xs mt-3 italic">
+                  ${t('settings.support.note')}
+                </p>
+              </div>
+            </div>
+
           <!-- Spacer for bottom nav -->
           <div class="h-24"></div>
 
