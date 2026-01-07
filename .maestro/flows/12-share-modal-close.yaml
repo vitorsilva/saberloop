@@ -1,14 +1,14 @@
 appId: com.saberloop.app
 ---
-# Test 10: Quiz Sharing - Share Button Visible on History Page
-# Corresponds to E2E test: "should show share button on quiz items in history page"
+# Test 12: Quiz Sharing - Close Modal
+# Corresponds to E2E test: "should close Share Quiz modal when close button clicked"
 
 # Launch and navigate to home
 - launchApp
 - runFlow:
     file: _shared/navigate-home.yaml
 
-# First complete a quiz to have something in history
+# Complete a quiz
 - tapOn:
     text: ".*Solar System.*|.*Basic Math.*|.*Famous Scientists.*"
 
@@ -53,21 +53,29 @@ appId: com.saberloop.app
     visible: ".*Results.*|.*Score.*|.*%.*"
     timeout: 10000
 
-# Navigate to Topics/History page via bottom nav
+# Open share modal
 - tapOn:
-    text: "Topics"
+    text: ".*Share Quiz.*"
 
-# Wait for history page to load
 - extendedWaitUntil:
-    visible: ".*Quiz History.*|.*Topics.*|.*quizzes.*"
+    visible: ".*Copy.*Link.*|.*Copy.*"
     timeout: 5000
 
-- takeScreenshot: 10-history-page
+- takeScreenshot: 12-modal-open
 
-# Verify share button exists (send icon) - main assertion
-# Note: On Android TWA, the share button has aria-label "Share quiz"
+# Close the modal
+- tapOn:
+    text: ".*Close.*"
+
+# Wait for modal to close (Copy Link button should not be visible)
+- extendedWaitUntil:
+    notVisible: ".*Copy.*Link.*"
+    timeout: 3000
+
+- takeScreenshot: 12-modal-closed
+
+# Verify we're back on results page
 - assertVisible:
-    text: ".*Share quiz.*"
-    optional: true
+    text: ".*Results.*|.*Score.*|.*%.*"
 
-- takeScreenshot: 10-share-button-visible
+- takeScreenshot: 12-back-on-results

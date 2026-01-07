@@ -1,7 +1,7 @@
 appId: com.saberloop.app
 ---
-# Test 10: Quiz Sharing - Share Button Visible on History Page
-# Corresponds to E2E test: "should show share button on quiz items in history page"
+# Test 14: Quiz Sharing - Open Modal from History Page
+# Corresponds to E2E test: "should open Share Quiz modal from history page"
 
 # Launch and navigate to home
 - launchApp
@@ -57,17 +57,41 @@ appId: com.saberloop.app
 - tapOn:
     text: "Topics"
 
-# Wait for history page to load
 - extendedWaitUntil:
     visible: ".*Quiz History.*|.*Topics.*|.*quizzes.*"
     timeout: 5000
 
-- takeScreenshot: 10-history-page
+- takeScreenshot: 14-history-page
 
-# Verify share button exists (send icon) - main assertion
-# Note: On Android TWA, the share button has aria-label "Share quiz"
-- assertVisible:
+# Tap share button (aria-label "Share quiz")
+- tapOn:
     text: ".*Share quiz.*"
-    optional: true
 
-- takeScreenshot: 10-share-button-visible
+# Wait for modal to appear
+- extendedWaitUntil:
+    visible: ".*Copy.*Link.*|.*Copy.*"
+    timeout: 5000
+
+- takeScreenshot: 14-modal-from-history
+
+# Verify modal elements
+- assertVisible:
+    text: ".*Share Quiz.*"
+
+- assertVisible:
+    text: ".*Copy.*Link.*|.*Copy.*"
+
+# Verify still on history page (URL didn't change)
+# Close modal to verify
+- tapOn:
+    text: ".*Close.*"
+
+- extendedWaitUntil:
+    notVisible: ".*Copy.*Link.*"
+    timeout: 3000
+
+# Verify still on history page
+- assertVisible:
+    text: ".*Quiz History.*|.*Topics.*|.*quizzes.*"
+
+- takeScreenshot: 14-still-on-history

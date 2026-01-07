@@ -1,7 +1,7 @@
 appId: com.saberloop.app
 ---
-# Test 09: Quiz Sharing Feature
-# Verifies Share Quiz button and modal on results page
+# Test 09: Quiz Sharing - Share Button Visibility on Results
+# Corresponds to E2E test: "should show Share Quiz button on results page"
 
 # Launch and navigate to home
 - launchApp
@@ -18,13 +18,11 @@ appId: com.saberloop.app
     timeout: 10000
 
 # Answer 5 questions quickly (all option A)
-# Question 1
 - tapOn:
     text: "A\\).*"
 - tapOn:
     text: ".*Submit.*|.*Next.*"
 
-# Question 2
 - tapOn:
     text: "A\\).*"
     optional: true
@@ -32,7 +30,6 @@ appId: com.saberloop.app
     text: ".*Submit.*|.*Next.*"
     optional: true
 
-# Question 3
 - tapOn:
     text: "A\\).*"
     optional: true
@@ -40,7 +37,6 @@ appId: com.saberloop.app
     text: ".*Submit.*|.*Next.*"
     optional: true
 
-# Question 4
 - tapOn:
     text: "A\\).*"
     optional: true
@@ -48,7 +44,6 @@ appId: com.saberloop.app
     text: ".*Submit.*|.*Next.*"
     optional: true
 
-# Question 5
 - tapOn:
     text: "A\\).*"
     optional: true
@@ -61,63 +56,10 @@ appId: com.saberloop.app
     visible: ".*Results.*|.*Score.*|.*%.*"
     timeout: 10000
 
-- takeScreenshot: 09-results-before-share
+- takeScreenshot: 09-results-page
 
-# Verify Share Quiz button is visible
+# Verify Share Quiz button is visible (main assertion)
 - assertVisible:
     text: ".*Share Quiz.*"
 
-# Tap Share Quiz button
-- tapOn:
-    text: ".*Share Quiz.*"
-
-# Wait for modal to appear
-- extendedWaitUntil:
-    visible: ".*Copy Link.*|.*Copy.*"
-    timeout: 5000
-
-- takeScreenshot: 09-share-modal-opened
-
-# Verify modal elements
-- assertVisible:
-    text: ".*Share Quiz.*"
-
-# Verify Copy Link button is present
-- assertVisible:
-    text: ".*Copy.*Link.*|.*Copy.*"
-
-# Verify quiz topic is shown in modal
-- assertVisible:
-    text: ".*Solar System.*|.*Basic Math.*|.*Famous Scientists.*"
-
-# Verify question count is shown
-- assertVisible:
-    text: ".*questions.*"
-
-- takeScreenshot: 09-share-modal-details
-
-# Test Copy Link button
-- tapOn:
-    text: ".*Copy.*Link.*|.*Copy.*"
-
-# Wait for success feedback (button text changes to "Copied")
-- extendedWaitUntil:
-    visible: ".*Copied.*"
-    timeout: 3000
-
-- takeScreenshot: 09-link-copied
-
-# Close the modal
-- tapOn:
-    text: ".*Close.*"
-
-# Wait for modal to close
-- extendedWaitUntil:
-    notVisible: ".*Copy.*Link.*"
-    timeout: 3000
-
-# Verify we're back on results page
-- assertVisible:
-    text: ".*Results.*|.*Score.*|.*%.*"
-
-- takeScreenshot: 09-share-complete
+- takeScreenshot: 09-share-button-visible

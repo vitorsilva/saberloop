@@ -122,9 +122,25 @@
 - [x] Add QR code generation (install `qrcode` library)
 - [x] Test validation (unit tests, arch tests, mutation testing)
 - [x] Write E2E tests (Playwright) - 8 tests covering share flow, import flow, clipboard
-- [x] Write Maestro tests (mobile) - 2 test files for results page and history page sharing
+- [x] Write Maestro tests (mobile) - 6 tests matching E2E coverage (see note below)
 - [ ] Deploy to staging and test
 - [ ] Manual testing on real devices
+
+**Test Coverage Parity Note:**
+- E2E (Playwright): 8 tests
+- Maestro: 6 tests
+
+The 2 E2E-only tests are for **import quiz from URL** (tests 6-7), which require:
+- Navigating to a specific URL with encoded quiz data
+- This is a web-only feature - cannot be tested in Maestro without deep link configuration
+
+The 6 Maestro tests cover the same scenarios as the other 6 E2E tests:
+1. Share button visibility on results (09)
+2. Share button visibility on history (10)
+3. Open modal on results (11)
+4. Close modal (12)
+5. Copy link (13)
+6. Open modal from history (14)
 
 ---
 
