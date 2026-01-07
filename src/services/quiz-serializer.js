@@ -126,8 +126,9 @@
       // Convert to JSON
       const json = JSON.stringify(shortQuiz);
 
-      // Compress with LZ-string
-      const compressed = LZString.compressToEncodedURIComponent(json);
+      // Compress and make truly URL-safe (replace + with -)
+      const compressed = LZString.compressToEncodedURIComponent(json)
+        .replace(/\+/g, '_');
 
       // Check length
       if (compressed.length > MAX_URL_LENGTH) {
@@ -167,8 +168,9 @@
         return { success: false, error: 'Invalid encoded data' };
       }
 
-      // Decompress
-      const json = LZString.decompressFromEncodedURIComponent(encoded);
+      // Restore + before decompressing (we replaced with - for URL safety)
+      const safeEncoded = encoded.replace(/_/g, '+');
+      const json = LZString.decompressFromEncodedURIComponent(safeEncoded);
       if (!json) {
         return { success: false, error: 'Decompression failed' };
       }
