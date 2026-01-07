@@ -1,8 +1,8 @@
 appId: com.saberloop.app
 ---
 # Test 10: Ads Behavior When Offline
-# Verifies loading view behavior when user is offline
-# Ad container should be empty/hidden when offline
+# Verifies app behavior when user is offline
+# Sample quizzes should still work offline (cached)
 
 # Launch and navigate to home
 - launchApp
@@ -21,44 +21,38 @@ appId: com.saberloop.app
 
 - takeScreenshot: 10-offline-state
 
-# Navigate to topic input
+# Sample quizzes should work offline - tap on one
 - tapOn:
-    text: ".*Start.*Quiz.*|.*Generate.*Quiz.*"
-    optional: true
+    text: ".*Solar System.*|.*Famous Scientists.*|.*Basic Math.*"
 
-# If button is disabled when offline, try to tap on topic input link
-- tapOn:
-    text: ".*topic.*|.*Topic.*"
-    optional: true
-
-# Wait for topic input view (may show offline warning)
+# Wait for quiz to load (from cache)
 - extendedWaitUntil:
-    visible: ".*topic.*|.*Topic.*|.*offline.*|.*Offline.*"
-    timeout: 5000
+    visible: "Question.*of.*"
+    timeout: 10000
 
-- takeScreenshot: 10-topic-input-offline
+- takeScreenshot: 10-offline-quiz-started
 
-# Enter a topic
+# Answer a couple questions offline
 - tapOn:
-    id: "topicInput"
-    optional: true
-- inputText: "Test Topic Offline"
-
-# Try to generate (may show offline warning in loading view)
+    text: "A\\).*"
 - tapOn:
-    text: ".*Generate.*|.*Create.*|.*Start.*"
+    text: ".*Submit.*|.*Next.*"
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
     optional: true
 
-# Wait a moment for any loading view or error
-- extendedWaitUntil:
-    timeout: 5000
-    visible: ".*"
+- takeScreenshot: 10-offline-quiz-progress
 
-- takeScreenshot: 10-loading-offline
+# Go back to home
+- tapOn: "Home"
 
-# Check for offline indicator or warning
-- assertVisible:
-    text: ".*offline.*|.*Offline.*|.*connection.*|.*appear.*"
+# Handle confirmation dialog if it appears
+- tapOn:
+    text: "OK"
     optional: true
 
 # Go back online
@@ -70,11 +64,6 @@ appId: com.saberloop.app
     visible: ".*"
 
 - takeScreenshot: 10-back-online
-
-# Navigate back to home
-- tapOn:
-    text: ".*Cancel.*|.*Back.*|.*Home.*"
-    optional: true
 
 # Verify app is functional again
 - extendedWaitUntil:

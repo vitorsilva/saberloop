@@ -123,6 +123,46 @@ git worktree add ../demo-pwa-app-phase60 -b feature/phase60-adsense main
   - Verification scripts should be on the page Google will crawl (usually root)
   - Check where Google is actually looking, not where your app lives
 
+### Maestro Test Setup on Windows
+
+**Problem 1: "Not enough devices connected"**
+- **Cause:** Android emulator was not running
+- **Fix:** Start emulator via command line:
+  ```bash
+  "$LOCALAPPDATA/Android/Sdk/emulator/emulator" -avd Medium_Phone_API_36.1 -no-snapshot-load &
+  ```
+- **Learning:** Maestro requires a running emulator or physical device connected via ADB
+
+**Problem 2: App goes to OpenRouter setup instead of expected screen**
+- **Cause:** Tests assumed API key was configured, but fresh app install has no key
+- **Fix:** Design tests to use sample quizzes (pre-cached, no API key needed)
+- **Learning:** Maestro tests should work with a fresh app install without external dependencies
+
+**Problem 3: LoadingView with ads cannot be tested without API key**
+- **Cause:** LoadingView only appears during NEW quiz generation (requires OpenRouter)
+- **Fix:** Accept this as a testing limitation - document it, rely on E2E tests for ad container
+- **Learning:** Some UI states depend on external services. Plan test coverage accordingly:
+  - **E2E tests (Playwright)**: Can mock loading states, test DOM structure
+  - **Maestro tests**: Test real device behavior with cached/sample data
+
+**Maestro Quick Reference (Windows):**
+```bash
+# Check connected devices
+adb devices
+
+# Start emulator
+"$LOCALAPPDATA/Android/Sdk/emulator/emulator" -avd <AVD_NAME> &
+
+# Install APK
+adb install -r path/to/app.apk
+
+# Run single test
+maestro test .maestro/flows/09-ads-loading.yaml
+
+# Run all tests
+maestro test .maestro/flows/
+```
+
 ---
 
 ## Learnings
@@ -231,17 +271,21 @@ git worktree add ../demo-pwa-app-phase60 -b feature/phase60-adsense main
 
 ### 60.9c Maestro Mobile Tests
 - [x] Created `09-ads-loading.yaml` - Loading view with ad container
-  - Navigates to topic input and generates quiz
-  - Verifies loading view UI elements (topic, message, cancel)
-  - Takes screenshots of loading view with ad area
-  - Waits for quiz to load
+  - Uses sample quizzes (no API key needed)
+  - Navigates to home and taps on a sample quiz
+  - Takes screenshots of quiz flow
+  - Note: Sample quizzes load instantly from cache (skip loading view)
 - [x] Created `10-ads-offline.yaml` - Offline ad behavior
-  - Tests loading view when offline
-  - Verifies offline warning/indicator
+  - Uses sample quizzes (work offline from cache)
+  - Tests quiz functionality while offline
   - Tests recovery after going back online
 
 **Note:** Maestro tests verify visual UI elements, not DOM structure.
 Ad container visibility is implicit in loading view screenshots.
+
+**Limitation:** Loading view with ad container is only shown for NEW quiz
+generation (requires OpenRouter API key). Sample quizzes skip the loading view.
+Full ad container testing is covered by E2E tests which can mock the loading state.
 
 ### Remaining Phases
 - [ ] 60.11 (Post-approval) Add real ad unit IDs - waiting for Google approval (1-7 days)
