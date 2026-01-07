@@ -87,11 +87,10 @@ export function loadAd(containerId, slotKey) {
 
   const slotId = AD_SLOTS[slotKey];
 
-  // If no slot ID yet (pre-approval), show placeholder or hide
+  // If no slot ID yet (pre-approval), show placeholder
   if (!slotId) {
     logger.debug(`[AdManager] No slot ID for ${slotKey} - AdSense pending approval`);
-    // For now, hide the container until we have real ad units
-    hideContainer(containerId);
+    showPlaceholder(containerId);
     return false;
   }
 
@@ -143,6 +142,35 @@ export function hideContainer(containerId) {
 export function showContainer(containerId) {
   const container = document.getElementById(containerId);
   if (container) {
+    container.style.display = 'block';
+  }
+}
+
+/**
+ * Show a placeholder in the ad container (for pre-approval testing)
+ * @param {string} containerId - DOM element ID
+ */
+export function showPlaceholder(containerId) {
+  const container = document.getElementById(containerId);
+  if (container) {
+    container.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        border: 2px dashed #4b5563;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      ">
+        <span style="color: #9ca3af; font-size: 14px;">Ad Space</span>
+        <span style="color: #6b7280; font-size: 12px;">Awaiting AdSense approval</span>
+      </div>
+    `;
     container.style.display = 'block';
   }
 }

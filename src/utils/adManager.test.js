@@ -25,6 +25,7 @@ import {
   loadAd,
   hideContainer,
   showContainer,
+  showPlaceholder,
   resetForNavigation,
   initAdManager,
   getPublisherId,
@@ -113,20 +114,30 @@ describe('AdManager', () => {
       expect(logger.warn).toHaveBeenCalledWith('[AdManager] Container not found: nonexistent-container');
     });
 
-    it('should return false when no slot ID is configured for quizLoading', () => {
+    it('should return false and show placeholder when no slot ID is configured for quizLoading', () => {
       // quizLoading has empty slot ID by default
       const result = loadAd('test-ad-container', 'quizLoading');
 
       expect(result).toBe(false);
       expect(logger.debug).toHaveBeenCalledWith('[AdManager] No slot ID for quizLoading - AdSense pending approval');
+
+      // Should show placeholder instead of hiding
+      const container = document.getElementById('test-ad-container');
+      expect(container.style.display).toBe('block');
+      expect(container.innerHTML).toContain('Ad Space');
     });
 
-    it('should return false when no slot ID is configured for resultsLoading', () => {
+    it('should return false and show placeholder when no slot ID is configured for resultsLoading', () => {
       // resultsLoading also has empty slot ID by default
       const result = loadAd('test-ad-container', 'resultsLoading');
 
       expect(result).toBe(false);
       expect(logger.debug).toHaveBeenCalledWith('[AdManager] No slot ID for resultsLoading - AdSense pending approval');
+
+      // Should show placeholder instead of hiding
+      const container = document.getElementById('test-ad-container');
+      expect(container.style.display).toBe('block');
+      expect(container.innerHTML).toContain('Ad Space');
     });
 
     it('should prevent duplicate ad loads in same container', () => {
@@ -243,6 +254,25 @@ describe('AdManager', () => {
     it('should not crash when container does not exist', () => {
       expect(() => {
         showContainer('nonexistent');
+      }).not.toThrow();
+    });
+  });
+
+  describe('showPlaceholder', () => {
+    it('should show placeholder with "Ad Space" text', () => {
+      document.body.innerHTML = '<div id="test-container" style="display: none;"></div>';
+
+      showPlaceholder('test-container');
+
+      const container = document.getElementById('test-container');
+      expect(container.style.display).toBe('block');
+      expect(container.innerHTML).toContain('Ad Space');
+      expect(container.innerHTML).toContain('Awaiting AdSense approval');
+    });
+
+    it('should not crash when container does not exist', () => {
+      expect(() => {
+        showPlaceholder('nonexistent');
       }).not.toThrow();
     });
   });
