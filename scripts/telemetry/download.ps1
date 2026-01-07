@@ -10,7 +10,7 @@ param(
 )
 
 # Load environment variables from .env
-$envFile = Join-Path $PSScriptRoot "..\..\env"
+$envFile = Join-Path $PSScriptRoot "..\..\.env"
 if (Test-Path $envFile) {
     Get-Content $envFile | ForEach-Object {
         if ($_ -match "^([^#][^=]+)=(.*)$") {
@@ -45,6 +45,12 @@ Write-Host "Downloading logs from $cutoffDate to today..."
 
 # Use WinSCP if available, otherwise provide instructions
 $winscp = Get-Command winscp.com -ErrorAction SilentlyContinue
+$winscpPath = "$env:LOCALAPPDATA\Programs\WinSCP\WinSCP.com"
+
+# Check default winget install location if not in PATH
+if (-not $winscp -and (Test-Path $winscpPath)) {
+    $winscp = $winscpPath
+}
 
 if ($winscp) {
     # WinSCP script for downloading
@@ -56,7 +62,10 @@ mget telemetry-*.jsonl
 exit
 "@
 
-    $script | & winscp.com /script=/dev/stdin
+    $scriptFile = [System.IO.Path]::GetTempFileName()
+    $script | Out-File -FilePath $scriptFile -Encoding ASCII
+    & $winscp /script="$scriptFile"
+    Remove-Item $scriptFile
 } else {
     Write-Host ""
     Write-Host "WinSCP not found. Manual download options:" -ForegroundColor Yellow
