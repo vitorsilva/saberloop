@@ -27,3 +27,27 @@
 body {
   min-height: max(884px, 100dvh);
 }
+
+/* Ad Container Styles */
+.ad-container {
+  width: 100%;
+  max-width: 336px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ad-container:empty {
+  display: none;
+  min-height: 0;
+}
+
+@media (max-width: 468px) {
+  .ad-container {
+    max-width: 320px;
+    min-height: 100px;
+  }
+}

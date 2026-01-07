@@ -31,6 +31,10 @@
     SHOW_USAGE_COSTS: {
       phase: 'ENABLED',  // Show LLM usage costs on results
       description: 'Display token counts and costs after each quiz'
+    },
+    SHOW_ADS: {
+      phase: 'ENABLED',  // Show AdSense ads during loading screens
+      description: 'Display Google AdSense ads during quiz and results loading'
     }
   };
 
