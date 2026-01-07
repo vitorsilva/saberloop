@@ -46,6 +46,10 @@
   - Imports showShareQuizModal
   - New button alongside existing Share Results button
   - handleShareQuizClick handler
+- [x] Added Share Quiz button to TopicsView (history list)
+  - Share icon button on each quiz row (per wireframe Screen 1b)
+  - stopPropagation to prevent triggering replay
+  - shareQuiz method loads session and shows modal
 
 ### Difficulties & Solutions
 
@@ -78,7 +82,6 @@
 
 ### Next Steps
 
-- [ ] Add share button to quiz history/topics list
 - [ ] Add QR code generation (install `qrcode` library)
 - [ ] Write E2E tests (Playwright)
 - [ ] Write Maestro tests (mobile)
