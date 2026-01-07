@@ -115,7 +115,28 @@ This is different from Playwright E2E tests which use localStorage override (`__
 ### Next Steps
 
 - [x] Write Maestro tests (mobile) ✅ (prepared, waiting for flag enable)
-- [ ] Deploy and test (when ready to enable feature)
+- [x] Deploy and test ✅ (deployed to saberloop.com/app/)
+
+---
+
+## Deployment Summary
+
+**Status:** Phase 2 implementation COMPLETE
+
+- **Feature:** Mode Toggle (Learning/Party modes)
+- **Flag:** `MODE_TOGGLE` set to `DISABLED` (hidden from users)
+- **Deployed to:** https://saberloop.com/app/ (version 20260107.247)
+
+### What was deployed:
+- Theme manager service with Learning/Party mode switching
+- ModeToggle component with accessibility support
+- CSS custom properties for dynamic theming
+- Toggle on Home, Topics, and Settings views (behind feature flag)
+- Dark theme applied in Party mode
+
+### To enable the feature:
+1. Change `MODE_TOGGLE.phase` from `'DISABLED'` to `'ENABLED'` in `src/core/features.js`
+2. Build and deploy again
 
 ---
 
