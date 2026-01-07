@@ -105,6 +105,11 @@
 
 - **Tip**: When generating test data for E2E tests (like encoded quiz URLs), pre-generate and hardcode the value rather than trying to generate dynamically in the browser context
 
+- **Problem**: Maestro tests fail with "Element not found: Share Quiz"
+- **Cause**: Maestro tests run against the installed TWA which loads from saberloop.com. The Share Quiz feature is only in the feature branch, not yet deployed.
+- **Learning**: E2E tests (Playwright) run against local dev server - they can test uncommitted/undeployed code. Maestro tests (Android TWA) run against the deployed production site - they can only test features that are already deployed.
+- **Sequence**: For new features: (1) Write tests, (2) Merge to main, (3) Deploy, (4) Validate Maestro tests
+
 ### Commits Made
 
 1. `docs(sharing): add QuizSession type definitions for sharing fields`
