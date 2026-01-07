@@ -160,8 +160,9 @@ Telemetry is **only sent** when:
 3. **Appends** each event to daily `.jsonl` file
 4. **Adds** server metadata (`_server` object):
    - `receivedAt`: Server timestamp
-   - `clientIp`: Client IP address
-   - `batchSentAt`: Client batch timestamp
+   - `batchSentAt`: Client batch timestamp (copied from request)
+
+**Note:** `clientIp` logging was commented out for privacy reasons.
 
 ### Security Measures
 
@@ -191,12 +192,14 @@ Example: `telemetry-2025-12-26.jsonl`
 ### Docker Compose File
 `docker-compose.telemetry.yml`
 
-### Containers
+### Containers (created on first run)
 
 | Container | Image | Port | Purpose |
 |-----------|-------|------|---------|
 | `saberloop-loki` | `grafana/loki:2.9.0` | 3100 | Log aggregation |
 | `saberloop-grafana` | `grafana/grafana:10.2.0` | 3000 | Visualization |
+
+**Note:** These containers are created when you first run `npm run telemetry:start`. The configuration files exist, but the containers won't appear in Docker Desktop until you run the command.
 
 ### Configuration Files
 
@@ -338,7 +341,6 @@ Script provides instructions for:
   "userAgent": "Mozilla/5.0 (Linux; Android 10; K)...",
   "_server": {
     "receivedAt": "2025-12-25T11:30:55+00:00",
-    "clientIp": "2.82.236.40",
     "batchSentAt": "2025-12-25T11:30:55.251Z"
   }
 }
