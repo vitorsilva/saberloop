@@ -14,6 +14,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 - **Epic 06: Sharing Features** - Learning & Party modes with social quiz sharing ⏳ **Current**
 - **Epic 07: Monetization** - Revenue streams (AdSense, donations, premium features)
 - **Epic 08: iOS** - iOS App Store publishing and native features
+- **Epic 09: Telemetry Analysis** - Analytics, performance insights, and reporting
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
@@ -174,6 +175,7 @@ When user says "what's next" or similar:
    - Epic 06 (Sharing Features): `docs/learning/epic06_sharing/EPIC6_SHARING_PLAN.md` and phase files ⏳ Current
    - Epic 07 (Monetization): `docs/learning/epic07_monetization/EPIC7_MONETIZATION_PLAN.md` and phase files
    - Epic 08 (iOS): `docs/learning/epic08_ios/IOS_APP_STORE.md` and phase files
+   - Epic 09 (Telemetry Analysis): `docs/learning/epic09_telemetry_analysis/EPIC9_TELEMETRY_ANALYSIS_PLAN.md` and phase files
 2. Identify current phase and next step
 3. **Present the next topic and ask if they want to proceed**
 4. Once confirmed, **teach it step-by-step** (don't execute autonomously)
@@ -226,6 +228,7 @@ When the user asks **"what's next"** or similar phrases (e.g., "what should I do
    - **Epic 06 (Sharing Features)**: Read `docs/learning/epic06_sharing/EPIC6_SHARING_PLAN.md` and phase files ⏳ Current
    - **Epic 07 (Monetization)**: Read `docs/learning/epic07_monetization/EPIC7_MONETIZATION_PLAN.md` and related phase files
    - **Epic 08 (iOS)**: Read `docs/learning/epic08_ios/IOS_APP_STORE.md` and related phase files
+   - **Epic 09 (Telemetry Analysis)**: Read `docs/learning/epic09_telemetry_analysis/EPIC9_TELEMETRY_ANALYSIS_PLAN.md` and related phase files
 2. Identify the current phase and next steps in the learning progression
 3. Guide the user through the next appropriate task or learning objective
 
@@ -242,6 +245,7 @@ When the user says **"that's a wrap"**, **"let's call it a day"**, **"let's paus
    - **Epic 06**: `docs/learning/epic06_sharing/PHASE*_LEARNING_NOTES.md` ⏳ Current
    - **Epic 07**: `docs/learning/epic07_monetization/PHASE*_LEARNING_NOTES.md`
    - **Epic 08**: `docs/learning/epic08_ios/PHASE*_LEARNING_NOTES.md`
+   - **Epic 09**: `docs/learning/epic09_telemetry_analysis/PHASE*_LEARNING_NOTES.md`
 2. Follow the structure in "Learning Notes: What to Capture" section - include progress, difficulties, errors, fixes, and learnings
 3. Ensure all recent work is properly documented so progress can be easily resumed
 
@@ -328,6 +332,8 @@ demo-pwa-app/
 │   │   ├── epic05/            # Growth & Excellence
 │   │   ├── epic06_sharing/    # Learning & Party Modes (current)
 │   │   ├── epic07_monetization/ # Revenue streams (AdSense, donations, premium)
+│   │   ├── epic08_ios/        # iOS App Store publishing
+│   │   ├── epic09_telemetry_analysis/ # Analytics and reporting
 │   │   └── parking_lot/       # Optional/deferred phases
 │   └── product-info/          # Product assets (mockups, logos)
 ├── src/
@@ -555,6 +561,14 @@ Located in `docs/learning/epic07_monetization/`:
 - **PHASE60_MONETIZATION_REFERENCE.md**: Detailed code reference for AdSense
 - **PHASE61_DONATION.md**: User donation support
 - **PHASE62_LICENSE_KEY_PREMIUM.md**: Premium features with license keys
+
+### Epic 08: iOS
+Located in `docs/learning/epic08_ios/`:
+- **IOS_APP_STORE.md**: iOS App Store publishing plan
+
+### Epic 09: Telemetry Analysis
+Located in `docs/learning/epic09_telemetry_analysis/`:
+- **EPIC9_TELEMETRY_ANALYSIS_PLAN.md**: Telemetry analysis approaches and reporting
 
 When making changes, respect the learning-focused nature of the project. Keep code simple and well-commented rather than introducing complex patterns or dependencies.
 
