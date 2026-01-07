@@ -183,10 +183,23 @@ git worktree add ../demo-pwa-app-phase60 -b feature/phase60-adsense main
 - [x] Phase: ENABLED
 - [x] AdManager checks this flag before loading ads
 
+### 60.4 Ad Containers in Views
+- [x] Added ad container div to `src/views/LoadingView.js`
+- [x] Import `loadAd` and `resetForNavigation` from adManager
+- [x] Call `loadAd('quiz-loading-ad', 'quizLoading')` after view renders
+- [x] Call `resetForNavigation()` in cleanup method
+
+### 60.5 Ad Styles
+- [x] Added `.ad-container` styles to `src/styles/main.css`
+- [x] Responsive sizing (336px desktop, 320px mobile)
+- [x] Empty state handling (hidden when no ad)
+
+### 60.6 Quiz Flow Integration
+- [x] AdManager initialized in `src/main.js`
+- [x] LoadingView loads ad when user is waiting for quiz generation
+- [x] Ad state reset on navigation
+
 ### Remaining Phases
-- [ ] 60.4 Add ad containers to loading views
-- [ ] 60.5 Add ad styles
-- [ ] 60.6 Integrate into quiz flow
-- [ ] 60.7 Add i18n translations
+- [ ] 60.7 Add i18n translations (optional - ads don't have translatable text)
 - [ ] 60.9 Write tests (unit + E2E)
 - [ ] 60.11 (Post-approval) Add real ad unit IDs
