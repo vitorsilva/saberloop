@@ -50,6 +50,9 @@
   - Share icon button on each quiz row (per wireframe Screen 1b)
   - stopPropagation to prevent triggering replay
   - shareQuiz method loads session and shows modal
+- [x] Added QR code generation (`qrcode` library)
+  - Only generates QR for URLs ≤300 characters (longer URLs create unscannable dense QR codes)
+  - Uses error correction level 'H' for better scanning reliability
 
 ### Difficulties & Solutions
 
@@ -68,6 +71,15 @@
 - **Fix**: Changed to `telemetry.track('event', { name: '...' })` pattern
 - **Learning**: Always check existing patterns in the codebase before introducing new code
 
+- **Tip**: When adding buttons inside clickable list items (like share button inside quiz row)
+- **Pattern**: Use `e.stopPropagation()` in the button click handler to prevent triggering parent click
+- **Example**: Share button click should open modal, not replay the quiz
+
+- **Problem**: QR codes generated for quiz share URLs were unscannable on mobile devices
+- **Cause**: Data URLs with compressed quiz content are 500+ characters, creating extremely dense QR codes
+- **Fix**: Only generate QR codes when URL length ≤300 characters; longer quizzes just use Copy Link/Share buttons
+- **Learning**: QR codes work best for short URLs (<300 chars). For data-heavy URLs, provide alternative sharing methods
+
 ### Commits Made
 
 1. `docs(sharing): add QuizSession type definitions for sharing fields`
@@ -82,7 +94,7 @@
 
 ### Next Steps
 
-- [ ] Add QR code generation (install `qrcode` library)
+- [x] Add QR code generation (install `qrcode` library)
 - [ ] Write E2E tests (Playwright)
 - [ ] Write Maestro tests (mobile)
 - [ ] Deploy to staging and test

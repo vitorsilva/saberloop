@@ -23,8 +23,9 @@ import QRCode from 'qrcode';
 async function generateQRCode(url) {
   try {
     return await QRCode.toDataURL(url, {
-      width: 200,
+      width: 256,
       margin: 2,
+      errorCorrectionLevel: 'H',
       color: {
         dark: '#000000',
         light: '#ffffff'
@@ -59,8 +60,11 @@ export function showShareQuizModal(quiz, creatorName = null) {
     // Generate share URL
     const shareResult = generateShareUrl(quiz, creatorName);
 
-    // Generate QR code if URL was created successfully
-    const qrCodeDataUrl = shareResult.success ? await generateQRCode(shareResult.url) : null;    
+    // Generate QR code only if URL is short enough to be scannable
+    const MAX_QR_URL_LENGTH = 300;
+    const qrCodeDataUrl = shareResult.success && shareResult.url.length <= MAX_QR_URL_LENGTH
+      ? await generateQRCode(shareResult.url)
+      : null;    
 
     // Create modal backdrop
     const backdrop = document.createElement('div');
@@ -216,7 +220,7 @@ function createShareContent(quiz, url, qrCodeDataUrl) {
         ${qrCodeDataUrl ? `
         <div class="px-4 mb-4 flex justify-center">
           <div class="bg-white p-3 rounded-xl">
-            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-48 h-48" />
+            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-56 h-56" />
           </div>
         </div>
         ` : ''}      
