@@ -177,8 +177,8 @@ export default class ResultsView extends BaseView {
             </button>
             ` : ''}
             ${showShareQuizButton ? `
-            <button id="shareQuizBtn" data-testid="share-quiz-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-secondary text-secondary font-semibold hover:bg-secondary/10 transition-colors">
-              <span class="material-symbols-outlined text-xl">send</span>
+            <button id="shareQuizBtn" data-testid="share-quiz-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
+              <span class="material-symbols-outlined text-xl">link</span>
               ${t('shareQuiz.title')}
             </button>
             ` : ''}

@@ -157,7 +157,7 @@
             <button class="share-quiz-btn flex size-10 items-center justify-center rounded-full hover:bg-primary/10 text-primary transition-colors"
               data-session-id="${session.id}"
               aria-label="Share quiz">
-              <span class="material-symbols-outlined text-xl">send</span>
+              <span class="material-symbols-outlined text-xl">link</span>
             </button>
             ` : ''}
             <p class="${colorClass.split(' ')[0]} text-lg
