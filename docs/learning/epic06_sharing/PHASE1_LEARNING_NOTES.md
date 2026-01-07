@@ -106,9 +106,22 @@
 - **Tip**: When generating test data for E2E tests (like encoded quiz URLs), pre-generate and hardcode the value rather than trying to generate dynamically in the browser context
 
 - **Problem**: Maestro tests fail with "Element not found: Share Quiz"
-- **Cause**: Maestro tests run against the installed TWA which loads from saberloop.com. The Share Quiz feature is only in the feature branch, not yet deployed.
-- **Learning**: E2E tests (Playwright) run against local dev server - they can test uncommitted/undeployed code. Maestro tests (Android TWA) run against the deployed production site - they can only test features that are already deployed.
-- **Sequence**: For new features: (1) Write tests, (2) Merge to main, (3) Deploy, (4) Validate Maestro tests
+- **Cause**: The emulator was running a version deployed by another agent. Need to deploy your branch and clear app cache.
+- **Fix**: Build, deploy (`npm run build && npm run deploy`), clear app cache (`adb shell pm clear com.saberloop.app`)
+- **Learning**: Maestro tests run against deployed code. Always redeploy after code changes.
+
+- **Problem**: Share Quiz button used 'send' icon which looked like a play button
+- **Fix**: Changed to 'link' icon which clearly represents "share a URL"
+- **Learning**: Choose icons that convey the action clearly - 'link' for URL sharing, 'share' for social sharing
+
+- **Problem**: Share Quiz button had gray/secondary styling, inconsistent with Share Results
+- **Fix**: Changed from `border-secondary text-secondary` to `border-primary text-primary`
+- **Learning**: Keep related buttons visually consistent - both share buttons should use same color scheme
+
+- **Problem**: Google consent dialog appeared during Maestro test, blocking the flow
+- **Cause**: Google services/fonts triggering consent on fresh emulator
+- **Fix**: Clear app data and retry, or dismiss dialog manually
+- **Learning**: Flaky tests can be caused by external dialogs - consider adding optional dismissal steps
 
 ### Commits Made
 
@@ -127,8 +140,8 @@
 - [x] Add QR code generation (install `qrcode` library)
 - [x] Test validation (unit tests, arch tests, mutation testing)
 - [x] Write E2E tests (Playwright) - 8 tests covering share flow, import flow, clipboard
-- [x] Write Maestro tests (mobile) - 6 tests matching E2E coverage (see note below)
-- [ ] Deploy to staging and test
+- [x] Write Maestro tests (mobile) - 6 tests matching E2E coverage (all passing)
+- [x] Deploy to staging and test
 - [ ] Manual testing on real devices
 
 **Test Coverage Parity Note:**
