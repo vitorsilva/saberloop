@@ -231,10 +231,52 @@
     "shareSuccess": "Shared successfully!",
     "shareFailed": "Could not share. Try copying the link instead."
   },
+  "shareQuiz": {
+    "title": "Share Quiz",
+    "questions": "questions",
+    "linkLabel": "Share link",
+    "shareVia": "Share via...",
+    "noteNoExplanations": "Note: Explanations are not included in shared quizzes",
+    "error": {
+      "tooLargeTitle": "Quiz Too Large to Share",
+      "tooLargeDescription": "This quiz has too many questions to fit in a shareable URL.",
+      "maximum": "Maximum",
+      "thisQuiz": "This quiz",
+      "suggestions": "Suggestions:",
+      "suggestion1": "Create a shorter quiz (10 questions or less)",
+      "suggestion2": "Share the topic name instead"
+    }
+  },
   "usage": {
     "thisQuizUsed": "This quiz used",
     "tokens": "{{count}} tokens",
     "freeModel": "Free model (no charge)",
     "onPaidModel": "On a paid model, this would cost {{cost}}"
+  },
+  "import": {
+    "loading": "Loading quiz...",
+    "title": "Quiz Shared With You",
+    "questions_count": "{{count}} questions",
+    "grade_level": "{{level}} level",
+    "shared_by": "Shared by: {{name}}",
+    "play": "Play Now",
+    "save": "Save for Later",
+    "dismiss": "Dismiss",
+    "saved": {
+      "title": "Quiz Saved!",
+      "description": "\"{{title}}\" saved to your quiz library.",
+      "go_home": "Go to Home"
+    },
+    "error": {
+      "title": "Import Failed",
+      "description": "Could not load quiz",
+      "reason": {
+        "incomplete": "The link may be incomplete (got cut off)",
+        "corrupted": "The data may be corrupted",
+        "old_version": "It may be from an older version"
+      },
+      "go_home": "Go to Home",
+      "try_again": "Try Again"
+    }
   }
 }

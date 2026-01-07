@@ -1,0 +1,65 @@
+appId: com.saberloop.app
+---
+# Test 09: Quiz Sharing - Share Button Visibility on Results
+# Corresponds to E2E test: "should show Share Quiz button on results page"
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Find and tap on any sample quiz
+- tapOn:
+    text: ".*Solar System.*|.*Basic Math.*|.*Famous Scientists.*"
+
+# Wait for quiz to load
+- extendedWaitUntil:
+    visible: "Question.*of.*"
+    timeout: 10000
+
+# Answer 5 questions quickly (all option A)
+- tapOn:
+    text: "A\\).*"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Wait for results page
+- extendedWaitUntil:
+    visible: ".*Results.*|.*Score.*|.*%.*"
+    timeout: 10000
+
+- takeScreenshot: 09-results-page
+
+# Verify Share Quiz button is visible (main assertion)
+- assertVisible:
+    text: ".*Share Quiz.*"
+
+- takeScreenshot: 09-share-button-visible

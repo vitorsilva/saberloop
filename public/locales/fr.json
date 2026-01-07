@@ -231,10 +231,52 @@
     "shareSuccess": "Partagé avec succès !",
     "shareFailed": "Impossible de partager. Essaie de copier le lien."
   },
+  "shareQuiz": {
+    "title": "Partager le Quiz",
+    "questions": "questions",
+    "linkLabel": "Lien de partage",
+    "shareVia": "Partager via...",
+    "noteNoExplanations": "Note : Les explications ne sont pas incluses dans les quiz partagés",
+    "error": {
+      "tooLargeTitle": "Quiz Trop Grand à Partager",
+      "tooLargeDescription": "Ce quiz a trop de questions pour tenir dans une URL partageable.",
+      "maximum": "Maximum",
+      "thisQuiz": "Ce quiz",
+      "suggestions": "Suggestions :",
+      "suggestion1": "Créer un quiz plus court (10 questions ou moins)",
+      "suggestion2": "Partager le nom du sujet à la place"
+    }
+  },
   "usage": {
     "thisQuizUsed": "Ce quiz a utilisé",
     "tokens": "{{count}} tokens",
     "freeModel": "Modèle gratuit (sans frais)",
     "onPaidModel": "Sur un modèle payant, cela coûterait {{cost}}"
+  },
+  "import": {
+    "loading": "Chargement du quiz...",
+    "title": "Quiz Partagé Avec Toi",
+    "questions_count": "{{count}} questions",
+    "grade_level": "Niveau {{level}}",
+    "shared_by": "Partagé par : {{name}}",
+    "play": "Jouer Maintenant",
+    "save": "Sauvegarder pour Plus Tard",
+    "dismiss": "Ignorer",
+    "saved": {
+      "title": "Quiz Sauvegardé !",
+      "description": "\"{{title}}\" sauvegardé dans ta bibliothèque de quiz.",
+      "go_home": "Aller à l'Accueil"
+    },
+    "error": {
+      "title": "Échec de l'Importation",
+      "description": "Impossible de charger le quiz",
+      "reason": {
+        "incomplete": "Le lien peut être incomplet (coupé)",
+        "corrupted": "Les données peuvent être corrompues",
+        "old_version": "Il peut s'agir d'une ancienne version"
+      },
+      "go_home": "Aller à l'Accueil",
+      "try_again": "Réessayer"
+    }
   }
 }

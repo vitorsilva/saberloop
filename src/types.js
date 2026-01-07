@@ -48,6 +48,13 @@
  * @property {number} totalQuestions - Total number of questions
  * @property {string} timestamp - ISO timestamp of when quiz was taken
  * @property {string} [language] - Language code used for generation
+ * @property {boolean} [isSample] - Whether this is a sample quiz
+ * @property {'learning'|'party'|'both'} [mode='learning'] - Quiz mode
+ * @property {boolean} [isImported=false] - Whether quiz was imported from shared URL
+ * @property {string} [shareId] - Unique ID generated when quiz is shared
+ * @property {number} [sharedAt] - Timestamp when quiz was first shared
+ * @property {number} [importedAt] - Timestamp when quiz was imported
+ * @property {string} [originalCreator] - Name of person who shared the quiz
  */
 
 // ============================================

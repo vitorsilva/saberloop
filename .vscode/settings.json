@@ -3,6 +3,7 @@
         "beforeinstallprompt",
         "OPENROUTER",
         "PKCE",
+        "qrcode",
         "Saberloop",
         "vite"
     ]

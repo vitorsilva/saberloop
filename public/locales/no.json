@@ -231,10 +231,52 @@
     "shareSuccess": "Delt!",
     "shareFailed": "Kunne ikke dele. Prøv å kopiere lenken i stedet."
   },
+  "shareQuiz": {
+    "title": "Del Quiz",
+    "questions": "spørsmål",
+    "linkLabel": "Delingslenke",
+    "shareVia": "Del via...",
+    "noteNoExplanations": "Merk: Forklaringer er ikke inkludert i delte quiz",
+    "error": {
+      "tooLargeTitle": "Quiz For Stor til å Dele",
+      "tooLargeDescription": "Denne quizen har for mange spørsmål til å passe i en delbar URL.",
+      "maximum": "Maksimum",
+      "thisQuiz": "Denne quizen",
+      "suggestions": "Forslag:",
+      "suggestion1": "Lag en kortere quiz (10 spørsmål eller mindre)",
+      "suggestion2": "Del emnenavnet i stedet"
+    }
+  },
   "usage": {
     "thisQuizUsed": "Denne quizen brukte",
     "tokens": "{{count}} tokens",
     "freeModel": "Gratis modell (ingen kostnad)",
     "onPaidModel": "På en betalt modell ville dette kostet {{cost}}"
+  },
+  "import": {
+    "loading": "Laster quiz...",
+    "title": "Quiz Delt Med Deg",
+    "questions_count": "{{count}} spørsmål",
+    "grade_level": "Nivå {{level}}",
+    "shared_by": "Delt av: {{name}}",
+    "play": "Spill Nå",
+    "save": "Lagre for Senere",
+    "dismiss": "Avvis",
+    "saved": {
+      "title": "Quiz Lagret!",
+      "description": "\"{{title}}\" lagret i quiz-biblioteket ditt.",
+      "go_home": "Gå til Hjem"
+    },
+    "error": {
+      "title": "Import Mislyktes",
+      "description": "Kunne ikke laste quiz",
+      "reason": {
+        "incomplete": "Lenken kan være ufullstendig (avkuttet)",
+        "corrupted": "Dataene kan være ødelagt",
+        "old_version": "Det kan være fra en eldre versjon"
+      },
+      "go_home": "Gå til Hjem",
+      "try_again": "Prøv Igjen"
+    }
   }
 }

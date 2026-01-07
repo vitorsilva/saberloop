@@ -88,6 +88,13 @@ jobs:
             maestro test .maestro/flows/05-navigation.yaml --format junit --output maestro-results-05.xml || true
             maestro test .maestro/flows/06-settings.yaml --format junit --output maestro-results-06.xml || true
             # Note: 07-offline.yaml excluded due to airplane mode flakiness in CI
+            # Quiz Sharing tests (09-14)
+            maestro test .maestro/flows/09-quiz-sharing.yaml --format junit --output maestro-results-09.xml || true
+            maestro test .maestro/flows/10-history-share.yaml --format junit --output maestro-results-10.xml || true
+            maestro test .maestro/flows/11-share-modal-open.yaml --format junit --output maestro-results-11.xml || true
+            maestro test .maestro/flows/12-share-modal-close.yaml --format junit --output maestro-results-12.xml || true
+            maestro test .maestro/flows/13-share-copy-link.yaml --format junit --output maestro-results-13.xml || true
+            maestro test .maestro/flows/14-history-share-modal.yaml --format junit --output maestro-results-14.xml || true
 
       - name: Upload test results
         if: always()

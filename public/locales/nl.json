@@ -231,10 +231,52 @@
     "shareSuccess": "Succesvol gedeeld!",
     "shareFailed": "Kon niet delen. Probeer de link te kopiëren."
   },
+  "shareQuiz": {
+    "title": "Quiz Delen",
+    "questions": "vragen",
+    "linkLabel": "Deellink",
+    "shareVia": "Delen via...",
+    "noteNoExplanations": "Let op: Uitleg is niet inbegrepen in gedeelde quizzen",
+    "error": {
+      "tooLargeTitle": "Quiz Te Groot om Te Delen",
+      "tooLargeDescription": "Deze quiz heeft te veel vragen om in een deelbare URL te passen.",
+      "maximum": "Maximum",
+      "thisQuiz": "Deze quiz",
+      "suggestions": "Suggesties:",
+      "suggestion1": "Maak een kortere quiz (10 vragen of minder)",
+      "suggestion2": "Deel in plaats daarvan de onderwerpnaam"
+    }
+  },
   "usage": {
     "thisQuizUsed": "Deze quiz gebruikte",
     "tokens": "{{count}} tokens",
     "freeModel": "Gratis model (geen kosten)",
     "onPaidModel": "Op een betaald model zou dit {{cost}} kosten"
+  },
+  "import": {
+    "loading": "Quiz laden...",
+    "title": "Quiz Met Je Gedeeld",
+    "questions_count": "{{count}} vragen",
+    "grade_level": "Niveau {{level}}",
+    "shared_by": "Gedeeld door: {{name}}",
+    "play": "Nu Spelen",
+    "save": "Bewaren voor Later",
+    "dismiss": "Negeren",
+    "saved": {
+      "title": "Quiz Opgeslagen!",
+      "description": "\"{{title}}\" opgeslagen in je quiz-bibliotheek.",
+      "go_home": "Naar Home"
+    },
+    "error": {
+      "title": "Import Mislukt",
+      "description": "Kon quiz niet laden",
+      "reason": {
+        "incomplete": "De link is mogelijk onvolledig (afgekapt)",
+        "corrupted": "De gegevens zijn mogelijk beschadigd",
+        "old_version": "Het is mogelijk van een oudere versie"
+      },
+      "go_home": "Naar Home",
+      "try_again": "Opnieuw Proberen"
+    }
   }
 }

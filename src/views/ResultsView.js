@@ -6,6 +6,7 @@ import { logger } from '../utils/logger.js';
 import { isFeatureEnabled } from '../core/features.js';
 import { showExplanationModal } from '../components/ExplanationModal.js';
 import { showShareModal } from '../components/ShareModal.js';
+import { showShareQuizModal } from '../components/ShareQuizModal.js';
 import { calculateNextGradeLevel } from '../utils/gradeProgression.js';
 import { t, getCurrentLanguage } from '../core/i18n.js';
 import { getUsageSummary } from '../services/cost-service.js';
@@ -53,6 +54,7 @@ export default class ResultsView extends BaseView {
     const showExplanationButton = isFeatureEnabled('EXPLANATION_FEATURE');
     const showContinueButton = isFeatureEnabled('CONTINUE_TOPIC');
     const showShareButton = isFeatureEnabled('SHARE_FEATURE');
+    const showShareQuizButton = isFeatureEnabled('SHARE_QUIZ');
     const showUsageCosts = isFeatureEnabled('SHOW_USAGE_COSTS');
 
     // Get usage data for cost display
@@ -165,13 +167,21 @@ export default class ResultsView extends BaseView {
           </div>
           ` : ''}
 
-          <!-- Share Button -->
-          ${showShareButton ? `
-          <div class="flex justify-center mt-4">
+          <!-- Share Buttons -->
+          ${(showShareButton || showShareQuizButton) ? `
+          <div class="flex justify-center gap-3 mt-4 flex-wrap">
+            ${showShareButton ? `
             <button id="shareBtn" data-testid="share-results-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
               <span class="material-symbols-outlined text-xl">share</span>
               ${t('share.button')}
             </button>
+            ` : ''}
+            ${showShareQuizButton ? `
+            <button id="shareQuizBtn" data-testid="share-quiz-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
+              <span class="material-symbols-outlined text-xl">link</span>
+              ${t('shareQuiz.title')}
+            </button>
+            ` : ''}
           </div>
           ` : ''}
 
@@ -324,6 +334,16 @@ export default class ResultsView extends BaseView {
         });
       }
     }
+
+    // Share Quiz button (only if feature is enabled)
+    if (isFeatureEnabled('SHARE_QUIZ')) {
+      const shareQuizBtn = this.querySelector('#shareQuizBtn');
+      if (shareQuizBtn) {
+        this.addEventListener(shareQuizBtn, 'click', () => {
+          this.handleShareQuizClick();
+        });
+      }
+    }
   }
 
   handleShareClick() {
@@ -354,6 +374,23 @@ export default class ResultsView extends BaseView {
       score: correctCount,
       total: totalQuestions,
       percentage
+    });
+  }
+
+  handleShareQuizClick() {
+    const topic = state.get('currentTopic') || 'Quiz';
+    const gradeLevel = state.get('currentGradeLevel');
+    const questions = state.get('currentQuestions');
+
+    logger.action('share_quiz_initiated', {
+      topic,
+      questionCount: questions.length
+    });
+
+    showShareQuizModal({
+      topic,
+      gradeLevel,
+      questions
     });
   }
 

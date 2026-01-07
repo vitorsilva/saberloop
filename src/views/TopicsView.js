@@ -5,6 +5,8 @@
   import { formatRelativeDate } from '../utils/formatters.js';
   import { isFeatureEnabled } from '../core/features.js';
   import { formatCost, isFreeModel } from '../services/cost-service.js';
+  import { showShareQuizModal } from '../components/ShareQuizModal.js';
+  import { logger } from '../utils/logger.js';
 
   export default class TopicsView extends BaseView {
     async render() {
@@ -116,6 +118,7 @@
       }
 
       const canReplay = !!session.questions;
+      const canShare = canReplay && isFeatureEnabled('SHARE_QUIZ');
 
       // Choose color based on score (gray for unplayed)
       let colorClass = 'text-subtext-light bg-gray-500';
@@ -150,9 +153,16 @@
             </p>
           </div>
           <div class="flex items-center gap-2">
+            ${canShare ? `
+            <button class="share-quiz-btn flex size-10 items-center justify-center rounded-full hover:bg-primary/10 text-primary transition-colors"
+              data-session-id="${session.id}"
+              aria-label="Share quiz">
+              <span class="material-symbols-outlined text-xl">link</span>
+            </button>
+            ` : ''}
             <p class="${colorClass.split(' ')[0]} text-lg
   font-bold">${scoreDisplay}</p>
-            ${canReplay ? '<span class="material-symbols-outlined text-subtext-light dark:text-subtext-dark">chevron_right</span>' : ''}     
+            ${canReplay ? '<span class="material-symbols-outlined text-subtext-light dark:text-subtext-dark">chevron_right</span>' : ''}
           </div>
         </div>
       `;
@@ -166,6 +176,16 @@
         this.addEventListener(item, 'click', async () => {
           const sessionId = parseInt(/** @type {HTMLElement} */ (item).dataset.sessionId);
           await this.replayQuiz(sessionId);
+        });
+      });
+
+      // Share quiz button handlers
+      const shareButtons = document.querySelectorAll('.share-quiz-btn');
+      shareButtons.forEach(btn => {
+        this.addEventListener(btn, 'click', async (e) => {
+          e.stopPropagation(); // Prevent triggering quiz item click
+          const sessionId = parseInt(/** @type {HTMLElement} */ (btn).dataset.sessionId);
+          await this.shareQuiz(sessionId);
         });
       });
     }
@@ -185,5 +205,24 @@
       state.set('replaySessionId', sessionId);
 
       this.navigateTo('/quiz');
+    }
+
+    async shareQuiz(sessionId) {
+      const session = await getQuizSession(sessionId);
+
+      if (!session || !session.questions) {
+        return;
+      }
+
+      logger.action('share_quiz_initiated_from_history', {
+        topic: session.topic,
+        questionCount: session.questions.length
+      });
+
+      showShareQuizModal({
+        topic: session.topic,
+        gradeLevel: session.gradeLevel,
+        questions: session.questions
+      });
     }
   }

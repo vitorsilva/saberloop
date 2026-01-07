@@ -231,10 +231,52 @@
     "shareSuccess": "Erfolgreich geteilt!",
     "shareFailed": "Teilen fehlgeschlagen. Versuche den Link zu kopieren."
   },
+  "shareQuiz": {
+    "title": "Quiz teilen",
+    "questions": "Fragen",
+    "linkLabel": "Teilen-Link",
+    "shareVia": "Teilen über...",
+    "noteNoExplanations": "Hinweis: Erklärungen sind in geteilten Quiz nicht enthalten",
+    "error": {
+      "tooLargeTitle": "Quiz zu groß zum Teilen",
+      "tooLargeDescription": "Dieses Quiz hat zu viele Fragen für eine teilbare URL.",
+      "maximum": "Maximum",
+      "thisQuiz": "Dieses Quiz",
+      "suggestions": "Vorschläge:",
+      "suggestion1": "Ein kürzeres Quiz erstellen (10 Fragen oder weniger)",
+      "suggestion2": "Stattdessen den Themennamen teilen"
+    }
+  },
   "usage": {
     "thisQuizUsed": "Dieses Quiz hat verwendet",
     "tokens": "{{count}} Tokens",
     "freeModel": "Kostenloses Modell (keine Gebühr)",
     "onPaidModel": "Bei einem kostenpflichtigen Modell würde dies {{cost}} kosten"
+  },
+  "import": {
+    "loading": "Quiz wird geladen...",
+    "title": "Quiz Mit Dir Geteilt",
+    "questions_count": "{{count}} Fragen",
+    "grade_level": "Stufe {{level}}",
+    "shared_by": "Geteilt von: {{name}}",
+    "play": "Jetzt Spielen",
+    "save": "Für Später Speichern",
+    "dismiss": "Verwerfen",
+    "saved": {
+      "title": "Quiz Gespeichert!",
+      "description": "\"{{title}}\" in deiner Quiz-Bibliothek gespeichert.",
+      "go_home": "Zur Startseite"
+    },
+    "error": {
+      "title": "Import Fehlgeschlagen",
+      "description": "Quiz konnte nicht geladen werden",
+      "reason": {
+        "incomplete": "Der Link ist möglicherweise unvollständig (abgeschnitten)",
+        "corrupted": "Die Daten könnten beschädigt sein",
+        "old_version": "Es könnte von einer älteren Version stammen"
+      },
+      "go_home": "Zur Startseite",
+      "try_again": "Erneut Versuchen"
+    }
   }
 }
