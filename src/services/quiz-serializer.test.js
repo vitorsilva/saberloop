@@ -72,6 +72,26 @@
         expect(serializeQuiz(null).success).toBe(false);
         expect(serializeQuiz(undefined).success).toBe(false);
       });
+
+       it('handles quiz with only required fields (no optional fields)', () => {
+          const minimalQuiz = {
+            questions: [
+              { question: 'Q?', options: ['A', 'B', 'C', 'D'], correctIndex: 0 },
+            ],
+          };
+          const result = serializeQuiz(minimalQuiz);
+          expect(result.success).toBe(true);
+
+          // Verify roundtrip - optional fields should remain undefined
+          const decoded = deserializeQuiz(result.data);
+          expect(decoded.success).toBe(true);
+          expect(decoded.quiz.topic).toBeUndefined();
+          expect(decoded.quiz.gradeLevel).toBeUndefined();
+          expect(decoded.quiz.creator).toBeUndefined();
+          expect(decoded.quiz.mode).toBeUndefined();
+          expect(decoded.quiz.questions).toHaveLength(1);
+        });
+
     });
 
     describe('deserializeQuiz', () => {
@@ -116,6 +136,14 @@
         expect(deserializeQuiz(null).success).toBe(false);
         expect(deserializeQuiz(undefined).success).toBe(false);
       });
+
+      it('rejects non-string input types', () => {
+        expect(deserializeQuiz(123).success).toBe(false);
+        expect(deserializeQuiz({}).success).toBe(false);
+        expect(deserializeQuiz([]).success).toBe(false);
+        expect(deserializeQuiz(true).success).toBe(false);
+      });
+            
     });
 
     describe('roundtrip', () => {
@@ -157,6 +185,12 @@
         const result = canShareQuiz(null);
         expect(result.canShare).toBe(false);
       });
+
+        it('returns false for quiz without questions property', () => {
+          const result = canShareQuiz({ topic: 'Test' });
+          expect(result.canShare).toBe(false);
+          expect(result.estimatedLength).toBe(0);
+        });      
     });
 
     describe('getMaxShareableQuestions', () => {
