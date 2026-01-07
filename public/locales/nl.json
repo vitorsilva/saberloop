@@ -236,5 +236,31 @@
     "tokens": "{{count}} tokens",
     "freeModel": "Gratis model (geen kosten)",
     "onPaidModel": "Op een betaald model zou dit {{cost}} kosten"
+  },
+  "import": {
+    "loading": "Quiz laden...",
+    "title": "Quiz Met Je Gedeeld",
+    "questions_count": "{{count}} vragen",
+    "grade_level": "Niveau {{level}}",
+    "shared_by": "Gedeeld door: {{name}}",
+    "play": "Nu Spelen",
+    "save": "Bewaren voor Later",
+    "dismiss": "Negeren",
+    "saved": {
+      "title": "Quiz Opgeslagen!",
+      "description": "\"{{title}}\" opgeslagen in je quiz-bibliotheek.",
+      "go_home": "Naar Home"
+    },
+    "error": {
+      "title": "Import Mislukt",
+      "description": "Kon quiz niet laden",
+      "reason": {
+        "incomplete": "De link is mogelijk onvolledig (afgekapt)",
+        "corrupted": "De gegevens zijn mogelijk beschadigd",
+        "old_version": "Het is mogelijk van een oudere versie"
+      },
+      "go_home": "Naar Home",
+      "try_again": "Opnieuw Proberen"
+    }
   }
 }

@@ -236,5 +236,31 @@
     "tokens": "{{count}} tokens",
     "freeModel": "Modèle gratuit (sans frais)",
     "onPaidModel": "Sur un modèle payant, cela coûterait {{cost}}"
+  },
+  "import": {
+    "loading": "Chargement du quiz...",
+    "title": "Quiz Partagé Avec Toi",
+    "questions_count": "{{count}} questions",
+    "grade_level": "Niveau {{level}}",
+    "shared_by": "Partagé par : {{name}}",
+    "play": "Jouer Maintenant",
+    "save": "Sauvegarder pour Plus Tard",
+    "dismiss": "Ignorer",
+    "saved": {
+      "title": "Quiz Sauvegardé !",
+      "description": "\"{{title}}\" sauvegardé dans ta bibliothèque de quiz.",
+      "go_home": "Aller à l'Accueil"
+    },
+    "error": {
+      "title": "Échec de l'Importation",
+      "description": "Impossible de charger le quiz",
+      "reason": {
+        "incomplete": "Le lien peut être incomplet (coupé)",
+        "corrupted": "Les données peuvent être corrompues",
+        "old_version": "Il peut s'agir d'une ancienne version"
+      },
+      "go_home": "Aller à l'Accueil",
+      "try_again": "Réessayer"
+    }
   }
 }
