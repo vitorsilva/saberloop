@@ -58,8 +58,8 @@
 ### Next Steps
 
 - [x] Write E2E tests (Playwright) ✅
-- [ ] Write Maestro tests (mobile)
-- [ ] Deploy and test
+- [x] Write Maestro tests (mobile) ✅ (prepared, see note below)
+- [ ] Deploy and test (when ready to enable feature)
 
 ---
 
@@ -90,6 +90,32 @@
 
 - Unit tests: 529 passed
 - E2E tests: 10 passed (mode-toggle.spec.js)
+
+---
+
+## Session: 2026-01-07 (Maestro tests)
+
+### Completed
+
+- [x] Maestro test for mode toggle (15-mode-toggle.yaml)
+  - Tests mode toggle visibility on Home, Settings, Topics
+  - Tests switching between Learning and Party modes
+  - Tests mode persistence across navigation
+  - Includes screenshots for each state
+
+### Important Note
+
+The Maestro test is prepared but **cannot be run yet** because:
+- MODE_TOGGLE feature flag is set to `DISABLED` by default
+- Maestro tests run on actual mobile device/emulator where localStorage override isn't easily possible
+- The test will work once the feature flag is changed to `ENABLED` in `src/core/features.js`
+
+This is different from Playwright E2E tests which use localStorage override (`__test_feature_MODE_TOGGLE=ENABLED`) to enable the feature during testing.
+
+### Next Steps
+
+- [x] Write Maestro tests (mobile) ✅ (prepared, waiting for flag enable)
+- [ ] Deploy and test (when ready to enable feature)
 
 ---
 
