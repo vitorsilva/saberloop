@@ -68,10 +68,15 @@ Add donation support via Liberapay to allow users to support Saberloop developme
 ### Skipped
 - 61.5 Help page link (optional, can add later if desired)
 
+#### 61.7 Landing Page Deployment ✅
+- Deployed landing page with donation link: `npm run deploy:landing`
+- Live at: https://saberloop.com/
+
 ### Pending
 - [x] Run E2E tests to verify ✅
 - [x] Run all tests (unit + E2E) ✅
 - [x] Create PR ✅ #85
+- [x] Deploy landing page ✅
 - [ ] Merge PR after CI passes
 
 ### Learnings
@@ -88,6 +93,8 @@ Add donation support via Liberapay to allow users to support Saberloop developme
 - Simple setup process
 
 ### Next Steps
-1. Run E2E tests: `npm run test:e2e -- tests/e2e/donation.spec.js`
-2. Run all tests to ensure no regressions
-3. Create PR to merge into main
+1. ~~Run E2E tests~~ ✅
+2. ~~Run all tests~~ ✅
+3. ~~Create PR~~ ✅ #85
+4. ~~Deploy landing page~~ ✅
+5. Merge PR #85 after CI passes
