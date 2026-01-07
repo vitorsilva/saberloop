@@ -5,6 +5,7 @@
 
 import { t } from '../core/i18n.js';
 import { telemetry } from '../utils/telemetry.js';
+import { logger } from '../utils/logger.js';
 import {
   generateShareUrl,
   copyShareUrl,
@@ -12,6 +13,28 @@ import {
   isNativeShareSupported,
   canShareQuiz,
 } from '../services/quiz-share.js';
+import QRCode from 'qrcode';
+
+/**
+ * Generate a QR code data URL from a URL string
+ * @param {string} url - The URL to encode
+ * @returns {Promise<string|null>} Data URL or null on error
+ */
+async function generateQRCode(url) {
+  try {
+    return await QRCode.toDataURL(url, {
+      width: 200,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    });
+  } catch (err) {
+    logger.error('Failed to generate QR code', err);
+    return null;
+  }
+}
 
 /**
  * Show a bottom sheet modal for sharing a quiz
@@ -23,7 +46,7 @@ import {
  * @returns {Promise<void>} Resolves when modal is closed
  */
 export function showShareQuizModal(quiz, creatorName = null) {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     telemetry.track('event', {
       name: 'quiz_share_modal_opened',
       topic: quiz.topic,
@@ -36,6 +59,9 @@ export function showShareQuizModal(quiz, creatorName = null) {
     // Generate share URL
     const shareResult = generateShareUrl(quiz, creatorName);
 
+    // Generate QR code if URL was created successfully
+    const qrCodeDataUrl = shareResult.success ? await generateQRCode(shareResult.url) : null;    
+
     // Create modal backdrop
     const backdrop = document.createElement('div');
     backdrop.id = 'shareQuizModal';
@@ -46,7 +72,7 @@ export function showShareQuizModal(quiz, creatorName = null) {
       backdrop.innerHTML = createErrorContent(quiz, shareCheck);
     } else {
       // Show share options
-      backdrop.innerHTML = createShareContent(quiz, shareResult.url);
+      backdrop.innerHTML = createShareContent(quiz, shareResult.url, qrCodeDataUrl);
     }
 
     document.body.appendChild(backdrop);
@@ -144,7 +170,7 @@ export function showShareQuizModal(quiz, creatorName = null) {
 /**
  * Create the share content HTML
  */
-function createShareContent(quiz, url) {
+function createShareContent(quiz, url, qrCodeDataUrl) {
   const questionCount = quiz.questions.length;
   const truncatedUrl = url.length > 50 ? url.substring(0, 50) + '...' : url;
 
@@ -185,6 +211,15 @@ function createShareContent(quiz, url) {
           <span class="text-text-light dark:text-text-dark text-sm flex-1 truncate">${truncatedUrl}</span>
         </div>
       </div>
+
+        <!-- QR Code -->
+        ${qrCodeDataUrl ? `
+        <div class="px-4 mb-4 flex justify-center">
+          <div class="bg-white p-3 rounded-xl">
+            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-48 h-48" />
+          </div>
+        </div>
+        ` : ''}      
 
       <!-- Copy Button -->
       <div class="px-4 mb-4">
