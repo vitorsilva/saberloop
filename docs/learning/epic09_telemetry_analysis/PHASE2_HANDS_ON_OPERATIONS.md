@@ -1,6 +1,6 @@
 # Phase 2: Hands-On Operations
 
-**Status:** Not Started
+**Status:** In Progress
 **Goal:** Practice the complete workflow from downloading logs to viewing them in Grafana.
 
 ---

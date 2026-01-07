@@ -19,7 +19,7 @@ Epic 9 focuses on **understanding, operating, and extracting value** from the te
 
 ## Goals
 
-- [ ] Understand the complete telemetry data flow (browser → VPS → local)
+- [x] Understand the complete telemetry data flow (browser → VPS → local)
 - [ ] Be proficient in operating the telemetry tools
 - [ ] Extract error information and act on it
 - [ ] Have a repeatable analysis workflow
@@ -30,8 +30,8 @@ Epic 9 focuses on **understanding, operating, and extracting value** from the te
 
 | Phase | Name | Status | Description |
 |-------|------|--------|-------------|
-| 1 | [Review & Understand](./PHASE1_REVIEW_UNDERSTAND.md) | Not Started | Walk through existing infrastructure |
-| 2 | [Hands-On Operations](./PHASE2_HANDS_ON_OPERATIONS.md) | Not Started | Practice the operational workflow |
+| 1 | [Review & Understand](./PHASE1_REVIEW_UNDERSTAND.md) | Complete | Walk through existing infrastructure |
+| 2 | [Hands-On Operations](./PHASE2_HANDS_ON_OPERATIONS.md) | In Progress | Practice the operational workflow |
 | 3 | [Error Analysis](./PHASE3_ERROR_ANALYSIS.md) | Not Started | Extract and act on error data |
 
 ---
