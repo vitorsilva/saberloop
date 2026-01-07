@@ -39,6 +39,10 @@
     SHOW_ADS: {
       phase: 'ENABLED',  // Show AdSense ads during loading screens
       description: 'Display Google AdSense ads during quiz and results loading'
+    },
+    MODE_TOGGLE: {
+      phase: 'DISABLED',  // Learning/Party mode toggle
+      description: 'Toggle between Learning and Party modes with different themes'
     }
   };
 

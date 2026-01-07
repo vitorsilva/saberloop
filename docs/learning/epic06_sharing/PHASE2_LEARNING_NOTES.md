@@ -33,6 +33,7 @@
   - Updates UI on click, calls setMode()
   - Accessible with ARIA roles
 - [x] Added mode toggle to HomeView header
+- [x] Added MODE_TOGGLE feature flag (DISABLED by default)
 
 ### Key Decisions
 

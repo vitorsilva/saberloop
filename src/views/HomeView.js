@@ -89,10 +89,12 @@ export default class HomeView extends BaseView {
       </div>
     `);
 
-    // Mount mode toggle
-    const toggleContainer = this.querySelector('#modeToggleContainer');
-    if (toggleContainer) {
-      toggleContainer.appendChild(createModeToggle());
+    // Mount mode toggle (behind feature flag)
+    if (isFeatureEnabled('MODE_TOGGLE')) {
+      const toggleContainer = this.querySelector('#modeToggleContainer');
+      if (toggleContainer) {
+        toggleContainer.appendChild(createModeToggle());
+      }
     }
 
     this.attachListeners();
