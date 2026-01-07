@@ -231,6 +231,22 @@
     "shareSuccess": "Partilhado com sucesso!",
     "shareFailed": "Não foi possível partilhar. Tenta copiar o link."
   },
+  "shareQuiz": {
+    "title": "Partilhar Quiz",
+    "questions": "perguntas",
+    "linkLabel": "Link de partilha",
+    "shareVia": "Partilhar via...",
+    "noteNoExplanations": "Nota: As explicações não são incluídas nos quizzes partilhados",
+    "error": {
+      "tooLargeTitle": "Quiz Demasiado Grande para Partilhar",
+      "tooLargeDescription": "Este quiz tem demasiadas perguntas para caber num URL partilhável.",
+      "maximum": "Máximo",
+      "thisQuiz": "Este quiz",
+      "suggestions": "Sugestões:",
+      "suggestion1": "Criar um quiz mais curto (10 perguntas ou menos)",
+      "suggestion2": "Partilhar o nome do tópico em vez disso"
+    }
+  },
   "usage": {
     "thisQuizUsed": "Este quiz usou",
     "tokens": "{{count}} tokens",

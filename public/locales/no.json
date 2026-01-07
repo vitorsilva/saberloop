@@ -231,6 +231,22 @@
     "shareSuccess": "Delt!",
     "shareFailed": "Kunne ikke dele. Prøv å kopiere lenken i stedet."
   },
+  "shareQuiz": {
+    "title": "Del Quiz",
+    "questions": "spørsmål",
+    "linkLabel": "Delingslenke",
+    "shareVia": "Del via...",
+    "noteNoExplanations": "Merk: Forklaringer er ikke inkludert i delte quiz",
+    "error": {
+      "tooLargeTitle": "Quiz For Stor til å Dele",
+      "tooLargeDescription": "Denne quizen har for mange spørsmål til å passe i en delbar URL.",
+      "maximum": "Maksimum",
+      "thisQuiz": "Denne quizen",
+      "suggestions": "Forslag:",
+      "suggestion1": "Lag en kortere quiz (10 spørsmål eller mindre)",
+      "suggestion2": "Del emnenavnet i stedet"
+    }
+  },
   "usage": {
     "thisQuizUsed": "Denne quizen brukte",
     "tokens": "{{count}} tokens",

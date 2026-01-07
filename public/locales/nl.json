@@ -231,6 +231,22 @@
     "shareSuccess": "Succesvol gedeeld!",
     "shareFailed": "Kon niet delen. Probeer de link te kopiëren."
   },
+  "shareQuiz": {
+    "title": "Quiz Delen",
+    "questions": "vragen",
+    "linkLabel": "Deellink",
+    "shareVia": "Delen via...",
+    "noteNoExplanations": "Let op: Uitleg is niet inbegrepen in gedeelde quizzen",
+    "error": {
+      "tooLargeTitle": "Quiz Te Groot om Te Delen",
+      "tooLargeDescription": "Deze quiz heeft te veel vragen om in een deelbare URL te passen.",
+      "maximum": "Maximum",
+      "thisQuiz": "Deze quiz",
+      "suggestions": "Suggesties:",
+      "suggestion1": "Maak een kortere quiz (10 vragen of minder)",
+      "suggestion2": "Deel in plaats daarvan de onderwerpnaam"
+    }
+  },
   "usage": {
     "thisQuizUsed": "Deze quiz gebruikte",
     "tokens": "{{count}} tokens",
