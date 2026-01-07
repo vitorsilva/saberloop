@@ -58,6 +58,7 @@ describe('AdManager', () => {
       const result = canLoadAds();
 
       expect(result).toBe(false);
+      expect(isFeatureEnabled).toHaveBeenCalledWith('SHOW_ADS');
       expect(logger.debug).toHaveBeenCalledWith('[AdManager] Ads disabled by feature flag');
     });
 
@@ -112,12 +113,20 @@ describe('AdManager', () => {
       expect(logger.warn).toHaveBeenCalledWith('[AdManager] Container not found: nonexistent-container');
     });
 
-    it('should return false when no slot ID is configured', () => {
+    it('should return false when no slot ID is configured for quizLoading', () => {
       // quizLoading has empty slot ID by default
       const result = loadAd('test-ad-container', 'quizLoading');
 
       expect(result).toBe(false);
       expect(logger.debug).toHaveBeenCalledWith('[AdManager] No slot ID for quizLoading - AdSense pending approval');
+    });
+
+    it('should return false when no slot ID is configured for resultsLoading', () => {
+      // resultsLoading also has empty slot ID by default
+      const result = loadAd('test-ad-container', 'resultsLoading');
+
+      expect(result).toBe(false);
+      expect(logger.debug).toHaveBeenCalledWith('[AdManager] No slot ID for resultsLoading - AdSense pending approval');
     });
 
     it('should prevent duplicate ad loads in same container', () => {
@@ -135,15 +144,23 @@ describe('AdManager', () => {
     });
 
     it('should hide container when ads cannot load', () => {
+      // Add content to verify it gets cleared by hideContainer
+      document.getElementById('test-ad-container').innerHTML = '<p>old content</p>';
       isOnline.mockReturnValue(false);
 
-      loadAd('test-ad-container', 'quizLoading');
+      const result = loadAd('test-ad-container', 'quizLoading');
 
+      expect(result).toBe(false);
       const container = document.getElementById('test-ad-container');
       expect(container.style.display).toBe('none');
+      expect(container.innerHTML).toBe('');
+      // Verify old content was removed
+      expect(container.querySelectorAll('p').length).toBe(0);
     });
 
     it('should load ad successfully when slot ID is set', () => {
+      // Add some content to verify it gets cleared
+      document.getElementById('test-ad-container').innerHTML = '<p>old content</p>';
       setAdSlot('quizLoading', '1234567890');
 
       const result = loadAd('test-ad-container', 'quizLoading');
@@ -151,11 +168,21 @@ describe('AdManager', () => {
       expect(result).toBe(true);
       expect(logger.info).toHaveBeenCalledWith('[AdManager] Ad loaded in test-ad-container');
 
-      // Check that ad element was created
+      // Check that ad element was created with correct attributes
       const container = document.getElementById('test-ad-container');
       const adElement = container.querySelector('.adsbygoogle');
       expect(adElement).toBeTruthy();
       expect(adElement.getAttribute('data-ad-slot')).toBe('1234567890');
+      expect(adElement.getAttribute('data-ad-format')).toBe('auto');
+      expect(adElement.getAttribute('data-full-width-responsive')).toBe('true');
+      expect(adElement.style.display).toBe('block');
+
+      // Verify container was cleared (old content removed) and only has the ad element
+      expect(container.querySelectorAll('p').length).toBe(0);
+      expect(container.children.length).toBe(1);
+      expect(container.children[0]).toBe(adElement);
+      // Also verify no text nodes exist (container.innerHTML = '' must clear all content)
+      expect(container.childNodes.length).toBe(1);
     });
 
     it('should push to adsbygoogle array when loading ad', () => {
@@ -165,6 +192,23 @@ describe('AdManager', () => {
       loadAd('test-ad-container', 'quizLoading');
 
       expect(window.adsbygoogle.length).toBe(1);
+    });
+
+    it('should initialize adsbygoogle array if undefined when loading ad', () => {
+      setAdSlot('quizLoading', '1234567890');
+      // Simulate adsbygoogle being defined but as an empty array (edge case)
+      window.adsbygoogle = undefined;
+      // But we need canLoadAds to pass, so set it back before the check
+      Object.defineProperty(window, 'adsbygoogle', {
+        value: [],
+        writable: true,
+        configurable: true
+      });
+
+      loadAd('test-ad-container', 'quizLoading');
+
+      expect(window.adsbygoogle).toBeDefined();
+      expect(Array.isArray(window.adsbygoogle)).toBe(true);
     });
   });
 
@@ -242,13 +286,19 @@ describe('AdManager', () => {
       expect(onOffline).toHaveBeenCalledTimes(1);
     });
 
-    it('should log initialization info', () => {
+    it('should log initialization info with correct details', () => {
       isFeatureEnabled.mockReturnValue(true);
       isOnline.mockReturnValue(true);
 
       initAdManager();
 
-      expect(logger.info).toHaveBeenCalledWith('[AdManager] Initialized', expect.any(Object));
+      // Verify isFeatureEnabled was called with correct argument
+      expect(isFeatureEnabled).toHaveBeenCalledWith('SHOW_ADS');
+      expect(logger.info).toHaveBeenCalledWith('[AdManager] Initialized', {
+        publisherId: 'ca-pub-9849708569219157',
+        featureEnabled: true,
+        online: true
+      });
     });
   });
 
@@ -267,10 +317,80 @@ describe('AdManager', () => {
       expect(logger.info).toHaveBeenCalledWith('[AdManager] Set slot quizLoading = 9999999999');
     });
 
+    it('should set slot ID for resultsLoading key', () => {
+      setAdSlot('resultsLoading', '8888888888');
+
+      expect(logger.info).toHaveBeenCalledWith('[AdManager] Set slot resultsLoading = 8888888888');
+    });
+
     it('should warn for unknown slot key', () => {
       setAdSlot('unknownSlot', '1234567890');
 
       expect(logger.warn).toHaveBeenCalledWith('[AdManager] Unknown slot key: unknownSlot');
+    });
+  });
+
+  describe('online/offline handlers', () => {
+    it('should register handlers that log on online event', () => {
+      isFeatureEnabled.mockReturnValue(true);
+      isOnline.mockReturnValue(true);
+
+      initAdManager();
+
+      // Get the handler that was registered
+      const onlineHandler = onOnline.mock.calls[0][0];
+
+      // Call the handler
+      onlineHandler();
+
+      expect(logger.debug).toHaveBeenCalledWith('[AdManager] Online - ads can be shown');
+    });
+
+    it('should register handlers that hide containers on offline event', () => {
+      document.body.innerHTML = '<div id="ad-container-1"></div><div id="ad-container-2"></div>';
+      isFeatureEnabled.mockReturnValue(true);
+      isOnline.mockReturnValue(true);
+      window.adsbygoogle = [];
+
+      // Load ads in containers first
+      setAdSlot('quizLoading', '1234567890');
+      loadAd('ad-container-1', 'quizLoading');
+
+      resetForNavigation(); // Clear loaded state
+      setAdSlot('resultsLoading', '0987654321');
+      loadAd('ad-container-2', 'resultsLoading');
+
+      initAdManager();
+
+      // Get the offline handler that was registered
+      const offlineHandler = onOffline.mock.calls[0][0];
+
+      // Call the handler
+      offlineHandler();
+
+      expect(logger.debug).toHaveBeenCalledWith('[AdManager] Offline - hiding ads');
+      // Containers should be hidden
+      expect(document.getElementById('ad-container-2').style.display).toBe('none');
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle errors when loading ad and return false', () => {
+      // Setup container
+      document.body.innerHTML = '<div id="error-test-container"></div>';
+      isFeatureEnabled.mockReturnValue(true);
+      isOnline.mockReturnValue(true);
+      window.adsbygoogle = [];
+      setAdSlot('quizLoading', '1234567890');
+
+      // Make appendChild throw an error
+      const container = document.getElementById('error-test-container');
+      container.appendChild = () => { throw new Error('DOM error'); };
+
+      const result = loadAd('error-test-container', 'quizLoading');
+
+      expect(result).toBe(false);
+      expect(logger.error).toHaveBeenCalledWith('[AdManager] Error loading ad:', expect.any(Error));
     });
   });
 });

@@ -207,21 +207,27 @@ git worktree add ../demo-pwa-app-phase60 -b feature/phase60-adsense main
 - Google handles ad localization internally
 
 ### 60.9 Testing
-- [x] Unit tests: 21 tests in `src/utils/adManager.test.js`
+- [x] Unit tests: 27 tests in `src/utils/adManager.test.js`
   - canLoadAds: feature flag, offline, adsbygoogle checks
-  - loadAd: container not found, no slot ID, duplicate prevention, successful load
+  - loadAd: container not found, no slot ID (both slots), duplicate prevention, successful load
   - hideContainer/showContainer: visibility and content management
   - resetForNavigation: clears loaded ads tracking
   - initAdManager: registers online/offline listeners
   - getPublisherId/setAdSlot: configuration functions
+  - online/offline handlers: event handler behavior
+  - error handling: DOM errors during ad loading
 - [x] E2E tests: 3 tests in `tests/e2e/ads.spec.js`
   - Ad container exists in LoadingView with correct CSS class
   - Ad container behavior when offline (empty/hidden)
   - Loading UI coexists with ad container
+- [x] Mutation testing: 97.50% score
+  - 78 mutants killed, 1 survived (unreachable defensive code)
+  - Added `src/utils/adManager.js` to stryker.config.json
 
 **Test Results:**
-- Unit tests: 21/21 passing (included in 436 total)
+- Unit tests: 27/27 passing
 - E2E tests: 3/3 passing
+- Mutation score: 97.50%
 
 ### Remaining Phases
 - [ ] 60.11 (Post-approval) Add real ad unit IDs - waiting for Google approval (1-7 days)
