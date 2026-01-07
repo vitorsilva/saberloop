@@ -1,0 +1,67 @@
+appId: com.saberloop.app
+---
+# Test 09: Ads in Loading View
+# Verifies the loading view displays correctly during quiz generation
+# Note: Actual ad content is loaded by AdSense, we verify the UI structure
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# Take screenshot of home state
+- takeScreenshot: 09-home-before-loading
+
+# Navigate to topic input
+- tapOn:
+    text: ".*Start.*Quiz.*|.*Generate.*Quiz.*"
+
+# Wait for topic input view
+- extendedWaitUntil:
+    visible: ".*topic.*|.*Topic.*|.*subject.*"
+    timeout: 5000
+
+# Enter a topic for quiz generation
+- tapOn:
+    id: "topicInput"
+    optional: true
+- inputText: "World History"
+
+- takeScreenshot: 09-topic-entered
+
+# Tap generate button
+- tapOn:
+    text: ".*Generate.*|.*Create.*|.*Start.*"
+
+# Wait for loading view to appear
+- extendedWaitUntil:
+    visible: ".*Generating.*|.*Preparing.*|.*loading.*"
+    timeout: 5000
+
+- takeScreenshot: 09-loading-view
+
+# Verify loading view UI elements
+- assertVisible:
+    text: ".*World History.*"
+
+# Verify loading message is displayed
+- assertVisible:
+    text: ".*Preparing.*|.*Consulting.*|.*Crafting.*|.*Almost.*"
+
+# Verify cancel button exists
+- assertVisible:
+    text: ".*Cancel.*"
+
+# Take screenshot showing full loading view (including ad container area)
+- takeScreenshot: 09-loading-with-ad-area
+
+# Wait for quiz to finish loading or timeout
+- extendedWaitUntil:
+    visible: "Question.*of.*"
+    timeout: 90000
+
+- takeScreenshot: 09-quiz-loaded
+
+# Verify we reached the quiz
+- assertVisible:
+    text: ".*Question.*"

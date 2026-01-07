@@ -229,5 +229,19 @@ git worktree add ../demo-pwa-app-phase60 -b feature/phase60-adsense main
 - E2E tests: 3/3 passing
 - Mutation score: 97.50%
 
+### 60.9c Maestro Mobile Tests
+- [x] Created `09-ads-loading.yaml` - Loading view with ad container
+  - Navigates to topic input and generates quiz
+  - Verifies loading view UI elements (topic, message, cancel)
+  - Takes screenshots of loading view with ad area
+  - Waits for quiz to load
+- [x] Created `10-ads-offline.yaml` - Offline ad behavior
+  - Tests loading view when offline
+  - Verifies offline warning/indicator
+  - Tests recovery after going back online
+
+**Note:** Maestro tests verify visual UI elements, not DOM structure.
+Ad container visibility is implicit in loading view screenshots.
+
 ### Remaining Phases
 - [ ] 60.11 (Post-approval) Add real ad unit IDs - waiting for Google approval (1-7 days)

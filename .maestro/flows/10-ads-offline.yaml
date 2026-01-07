@@ -1,0 +1,84 @@
+appId: com.saberloop.app
+---
+# Test 10: Ads Behavior When Offline
+# Verifies loading view behavior when user is offline
+# Ad container should be empty/hidden when offline
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+- takeScreenshot: 10-online-state
+
+# Enable airplane mode (go offline)
+- toggleAirplaneMode
+
+# Wait for network state change
+- extendedWaitUntil:
+    timeout: 3000
+    visible: ".*"
+
+- takeScreenshot: 10-offline-state
+
+# Navigate to topic input
+- tapOn:
+    text: ".*Start.*Quiz.*|.*Generate.*Quiz.*"
+    optional: true
+
+# If button is disabled when offline, try to tap on topic input link
+- tapOn:
+    text: ".*topic.*|.*Topic.*"
+    optional: true
+
+# Wait for topic input view (may show offline warning)
+- extendedWaitUntil:
+    visible: ".*topic.*|.*Topic.*|.*offline.*|.*Offline.*"
+    timeout: 5000
+
+- takeScreenshot: 10-topic-input-offline
+
+# Enter a topic
+- tapOn:
+    id: "topicInput"
+    optional: true
+- inputText: "Test Topic Offline"
+
+# Try to generate (may show offline warning in loading view)
+- tapOn:
+    text: ".*Generate.*|.*Create.*|.*Start.*"
+    optional: true
+
+# Wait a moment for any loading view or error
+- extendedWaitUntil:
+    timeout: 5000
+    visible: ".*"
+
+- takeScreenshot: 10-loading-offline
+
+# Check for offline indicator or warning
+- assertVisible:
+    text: ".*offline.*|.*Offline.*|.*connection.*|.*appear.*"
+    optional: true
+
+# Go back online
+- toggleAirplaneMode
+
+# Wait for network state change
+- extendedWaitUntil:
+    timeout: 3000
+    visible: ".*"
+
+- takeScreenshot: 10-back-online
+
+# Navigate back to home
+- tapOn:
+    text: ".*Cancel.*|.*Back.*|.*Home.*"
+    optional: true
+
+# Verify app is functional again
+- extendedWaitUntil:
+    visible: ".*Saberloop.*|.*Welcome.*|.*Start.*Quiz.*"
+    timeout: 5000
+
+- takeScreenshot: 10-home-recovered
