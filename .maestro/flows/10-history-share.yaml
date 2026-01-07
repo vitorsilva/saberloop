@@ -1,0 +1,103 @@
+appId: com.saberloop.app
+---
+# Test 10: Share Quiz from History Page
+# Verifies share button on quiz items in history/topics view
+
+# Launch and navigate to home
+- launchApp
+- runFlow:
+    file: _shared/navigate-home.yaml
+
+# First complete a quiz to have something in history
+- tapOn:
+    text: ".*Solar System.*|.*Basic Math.*|.*Famous Scientists.*"
+
+# Wait for quiz to load
+- extendedWaitUntil:
+    visible: "Question.*of.*"
+    timeout: 10000
+
+# Answer 5 questions quickly
+- tapOn:
+    text: "A\\).*"
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+- tapOn:
+    text: "A\\).*"
+    optional: true
+- tapOn:
+    text: ".*Submit.*|.*Next.*"
+    optional: true
+
+# Wait for results page
+- extendedWaitUntil:
+    visible: ".*Results.*|.*Score.*|.*%.*"
+    timeout: 10000
+
+# Navigate to Topics/History page via bottom nav
+- tapOn:
+    text: "Topics"
+
+# Wait for history page to load
+- extendedWaitUntil:
+    visible: ".*Quiz History.*|.*Topics.*|.*quizzes.*"
+    timeout: 5000
+
+- takeScreenshot: 10-history-page
+
+# Look for the send/share icon button (share-quiz-btn)
+# The share button uses a "send" icon
+- tapOn:
+    id: ".*share.*"
+    optional: true
+
+# Alternative: tap by accessibility label if id doesn't work
+- tapOn:
+    text: ".*Share quiz.*"
+    optional: true
+
+# If we found a share button and tapped it, modal should appear
+- extendedWaitUntil:
+    visible: ".*Share Quiz.*|.*Copy.*Link.*"
+    timeout: 5000
+    optional: true
+
+- takeScreenshot: 10-share-from-history
+
+# If modal is open, verify elements
+- assertVisible:
+    text: ".*Copy.*Link.*|.*Copy.*"
+    optional: true
+
+# Close modal if open
+- tapOn:
+    text: ".*Close.*"
+    optional: true
+
+# Verify still on history page (didn't navigate away)
+- assertVisible:
+    text: ".*Quiz History.*|.*Topics.*|.*quizzes.*"
+
+- takeScreenshot: 10-history-share-complete

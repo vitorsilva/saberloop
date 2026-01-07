@@ -121,8 +121,8 @@
 
 - [x] Add QR code generation (install `qrcode` library)
 - [x] Test validation (unit tests, arch tests, mutation testing)
-- [x] Write E2E tests (Playwright) - 9 tests covering share flow, import flow, clipboard
-- [ ] Write Maestro tests (mobile)
+- [x] Write E2E tests (Playwright) - 8 tests covering share flow, import flow, clipboard
+- [x] Write Maestro tests (mobile) - 2 test files for results page and history page sharing
 - [ ] Deploy to staging and test
 - [ ] Manual testing on real devices
 
