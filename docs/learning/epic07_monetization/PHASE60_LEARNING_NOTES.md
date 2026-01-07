@@ -92,6 +92,10 @@ git worktree add ../demo-pwa-app-phase60 -b feature/phase60-adsense main
 - Using `vitorsilva.com@gmail.com` for AdSense account
 - Domain registered as `saberloop.com` (root domain, not /app/ path)
 - Using git worktree for parallel development with Epic 6
+- **Ad placement:** Only during quiz generation loading (10-15s wait)
+  - Original plan included "results loading" but results are instant (no API call)
+  - Decided against artificial delays or ads on results page - respects UX
+  - `resultsLoading` slot kept in adManager.js for potential future use
 
 ### Next Steps
 
