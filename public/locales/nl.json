@@ -89,7 +89,13 @@
     "deleteDataTip": "Tip: Gebruik dit voor het verwijderen van de app om volledige gegevensverwijdering te garanderen.",
     "deleteDataConfirm": "Verwijderen",
     "deleteDataSuccess": "Alle gegevens succesvol verwijderd",
-    "deleting": "Verwijderen..."
+    "deleting": "Verwijderen...",
+    "support": {
+      "title": "Ondersteun de Ontwikkeling",
+      "message": "Saberloop is gratis en voor iedereen toegankelijk. Als je het nuttig vindt, overweeg dan de ontwikkeling te steunen.",
+      "button": "Steun op Liberapay",
+      "note": "Jouw steun helpt de hostingkosten te dekken. Bedankt!"
+    }
   },
   "loading": {
     "preparing": "Je vragen voorbereiden...",
