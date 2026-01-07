@@ -40,6 +40,11 @@
   - getCurrentMode, setMode, applyTheme, toggleMode, initTheme
   - Telemetry tracking verification
   - DOM class manipulation verification
+- [x] Unit tests for ModeToggle component (22 tests)
+  - Component structure and ARIA attributes
+  - Initial state for learning/party modes
+  - Click interactions and UI updates
+  - Accessibility verification
 
 ### Key Decisions
 
@@ -52,7 +57,6 @@
 
 ### Next Steps
 
-- [ ] Write unit tests for ModeToggle component
 - [ ] Write E2E tests (Playwright)
 - [ ] Write Maestro tests (mobile)
 - [ ] Deploy and test
