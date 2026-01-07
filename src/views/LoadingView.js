@@ -5,6 +5,7 @@ import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
 import { t, getCurrentLanguage } from '../core/i18n.js';
 import { getSetting } from '../core/settings.js';
+import { loadAd, resetForNavigation } from '../utils/adManager.js';
 
 // Default timing constants (can be overridden via window.LOADING_VIEW_CONFIG for testing)
 const getConfig = () => {
@@ -87,6 +88,9 @@ export default class LoadingView extends BaseView {
             <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 300ms"></span>
           </div>
 
+          <!-- Ad Container (shown during loading) -->
+          <div id="quiz-loading-ad" class="ad-container mt-6"></div>
+
           <!-- Offline Warning -->
           ${isOffline ? `
             <div class="mt-4 p-4 bg-warning/10 border border-warning rounded-lg max-w-sm">
@@ -113,6 +117,9 @@ export default class LoadingView extends BaseView {
       this.startMessageRotation();
       this.startCountdownTimer();
       this.startQuizGeneration(topic, gradeLevel);
+
+      // Load ad during quiz generation (user is waiting anyway)
+      loadAd('quiz-loading-ad', 'quizLoading');
     }
   }
 
@@ -240,6 +247,8 @@ export default class LoadingView extends BaseView {
       clearInterval(this.countdownInterval);
       this.countdownInterval = null;
     }
+    // Reset ad state for next navigation
+    resetForNavigation();
   }
 
   destroy() {
