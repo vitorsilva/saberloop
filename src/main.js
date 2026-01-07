@@ -27,10 +27,12 @@ import { telemetry } from './utils/telemetry.js';
 import { initI18n } from './core/i18n.js';
 import state from './core/state.js';
 import { initAdManager } from './utils/adManager.js';
+import { initTheme } from './services/theme-manager.js';
 
 logger.info('Saberloop initializing');
 initErrorHandling();
 initPerformanceMonitoring();
+initTheme();
 
 // Log telemetry status
 if (telemetry.isEnabled()) {

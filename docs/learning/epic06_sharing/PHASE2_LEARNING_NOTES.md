@@ -24,6 +24,15 @@
   - `applyTheme()` - toggles CSS classes on root element
   - `toggleMode()` - switches between modes
   - `initTheme()` - initializes on app startup
+- [x] Initialize theme on app startup (`src/main.js`)
+  - Called synchronously before async init to prevent theme flash
+- [x] Added i18n strings for mode toggle (all 9 locales)
+  - `mode.learn`, `mode.party`, `mode.switchToLearn`, `mode.switchToParty`
+- [x] Created ModeToggle component (`src/components/ModeToggle.js`)
+  - Segmented button with Learn/Party options
+  - Updates UI on click, calls setMode()
+  - Accessible with ARIA roles
+- [x] Added mode toggle to HomeView header
 
 ### Key Decisions
 
@@ -36,13 +45,12 @@
 
 ### Next Steps
 
-- [ ] Initialize theme on app startup (call `initTheme()` in main.js)
-- [ ] Create mode toggle component
-- [ ] Add toggle to header
-- [ ] Add i18n strings for mode labels
+- [ ] Add mode toggle to other views (TopicsView, TopicInputView, etc.)
 - [ ] Write unit tests for theme-manager.js
-- [ ] Write E2E tests
-- [ ] Write Maestro tests
+- [ ] Write unit tests for ModeToggle component
+- [ ] Write E2E tests (Playwright)
+- [ ] Write Maestro tests (mobile)
+- [ ] Deploy and test
 
 ---
 
