@@ -1,6 +1,6 @@
 # iOS App Store Publishing
 
-**Epic:** 3 - QuizMaster V2
+**Epic:** 08 - iOS
 **Status:** Optional / Future Enhancement
 **Estimated Time:** 4-6 sessions (Mac required for ~2 sessions)
 **Prerequisites:** Phase 9 (Google Play) complete, Mac access, iPhone for testing
