@@ -65,3 +65,93 @@
 6. Query logs in Explore with `{app="saberloop"}`
 7. Complete Phase 2 checklist
 8. Move to Phase 3: Error Analysis
+
+---
+
+## Session: 2026-01-08
+
+### Completed
+
+- Fixed OutOfMemoryException root cause in `import-to-loki.cjs`
+- Created `error-report.cjs` for direct error analysis (no Loki needed)
+- Successfully ran first error report
+
+### Difficulties & Solutions
+
+#### 5. import-to-loki.cjs - Still OutOfMemoryException
+- **Problem**: Previous fix (reduced batch size) wasn't enough
+- **Root Cause**: Both Node.js and PowerShell scripts load entire file into memory before processing
+  ```javascript
+  // Node.js loaded ALL events into array first
+  const events = await readJsonlFile(filePath);  // ALL in memory
+  for (let i = 0; i < events.length; i += BATCH_SIZE) { ... }
+  ```
+- **Fix**: Implemented true streaming - process lines as they come in, push batches immediately, clear batch after each push
+- **Learning**: Even with small batch sizes, if you load the whole file first, you still have memory problems
+
+#### 6. Loki not becoming ready (503 Service Unavailable)
+- **Problem**: `localhost:3100/ready` returns 503, import script hangs
+- **Cause**: Unknown - Loki container starts but doesn't become ready
+- **Workaround**: Pivoted to Phase 3 error-report.cjs which doesn't need Loki
+- **Status**: Loki issue is **unresolved**, needs investigation later
+
+### Files Modified
+
+1. `scripts/telemetry/import-to-loki.cjs`
+   - Removed `readJsonlFile` function (loaded all into memory)
+   - Implemented inline streaming with readline
+   - Batch cleared immediately after push (line 85: `batch = []`)
+   - Memory usage now constant regardless of file size
+
+2. `scripts/telemetry/error-report.cjs` (NEW)
+   - Reads .jsonl files directly (no Docker/Loki needed)
+   - Groups errors by message, shows count/first/last/sessions
+   - Analyzes patterns by page and time of day
+   - Provides actionable recommendations
+
+3. `package.json`
+   - Added `telemetry:errors` script
+
+### Error Report Findings (First Run)
+
+```
+Total Events:        1,113
+Total Errors:        54 (4.9%)
+Sessions w/Errors:   21 (14%)
+
+Top Errors:
+1. "Failed to generate questions" (17x) - 9 sessions
+2. "Failed to parse explanation JSON" (11x) - 6 sessions
+3. "Failed to fetch explanation" (9x) - 5 sessions
+
+Failed Operations:
+- quiz_generation: 4 failures
+  - Failed to fetch: 2
+  - Invalid API key: 1
+  - Invalid response format: 1
+
+Error Patterns:
+- 52% on /results page
+- 41% on /loading page
+- Peak hour: 17:00 UTC (16 errors)
+
+Recommendations:
+1. [HIGH] Network errors - add retry logic
+2. [MEDIUM] Quiz generation failures - review LLM parsing
+```
+
+### Learnings
+
+- **True streaming is essential for large files**: Even if you batch during *processing*, loading the entire file into memory first defeats the purpose
+- **Alternative paths can unblock progress**: When Loki wasn't working, creating error-report.cjs that reads files directly provided immediate value
+- **First error analysis provides actionable insights**: 4.9% error rate with clear patterns (network errors, JSON parsing) suggests specific improvements
+
+### Next Steps (When Resuming)
+
+1. **Optional**: Debug Loki startup issue for Grafana visualization
+2. Create GitHub issues for top errors:
+   - Network retry logic (HIGH)
+   - LLM response parsing improvements (MEDIUM)
+3. Consider adding:
+   - `--days N` flag to error-report.cjs for date filtering
+   - More detailed session correlation
