@@ -148,10 +148,82 @@ Recommendations:
 
 ### Next Steps (When Resuming)
 
-1. **Optional**: Debug Loki startup issue for Grafana visualization
-2. Create GitHub issues for top errors:
-   - Network retry logic (HIGH)
-   - LLM response parsing improvements (MEDIUM)
-3. Consider adding:
-   - `--days N` flag to error-report.cjs for date filtering
-   - More detailed session correlation
+1. ~~**Optional**: Debug Loki startup issue for Grafana visualization~~ ✅ Done (Session 2026-01-08 continued)
+2. ~~Create GitHub issues for top errors~~ ✅ Done (#88, #89, #90)
+3. ~~Consider adding `--days N` flag~~ ✅ Done
+
+---
+
+## Session: 2026-01-08 (continued)
+
+### Completed
+
+- Resolved Loki 503 Service Unavailable issue
+- Successfully imported telemetry to Loki (644 events)
+- Created GitHub issues #88, #89, #90 for error analysis findings
+- Added `--days N` flag to error-report.cjs
+- Merged `feature/epic9-telemetry-analysis` to main
+
+### Difficulties & Solutions
+
+#### 7. Loki 503 Service Unavailable - Initial Diagnosis
+- **Problem**: `/ready` endpoint returned 503 even though logs showed "Loki started"
+- **Root Cause**: The compactor component waits 10 minutes for the ring to stabilize
+- **Learning**: Loki logs this explicitly: `msg="waiting 10m0s for ring to stay stable"`
+- **Solution**: Just wait longer - Loki eventually becomes ready
+
+#### 8. Loki unreachable from Windows host (timeout)
+- **Problem**: `localhost:3100` timed out from Windows, but worked inside container
+- **Root Cause**: Windows `localhost` resolved to IPv6 (::1), but Docker was only properly serving IPv4
+- **Diagnosis**: `docker exec saberloop-loki wget localhost:3100/ready` worked, but `curl http://localhost:3100/ready` from Windows timed out
+- **Fix**: Changed `import-to-loki.cjs` default URL from `localhost` to `127.0.0.1`
+  ```javascript
+  // Note: Use 127.0.0.1 instead of localhost to avoid IPv6 issues on Windows
+  const LOKI_URL = process.env.LOKI_URL || 'http://127.0.0.1:3100';
+  ```
+- **Learning**: On Windows with Docker, prefer explicit IPv4 (127.0.0.1) over hostname (localhost)
+
+#### 9. Loki import 400 errors
+- **Problem**: Some batches failed with HTTP 400 during import (644/1113 imported)
+- **Likely Cause**: Duplicate timestamps within same stream - Loki requires unique timestamps per log stream
+- **Impact**: Minor - enough data imported for analysis
+- **Potential Fix**: Add nanosecond jitter to timestamps in import script
+
+#### 10. Loki queries return empty results
+- **Problem**: Data was ingested (labels visible) but queries return no results
+- **Diagnosis**: Label values show data exists (`app=saberloop`, `type=error`, etc.)
+  - Flush log confirms: `flushing stream ... labels="{app=\"saberloop\", type=\"error\"}"`
+- **Likely Cause**: Timestamp mismatch - telemetry has historical dates (Dec 2025) but default query looks at recent time
+- **Status**: Minor issue - can be resolved by adjusting time range in Grafana
+- **Workaround**: error-report.cjs works directly on files and doesn't need Loki
+
+### GitHub Issues Created
+
+- **#88**: Add retry logic with exponential backoff for network operations [priority-high]
+- **#89**: Make quiz/explanation JSON parsing more robust [priority-medium]
+- **#90**: Investigate Service Worker registration failures [priority-low]
+
+### Learnings
+
+- **IPv4 vs IPv6 on Windows Docker**: Windows localhost can resolve to IPv6, but Docker port forwarding may only work correctly with IPv4. Always use 127.0.0.1 explicitly.
+- **Loki startup time**: Loki has multiple components (compactor, ring, scheduler) that need time to stabilize. The `/ready` endpoint reflects overall system readiness, not just HTTP availability.
+- **Alternative analysis paths**: When visualization tools (Grafana/Loki) have issues, direct file analysis (error-report.cjs) provides immediate value.
+- **Timestamp uniqueness in Loki**: Each log entry in a stream must have a unique timestamp. Importing historical data may require timestamp jitter.
+
+### Epic 09 Status
+
+**Phase 2 (Hands-On Operations)**: ✅ Complete
+- Download scripts working
+- Import to Loki working (with IPv4 fix)
+- Grafana accessible at localhost:3000
+
+**Phase 3 (Error Analysis)**: ✅ Complete
+- error-report.cjs created and working
+- `--days N` flag implemented
+- First error analysis completed
+- GitHub issues created for top findings
+
+**Next**: Phase 4 or Epic completion - consider:
+- Creating Grafana dashboards for ongoing monitoring
+- Adding more metrics/insights to error-report.cjs
+- Documenting operational runbook for telemetry analysis

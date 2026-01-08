@@ -11,7 +11,8 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
-const LOKI_URL = process.env.LOKI_URL || 'http://localhost:3100';
+// Note: Use 127.0.0.1 instead of localhost to avoid IPv6 issues on Windows
+const LOKI_URL = process.env.LOKI_URL || 'http://127.0.0.1:3100';
 const INPUT_DIR = process.argv[2] || './telemetry-logs';
 const BATCH_SIZE = 100;
 
