@@ -13,7 +13,7 @@
  * @typedef {Object} Question
  * @property {string} question - The question text
  * @property {string[]} options - Array of 4 answer options (A, B, C, D)
- * @property {number} correctIndex - Index of correct answer (0-3)
+ * @property {number} correct - Index of correct answer (0-3)
  * @property {string} [explanation] - Optional explanation of the answer
  * @property {string} [difficulty] - Optional difficulty level
  */

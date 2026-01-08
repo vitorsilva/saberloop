@@ -22,7 +22,7 @@
       questions: Array.from({ length: questionCount }, (_, i) => ({
         question: `Question ${i + 1}?`,
         options: ['A', 'B', 'C', 'D'],
-        correctIndex: 0,
+        correct: 0,
       })),
     };
   }
@@ -62,7 +62,7 @@
               'Long option C with padding',
               'Long option D with padding',
             ],
-            correctIndex: 0,
+            correct: 0,
           })),
         };
 
