@@ -57,20 +57,48 @@ async function main() {
         console.log(`📄 Processing: ${file}`);
         const filePath = path.join(INPUT_DIR, file);
 
-        const events = await readJsonlFile(filePath);
-        totalEvents += events.length;
+        // Stream file and process in batches (memory efficient)
+        const fileStream = fs.createReadStream(filePath);
+        const rl = readline.createInterface({
+            input: fileStream,
+            crlfDelay: Infinity
+        });
 
-        // Process in batches
-        for (let i = 0; i < events.length; i += BATCH_SIZE) {
-            const batch = events.slice(i, i + BATCH_SIZE);
+        let batch = [];
+        let fileEvents = 0;
+
+        for await (const line of rl) {
+            if (!line.trim()) continue;
+
+            try {
+                const parsed = JSON.parse(line);
+                batch.push({ raw: line, parsed });
+                fileEvents++;
+                totalEvents++;
+
+                // Push when batch is full - don't accumulate in memory
+                if (batch.length >= BATCH_SIZE) {
+                    const success = await pushToLoki(batch);
+                    if (success) {
+                        importedEvents += batch.length;
+                    }
+                    batch = [];  // Clear immediately after push
+                    process.stdout.write(`   Imported ${importedEvents} events...\r`);
+                }
+            } catch (e) {
+                // Skip invalid lines
+            }
+        }
+
+        // Push remaining events in batch
+        if (batch.length > 0) {
             const success = await pushToLoki(batch);
             if (success) {
                 importedEvents += batch.length;
             }
-            process.stdout.write(`   Imported ${Math.min(i + BATCH_SIZE, events.length)}/${events.length}\r`);
         }
 
-        console.log(`   ✅ Done: ${events.length} events`);
+        console.log(`   ✅ Done: ${fileEvents} events`);
     }
 
     console.log('');
@@ -81,27 +109,6 @@ async function main() {
     console.log('View in Grafana: http://localhost:3000');
     console.log('  Default login: admin / admin');
     console.log('  Go to Explore > Select Loki > Query logs');
-}
-
-async function readJsonlFile(filePath) {
-    const events = [];
-    const fileStream = fs.createReadStream(filePath);
-    const rl = readline.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity
-    });
-
-    for await (const line of rl) {
-        if (!line.trim()) continue;
-        try {
-            const event = JSON.parse(line);
-            events.push({ raw: line, parsed: event });
-        } catch (e) {
-            // Skip invalid lines
-        }
-    }
-
-    return events;
 }
 
 async function pushToLoki(events) {
