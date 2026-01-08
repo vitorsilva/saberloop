@@ -1,7 +1,17 @@
 /**
  * Error Report - Analyze telemetry data for errors
  *
- * Usage: node scripts/telemetry/error-report.cjs [input-dir]
+ * Usage: node scripts/telemetry/error-report.cjs [options]
+ *
+ * Options:
+ *   --days N       Only analyze last N days (default: all)
+ *   --dir PATH     Input directory (default: ./telemetry-logs)
+ *   --help         Show this help message
+ *
+ * Examples:
+ *   npm run telemetry:errors                    # All available data
+ *   npm run telemetry:errors -- --days 7       # Last 7 days
+ *   npm run telemetry:errors -- --days 1       # Last 24 hours
  *
  * Reads .jsonl files and generates an error analysis report.
  * No Docker/Loki required - works directly with downloaded log files.
@@ -11,12 +21,65 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
-const INPUT_DIR = process.argv[2] || './telemetry-logs';
+// Parse command line arguments
+const args = parseArgs(process.argv.slice(2));
+const INPUT_DIR = args.dir || './telemetry-logs';
+const DAYS_FILTER = args.days ? parseInt(args.days, 10) : null;
+
+function parseArgs(argv) {
+    const result = {};
+    for (let i = 0; i < argv.length; i++) {
+        if (argv[i] === '--days' && argv[i + 1]) {
+            result.days = argv[i + 1];
+            i++;
+        } else if (argv[i] === '--dir' && argv[i + 1]) {
+            result.dir = argv[i + 1];
+            i++;
+        } else if (argv[i] === '--help') {
+            console.log(`
+Error Report - Analyze telemetry data for errors
+
+Usage: node scripts/telemetry/error-report.cjs [options]
+
+Options:
+  --days N       Only analyze last N days (default: all)
+  --dir PATH     Input directory (default: ./telemetry-logs)
+  --help         Show this help message
+
+Examples:
+  npm run telemetry:errors                    # All available data
+  npm run telemetry:errors -- --days 7       # Last 7 days
+  npm run telemetry:errors -- --days 1       # Last 24 hours
+`);
+            process.exit(0);
+        }
+    }
+    return result;
+}
+
+function getDateCutoff() {
+    if (!DAYS_FILTER) return null;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - DAYS_FILTER);
+    cutoff.setHours(0, 0, 0, 0);
+    return cutoff;
+}
+
+function isWithinDateRange(timestamp, cutoff) {
+    if (!cutoff) return true;
+    return new Date(timestamp) >= cutoff;
+}
 
 async function main() {
+    const dateCutoff = getDateCutoff();
+    const dateRangeText = DAYS_FILTER
+        ? `Last ${DAYS_FILTER} day${DAYS_FILTER === 1 ? '' : 's'}`
+        : 'All available data';
+
     console.log('');
     console.log('╔══════════════════════════════════════════════════════════════╗');
     console.log('║           SABERLOOP TELEMETRY ERROR REPORT                   ║');
+    console.log(`║           ${dateRangeText.padEnd(51)}║`);
     console.log('╚══════════════════════════════════════════════════════════════╝');
     console.log('');
 
@@ -50,6 +113,11 @@ async function main() {
         const events = await readJsonlFile(filePath);
 
         for (const event of events) {
+            // Skip events outside date range
+            if (!isWithinDateRange(event.timestamp, dateCutoff)) {
+                continue;
+            }
+
             totalEvents++;
             sessions.add(event.sessionId);
 
