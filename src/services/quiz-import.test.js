@@ -25,7 +25,7 @@
         {
           question: 'What is 2+2?',
           options: ['3', '4', '5', '6'],
-          correctIndex: 1,
+          correct: 1,
         },
       ],
     };
@@ -61,7 +61,7 @@
       it('sets originalCreator to Anonymous when not provided', async () => {
         const quiz = {
           topic: 'Test',
-          questions: [{ question: 'Q?', options: ['A', 'B', 'C', 'D'], correctIndex: 0 }],
+          questions: [{ question: 'Q?', options: ['A', 'B', 'C', 'D'], correct: 0 }],
         };
         const { data } = serializeQuiz(quiz);
         const result = await importQuizFromUrl(data);
@@ -72,7 +72,7 @@
       it('defaults mode to learning when not provided', async () => {
         const quiz = {
           topic: 'Test',
-          questions: [{ question: 'Q?', options: ['A', 'B', 'C', 'D'], correctIndex: 0 }],
+          questions: [{ question: 'Q?', options: ['A', 'B', 'C', 'D'], correct: 0 }],
         };
         const { data } = serializeQuiz(quiz);
         const result = await importQuizFromUrl(data);
@@ -114,7 +114,7 @@
         const quiz = {
           topic: 'Test',
           gradeLevel: 'high school',
-          questions: [{ question: 'Q?', options: ['A', 'B', 'C', 'D'], correctIndex: 0 }],
+          questions: [{ question: 'Q?', options: ['A', 'B', 'C', 'D'], correct: 0 }],
           isImported: true,
           importedAt: Date.now(),
           originalCreator: 'Tester',
@@ -132,7 +132,7 @@
 
         const quiz = {
           topic: 'Test',
-          questions: [{ question: 'Q?', options: ['A', 'B', 'C', 'D'], correctIndex: 0 }],
+          questions: [{ question: 'Q?', options: ['A', 'B', 'C', 'D'], correct: 0 }],
           isImported: true,
         };
 

@@ -16,7 +16,7 @@
       questions: Array.from({ length: questionCount }, (_, i) => ({
         question: `Question ${i + 1}?`,
         options: ['Option A', 'Option B', 'Option C', 'Option D'],
-        correctIndex: 0,
+        correct: 0,
         difficulty: 'medium',
         explanation: 'This is an explanation that should be excluded',
       })),
@@ -76,7 +76,7 @@
        it('handles quiz with only required fields (no optional fields)', () => {
           const minimalQuiz = {
             questions: [
-              { question: 'Q?', options: ['A', 'B', 'C', 'D'], correctIndex: 0 },
+              { question: 'Q?', options: ['A', 'B', 'C', 'D'], correct: 0 },
             ],
           };
           const result = serializeQuiz(minimalQuiz);
@@ -111,7 +111,7 @@
         const quiz = {
           topic: 'Minimal Quiz',
           questions: [
-            { question: 'Q?', options: ['A', 'B', 'C', 'D'], correctIndex: 1 },
+            { question: 'Q?', options: ['A', 'B', 'C', 'D'], correct: 1 },
           ],
         };
         const serialized = serializeQuiz(quiz);
@@ -249,7 +249,7 @@
               'This is option C with extra padding text',
               'This is option D with extra padding text',
             ],
-            correctIndex: 0,
+            correct: 0,
           })),
         };
 

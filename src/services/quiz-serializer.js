@@ -19,7 +19,7 @@
   const QUESTION_KEY_MAP = {
     question: 'q',
     options: 'o',
-    correctIndex: 'c',
+    correct: 'c',
     difficulty: 'd',
   };
 
@@ -55,7 +55,7 @@
         const shortQ = {};
         shortQ[QUESTION_KEY_MAP.question] = q.question;
         shortQ[QUESTION_KEY_MAP.options] = q.options;
-        shortQ[QUESTION_KEY_MAP.correctIndex] = q.correctIndex;
+        shortQ[QUESTION_KEY_MAP.correct] = q.correct;
         if (q.difficulty) shortQ[QUESTION_KEY_MAP.difficulty] = q.difficulty;
         // Note: explanations are intentionally excluded to keep URLs short
         return shortQ;
@@ -85,7 +85,7 @@
         const question = {
           question: sq.q,
           options: sq.o,
-          correctIndex: sq.c,
+          correct: sq.c,
         };
         if (sq.d) question.difficulty = sq.d;
         return question;
