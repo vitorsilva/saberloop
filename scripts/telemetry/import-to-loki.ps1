@@ -35,6 +35,38 @@ if ($files.Count -eq 0) {
 Write-Host "Found $($files.Count) log file(s)"
 Write-Host ""
 
+# Function to push batch to Loki (must be defined before use)
+function Push-ToLoki {
+    param($Batch, $LokiUrl)
+
+    # Group by labels
+    $streams = @{}
+    foreach ($entry in $Batch) {
+        $labelKey = "$($entry.labels.app)|$($entry.labels.type)"
+        if (-not $streams.ContainsKey($labelKey)) {
+            $streams[$labelKey] = @{
+                stream = $entry.labels
+                values = @()
+            }
+        }
+        $streams[$labelKey].values += ,@("$($entry.ts)", $entry.line)
+    }
+
+    $payload = @{
+        streams = $streams.Values
+    } | ConvertTo-Json -Depth 10 -Compress
+
+    try {
+        Invoke-RestMethod -Uri "$LokiUrl/loki/api/v1/push" `
+            -Method Post `
+            -ContentType "application/json" `
+            -Body $payload `
+            -TimeoutSec 30 | Out-Null
+    } catch {
+        Write-Host "  Push failed: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
 $totalEvents = 0
 $importedEvents = 0
 
@@ -46,7 +78,7 @@ foreach ($file in $files) {
 
     # Batch events for Loki push
     $batch = @()
-    $batchSize = 100
+    $batchSize = 10
 
     foreach ($line in $lines) {
         if ([string]::IsNullOrWhiteSpace($line)) { continue }
@@ -88,37 +120,6 @@ foreach ($file in $files) {
     }
 
     Write-Host "  Done: $($lines.Count) lines processed" -ForegroundColor Green
-}
-
-function Push-ToLoki {
-    param($Batch, $LokiUrl)
-
-    # Group by labels
-    $streams = @{}
-    foreach ($entry in $Batch) {
-        $labelKey = "$($entry.labels.app)|$($entry.labels.type)"
-        if (-not $streams.ContainsKey($labelKey)) {
-            $streams[$labelKey] = @{
-                stream = $entry.labels
-                values = @()
-            }
-        }
-        $streams[$labelKey].values += ,@("$($entry.ts)", $entry.line)
-    }
-
-    $payload = @{
-        streams = $streams.Values
-    } | ConvertTo-Json -Depth 10 -Compress
-
-    try {
-        Invoke-RestMethod -Uri "$LokiUrl/loki/api/v1/push" `
-            -Method Post `
-            -ContentType "application/json" `
-            -Body $payload `
-            -TimeoutSec 30 | Out-Null
-    } catch {
-        Write-Host "  Push failed: $($_.Exception.Message)" -ForegroundColor Red
-    }
 }
 
 Write-Host ""
