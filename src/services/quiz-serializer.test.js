@@ -164,6 +164,32 @@
         expect(deserialized.quiz.mode).toBe('party');
         expect(deserialized.quiz.questions).toHaveLength(10);
       });
+
+      // Issue #86: Quiz sharing breaks because serializer uses 'correctIndex'
+      // but the app uses 'correct' throughout (API response, ResultsView, shuffle)
+      it('preserves correct property from API-style quiz (issue #86)', () => {
+        // This is how the AI API returns questions - with 'correct' not 'correctIndex'
+        const apiStyleQuiz = {
+          topic: 'Science Quiz',
+          gradeLevel: 'middle school',
+          questions: [
+            { question: 'Q1?', options: ['A', 'B', 'C', 'D'], correct: 0, difficulty: 'easy' },
+            { question: 'Q2?', options: ['A', 'B', 'C', 'D'], correct: 2, difficulty: 'medium' },
+            { question: 'Q3?', options: ['A', 'B', 'C', 'D'], correct: 1, difficulty: 'hard' },
+          ],
+        };
+
+        const serialized = serializeQuiz(apiStyleQuiz);
+        expect(serialized.success).toBe(true);
+
+        const deserialized = deserializeQuiz(serialized.data);
+        expect(deserialized.success).toBe(true);
+
+        // The 'correct' property must be preserved after roundtrip
+        expect(deserialized.quiz.questions[0].correct).toBe(0);
+        expect(deserialized.quiz.questions[1].correct).toBe(2);
+        expect(deserialized.quiz.questions[2].correct).toBe(1);
+      });
     });
 
     describe('canShareQuiz', () => {
