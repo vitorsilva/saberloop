@@ -1,0 +1,116 @@
+<?php
+/**
+ * Room API Endpoint
+ *
+ * Handles room CRUD operations:
+ * - POST   /rooms              Create a new room
+ * - GET    /rooms/{code}       Get room info
+ * - POST   /rooms/{code}/join  Join a room
+ * - POST   /rooms/{code}/leave Leave a room
+ * - POST   /rooms/{code}/start Start the quiz (host only)
+ * - POST   /rooms/{code}/quiz  Update quiz data (host only)
+ * - DELETE /rooms/{code}       End room (host only)
+ */
+
+require_once __DIR__ . '/../ApiHelper.php';
+require_once __DIR__ . '/../RoomManager.php';
+
+// Load config and set up CORS
+$config = require __DIR__ . '/../config.php';
+ApiHelper::setupCors($config);
+
+try {
+    $roomManager = new RoomManager();
+    $method = ApiHelper::getMethod();
+    $pathInfo = $_SERVER['PATH_INFO'] ?? '';
+    $segments = ApiHelper::parsePath($pathInfo);
+
+    // Route: POST /rooms - Create room
+    if ($method === 'POST' && count($segments) === 0) {
+        $body = ApiHelper::getJsonBody();
+        $hostId = ApiHelper::requireField($body, 'hostId');
+        $hostName = ApiHelper::requireField($body, 'hostName');
+        $quizData = $body['quizData'] ?? null;
+        $secondsPerQuestion = $body['secondsPerQuestion'] ?? null;
+
+        $room = $roomManager->createRoom($hostId, $hostName, $quizData, $secondsPerQuestion);
+        ApiHelper::success($room, 201);
+    }
+
+    // Route: GET /rooms/{code} - Get room
+    if ($method === 'GET' && count($segments) === 1) {
+        $code = $segments[0];
+        $room = $roomManager->getRoomByCode($code);
+
+        if (!$room) {
+            ApiHelper::error('Room not found', 404, 'ROOM_NOT_FOUND');
+        }
+
+        ApiHelper::success($room);
+    }
+
+    // Route: POST /rooms/{code}/join - Join room
+    if ($method === 'POST' && count($segments) === 2 && $segments[1] === 'join') {
+        $code = $segments[0];
+        $body = ApiHelper::getJsonBody();
+        $participantId = ApiHelper::requireField($body, 'participantId');
+        $name = ApiHelper::requireField($body, 'name');
+
+        $room = $roomManager->joinRoom($code, $participantId, $name);
+        ApiHelper::success($room);
+    }
+
+    // Route: POST /rooms/{code}/leave - Leave room
+    if ($method === 'POST' && count($segments) === 2 && $segments[1] === 'leave') {
+        $code = $segments[0];
+        $body = ApiHelper::getJsonBody();
+        $participantId = ApiHelper::requireField($body, 'participantId');
+
+        $roomManager->leaveRoom($code, $participantId);
+        ApiHelper::success(['left' => true]);
+    }
+
+    // Route: POST /rooms/{code}/start - Start quiz
+    if ($method === 'POST' && count($segments) === 2 && $segments[1] === 'start') {
+        $code = $segments[0];
+        $body = ApiHelper::getJsonBody();
+        $hostId = ApiHelper::requireField($body, 'hostId');
+
+        $room = $roomManager->startQuiz($code, $hostId);
+        ApiHelper::success($room);
+    }
+
+    // Route: POST /rooms/{code}/quiz - Update quiz data
+    if ($method === 'POST' && count($segments) === 2 && $segments[1] === 'quiz') {
+        $code = $segments[0];
+        $body = ApiHelper::getJsonBody();
+        $hostId = ApiHelper::requireField($body, 'hostId');
+        $quizData = ApiHelper::requireField($body, 'quizData');
+
+        $room = $roomManager->updateQuizData($code, $hostId, $quizData);
+        ApiHelper::success($room);
+    }
+
+    // Route: DELETE /rooms/{code} - End room
+    if ($method === 'DELETE' && count($segments) === 1) {
+        $code = $segments[0];
+        $body = ApiHelper::getJsonBody();
+        $hostId = ApiHelper::requireField($body, 'hostId');
+
+        $roomManager->endRoom($code, $hostId);
+        ApiHelper::success(['ended' => true]);
+    }
+
+    // No matching route
+    ApiHelper::error('Not found', 404, 'NOT_FOUND');
+
+} catch (Exception $e) {
+    $statusCode = $e->getCode();
+
+    // Ensure valid HTTP status code
+    if ($statusCode < 400 || $statusCode > 599) {
+        $statusCode = 500;
+    }
+
+    ApiHelper::error($e->getMessage(), $statusCode);
+}
