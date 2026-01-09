@@ -1,6 +1,6 @@
 # Phase 3: Party Sessions - Learning Notes
 
-**Status:** In Progress (Sub-Phases 3a, 3b, 3c, 3d Complete - Bug fixes applied)
+**Status:** In Progress (Sub-Phases 3a, 3b, 3c, 3d Complete + Demo Video)
 **Branch:** `feature/phase3-telemetry`
 **Started:** 2026-01-09
 **Depends on:** Phase 1 (Quiz Sharing) ✅, Phase 2 (Mode Toggle) ✅
@@ -303,11 +303,124 @@ await page.evaluate(() => {
 
 ---
 
+## Session: 2026-01-09 (Party Mode Demo Video)
+
+### Completed
+
+- [x] Create video storyboard (`docs/learning/epic06_sharing/PARTY_MODE_DEMO_VIDEO.md`)
+- [x] Create marketing assets README (`docs/product-info/README.md`)
+- [x] Create Playwright capture script (`tests/e2e/capture-party-demo.spec.js`)
+- [x] Fix script issues (ES modules, test.use placement)
+- [x] Run capture and generate video
+- [x] Save screenshots (7) to `docs/product-info/screenshots/party/`
+- [x] Save video to `docs/product-info/videos/party-mode-demo.webm`
+
+### Problems Encountered
+
+#### Issue 4: Capture script using CommonJS in ES module project
+
+**Symptom**: Script failed with `require is not defined` error.
+
+**Root Cause**: Original script used CommonJS syntax (`const { test } = require(...)`), but the project uses ES modules (`"type": "module"` in package.json).
+
+**Fix**: Changed to ES module imports:
+```javascript
+// Before (wrong)
+const { test, expect } = require('@playwright/test');
+
+// After (correct)
+import { test, expect } from '@playwright/test';
+```
+
+**Learning**: Always check project's module system (`package.json` type field) before adding new scripts.
+
+---
+
+#### Issue 5: `test.use()` inside describe block error
+
+**Symptom**: Playwright error: `test.use() can only be called in a test file`
+
+**Root Cause**: `test.use()` was placed inside the `test.describe()` block, but Playwright requires it at the top level of the file.
+
+```javascript
+// Before (wrong)
+test.describe('Capture Party Mode Demo', () => {
+  test.use({ viewport: MOBILE_VIEWPORT, video: {...} }); // ❌ Error
+});
+
+// After (correct)
+test.use({ viewport: MOBILE_VIEWPORT, video: {...} }); // ✅ Top level
+
+test.describe('Capture Party Mode Demo', () => {
+  // tests here
+});
+```
+
+**Learning**: Playwright's `test.use()` configures the test file globally, not per-describe block. It must be at the top level, outside any describe/test blocks.
+
+---
+
+#### Issue 6: `__dirname` not available in ES modules
+
+**Symptom**: `__dirname is not defined` when trying to use it for file paths.
+
+**Root Cause**: ES modules don't have `__dirname` - it's a CommonJS global.
+
+**Fix**: Used `import.meta.url` with `fileURLToPath`:
+```javascript
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+```
+
+**Learning**: In ES modules, derive `__dirname` from `import.meta.url` if needed. Or use relative paths from project root.
+
+---
+
+### Assets Generated
+
+| Asset | Location | Size |
+|-------|----------|------|
+| 01-home-learning-mode.png | `docs/product-info/screenshots/party/` | ~50KB |
+| 02-home-party-mode.png | `docs/product-info/screenshots/party/` | ~50KB |
+| 03-create-party-select-quiz.png | `docs/product-info/screenshots/party/` | ~50KB |
+| 04-room-code-created.png | `docs/product-info/screenshots/party/` | ~50KB |
+| 05-party-lobby-participants.png | `docs/product-info/screenshots/party/` | ~50KB |
+| 06-party-quiz-gameplay.png | `docs/product-info/screenshots/party/` | ~50KB |
+| 07-party-results.png | `docs/product-info/screenshots/party/` | ~50KB |
+| party-mode-demo.webm | `docs/product-info/videos/` | ~700KB |
+
+### Regeneration Command
+
+To regenerate the demo video in the future:
+```bash
+npx playwright test tests/e2e/capture-party-demo.spec.js --headed
+# Then copy video from test-results/ to docs/product-info/videos/
+```
+
+### Key Takeaways
+
+1. **ES modules vs CommonJS**: Check `package.json` type before writing scripts
+2. **Playwright test.use()**: Must be at file top level, not inside describe
+3. **Mock UI for demos**: Injecting mock HTML via `page.evaluate()` is effective for simulating multi-device scenarios
+4. **Video capture**: Playwright's video recording captures the full test - just need to trim/copy afterward
+
+### Commits Made
+
+1. `docs(party): add party mode demo video plan and assets README`
+2. `feat(party): add party mode demo video and screenshots`
+
+---
+
 ### Next Steps
 
-- [ ] Continue with Sub-Phase 3c remaining tasks
-- [ ] Review and commit the bug fixes
-- [ ] Proceed to Sub-Phase 3d if 3c is complete
+- [x] ~~Sub-Phase 3c: Party UI~~ - Complete
+- [x] ~~Sub-Phase 3d: Live Gameplay~~ - Complete (merged PR #98)
+- [x] ~~Demo Video~~ - Complete
+- [ ] Sub-Phase 3e: Testing & Polish (if planned)
+- [ ] Phase 3 final review and merge to main
 
 ---
 
