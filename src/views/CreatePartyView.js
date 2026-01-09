@@ -9,19 +9,30 @@ import BaseView from './BaseView.js';
 import { t } from '../core/i18n.js';
 import { createRoomCodeDisplay } from '../components/RoomCodeDisplay.js';
 import { createParticipantList } from '../components/ParticipantList.js';
-import { getQuizHistory } from '../services/quiz-service.js';
+import { getQuizHistory, getQuizSession } from '../services/quiz-service.js';
 import { shareContent } from '../utils/share.js';
 import { logger } from '../utils/logger.js';
+import {
+  createRoom,
+  getRoom,
+  endRoom,
+  generateParticipantId,
+} from '../services/party-api.js';
 
 const log = logger.child({ module: 'CreatePartyView' });
+
+/** @type {number} Polling interval for participant updates (ms) */
+const POLL_INTERVAL_MS = 2000;
 
 export default class CreatePartyView extends BaseView {
   constructor() {
     super();
     this.roomCode = null;
+    this.hostId = null;
     this.participants = [];
     this.selectedQuizId = null;
     this.quizzes = [];
+    this.pollInterval = null;
   }
 
   async render() {
@@ -193,20 +204,22 @@ export default class CreatePartyView extends BaseView {
     overlay?.classList.remove('hidden');
 
     try {
-      // TODO: Call room API to create room
-      // For now, generate a mock room code
-      this.roomCode = this.generateMockRoomCode();
+      // Generate host ID and get quiz data
+      this.hostId = generateParticipantId();
+      const quiz = await getQuizSession(this.selectedQuizId);
 
-      // Initialize participants with host
-      this.participants = [
-        {
-          id: 'host-' + Date.now(),
-          name: 'You',
-          isHost: true,
-          isYou: true,
-          status: 'connected',
-        },
-      ];
+      // Create room via API
+      const roomData = await createRoom({
+        hostId: this.hostId,
+        hostName: 'You', // TODO: Allow user to set name
+        quizData: quiz,
+        secondsPerQuestion: 30,
+      });
+
+      this.roomCode = roomData.code;
+
+      // Initialize participants from API response
+      this.participants = this._mapParticipants(roomData.participants || []);
 
       // Hide quiz selection, show room
       this.querySelector('#selectQuizSection')?.classList.add('hidden');
@@ -226,7 +239,10 @@ export default class CreatePartyView extends BaseView {
       // Render participant list
       this.updateParticipantList();
 
-      log.info('Room created', { roomCode: this.roomCode });
+      // Start polling for participant updates
+      this._startPolling();
+
+      log.info('Room created', { roomCode: this.roomCode, hostId: this.hostId });
     } catch (error) {
       log.error('Failed to create room', { error: error.message });
       alert(t('errors.generic'));
@@ -235,13 +251,54 @@ export default class CreatePartyView extends BaseView {
     }
   }
 
-  generateMockRoomCode() {
-    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-    let code = '';
-    for (let i = 0; i < 6; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
+  /**
+   * Map API participant data to UI format.
+   * @param {Array} apiParticipants - Participants from API
+   * @returns {Array} Formatted participants for UI
+   */
+  _mapParticipants(apiParticipants) {
+    return apiParticipants.map((p) => ({
+      id: p.id,
+      name: p.name,
+      isHost: p.isHost === true,
+      isYou: p.id === this.hostId,
+      status: 'connected',
+    }));
+  }
+
+  /**
+   * Start polling for participant updates.
+   */
+  _startPolling() {
+    if (this.pollInterval) return;
+
+    log.info('Starting polling for room', { roomCode: this.roomCode });
+
+    this.pollInterval = setInterval(async () => {
+      try {
+        const roomData = await getRoom(this.roomCode);
+        const newParticipants = this._mapParticipants(roomData.participants || []);
+
+        // Check if participant list changed
+        if (JSON.stringify(newParticipants) !== JSON.stringify(this.participants)) {
+          log.info('Participants updated', { count: newParticipants.length });
+          this.participants = newParticipants;
+          this.updateParticipantList();
+        }
+      } catch (error) {
+        log.error('Failed to poll room', { error: error.message });
+      }
+    }, POLL_INTERVAL_MS);
+  }
+
+  /**
+   * Stop polling for participant updates.
+   */
+  _stopPolling() {
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+      this.pollInterval = null;
     }
-    return code;
   }
 
   updateParticipantList() {
@@ -292,14 +349,24 @@ export default class CreatePartyView extends BaseView {
     this.navigateTo(`/party/quiz/${this.roomCode}`);
   }
 
-  cancelParty() {
-    // TODO: Clean up room via API
+  async cancelParty() {
+    this._stopPolling();
+
+    // Clean up room via API
+    if (this.roomCode && this.hostId) {
+      try {
+        await endRoom(this.roomCode, this.hostId);
+      } catch (error) {
+        log.error('Failed to end room', { error: error.message });
+      }
+    }
+
     log.info('Party cancelled', { roomCode: this.roomCode });
     this.navigateTo('/');
   }
 
   destroy() {
-    // TODO: Clean up P2P connections
+    this._stopPolling();
     super.destroy();
   }
 }

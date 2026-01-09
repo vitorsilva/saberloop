@@ -9,6 +9,7 @@ import { t } from '../core/i18n.js';
 import { createRoomCodeInput, isValidRoomCode } from '../components/RoomCodeInput.js';
 import { logger } from '../utils/logger.js';
 import router from '../core/router.js';
+import { joinRoom, generateParticipantId } from '../services/party-api.js';
 
 const log = logger.child({ module: 'JoinPartyView' });
 
@@ -175,9 +176,22 @@ export default class JoinPartyView extends BaseView {
     errorMsg?.classList.add('hidden');
 
     try {
-      // TODO: Call room API to join room
-      // For now, simulate success
-      log.info('Joining party', { code, name });
+      // Generate participant ID
+      const participantId = generateParticipantId();
+
+      // Join room via API
+      const roomData = await joinRoom(code, participantId, name);
+
+      log.info('Joined party', {
+        code,
+        name,
+        participantId,
+        participantCount: roomData.participants?.length,
+      });
+
+      // Store participant ID for lobby/quiz views
+      sessionStorage.setItem('partyParticipantId', participantId);
+      sessionStorage.setItem('partyRoomCode', code);
 
       // Navigate to lobby
       this.navigateTo(`/party/lobby/${code}`);
@@ -187,9 +201,9 @@ export default class JoinPartyView extends BaseView {
       // Show error
       if (errorMsg) {
         errorMsg.textContent =
-          error.message === 'Room not found'
+          error.message === 'ROOM_NOT_FOUND'
             ? t('party.roomNotFound')
-            : error.message === 'Room full'
+            : error.message === 'ROOM_FULL'
               ? t('party.roomFull')
               : t('errors.generic');
         errorMsg.classList.remove('hidden');

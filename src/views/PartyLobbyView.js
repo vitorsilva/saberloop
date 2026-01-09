@@ -10,8 +10,12 @@ import { t } from '../core/i18n.js';
 import { createParticipantList } from '../components/ParticipantList.js';
 import { logger } from '../utils/logger.js';
 import router from '../core/router.js';
+import { getRoom, leaveRoom } from '../services/party-api.js';
 
 const log = logger.child({ module: 'PartyLobbyView' });
+
+/** @type {number} Polling interval for room updates (ms) */
+const POLL_INTERVAL_MS = 2000;
 
 export default class PartyLobbyView extends BaseView {
   /**
@@ -26,21 +30,24 @@ export default class PartyLobbyView extends BaseView {
     this.isHost = options.isHost || false;
     this.participants = [];
     this.quizInfo = null;
+    this.pollInterval = null;
+    // Get participant ID from session storage (set during join)
+    this.participantId = sessionStorage.getItem('partyParticipantId') || '';
+    this.roomStatus = 'waiting';
   }
 
   async render() {
-    // TODO: Fetch room info from API
-    // For now, use mock data
-    this.quizInfo = {
-      topic: 'History of Portugal',
-      questionCount: 10,
-      secondsPerQuestion: 30,
-    };
-
-    this.participants = [
-      { id: 'host-1', name: 'Maria', isHost: true, status: 'connected' },
-      { id: 'guest-1', name: 'You', isHost: false, isYou: true, status: 'connected' },
-    ];
+    // Fetch room info from API
+    try {
+      const roomData = await getRoom(this.roomCode);
+      this._updateFromRoomData(roomData);
+    } catch (error) {
+      log.error('Failed to fetch room', { error: error.message });
+      // Room might not exist anymore
+      alert(t('party.roomNotFound'));
+      this.navigateTo('/');
+      return;
+    }
 
     this.setHTML(`
       <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
@@ -95,6 +102,93 @@ export default class PartyLobbyView extends BaseView {
     this.updateParticipantList();
 
     this.attachListeners();
+
+    // Start polling for room updates
+    this._startPolling();
+  }
+
+  /**
+   * Update view state from API room data.
+   * @param {Object} roomData - Room data from API
+   */
+  _updateFromRoomData(roomData) {
+    // Extract quiz info
+    const quiz = roomData.quiz_data;
+    if (quiz) {
+      this.quizInfo = {
+        topic: quiz.topic || 'Quiz',
+        questionCount: quiz.questions?.length || quiz.totalQuestions || 10,
+        secondsPerQuestion: roomData.seconds_per_question || 30,
+      };
+    }
+
+    // Map participants
+    this.participants = (roomData.participants || []).map((p) => ({
+      id: p.id,
+      name: p.name,
+      isHost: p.isHost === true,
+      isYou: p.id === this.participantId,
+      status: 'connected',
+    }));
+
+    this.roomStatus = roomData.status || 'waiting';
+  }
+
+  /**
+   * Start polling for room updates.
+   */
+  _startPolling() {
+    if (this.pollInterval) return;
+
+    this.pollInterval = setInterval(async () => {
+      try {
+        const roomData = await getRoom(this.roomCode);
+
+        // Check if quiz started
+        if (roomData.status === 'playing' && this.roomStatus !== 'playing') {
+          log.info('Quiz started by host');
+          this._stopPolling();
+          this.navigateTo(`/party/quiz/${this.roomCode}`);
+          return;
+        }
+
+        // Check if room ended
+        if (roomData.status === 'ended') {
+          log.info('Room ended');
+          this._stopPolling();
+          alert(t('party.hostLeft'));
+          this.navigateTo('/');
+          return;
+        }
+
+        // Update participants
+        const newParticipants = (roomData.participants || []).map((p) => ({
+          id: p.id,
+          name: p.name,
+          isHost: p.isHost === true,
+          isYou: p.id === this.participantId,
+          status: 'connected',
+        }));
+
+        if (JSON.stringify(newParticipants) !== JSON.stringify(this.participants)) {
+          log.info('Participants updated', { count: newParticipants.length });
+          this.participants = newParticipants;
+          this.updateParticipantList();
+        }
+      } catch (error) {
+        log.error('Failed to poll room', { error: error.message });
+      }
+    }, POLL_INTERVAL_MS);
+  }
+
+  /**
+   * Stop polling for room updates.
+   */
+  _stopPolling() {
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+      this.pollInterval = null;
+    }
   }
 
   updateParticipantList() {
@@ -114,10 +208,23 @@ export default class PartyLobbyView extends BaseView {
     this.addEventListener(leaveBtn, 'click', () => this.leaveParty());
   }
 
-  leaveParty() {
-    // TODO: Call API to leave room
-    // TODO: Close P2P connections
-    log.info('Leaving party', { roomCode: this.roomCode });
+  async leaveParty() {
+    this._stopPolling();
+
+    // Call API to leave room
+    if (this.roomCode && this.participantId) {
+      try {
+        await leaveRoom(this.roomCode, this.participantId);
+      } catch (error) {
+        log.error('Failed to leave room', { error: error.message });
+      }
+    }
+
+    // Clear session storage
+    sessionStorage.removeItem('partyParticipantId');
+    sessionStorage.removeItem('partyRoomCode');
+
+    log.info('Left party', { roomCode: this.roomCode });
     this.navigateTo('/');
   }
 
@@ -149,7 +256,7 @@ export default class PartyLobbyView extends BaseView {
   }
 
   destroy() {
-    // TODO: Clean up P2P connections
+    this._stopPolling();
     super.destroy();
   }
 }
