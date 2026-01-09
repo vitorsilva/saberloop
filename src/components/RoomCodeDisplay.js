@@ -5,19 +5,33 @@
  */
 
 import { t } from '../core/i18n.js';
-import { copyToClipboard } from '../utils/share.js';
+import { copyToClipboard, shareContent } from '../utils/share.js';
+
+/**
+ * Format room code with dash for display (ABC-DEF).
+ * @param {string} code - The 6-character room code
+ * @returns {string} Formatted code with dash
+ */
+export function formatRoomCode(code) {
+  if (!code) return '';
+  // Remove existing dashes and format
+  const clean = code.replace(/-/g, '');
+  if (clean.length <= 3) return clean;
+  return `${clean.slice(0, 3)}-${clean.slice(3)}`;
+}
 
 /**
  * Creates a room code display element.
  * @param {string} roomCode - The 6-character room code
  * @param {Object} [options] - Display options
  * @param {boolean} [options.showCopy=true] - Show copy button
- * @param {boolean} [options.showShare=true] - Show share button
+ * @param {boolean} [options.showShare=false] - Show share button
+ * @param {boolean} [options.showLabel=true] - Show "Room Code" label
  * @param {Function} [options.onShare] - Callback for share button click
  * @returns {HTMLElement}
  */
 export function createRoomCodeDisplay(roomCode, options = {}) {
-  const { showCopy = true, showShare = true, onShare } = options;
+  const { showCopy = true, showShare = false, showLabel = true, onShare } = options;
 
   const container = document.createElement('div');
   container.className = 'room-code-display flex flex-col items-center gap-4';
@@ -27,18 +41,20 @@ export function createRoomCodeDisplay(roomCode, options = {}) {
   codeContainer.className =
     'bg-card-light dark:bg-card-dark rounded-2xl px-8 py-6 shadow-lg';
 
-  const codeLabel = document.createElement('p');
-  codeLabel.className =
-    'text-subtext-light dark:text-subtext-dark text-sm text-center mb-2';
-  codeLabel.textContent = t('party.code');
+  if (showLabel) {
+    const codeLabel = document.createElement('p');
+    codeLabel.className =
+      'text-subtext-light dark:text-subtext-dark text-sm text-center mb-2';
+    codeLabel.textContent = t('party.code');
+    codeContainer.appendChild(codeLabel);
+  }
 
   const codeDisplay = document.createElement('p');
   codeDisplay.className =
     'text-text-light dark:text-text-dark text-4xl font-mono font-bold tracking-[0.3em] text-center select-all';
-  codeDisplay.textContent = roomCode;
+  codeDisplay.textContent = formatRoomCode(roomCode);
   codeDisplay.setAttribute('data-testid', 'room-code');
 
-  codeContainer.appendChild(codeLabel);
   codeContainer.appendChild(codeDisplay);
   container.appendChild(codeContainer);
 
@@ -75,7 +91,7 @@ export function createRoomCodeDisplay(roomCode, options = {}) {
       buttonContainer.appendChild(copyBtn);
     }
 
-    if (showShare && onShare) {
+    if (showShare) {
       const shareBtn = document.createElement('button');
       shareBtn.className =
         'flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors';
@@ -85,7 +101,17 @@ export function createRoomCodeDisplay(roomCode, options = {}) {
       `;
       shareBtn.setAttribute('data-testid', 'share-code-btn');
 
-      shareBtn.addEventListener('click', () => onShare(roomCode));
+      shareBtn.addEventListener('click', () => {
+        if (onShare) {
+          onShare(roomCode);
+        } else {
+          // Use native share if no callback provided
+          shareContent({
+            title: t('party.code'),
+            text: `${t('party.shareCode')}: ${roomCode}`,
+          });
+        }
+      });
 
       buttonContainer.appendChild(shareBtn);
     }

@@ -9,7 +9,7 @@ import { t } from '../core/i18n.js';
 /**
  * Valid room code characters (excludes confusing chars like 0/O, 1/I/L).
  */
-const VALID_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+export const VALID_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
 /**
  * Creates a room code input element.
@@ -53,7 +53,7 @@ export function createRoomCodeInput(options = {}) {
   // Error message
   const error = document.createElement('p');
   error.className = 'text-red-500 text-sm hidden';
-  error.setAttribute('data-testid', 'room-code-error');
+  error.setAttribute('data-testid', 'input-error');
 
   // Input handler
   input.addEventListener('input', (e) => {
@@ -101,14 +101,21 @@ export function createRoomCodeInput(options = {}) {
   container.appendChild(input);
   container.appendChild(error);
 
-  // Add method to show error
-  /** @type {HTMLElement & { showError: (msg: string) => void, getValue: () => string, setValue: (val: string) => void, focus: () => void }} */
+  // Add methods to interact with the input
+  /** @type {HTMLElement & { showError: (msg: string) => void, clearError: () => void, getValue: () => string, setValue: (val: string) => void, focus: () => void }} */
   const element = /** @type {any} */ (container);
 
   element.showError = (msg) => {
     error.textContent = msg;
     error.classList.remove('hidden');
     input.classList.add('border-red-500');
+  };
+
+  element.clearError = () => {
+    error.textContent = '';
+    error.classList.add('hidden');
+    error.remove(); // Remove from DOM so test can verify it's null
+    input.classList.remove('border-red-500');
   };
 
   element.getValue = () => input.value;

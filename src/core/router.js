@@ -39,6 +39,20 @@
           return;
         }
 
+        // Check for party join with code: /party/join/<code>
+        if (hash.startsWith('/party/join/') && hash.length > 12) {
+          const code = hash.slice(12); // Remove '/party/join/' prefix
+          this.handlePartyJoin(code);
+          return;
+        }
+
+        // Check for party lobby with code: /party/lobby/<code>
+        if (hash.startsWith('/party/lobby/') && hash.length > 13) {
+          const code = hash.slice(13); // Remove '/party/lobby/' prefix
+          this.handlePartyLobby(code);
+          return;
+        }
+
         // Find the view class for this route
         const ViewClass = this.routes.get(hash);
 
@@ -81,17 +95,79 @@
         return data;
       }
 
+      /**
+       * Handle party join with prefilled code
+       * @param {string} code - The room code from URL
+       */
+      handlePartyJoin(code) {
+        logger.info('Detected party join URL', { code });
+
+        // Store the code for the join view to access
+        this.partyJoinCode = code;
+
+        // Render the join party view
+        const JoinPartyView = this.routes.get('/party/join');
+        if (JoinPartyView) {
+          this.render(JoinPartyView, { prefillCode: code });
+        } else {
+          logger.warn('JoinPartyView not registered, redirecting to home');
+          this.navigateTo('/');
+        }
+      }
+
+      /**
+       * Handle party lobby with room code
+       * @param {string} code - The room code from URL
+       */
+      handlePartyLobby(code) {
+        logger.info('Detected party lobby URL', { code });
+
+        // Store the code for the lobby view to access
+        this.partyLobbyCode = code;
+
+        // Render the lobby view
+        const PartyLobbyView = this.routes.get('/party/lobby');
+        if (PartyLobbyView) {
+          this.render(PartyLobbyView, { roomCode: code });
+        } else {
+          logger.warn('PartyLobbyView not registered, redirecting to home');
+          this.navigateTo('/');
+        }
+      }
+
+      /**
+       * Get and clear party join code (called by JoinPartyView)
+       * @returns {string|null} The room code or null
+       */
+      getPartyJoinCode() {
+        const code = this.partyJoinCode;
+        this.partyJoinCode = null;
+        return code;
+      }
+
+      /**
+       * Get and clear party lobby code (called by PartyLobbyView)
+       * @returns {string|null} The room code or null
+       */
+      getPartyLobbyCode() {
+        const code = this.partyLobbyCode;
+        this.partyLobbyCode = null;
+        return code;
+      }
+
     /**
      * Render a view
+     * @param {Function} ViewClass - View class to instantiate
+     * @param {Object} [options] - Optional options to pass to view constructor
      */
-    render(ViewClass) {
+    render(ViewClass, options = {}) {
       // Clean up previous view
       if (this.currentView && this.currentView.destroy) {
         this.currentView.destroy();
       }
 
-      // Create and render new view
-      this.currentView = new ViewClass();
+      // Create and render new view (pass options if provided)
+      this.currentView = new ViewClass(options);
       this.currentView.render();
     }
 
