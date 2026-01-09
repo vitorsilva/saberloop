@@ -414,11 +414,45 @@ npx playwright test tests/e2e/capture-party-demo.spec.js --headed
 
 ---
 
+## Session: 2026-01-09 (Landing Page Party Mode Update)
+
+### Completed
+
+- [x] Create implementation plan (`docs/learning/epic06_sharing/LANDING_PAGE_PARTY_UPDATE.md`)
+- [x] Copy and add party gameplay screenshot to landing images
+- [x] Update hero subtitle to mention Party Mode
+- [x] Add Party Mode feature card (7th card in grid)
+- [x] Add party screenshot to screenshots section
+- [x] Update meta description and OG/Twitter tags
+- [x] Deploy landing page to production
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `landing/index.html` | Updated subtitle, added feature card, added screenshot, updated meta tags |
+| `landing/images/landing-party-gameplay.png` | New screenshot showing party gameplay |
+| `docs/learning/epic06_sharing/LANDING_PAGE_PARTY_UPDATE.md` | Implementation plan |
+
+### Key Updates
+
+1. **Hero subtitle:** "Learn solo or challenge friends in real-time Party Mode"
+2. **New feature card:** Party Mode with description about room codes and live competition
+3. **New screenshot:** Party gameplay showing live quiz with scoreboard
+4. **SEO tags:** All meta descriptions updated to mention Party Mode
+
+### Commits Made
+
+1. `feat(landing): add Party Mode to landing page`
+
+---
+
 ### Next Steps
 
 - [x] ~~Sub-Phase 3c: Party UI~~ - Complete
 - [x] ~~Sub-Phase 3d: Live Gameplay~~ - Complete (merged PR #98)
 - [x] ~~Demo Video~~ - Complete
+- [x] ~~Landing Page Update~~ - Complete
 - [ ] Sub-Phase 3e: Testing & Polish (if planned)
 - [ ] Phase 3 final review and merge to main
 
