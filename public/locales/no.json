@@ -89,7 +89,13 @@
     "deleteDataTip": "Tips: Bruk dette før du avinstallerer appen for å sikre fullstendig datafjerning.",
     "deleteDataConfirm": "Slett",
     "deleteDataSuccess": "Alle data slettet",
-    "deleting": "Sletter..."
+    "deleting": "Sletter...",
+    "support": {
+      "title": "Støtt Utviklingen",
+      "message": "Saberloop er gratis og åpent for alle. Hvis du synes det er nyttig, vurder å støtte utviklingen.",
+      "button": "Støtt på Liberapay",
+      "note": "Din støtte hjelper med å dekke hostingkostnader. Takk!"
+    }
   },
   "loading": {
     "preparing": "Forbereder spørsmålene dine...",

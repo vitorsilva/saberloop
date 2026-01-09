@@ -3,6 +3,7 @@
   import { callOpenRouter } from './openrouter-client.js';
   import { logger } from '../utils/logger.js';
   import { getSelectedModel } from '../services/model-service.js';
+  import { extractJSON } from '../utils/json-extractor.js';
 
   // Language code to full name mapping
   const LANGUAGE_NAMES = {
@@ -114,21 +115,10 @@ ${exclusionSection}
 
       logger.debug('OpenRouter raw response received');
 
-      // Parse JSON from response
+      // Parse JSON from response using robust extractor
       let data;
       try {
-        // Sometimes models wrap JSON in markdown code blocks
-        let jsonText = result.text.trim();
-        if (jsonText.startsWith('```json')) {
-          jsonText = jsonText.slice(7);
-        }
-        if (jsonText.startsWith('```')) {
-          jsonText = jsonText.slice(3);
-        }
-        if (jsonText.endsWith('```')) {
-          jsonText = jsonText.slice(0, -3);
-        }
-        data = JSON.parse(jsonText.trim());
+        data = extractJSON(result.text);
       } catch (parseError) {
         logger.error('Failed to parse questions JSON', { parseError: parseError.message });
         throw new Error('Invalid response format from AI');
@@ -204,52 +194,13 @@ Requirements:
       temperature: 0.7
     });
 
-    // Parse JSON response
+    // Parse JSON response using robust extractor
     let data;
     try {
-      let jsonText = result.text.trim();
-
-      // Remove BOM if present
-      if (jsonText.charCodeAt(0) === 0xFEFF) {
-        jsonText = jsonText.slice(1);
-      }
-
-      // Handle markdown code blocks
-      if (jsonText.startsWith('```json')) {
-        jsonText = jsonText.slice(7);
-      }
-      if (jsonText.startsWith('```')) {
-        jsonText = jsonText.slice(3);
-      }
-      if (jsonText.endsWith('```')) {
-        jsonText = jsonText.slice(0, -3);
-      }
-      jsonText = jsonText.trim();
-
-      // Try to extract JSON if there's extra text before/after it
-      // Look for { ... } pattern that contains our expected fields
-      if (!jsonText.startsWith('{')) {
-        const jsonMatch = jsonText.match(/\{[\s\S]*"rightAnswerExplanation"[\s\S]*"wrongAnswerExplanation"[\s\S]*\}/);
-        if (jsonMatch) {
-          jsonText = jsonMatch[0];
-        }
-      } else if (!jsonText.endsWith('}')) {
-        // JSON starts correctly but has trailing text
-        const lastBrace = jsonText.lastIndexOf('}');
-        if (lastBrace > 0) {
-          jsonText = jsonText.slice(0, lastBrace + 1);
-        }
-      }
-
-      // Normalize smart quotes to straight quotes
-      jsonText = jsonText
-        .replace(/[\u201C\u201D]/g, '"')  // Smart double quotes
-        .replace(/[\u2018\u2019]/g, "'"); // Smart single quotes
-
-      data = JSON.parse(jsonText);
+      data = extractJSON(result.text);
     } catch (parseError) {
-      logger.error('Failed to parse explanation JSON', { parseError: parseError.message, rawText: result.text.substring(0, 200) });
-      // Fallback: return a user-friendly message instead of raw JSON
+      logger.error('Failed to parse explanation JSON', { parseError: parseError.message });
+      // Fallback: return empty explanations instead of failing
       return {
         rightAnswerExplanation: '',
         wrongAnswerExplanation: ''

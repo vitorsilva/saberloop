@@ -37,7 +37,7 @@ See [Installation Guide](./INSTALLATION.md) for details.
 ### How do I test with real API?
 
 1. Set `VITE_USE_REAL_API=true` in `.env`
-2. Run `npm run dev:php`
+2. Run `npm run dev`
 3. Go to Settings in the app and connect to OpenRouter
 4. Your OpenRouter account provides the API access
 
@@ -133,8 +133,8 @@ Check DevTools → Application → Manifest for issues.
 
 ### Which AI models are used?
 
-- **Default:** Claude Sonnet (via Anthropic API)
-- **OpenRouter:** Various models available (Claude, GPT-4, Gemini, etc.)
+- **Default:** DeepSeek R1T2 Chimera (free tier via OpenRouter)
+- **OpenRouter:** Various models available (Claude, GPT-4, Gemini, DeepSeek, etc.)
 
 ### How accurate are the questions?
 
@@ -176,10 +176,14 @@ All data is stored locally in your browser (IndexedDB):
 
 ### How do I delete my data?
 
+**In the app:**
+1. Go to Settings
+2. Scroll to "Delete All Data"
+3. Click the delete button and confirm
+
+**Via browser DevTools:**
 1. DevTools → Application → Storage
 2. Click "Clear site data"
-
-Or in Settings → Clear Data (if implemented)
 
 ### Is my API key secure?
 

@@ -16,8 +16,7 @@
   "scripts": {
     "version": "node scripts/generate-version.js",
     "predev": "npm run version",
-    "dev": "netlify dev",
-    "dev:php": "vite --port 8888",
+    "dev": "vite --port 8888",
     "prebuild": "npm run version",
     "build": "vite build",
     "deploy": "node scripts/deploy-ftp.cjs",
@@ -41,6 +40,7 @@
     "telemetry:start": "docker-compose -f docker-compose.telemetry.yml up -d",
     "telemetry:stop": "docker-compose -f docker-compose.telemetry.yml down",
     "telemetry:import": "node scripts/telemetry/import-to-loki.cjs",
+    "telemetry:errors": "node scripts/telemetry/error-report.cjs",
     "translate": "node scripts/translate.js",
     "docs": "jsdoc -c jsdoc.config.json",
     "docs:open": "jsdoc -c jsdoc.config.json && start docs/api/index.html",

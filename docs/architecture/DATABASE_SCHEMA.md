@@ -71,14 +71,15 @@ interface Session {
 **Question Schema (embedded in Session):**
 ```typescript
 interface Question {
-  id: string;              // Unique question ID
-  question: string;        // Question text
-  options: string[];       // Answer options ["A) ...", "B) ...", ...]
-  correct: string;         // Correct answer letter ("A", "B", "C", "D")
-  userAnswer?: string;     // User's selected answer
-  isCorrect?: boolean;     // Whether user answered correctly
-  difficulty: string;      // "easy", "medium", "hard"
-  explanation?: string;    // Generated for incorrect answers
+  id: string;                        // Unique question ID
+  question: string;                  // Question text
+  options: string[];                 // Answer options ["A) ...", "B) ...", ...]
+  correct: number;                   // Index of correct answer (0-3)
+  userAnswer?: string;               // User's selected answer
+  isCorrect?: boolean;               // Whether user answered correctly
+  difficulty: string;                // "easy", "medium", "hard"
+  rightAnswerExplanation?: string;   // Why the correct answer is right
+  wrongAnswerExplanation?: string;   // Why the user's answer was wrong
 }
 ```
 

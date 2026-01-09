@@ -68,7 +68,7 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 | API | `src/api/` | External API calls (OpenRouter) |
 | Core | `src/core/` | Database, state, router, settings, i18n, feature flags |
 | Components | `src/components/` | Reusable presentational UI |
-| Utils | `src/utils/` | Shared utilities (logger, network, telemetry, share) |
+| Utils | `src/utils/` | Shared utilities (logger, network, telemetry, share, retry, JSON extraction, ads) |
 | Features | `src/features/` | Feature modules (onboarding, sample-loader) |
 | Data | `src/data/` | Static data files (sample quizzes) |
 
@@ -84,6 +84,11 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 - `quiz-service.js` - Quiz operations (history, sessions, generation)
 - `auth-service.js` - Authentication (connection status, OAuth flow)
 - `model-service.js` - AI model selection, free model discovery
+- `cost-service.js` - LLM usage cost tracking and formatting
+- `data-service.js` - User data management (export, deletion)
+- `quiz-import.js` - Import quizzes from shared URLs
+- `quiz-serializer.js` - Serialize/deserialize quizzes for sharing
+- `quiz-share.js` - Quiz sharing functionality
 
 **No Server Backend Required:**
 - Users provide their own OpenRouter API key
@@ -112,6 +117,10 @@ Saberloop is a **client-side PWA** with no backend required. AI calls are made d
 - Spanish (es)
 - French (fr)
 - German (de)
+- Italian (it)
+- Dutch (nl)
+- Norwegian (no)
+- Russian (ru)
 
 Translation files are loaded dynamically from `/locales/{lang}.json`.
 
@@ -131,6 +140,9 @@ The app uses a feature flag system (`src/core/features.js`) for gradual rollout:
 - `EXPLANATION_FEATURE` - AI-generated explanations for wrong answers
 - `CONTINUE_TOPIC` - Continue quiz with new questions on same topic
 - `SHARE_FEATURE` - Share quiz results to social media
+- `SHARE_QUIZ` - Share quiz questions via URL so friends can take the same quiz
+- `SHOW_USAGE_COSTS` - Display token counts and costs after each quiz
+- `SHOW_ADS` - Display Google AdSense ads during loading screens
 
 ### Telemetry
 

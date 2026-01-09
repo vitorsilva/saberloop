@@ -208,12 +208,43 @@ if ('serviceWorker' in navigator) {
     },
     onOfflineReady() {
       logger.info('App ready to work offline');
+      telemetry.track('sw_offline_ready');
     },
     onRegistered(registration) {
-      logger.info('Service Worker registered');
+      logger.info('Service Worker registered', {
+        scope: registration?.scope
+      });
+      telemetry.track('sw_registered', {
+        scope: registration?.scope
+      });
     },
     onRegisterError(error) {
-      logger.error('Service Worker registration failed', { error: error.message });
+      // Capture detailed context for debugging (issue #90)
+      const errorContext = {
+        error: error.message,
+        stack: error.stack?.substring(0, 500),
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+        online: navigator.onLine,
+        timestamp: new Date().toISOString()
+      };
+
+      logger.error('Service Worker registration failed', errorContext);
+
+      // Track in telemetry for pattern analysis
+      telemetry.track('sw_registration_failed', {
+        error: error.message,
+        userAgent: navigator.userAgent,
+        online: navigator.onLine
+      });
     }
+  });
+} else {
+  // Browser doesn't support service workers
+  logger.warn('Service Worker not supported', {
+    userAgent: navigator.userAgent
+  });
+  telemetry.track('sw_not_supported', {
+    userAgent: navigator.userAgent
   });
 }

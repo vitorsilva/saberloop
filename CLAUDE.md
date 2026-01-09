@@ -411,7 +411,7 @@ The app implements custom PWA installation using the `beforeinstallprompt` event
 
 ```bash
 # Start development server
-npm run dev:php
+npm run dev
 
 # Vite will:
 # - Start dev server on port 8888

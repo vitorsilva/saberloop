@@ -39,7 +39,7 @@ git checkout -b fix/bug-description
 
 ```bash
 # Start development server
-npm run dev:php
+npm run dev
 
 # Access at http://localhost:8888
 ```

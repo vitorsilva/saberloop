@@ -32,10 +32,10 @@ const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     'Authorization': `Bearer ${apiKey}`,
     'Content-Type': 'application/json',
     'HTTP-Referer': window.location.origin,
-    'X-Title': 'Saberloop'
+    'X-Title': 'SaberLoop'
   },
   body: JSON.stringify({
-    model: 'anthropic/claude-3.5-sonnet',
+    model: 'tngtech/deepseek-r1t2-chimera:free',  // Default free model
     messages: [{ role: 'user', content: prompt }]
   })
 });
@@ -111,7 +111,8 @@ Generate an explanation for why an answer was incorrect.
 **Response:**
 ```json
 {
-  "explanation": "Venus is actually the second planet from the Sun. Mercury is the closest planet to the Sun, orbiting at an average distance of about 58 million kilometers."
+  "rightAnswerExplanation": "Mercury is the closest planet to the Sun, orbiting at an average distance of about 58 million kilometers.",
+  "wrongAnswerExplanation": "Venus is actually the second planet from the Sun, not the first."
 }
 ```
 

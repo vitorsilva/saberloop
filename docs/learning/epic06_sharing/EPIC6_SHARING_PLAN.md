@@ -119,7 +119,7 @@ These standards apply to ALL phases in this epic.
 
 ```
 1. Feature Development (local)
-   └── npm run dev:php
+   └── npm run dev
    └── Run unit tests: npm test
    └── Run E2E tests: npm run test:e2e
    └── Run Maestro tests: maestro test tests/maestro/

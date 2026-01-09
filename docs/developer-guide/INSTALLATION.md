@@ -46,6 +46,9 @@ This installs all required packages including:
 - idb (IndexedDB wrapper)
 - loglevel (logging)
 - web-vitals (performance monitoring)
+- i18next (internationalization)
+- lz-string (compression for quiz sharing)
+- qrcode (QR code generation)
 
 ### 3. Set Up Environment
 
@@ -75,7 +78,7 @@ npx playwright install
 ### Development Mode
 
 ```bash
-npm run dev:php
+npm run dev
 ```
 
 Opens at `http://localhost:8888`

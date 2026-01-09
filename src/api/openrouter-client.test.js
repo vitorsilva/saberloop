@@ -9,10 +9,12 @@
     beforeEach(() => {
       vi.stubGlobal('fetch', mockFetch);
       mockFetch.mockReset();
+      vi.useFakeTimers();
     });
 
     afterEach(() => {
       vi.unstubAllGlobals();
+      vi.useRealTimers();
     });
 
     describe('callOpenRouter', () => {
@@ -119,15 +121,31 @@
           .rejects.toThrow('Invalid API key');
       });
 
-      it('should throw error on 429 (rate limit)', async () => {
-        mockFetch.mockResolvedValueOnce({
+      it('should throw error on 429 (rate limit) after retries', async () => {
+        // 429 is retryable, so we need to mock multiple responses
+        // maxRetries is 3, so we need 3 429 responses
+        const mock429Response = {
           ok: false,
           status: 429,
           json: () => Promise.resolve({ error: { message: 'Too many requests' } })
-        });
+        };
+        mockFetch
+          .mockResolvedValueOnce(mock429Response)
+          .mockResolvedValueOnce(mock429Response)
+          .mockResolvedValueOnce(mock429Response);
 
-        await expect(callOpenRouter('sk-test-key', 'Test'))
-          .rejects.toThrow('Rate limit exceeded');
+        const promise = callOpenRouter('sk-test-key', 'Test');
+
+        // Catch to prevent unhandled rejection warnings
+        promise.catch(() => {});
+
+        // Advance through retry delays (1s, 2s)
+        await vi.advanceTimersByTimeAsync(0);    // First attempt
+        await vi.advanceTimersByTimeAsync(1000); // First retry
+        await vi.advanceTimersByTimeAsync(2000); // Second retry (3rd attempt)
+
+        await expect(promise).rejects.toThrow('Rate limit exceeded');
+        expect(mockFetch).toHaveBeenCalledTimes(3);
       });
 
       it('should throw error on 402 (insufficient credits)', async () => {
@@ -299,11 +317,21 @@
         expect(result).toBeNull();
       });
 
-      it('should return null on network error', async () => {
-        mockFetch.mockRejectedValueOnce(new Error('Network error'));
+      it('should return null on network error after retries', async () => {
+        // Network errors are retryable, getCreditsBalance has maxRetries: 2
+        mockFetch
+          .mockRejectedValueOnce(new Error('Network error'))
+          .mockRejectedValueOnce(new Error('Network error'));
 
-        const result = await getCreditsBalance('sk-test-key');
+        const promise = getCreditsBalance('sk-test-key');
+
+        // Advance through retry delay (1s)
+        await vi.advanceTimersByTimeAsync(0);    // First attempt
+        await vi.advanceTimersByTimeAsync(1000); // First retry (2nd attempt)
+
+        const result = await promise;
         expect(result).toBeNull();
+        expect(mockFetch).toHaveBeenCalledTimes(2);
       });
     });
 

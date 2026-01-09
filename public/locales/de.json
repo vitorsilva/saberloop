@@ -89,7 +89,13 @@
     "deleteDataTip": "Tipp: Verwende dies vor der Deinstallation der App, um die vollständige Datenlöschung sicherzustellen.",
     "deleteDataConfirm": "Löschen",
     "deleteDataSuccess": "Alle Daten erfolgreich gelöscht",
-    "deleting": "Wird gelöscht..."
+    "deleting": "Wird gelöscht...",
+    "support": {
+      "title": "Entwicklung Unterstützen",
+      "message": "Saberloop ist kostenlos und für alle zugänglich. Wenn Sie es hilfreich finden, unterstützen Sie die Entwicklung.",
+      "button": "Auf Liberapay unterstützen",
+      "note": "Ihre Unterstützung hilft, die Hosting-Kosten zu decken. Danke!"
+    }
   },
   "loading": {
     "preparing": "Deine Fragen werden vorbereitet...",
