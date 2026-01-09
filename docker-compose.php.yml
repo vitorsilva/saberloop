@@ -1,5 +1,3 @@
-version: '3.8'
-
 # PHP Development Stack
 # Usage: docker-compose -f docker-compose.php.yml up -d
 #

@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Telemetry Analysis Stack
 # Usage: docker-compose -f docker-compose.telemetry.yml up -d
 #
