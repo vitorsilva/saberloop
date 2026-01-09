@@ -164,10 +164,10 @@ class RoomManager
     public function getParticipants(int $roomId): array
     {
         $stmt = $this->db->prepare('
-            SELECT participant_id, name, is_host, joined_at
+            SELECT participant_id, name, is_host, score, joined_at
             FROM party_participants
             WHERE room_id = ? AND left_at IS NULL
-            ORDER BY joined_at ASC
+            ORDER BY score DESC, joined_at ASC
         ');
         $stmt->execute([$roomId]);
         $participants = $stmt->fetchAll();
@@ -177,6 +177,7 @@ class RoomManager
                 'id' => $p['participant_id'],
                 'name' => $p['name'],
                 'isHost' => (bool) $p['is_host'],
+                'score' => (int) $p['score'],
                 'joinedAt' => $p['joined_at'],
             ];
         }, $participants);
@@ -418,6 +419,128 @@ class RoomManager
         ');
 
         $stmt->execute([$ip, $action]);
+    }
+
+    /**
+     * Submit an answer for a question.
+     *
+     * @param string $code Room code
+     * @param string $participantId Participant UUID
+     * @param int $questionIndex Question index (0-based)
+     * @param int $answerIndex Answer index (0-based, -1 for no answer)
+     * @param int $timeMs Time taken to answer in milliseconds
+     * @return array Result with points earned and updated score
+     * @throws Exception If room not found or not in playing state
+     */
+    public function submitAnswer(
+        string $code,
+        string $participantId,
+        int $questionIndex,
+        int $answerIndex,
+        int $timeMs
+    ): array {
+        $room = $this->getRoomByCode($code);
+
+        if (!$room) {
+            throw new Exception('Room not found', 404);
+        }
+
+        if ($room['status'] !== 'playing') {
+            throw new Exception('Quiz is not active', 400);
+        }
+
+        // Get quiz data to check correct answer
+        $quizData = $room['quiz_data'];
+        if (!$quizData || !isset($quizData['questions'][$questionIndex])) {
+            throw new Exception('Invalid question index', 400);
+        }
+
+        $question = $quizData['questions'][$questionIndex];
+        $correctIndex = (int) $question['correct'];
+        $isCorrect = ($answerIndex === $correctIndex);
+
+        // Calculate points
+        $points = 0;
+        if ($isCorrect) {
+            $basePoints = 10;
+            $secondsPerQuestion = $room['seconds_per_question'] ?? 30;
+            $maxTimeMs = $secondsPerQuestion * 1000;
+
+            // Speed bonus: up to 5 extra points for fast answers
+            // Full bonus if answered in < 20% of time, scales down to 0 at 100%
+            $timeRatio = min(1, $timeMs / $maxTimeMs);
+            $speedBonus = 0;
+            if ($timeRatio < 0.2) {
+                $speedBonus = 5;
+            } elseif ($timeRatio < 1) {
+                $speedBonus = (int) round(5 * (1 - ($timeRatio - 0.2) / 0.8));
+            }
+
+            $points = $basePoints + $speedBonus;
+        }
+
+        // Check if already answered this question
+        $stmt = $this->db->prepare('
+            SELECT id FROM party_answers
+            WHERE room_id = ? AND participant_id = ? AND question_index = ?
+        ');
+        $stmt->execute([(int) $room['id'], $participantId, $questionIndex]);
+
+        if ($stmt->fetch()) {
+            // Already answered - return current score without updating
+            return $this->getParticipantScore($room['id'], $participantId);
+        }
+
+        // Store the answer
+        $stmt = $this->db->prepare('
+            INSERT INTO party_answers (room_id, participant_id, question_index, answer_index, is_correct, time_ms, points)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ');
+        $stmt->execute([
+            (int) $room['id'],
+            $participantId,
+            $questionIndex,
+            $answerIndex,
+            $isCorrect ? 1 : 0,
+            $timeMs,
+            $points,
+        ]);
+
+        // Update participant's total score
+        $stmt = $this->db->prepare('
+            UPDATE party_participants
+            SET score = score + ?
+            WHERE room_id = ? AND participant_id = ?
+        ');
+        $stmt->execute([$points, (int) $room['id'], $participantId]);
+
+        return [
+            'questionIndex' => $questionIndex,
+            'isCorrect' => $isCorrect,
+            'points' => $points,
+            'score' => $this->getParticipantScore($room['id'], $participantId)['score'],
+        ];
+    }
+
+    /**
+     * Get participant's current score.
+     *
+     * @param int $roomId Room ID
+     * @param string $participantId Participant UUID
+     * @return array Score data
+     */
+    private function getParticipantScore(int $roomId, string $participantId): array
+    {
+        $stmt = $this->db->prepare('
+            SELECT score FROM party_participants
+            WHERE room_id = ? AND participant_id = ? AND left_at IS NULL
+        ');
+        $stmt->execute([$roomId, $participantId]);
+        $result = $stmt->fetch();
+
+        return [
+            'score' => $result ? (int) $result['score'] : 0,
+        ];
     }
 
     /**

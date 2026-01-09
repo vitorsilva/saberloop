@@ -424,7 +424,7 @@ export default class PartyQuizView extends BaseView {
     // Get original index for submission
     const originalIndex = this.shuffleMap[shuffledIndex];
 
-    // Update UI
+    // Update UI - mark selected
     const optionBtns = document.querySelectorAll('.option-btn');
     optionBtns.forEach((btn, index) => {
       if (index === shuffledIndex) {
@@ -438,26 +438,58 @@ export default class PartyQuizView extends BaseView {
     // Submit answer - support both session and API modes
     if (this.session) {
       this.session.submitAnswer(this.session.currentQuestion, originalIndex);
+      this._updateStatus(t('party.answered'));
     } else {
       // MVP mode: submit via API
       const timeMs = Date.now() - this.questionStartTime;
       try {
-        await submitAnswerApi(
+        const result = await submitAnswerApi(
           this.roomCode,
           this.participantId,
           this.currentQuestion,
           originalIndex,
           timeMs
         );
+
+        // Show correct/incorrect feedback
+        this._showAnswerFeedback(shuffledIndex, result.isCorrect, result.points);
+
+        log.info('Answer result', { isCorrect: result.isCorrect, points: result.points, score: result.score });
       } catch (error) {
         log.error('Failed to submit answer', { error: error.message });
-        // Continue anyway - UI already updated
+        this._updateStatus(t('party.answered'));
       }
     }
 
-    this._updateStatus(t('party.answered'));
-
     log.info('Option selected', { shuffledIndex, originalIndex });
+  }
+
+  /**
+   * Show visual feedback for answer correctness.
+   *
+   * @private
+   * @param {number} shuffledIndex - Selected option index
+   * @param {boolean} isCorrect - Whether answer was correct
+   * @param {number} points - Points earned
+   */
+  _showAnswerFeedback(shuffledIndex, isCorrect, points) {
+    const optionBtns = document.querySelectorAll('.option-btn');
+    const selectedBtn = optionBtns[shuffledIndex];
+
+    if (selectedBtn) {
+      // Remove neutral styling
+      selectedBtn.classList.remove('border-primary', 'bg-primary/10');
+
+      if (isCorrect) {
+        // Show correct styling
+        selectedBtn.classList.add('border-green-500', 'bg-green-500/20');
+        this._updateStatus(`✓ ${t('party.correct')} +${points} pts`);
+      } else {
+        // Show incorrect styling
+        selectedBtn.classList.add('border-red-500', 'bg-red-500/20');
+        this._updateStatus(`✗ ${t('party.incorrect')}`);
+      }
+    }
   }
 
   /**

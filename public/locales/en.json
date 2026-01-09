@@ -338,6 +338,9 @@
     "selectQuiz": "Select a Quiz",
     "noQuizSelected": "Please select or create a quiz first",
     "creating": "Creating party...",
-    "joining": "Joining party..."
+    "joining": "Joining party...",
+    "correct": "Correct!",
+    "incorrect": "Incorrect",
+    "timeUp": "Time's up!"
   }
 }

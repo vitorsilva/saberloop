@@ -110,21 +110,8 @@ try {
         $answerIndex = (int) ($body['answerIndex'] ?? -1);
         $timeMs = (int) ($body['timeMs'] ?? 0);
 
-        // MVP: Accept answer but scoring is calculated client-side
-        // TODO: Implement server-side answer validation and scoring
-        $room = $roomManager->getRoomByCode($code);
-
-        if (!$room) {
-            ApiHelper::error('Room not found', 404, 'ROOM_NOT_FOUND');
-        }
-
-        // For now, just acknowledge receipt
-        ApiHelper::success([
-            'accepted' => true,
-            'questionIndex' => $questionIndex,
-            'answerIndex' => $answerIndex,
-            'timeMs' => $timeMs,
-        ]);
+        $result = $roomManager->submitAnswer($code, $participantId, $questionIndex, $answerIndex, $timeMs);
+        ApiHelper::success($result);
     }
 
     // No matching route

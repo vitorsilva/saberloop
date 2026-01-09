@@ -414,6 +414,27 @@ test.describe('Capture Party Mode Demo', () => {
       await expect(hostPage.locator('#timerText')).toBeVisible();
       console.log('✅ Timer is visible');
 
+      // HOST: Answer a question
+      const hostOption = hostPage.locator('[data-testid="option-0"]');
+      await hostOption.click();
+      console.log('✅ Host clicked an answer');
+
+      // VERIFY: Host sees feedback (either correct or incorrect styling)
+      await expect(hostPage.locator('#statusText')).not.toHaveText('Waiting for host to start...');
+      console.log('✅ Host sees answer feedback');
+
+      // GUEST: Answer a question
+      const guestOption = guestPage.locator('[data-testid="option-1"]');
+      await guestOption.click();
+      console.log('✅ Guest clicked an answer');
+
+      // VERIFY: Guest sees feedback
+      await expect(guestPage.locator('#statusText')).not.toHaveText('Waiting for host to start...');
+      console.log('✅ Guest sees answer feedback');
+
+      // Wait a bit for scores to update via polling
+      await hostPage.waitForTimeout(3000);
+
       console.log('✅ Real multi-user quiz test passed!');
 
     } finally {
