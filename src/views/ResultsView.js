@@ -3,7 +3,6 @@ import state from '../core/state.js';
 import { saveQuizSession, updateQuizSession, generateExplanation, generateWrongAnswerExplanation, updateQuestionExplanation } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
-import { isFeatureEnabled } from '../core/features.js';
 import { showExplanationModal } from '../components/ExplanationModal.js';
 import { showShareModal } from '../components/ShareModal.js';
 import { showShareQuizModal } from '../components/ShareQuizModal.js';
@@ -50,13 +49,6 @@ export default class ResultsView extends BaseView {
       message = t('results.keepPracticing');
     }
 
-    // Check if features are enabled
-    const showExplanationButton = isFeatureEnabled('EXPLANATION_FEATURE');
-    const showContinueButton = isFeatureEnabled('CONTINUE_TOPIC');
-    const showShareButton = isFeatureEnabled('SHARE_FEATURE');
-    const showShareQuizButton = isFeatureEnabled('SHARE_QUIZ');
-    const showUsageCosts = isFeatureEnabled('SHOW_USAGE_COSTS');
-
     // Get usage data for cost display
     const usage = state.get('quizUsage');
     const model = state.get('quizModel');
@@ -88,17 +80,13 @@ export default class ResultsView extends BaseView {
           </div>
         `;
       } else {
-        // Incorrect answer - show info button if feature enabled
-        const rightSideContent = showExplanationButton
-          ? `<button
+        // Incorrect answer - show explain button
+        const rightSideContent = `<button
               aria-label="Explain answer"
               data-question-index="${index}"
               class="explain-btn flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-all hover:bg-primary/20 active:scale-95 animate-pulse shadow-[0_0_10px_rgba(74,144,226,0.5)]">
               <span class="material-symbols-outlined text-[20px]">info</span>
-            </button>`
-          : `<div class="flex size-7 items-center justify-center">
-              <div class="size-3 rounded-full bg-error"></div>
-            </div>`;
+            </button>`;
 
         return `
           <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-lg min-h-[72px] justify-between">
@@ -147,7 +135,7 @@ export default class ResultsView extends BaseView {
           </div>
 
           <!-- Usage Cost Card -->
-          ${showUsageCosts && usageSummary ? `
+          ${usageSummary ? `
           <div data-testid="usage-cost-card" class="mt-4 p-4 rounded-xl bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark">
             <div class="flex items-start gap-3">
               <span class="material-symbols-outlined text-primary text-xl mt-0.5">info</span>
@@ -168,22 +156,16 @@ export default class ResultsView extends BaseView {
           ` : ''}
 
           <!-- Share Buttons -->
-          ${(showShareButton || showShareQuizButton) ? `
           <div class="flex justify-center gap-3 mt-4 flex-wrap">
-            ${showShareButton ? `
             <button id="shareBtn" data-testid="share-results-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
               <span class="material-symbols-outlined text-xl">share</span>
               ${t('share.button')}
             </button>
-            ` : ''}
-            ${showShareQuizButton ? `
             <button id="shareQuizBtn" data-testid="share-quiz-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
               <span class="material-symbols-outlined text-xl">link</span>
               ${t('shareQuiz.title')}
             </button>
-            ` : ''}
           </div>
-          ` : ''}
 
           <!-- Section Header -->
           <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pt-8 pb-3">${t('results.reviewAnswers')}</h2>
@@ -198,7 +180,6 @@ export default class ResultsView extends BaseView {
         <div class="fixed bottom-0 left-0 w-full bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark">
           <!-- CTA Buttons -->
           <div class="p-4 pb-0">
-            ${showContinueButton ? `
             <div class="flex gap-3">
               <button id="continueTopicBtn" class="flex-1 rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
                 ${t('results.continueOnTopic')}
@@ -208,11 +189,6 @@ export default class ResultsView extends BaseView {
                 ${t('results.tryAnother')}
               </button>
             </div>
-            ` : `
-            <button id="tryAnotherBtn" class="w-full rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30">
-              ${t('results.tryAnother')}
-            </button>
-            `}
           </div>
 
           <!-- Bottom Navigation Bar -->
@@ -304,45 +280,37 @@ export default class ResultsView extends BaseView {
       this.navigateTo('/topic-input');
     });
 
-    // Continue on topic button (only if feature is enabled)
-    if (isFeatureEnabled('CONTINUE_TOPIC')) {
-      const continueTopicBtn = this.querySelector('#continueTopicBtn');
-      if (continueTopicBtn) {
-        this.addEventListener(continueTopicBtn, 'click', () => {
-          this.handleContinueTopic();
-        });
-      }
-    }
-
-    // Explanation buttons (only if feature is enabled)
-    if (isFeatureEnabled('EXPLANATION_FEATURE')) {
-      const explainBtns = this.appContainer.querySelectorAll('.explain-btn');
-      explainBtns.forEach(btn => {
-        this.addEventListener(btn, 'click', async () => {
-          const questionIndex = parseInt(/** @type {HTMLElement} */ (btn).dataset.questionIndex, 10);
-          await this.handleExplanationClick(questionIndex);
-        });
+    // Continue on topic button
+    const continueTopicBtn = this.querySelector('#continueTopicBtn');
+    if (continueTopicBtn) {
+      this.addEventListener(continueTopicBtn, 'click', () => {
+        this.handleContinueTopic();
       });
     }
 
-    // Share button (only if feature is enabled)
-    if (isFeatureEnabled('SHARE_FEATURE')) {
-      const shareBtn = this.querySelector('#shareBtn');
-      if (shareBtn) {
-        this.addEventListener(shareBtn, 'click', () => {
-          this.handleShareClick();
-        });
-      }
+    // Explanation buttons for incorrect answers
+    const explainBtns = this.appContainer.querySelectorAll('.explain-btn');
+    explainBtns.forEach(btn => {
+      this.addEventListener(btn, 'click', async () => {
+        const questionIndex = parseInt(/** @type {HTMLElement} */ (btn).dataset.questionIndex, 10);
+        await this.handleExplanationClick(questionIndex);
+      });
+    });
+
+    // Share button
+    const shareBtn = this.querySelector('#shareBtn');
+    if (shareBtn) {
+      this.addEventListener(shareBtn, 'click', () => {
+        this.handleShareClick();
+      });
     }
 
-    // Share Quiz button (only if feature is enabled)
-    if (isFeatureEnabled('SHARE_QUIZ')) {
-      const shareQuizBtn = this.querySelector('#shareQuizBtn');
-      if (shareQuizBtn) {
-        this.addEventListener(shareQuizBtn, 'click', () => {
-          this.handleShareQuizClick();
-        });
-      }
+    // Share Quiz button
+    const shareQuizBtn = this.querySelector('#shareQuizBtn');
+    if (shareQuizBtn) {
+      this.addEventListener(shareQuizBtn, 'click', () => {
+        this.handleShareQuizClick();
+      });
     }
   }
 

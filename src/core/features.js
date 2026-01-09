@@ -8,34 +8,6 @@
    */
 
   export const FEATURE_FLAGS = {
-    OPENROUTER_GUIDE: {
-      phase: 'ENABLED',
-      description: 'New OpenRouter connection guide with step-by-step instructions'
-    },
-    TELEMETRY: {
-      phase: 'ENABLED',  // Start disabled until VPS endpoint is ready
-      description: 'Send telemetry (logs, errors, metrics) to VPS for debugging'
-    },
-    EXPLANATION_FEATURE: {
-      phase: 'ENABLED',  // Enabled for testing
-      description: 'AI-generated explanations for incorrect answers'
-    },
-    CONTINUE_TOPIC: {
-      phase: 'ENABLED',  // Enabled for E2E testing
-      description: 'Continue quiz on same topic with new questions'
-    },
-    SHARE_FEATURE: {
-      phase: 'ENABLED',  // Share quiz results to social media
-      description: 'Share quiz results with text, link, and image'
-    },
-    SHARE_QUIZ: {
-      phase: 'ENABLED',  // Share quiz questions via URL
-      description: 'Share quiz questions so friends can take the same quiz'
-    },
-    SHOW_USAGE_COSTS: {
-      phase: 'ENABLED',  // Show LLM usage costs on results
-      description: 'Display token counts and costs after each quiz'
-    },
     SHOW_ADS: {
       phase: 'ENABLED',  // Show AdSense ads during loading screens
       description: 'Display Google AdSense ads during quiz and results loading'

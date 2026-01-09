@@ -1,13 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-
-// Mock features module
-vi.mock('../core/features.js', () => ({
-  isFeatureEnabled: vi.fn()
-}));
-
-// Import after mock
 import { TelemetryClient, CONFIG } from './telemetry.js';
-import { isFeatureEnabled } from '../core/features.js';
 
 describe('TelemetryClient', () => {
   let client;
@@ -31,9 +23,6 @@ describe('TelemetryClient', () => {
     };
     global.localStorage = mockLocalStorage;
 
-    // Enable telemetry by default for tests
-    isFeatureEnabled.mockReturnValue(true);
-
     // Override CONFIG for testing
     CONFIG.enabled = true;
     CONFIG.endpoint = 'https://test.example.com/telemetry';
@@ -55,14 +44,6 @@ describe('TelemetryClient', () => {
       client.track('error', { message: 'Test error' });
 
       expect(client.getQueueSize()).toBe(1);
-    });
-
-    it('should not add event when feature flag is disabled', () => {
-      isFeatureEnabled.mockReturnValue(false);
-
-      client.track('error', { message: 'Test error' });
-
-      expect(client.getQueueSize()).toBe(0);
     });
 
     it('should not add event when env var is disabled', () => {
@@ -132,15 +113,6 @@ describe('TelemetryClient', () => {
     });
 
     it('should not send if queue is empty', async () => {
-      await client.flush();
-
-      expect(mockFetch).not.toHaveBeenCalled();
-    });
-
-    it('should not send if disabled', async () => {
-      isFeatureEnabled.mockReturnValue(false);
-      client.queue = [{ type: 'test', data: {} }]; // Force an event
-
       await client.flush();
 
       expect(mockFetch).not.toHaveBeenCalled();

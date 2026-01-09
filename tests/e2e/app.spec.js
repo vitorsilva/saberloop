@@ -629,10 +629,13 @@ test.describe('Saberloop E2E Tests', () => {
     // Set up auth state
     await setupAuthenticatedState(page);
 
-    // Enable dark mode via media query emulation
-    await page.emulateMedia({ colorScheme: 'dark' });
-
     await page.goto('/#/topic-input');
+
+    // Enable dark mode via Tailwind's class-based approach (not media query)
+    // The app uses classList.add('dark') on <html>, not prefers-color-scheme
+    await page.evaluate(() => {
+      document.documentElement.classList.add('dark');
+    });
     await page.fill('#topicInput', 'Science');
     await page.click('#generateBtn');
 

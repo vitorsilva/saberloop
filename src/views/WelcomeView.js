@@ -2,9 +2,6 @@
 
   import BaseView from './BaseView.js';
   import { markWelcomeSeen } from '../features/onboarding.js';
-  import { showConnectModal } from '../components/ConnectModal.js';
-  import { startAuth } from '../services/auth-service.js';
-  import { isFeatureEnabled } from '../core/features.js';
   import { t } from '../core/i18n.js';
 
   export default class WelcomeView extends BaseView {
@@ -109,11 +106,7 @@
 
       const connectBtn = this.querySelector('#connectBtn');
       this.addEventListener(connectBtn, 'click', async () => {
-        if (isFeatureEnabled('OPENROUTER_GUIDE', 'welcome')) {
-          this.navigateTo('/setup-openrouter');
-        } else {
-          await showConnectModal(() => startAuth());
-        }
+        this.navigateTo('/setup-openrouter');
       });
     }
   }

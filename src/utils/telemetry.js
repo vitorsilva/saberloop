@@ -5,14 +5,12 @@
  * - Batches events before sending (reduces network requests)
  * - Auto-flushes on batch size or time interval
  * - Offline queue with localStorage fallback
- * - Feature flag controlled
+ * - Controlled via VITE_TELEMETRY_ENABLED environment variable
  *
  * Usage:
  *   import { telemetry } from './telemetry.js';
  *   telemetry.track('error', { message: 'Something went wrong' });
  */
-
-import { isFeatureEnabled } from '../core/features.js';
 
 // Configuration from environment variables
 const CONFIG = {
@@ -56,11 +54,11 @@ class TelemetryClient {
   }
 
   /**
-   * Check if telemetry is enabled (both env var and feature flag)
+   * Check if telemetry is enabled (via environment variable)
    * @returns {boolean}
    */
   _isEnabled() {
-    return CONFIG.enabled && isFeatureEnabled('TELEMETRY');
+    return CONFIG.enabled;
   }
 
   /**
