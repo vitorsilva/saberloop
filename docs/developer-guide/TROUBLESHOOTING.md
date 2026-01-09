@@ -6,20 +6,20 @@
 
 #### Port Already in Use
 
-**Symptom:** `Error: listen EADDRINUSE: address already in use :::3000`
+**Symptom:** `Error: listen EADDRINUSE: address already in use :::8888`
 
 **Solution:**
 ```bash
 # Windows
-netstat -ano | findstr :3000
+netstat -ano | findstr :8888
 taskkill /PID <PID> /F
 
 # Mac/Linux
-lsof -i :3000
+lsof -i :8888
 kill -9 <PID>
 
 # Or use a different port
-npm run dev -- --port 3001
+npm run dev -- --port 8889
 ```
 
 #### Hot Reload Not Working
@@ -52,9 +52,10 @@ npm run dev -- --port 3001
 **Symptom:** API returns 401
 
 **Solutions:**
-1. Verify API key is correct (starts with `sk-ant-`)
+1. Verify API key is correct (OpenRouter keys start with `sk-or-`)
 2. Check key hasn't expired
 3. Verify key has sufficient credits
+4. Reconnect to OpenRouter via Settings if needed
 
 #### CORS Errors
 
