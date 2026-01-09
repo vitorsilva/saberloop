@@ -27,7 +27,6 @@ import { shouldShowWelcome, markWelcomeSeen } from './features/onboarding.js';
 import { logger } from './utils/logger.js';
 import { initErrorHandling } from './utils/errorHandler.js';
 import { initPerformanceMonitoring } from './utils/performance.js'
-import { isFeatureEnabled } from './core/features.js';
 import { telemetry } from './utils/telemetry.js';
 import { initI18n } from './core/i18n.js';
 import state from './core/state.js';
@@ -170,12 +169,8 @@ function handleDeepLinks() {
 
       logger.info('OpenRouter connected successfully');
 
-      // Redirect based on feature flag
-      if (isFeatureEnabled('OPENROUTER_GUIDE', 'welcome')) {
-        window.location.href = window.location.origin + '/app/#/connection-confirmed';
-      } else {
-        window.location.href = window.location.origin + '/app/#/';
-      }
+      // Redirect to connection confirmed page
+      window.location.href = window.location.origin + '/app/#/connection-confirmed';
 
     } catch (error) {
       logger.error('OAuth callback failed', { error: error.message });

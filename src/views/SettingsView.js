@@ -420,7 +420,7 @@
                 </div>
               </div>
             </div>
-            <a href="#${isFeatureEnabled('OPENROUTER_GUIDE', 'settings') ? '/setup-openrouter' : '/welcome'}"
+            <a href="#/setup-openrouter"
               class="bg-primary hover:bg-primary/90 text-white rounded-xl p-4 flex items-center justify-center gap-2 transition-colors">
               <span class="material-symbols-outlined">link</span>
               <span class="font-medium">${t('settings.connectWithOpenRouter')}</span>

@@ -3,7 +3,6 @@ import state from '../core/state.js';
 import { saveQuizSession, updateQuizSession, generateExplanation, generateWrongAnswerExplanation, updateQuestionExplanation } from '../services/quiz-service.js';
 import { getApiKey } from '../services/auth-service.js';
 import { logger } from '../utils/logger.js';
-import { isFeatureEnabled } from '../core/features.js';
 import { showExplanationModal } from '../components/ExplanationModal.js';
 import { showShareModal } from '../components/ShareModal.js';
 import { showShareQuizModal } from '../components/ShareQuizModal.js';

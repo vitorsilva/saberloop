@@ -8,10 +8,6 @@
    */
 
   export const FEATURE_FLAGS = {
-    OPENROUTER_GUIDE: {
-      phase: 'ENABLED',
-      description: 'New OpenRouter connection guide with step-by-step instructions'
-    },
     SHOW_ADS: {
       phase: 'ENABLED',  // Show AdSense ads during loading screens
       description: 'Display Google AdSense ads during quiz and results loading'
