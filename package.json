@@ -16,8 +16,7 @@
   "scripts": {
     "version": "node scripts/generate-version.js",
     "predev": "npm run version",
-    "dev": "netlify dev",
-    "dev:php": "vite --port 8888",
+    "dev": "vite --port 8888",
     "prebuild": "npm run version",
     "build": "vite build",
     "deploy": "node scripts/deploy-ftp.cjs",
