@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn how spaced repetition helps you remember anything long-term. Understand the forgetting curve and practical schedules to optimize your learning.">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="robots" content="index, follow">
+    <title>Spaced Repetition: The Memory Technique That Actually Works - Saberloop Blog</title>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://saberloop.com/blog/spaced-repetition/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://saberloop.com/blog/spaced-repetition/">
+    <meta property="og:title" content="Spaced Repetition: The Memory Technique That Actually Works">
+    <meta property="og:description" content="Learn how spaced repetition helps you remember anything long-term. Understand the forgetting curve.">
+    <meta property="og:image" content="https://saberloop.com/app/icons/og-image.png">
+    <meta property="article:published_time" content="2026-01-09">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Spaced Repetition: The Memory Technique That Actually Works">
+    <meta name="twitter:description" content="How to remember anything long-term using the science of memory.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/app/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/app/icons/icon-192x192.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZP1TLMYBFM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ZP1TLMYBFM');
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9849708569219157"
+        crossorigin="anonymous"></script>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Spaced Repetition: The Memory Technique That Actually Works",
+        "description": "Learn how spaced repetition helps you remember anything long-term. Understand the forgetting curve and practical schedules to optimize your learning.",
+        "author": {
+            "@type": "Organization",
+            "name": "Saberloop"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Saberloop",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://saberloop.com/app/icons/icon-512x512.png"
+            }
+        },
+        "datePublished": "2026-01-09",
+        "dateModified": "2026-01-09"
+    }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #e55a2b;
+            --background: #1a1a2e;
+            --background-light: #252542;
+            --text: #ffffff;
+            --text-muted: #a0a0b0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 740px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        header {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .header-nav a:hover {
+            color: var(--primary);
+        }
+
+        .header-cta {
+            background: var(--primary);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .header-cta:hover {
+            background: var(--primary-dark);
+        }
+
+        article {
+            padding: 140px 0 80px;
+        }
+
+        .article-meta {
+            margin-bottom: 32px;
+        }
+
+        .article-category {
+            background: var(--primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .article-meta p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .article-intro {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--background-light);
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 48px 0 24px;
+            color: var(--text);
+        }
+
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin: 36px 0 16px;
+            color: var(--text);
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        ul, ol {
+            margin: 20px 0 20px 24px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        blockquote {
+            background: var(--background-light);
+            border-left: 4px solid var(--primary);
+            padding: 24px;
+            margin: 32px 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        blockquote p {
+            margin: 0;
+            font-style: italic;
+            color: var(--text);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 107, 53, 0.05));
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px 0;
+        }
+
+        .highlight-box h4 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .highlight-box p {
+            margin: 0;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            background: var(--background-light);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--background);
+        }
+
+        .schedule-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .schedule-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .cta-box {
+            background: var(--background-light);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 48px 0;
+            text-align: center;
+        }
+
+        .cta-box h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .cta-box p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .related {
+            border-top: 1px solid var(--background-light);
+            padding-top: 48px;
+            margin-top: 48px;
+        }
+
+        .related h3 {
+            margin-top: 0;
+        }
+
+        .related-links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .related-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--background-light);
+        }
+
+        footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 16px;
+        }
+
+        footer a:hover {
+            color: var(--primary);
+        }
+
+        .footer-links {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.85rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .header-nav {
+                display: none;
+            }
+
+            article {
+                padding-top: 100px;
+            }
+
+            .cta-box {
+                padding: 24px;
+            }
+
+            .schedule-table {
+                font-size: 0.9rem;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/app/icons/icon-192x192.png" alt="Saberloop" width="40" height="40">
+                Saberloop
+            </a>
+            <nav class="header-nav">
+                <a href="/">Home</a>
+                <a href="/blog/">Blog</a>
+                <a href="/app/" class="header-cta">Try Free</a>
+            </nav>
+        </div>
+    </header>
+
+    <article>
+        <div class="container">
+            <div class="article-meta">
+                <span class="article-category">Study Techniques</span>
+                <p>Published January 9, 2026 &bull; 10 min read</p>
+            </div>
+
+            <h1>Spaced Repetition: The Memory Technique That Actually Works</h1>
+
+            <p class="article-intro">
+                Ever crammed for an exam, passed it, and then forgotten everything within a week? You're experiencing what psychologists call the "forgetting curve." But there's a scientifically proven technique that can help you remember almost anything for years: spaced repetition.
+            </p>
+
+            <h2>The Forgetting Curve: Why We Forget</h2>
+
+            <p>
+                In 1885, German psychologist Hermann Ebbinghaus conducted groundbreaking experiments on memory. He discovered something remarkable: we forget information in a predictable pattern.
+            </p>
+
+            <p>
+                After learning something new, our memory of it decays rapidly at first, then levels off. Without review:
+            </p>
+
+            <ul>
+                <li><strong>After 1 hour:</strong> We forget about 50% of new information</li>
+                <li><strong>After 1 day:</strong> We forget about 70%</li>
+                <li><strong>After 1 week:</strong> We forget about 90%</li>
+            </ul>
+
+            <p>
+                This is the "forgetting curve"&mdash;and it explains why cramming doesn't work for long-term learning. The information goes into short-term memory but never makes it to long-term storage.
+            </p>
+
+            <h2>How Spaced Repetition Fights Forgetting</h2>
+
+            <p>
+                Here's the key insight: every time you review information <em>just before</em> you're about to forget it, the memory becomes stronger and lasts longer.
+            </p>
+
+            <p>
+                <strong>Spaced repetition</strong> is a learning technique that exploits this phenomenon. Instead of reviewing material repeatedly in one session (massed practice), you space out your reviews over increasing intervals.
+            </p>
+
+            <blockquote>
+                <p>"The spacing effect is one of the most robust findings in the entire history of experimental psychology."</p>
+            </blockquote>
+
+            <p>
+                Each successful review "resets" the forgetting curve, but with a twist: the curve becomes less steep each time. This means the memory lasts longer between reviews.
+            </p>
+
+            <h2>The Science of Spacing</h2>
+
+            <p>
+                Why does spacing work so well? Researchers have identified several mechanisms:
+            </p>
+
+            <h3>1. Retrieval Strengthens Memory</h3>
+
+            <p>
+                When you recall information after a delay, your brain has to work harder to retrieve it. This effort strengthens the memory trace, making future retrievals easier.
+            </p>
+
+            <h3>2. Contextual Variation</h3>
+
+            <p>
+                Reviewing at different times and in different contexts creates multiple "retrieval cues." This makes the memory more accessible from various mental states.
+            </p>
+
+            <h3>3. Memory Consolidation</h3>
+
+            <p>
+                Sleep plays a crucial role in memory formation. Spacing allows time for memories to consolidate between sessions, moving from short-term to long-term storage.
+            </p>
+
+            <div class="highlight-box">
+                <h4>The 24-Hour Rule</h4>
+                <p>Research shows that your first review should happen within 24 hours of initial learning. This single review can significantly extend how long you remember the material.</p>
+            </div>
+
+            <h2>A Practical Spaced Repetition Schedule</h2>
+
+            <p>
+                Here's a simple schedule you can use for any material you want to remember long-term:
+            </p>
+
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Review</th>
+                        <th>When</th>
+                        <th>Why</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1st Review</td>
+                        <td>1 day after learning</td>
+                        <td>Catch memory before major decay</td>
+                    </tr>
+                    <tr>
+                        <td>2nd Review</td>
+                        <td>3 days after learning</td>
+                        <td>Strengthen and extend retention</td>
+                    </tr>
+                    <tr>
+                        <td>3rd Review</td>
+                        <td>7 days after learning</td>
+                        <td>Move toward long-term memory</td>
+                    </tr>
+                    <tr>
+                        <td>4th Review</td>
+                        <td>14 days after learning</td>
+                        <td>Consolidate long-term storage</td>
+                    </tr>
+                    <tr>
+                        <td>5th Review</td>
+                        <td>30 days after learning</td>
+                        <td>Ensure lasting retention</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                This simple schedule (1-3-7-14-30) is easy to remember and effective for most material. After 30 days with successful reviews, the information is typically well-established in long-term memory.
+            </p>
+
+            <h2>Spaced Repetition in Practice</h2>
+
+            <h3>For Students</h3>
+
+            <p>
+                Don't wait until the week before an exam. When you learn new material in class:
+            </p>
+
+            <ol>
+                <li>Review your notes that evening (same day)</li>
+                <li>Quiz yourself the next day</li>
+                <li>Review again at the end of the week</li>
+                <li>Keep reviewing at increasing intervals until the exam</li>
+            </ol>
+
+            <p>
+                Students who use spaced repetition often find they need less total study time while achieving better results.
+            </p>
+
+            <h3>For Language Learners</h3>
+
+            <p>
+                Vocabulary acquisition is perfect for spaced repetition. Instead of cramming 50 new words in one session:
+            </p>
+
+            <ul>
+                <li>Learn 10 new words per day</li>
+                <li>Review yesterday's words each day</li>
+                <li>Weekly review of all words from that week</li>
+                <li>Monthly review of older vocabulary</li>
+            </ul>
+
+            <h3>For Professional Development</h3>
+
+            <p>
+                Whether you're learning coding concepts, medical terminology, or legal principles, spaced repetition helps. Many professionals use flashcard apps with built-in spaced repetition algorithms.
+            </p>
+
+            <h2>Tools for Spaced Repetition</h2>
+
+            <p>
+                While you can implement spaced repetition manually (using a calendar or index cards), several tools automate the scheduling:
+            </p>
+
+            <ul>
+                <li><strong>Anki</strong> &mdash; The gold standard for flashcard-based spaced repetition</li>
+                <li><strong>Quizlet</strong> &mdash; Popular for its ease of use and shared decks</li>
+                <li><strong>AI Quiz Apps</strong> &mdash; Generate questions on any topic automatically</li>
+            </ul>
+
+            <p>
+                The best tool is the one you'll actually use. Start simple, and add sophistication as needed.
+            </p>
+
+            <h2>Combining Spaced Repetition with Active Recall</h2>
+
+            <p>
+                Spaced repetition is most effective when combined with active recall (testing yourself) rather than passive review (re-reading).
+            </p>
+
+            <p>
+                Instead of just looking at your notes during each review:
+            </p>
+
+            <ul>
+                <li>Close your materials and try to recall the key points</li>
+                <li>Take a practice quiz on the material</li>
+                <li>Explain the concepts out loud from memory</li>
+            </ul>
+
+            <p>
+                The combination of spacing AND testing is more powerful than either technique alone.
+            </p>
+
+            <h2>Common Mistakes to Avoid</h2>
+
+            <h3>Starting Too Late</h3>
+
+            <p>
+                Spaced repetition works best when you start immediately after learning. If you wait a week before your first review, you've already forgotten most of the material.
+            </p>
+
+            <h3>Reviewing Too Often</h3>
+
+            <p>
+                Ironically, reviewing too frequently can reduce effectiveness. If you review before any forgetting has occurred, you're not forcing your brain to work at retrieval.
+            </p>
+
+            <h3>Only Using Recognition</h3>
+
+            <p>
+                Looking at flashcards and thinking "yeah, I know that" isn't the same as actively producing the answer. Cover the answer and test yourself properly.
+            </p>
+
+            <h2>The Long-Term Payoff</h2>
+
+            <p>
+                Spaced repetition requires more planning than cramming, but the payoff is substantial:
+            </p>
+
+            <ul>
+                <li><strong>Better retention:</strong> Remember material for months or years, not days</li>
+                <li><strong>Less total time:</strong> Distributed practice is more efficient than massed practice</li>
+                <li><strong>Deeper understanding:</strong> Repeated retrieval strengthens conceptual connections</li>
+                <li><strong>Reduced anxiety:</strong> Confidence comes from knowing you actually remember</li>
+            </ul>
+
+            <p>
+                Whether you're a student preparing for exams, a professional learning new skills, or a lifelong learner pursuing curiosity&mdash;spaced repetition can transform how effectively you learn.
+            </p>
+
+            <div class="cta-box">
+                <h3>Start Your Spaced Learning Journey</h3>
+                <p>Saberloop generates quiz questions on any topic, making it easy to practice active recall. Create a quiz today and review it tomorrow&mdash;your future self will thank you.</p>
+                <a href="/app/" class="btn">Create a Quiz</a>
+            </div>
+
+            <div class="related">
+                <h3>Continue Learning</h3>
+                <div class="related-links">
+                    <a href="/blog/testing-effect/">Why Testing Beats Re-Reading: The Testing Effect &rarr;</a>
+                    <a href="/blog/active-recall/">Active Recall: The Most Powerful Study Technique &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/blog/">Blog</a>
+                <a href="/app/">Try Saberloop</a>
+                <a href="/privacy.html">Privacy Policy</a>
+            </div>
+            <p>&copy; 2025 Saberloop. Built with Claude AI.</p>
+        </div>
+    </footer>
+</body>
+</html>

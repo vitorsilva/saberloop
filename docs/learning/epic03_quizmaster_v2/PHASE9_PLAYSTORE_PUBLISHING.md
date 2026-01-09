@@ -1,9 +1,9 @@
 # Phase 9: Google Play Store Publishing
 
 **Epic:** 3 - QuizMaster V2
-**Status:** 🔄 Closed Testing IN REVIEW | Awaiting Google approval
+**Status:** 🔄 Production Access Application SUBMITTED | Awaiting Google review (up to 7 days)
 **Started:** 2025-12-11
-**Last Updated:** 2025-12-16
+**Last Updated:** 2026-01-09
 **Learning Notes:** [PHASE9_LEARNING_NOTES.md](./PHASE9_LEARNING_NOTES.md)
 
 ---
@@ -1094,26 +1094,120 @@ Only needed for:
 - [x] Data safety declaration completed
 - [x] Privacy policy published (https://saberloop.com/privacy.html)
 
-### Submission (9.8) - CLOSED TESTING IN REVIEW
+### Submission (9.8) - PRODUCTION ACCESS APPLICATION
 - [x] AAB file uploaded (940 KB, v1.0.0.0)
 - [x] Pricing set (Free)
 - [x] Countries selected (176 countries)
 - [x] Internal testing published ✅
 - [x] Closed testing setup (14 testers in "lista testes 1") ✅
-- [x] Closed testing submitted for review 🔄 (2025-12-16)
-- [ ] Closed testing approved by Google ← AWAITING
-- [ ] 14-day closed testing period completed
-- [ ] Production release submitted
+- [x] Closed testing submitted for review ✅ (2025-12-16)
+- [x] Closed testing approved by Google ✅
+- [x] 14-day closed testing period completed ✅
+- [x] Production access application submitted ✅ (2026-01-09 at 17:15)
+  - [x] Step 1: About closed testing - completed ✅
+  - [x] Step 2: About your app - completed ✅
+  - [x] Step 3: Production readiness - completed ✅
+- [ ] Production access approved by Google ← AWAITING (up to 7 days)
+- [ ] Production release live
 
 ### Post-Publication Status
 - [x] Internal testing live and verified ✅
 - [x] assetlinks.json working (TWA verified) ✅
 - [x] Address bar removed (no browser chrome!) ✅
 - [x] Test installation from Play Store verified ✅
-- [x] Closed testing submitted (14 testers) 🔄 IN REVIEW
-- [ ] Closed testing approved by Google ← AWAITING
-- [ ] 14-day closed testing period (starts after approval)
-- [ ] Production release approved
+- [x] Closed testing approved (14 testers) ✅
+- [x] 14-day closed testing period completed ✅
+- [x] Production access application submitted ✅ (2026-01-09 at 17:15)
+- [ ] Production access approved by Google ← AWAITING (up to 7 days)
+- [ ] Production release live
+
+---
+
+## 9.8.5 Production Access Application
+
+**Time:** 15-30 minutes
+**Started:** 2026-01-09
+
+After completing the closed testing period, Google requires you to apply for production access before your app can be published to all users. This is a 3-step wizard.
+
+### Step 1: About Closed Testing (Acerca do teste fechado) ✅
+
+This step confirms that closed testing was completed. It's automatically marked as done if you've met the testing requirements.
+
+### Step 2: About Your App (Acerca da sua app) 🔄 IN PROGRESS
+
+Google asks three questions to understand your app:
+
+#### Question 1: What is your app's target audience? (Qual é o público-alvo da sua app?)
+**Character limit:** 300
+
+**Suggested answer:**
+```
+Estudantes, autodidatas e curiosos de todas as idades que desejam aprender sobre qualquer tópico através de quizzes interativos gerados por IA. A app é especialmente útil para quem quer testar conhecimentos, preparar-se para exames ou simplesmente aprender de forma divertida.
+```
+
+**English translation:**
+```
+Students, self-learners, and curious people of all ages who want to learn about any topic through AI-generated interactive quizzes. The app is especially useful for testing knowledge, preparing for exams, or simply learning in a fun way.
+```
+
+#### Question 2: How is your app useful for users? (Descreva de que forma a sua app é útil para os utilizadores)
+**Character limit:** 300
+
+**Suggested answer:**
+```
+Saberloop permite criar quizzes personalizados sobre qualquer tema em segundos usando IA. Os utilizadores podem estudar offline, acompanhar o seu progresso e aprender com explicações detalhadas para cada resposta errada. Ideal para estudo autónomo e revisão de matérias.
+```
+
+**English translation:**
+```
+Saberloop allows creating personalized quizzes on any topic in seconds using AI. Users can study offline, track their progress, and learn from detailed explanations for each wrong answer. Ideal for self-study and subject review.
+```
+
+#### Question 3: Expected installations in first year? (Quantas instalações prevê que a app tenha no primeiro ano?)
+**Options:**
+- **0 - 10 mil** ← Recommended for new apps (selected)
+- 10 mil - 100 mil
+- 100 mil - 1 milhão
+- Mais de 1 milhão
+- Não sei
+
+**Why 0-10k?** For a new app without marketing budget, this is a realistic estimate. Being conservative here is fine - Google uses this for capacity planning, not app evaluation.
+
+### Step 3: Production Readiness (Prontidão para a produção) ✅ COMPLETE
+
+Google asks about your testing process and readiness:
+
+#### Question 1: What changes did you make based on closed testing? (Que alterações fez à sua app com base no que aprendeu durante o teste fechado?)
+**Character limit:** 300
+
+**Suggested answer:**
+```
+Durante o teste fechado, validámos a estabilidade da aplicação e a experiência do utilizador. Fizemos ajustes menores na interface e corrigimos pequenos bugs identificados pelos testadores. Confirmámos que a funcionalidade offline e a integração com a API de IA funcionam corretamente em diferentes dispositivos Android.
+```
+
+**English translation:**
+```
+During closed testing, we validated the application stability and user experience. We made minor interface adjustments and fixed small bugs identified by testers. We confirmed that offline functionality and AI API integration work correctly across different Android devices.
+```
+
+#### Question 2: How did you decide your app is ready for production? (Como decidiu que a sua app está pronta para produção?)
+**Character limit:** 300
+
+**Suggested answer:**
+```
+A app passou por testes internos e teste fechado com 14 utilizadores. Todos os fluxos principais foram validados: criação de quizzes, modo offline, explicações de respostas e gestão de progresso. Os testes E2E automatizados passam consistentemente e não foram reportados problemas críticos durante o período de teste.
+```
+
+**English translation:**
+```
+The app went through internal testing and closed testing with 14 users. All main flows were validated: quiz creation, offline mode, answer explanations, and progress management. Automated E2E tests pass consistently and no critical issues were reported during the testing period.
+```
+
+After completing these questions, click **"Aplicar"** (Apply) to submit your production access application.
+
+**Application Submitted:** 2026-01-09 at 17:15
+**Expected Review Time:** Up to 7 days (Google will send email notification)
 
 ---
 
@@ -1150,10 +1244,11 @@ Common reasons:
 - [x] All features work in Android app ✅
 - [x] Content rating completed (all ages) ✅
 - [x] Signing files securely stored for future updates ✅
-- [x] Closed testing submitted (14 testers) 🔄 IN REVIEW
-- [ ] Closed testing approved by Google ← AWAITING
-- [ ] 14-day closed testing period completed
-- [ ] Production release approved
+- [x] Closed testing approved by Google ✅
+- [x] 14-day closed testing period completed ✅
+- [x] Production access application submitted ✅ (2026-01-09 at 17:15)
+- [ ] Production access approved by Google ← AWAITING (up to 7 days)
+- [ ] Production release live
 
 ---
 
