@@ -53,6 +53,11 @@ The services layer (`src/services/`) provides a clean abstraction between UI and
 | `quiz-service.js` | Quiz business logic | db.js, api/index.js |
 | `auth-service.js` | Authentication operations | db.js, openrouter-auth.js |
 | `model-service.js` | AI model selection | settings.js, OpenRouter API |
+| `cost-service.js` | LLM usage cost tracking | settings.js |
+| `data-service.js` | User data export/deletion | db.js |
+| `quiz-import.js` | Import quizzes from URLs | quiz-serializer.js, db.js |
+| `quiz-serializer.js` | Serialize/deserialize quizzes | - |
+| `quiz-share.js` | Quiz sharing functionality | quiz-serializer.js |
 
 ### Allowed Dependencies
 
