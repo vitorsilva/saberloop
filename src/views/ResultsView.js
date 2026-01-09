@@ -51,7 +51,6 @@ export default class ResultsView extends BaseView {
     }
 
     // Check if features are enabled
-    const showExplanationButton = isFeatureEnabled('EXPLANATION_FEATURE');
     const showShareButton = isFeatureEnabled('SHARE_FEATURE');
     const showShareQuizButton = isFeatureEnabled('SHARE_QUIZ');
     const showUsageCosts = isFeatureEnabled('SHOW_USAGE_COSTS');
@@ -87,17 +86,13 @@ export default class ResultsView extends BaseView {
           </div>
         `;
       } else {
-        // Incorrect answer - show info button if feature enabled
-        const rightSideContent = showExplanationButton
-          ? `<button
+        // Incorrect answer - show explain button
+        const rightSideContent = `<button
               aria-label="Explain answer"
               data-question-index="${index}"
               class="explain-btn flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-all hover:bg-primary/20 active:scale-95 animate-pulse shadow-[0_0_10px_rgba(74,144,226,0.5)]">
               <span class="material-symbols-outlined text-[20px]">info</span>
-            </button>`
-          : `<div class="flex size-7 items-center justify-center">
-              <div class="size-3 rounded-full bg-error"></div>
-            </div>`;
+            </button>`;
 
         return `
           <div class="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-lg min-h-[72px] justify-between">
@@ -305,16 +300,14 @@ export default class ResultsView extends BaseView {
       });
     }
 
-    // Explanation buttons (only if feature is enabled)
-    if (isFeatureEnabled('EXPLANATION_FEATURE')) {
-      const explainBtns = this.appContainer.querySelectorAll('.explain-btn');
-      explainBtns.forEach(btn => {
-        this.addEventListener(btn, 'click', async () => {
-          const questionIndex = parseInt(/** @type {HTMLElement} */ (btn).dataset.questionIndex, 10);
-          await this.handleExplanationClick(questionIndex);
-        });
+    // Explanation buttons for incorrect answers
+    const explainBtns = this.appContainer.querySelectorAll('.explain-btn');
+    explainBtns.forEach(btn => {
+      this.addEventListener(btn, 'click', async () => {
+        const questionIndex = parseInt(/** @type {HTMLElement} */ (btn).dataset.questionIndex, 10);
+        await this.handleExplanationClick(questionIndex);
       });
-    }
+    });
 
     // Share button (only if feature is enabled)
     if (isFeatureEnabled('SHARE_FEATURE')) {
