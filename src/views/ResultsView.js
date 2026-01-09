@@ -51,7 +51,6 @@ export default class ResultsView extends BaseView {
     }
 
     // Check if features are enabled
-    const showShareButton = isFeatureEnabled('SHARE_FEATURE');
     const showShareQuizButton = isFeatureEnabled('SHARE_QUIZ');
     const showUsageCosts = isFeatureEnabled('SHOW_USAGE_COSTS');
 
@@ -162,14 +161,11 @@ export default class ResultsView extends BaseView {
           ` : ''}
 
           <!-- Share Buttons -->
-          ${(showShareButton || showShareQuizButton) ? `
           <div class="flex justify-center gap-3 mt-4 flex-wrap">
-            ${showShareButton ? `
             <button id="shareBtn" data-testid="share-results-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
               <span class="material-symbols-outlined text-xl">share</span>
               ${t('share.button')}
             </button>
-            ` : ''}
             ${showShareQuizButton ? `
             <button id="shareQuizBtn" data-testid="share-quiz-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
               <span class="material-symbols-outlined text-xl">link</span>
@@ -177,7 +173,6 @@ export default class ResultsView extends BaseView {
             </button>
             ` : ''}
           </div>
-          ` : ''}
 
           <!-- Section Header -->
           <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pt-8 pb-3">${t('results.reviewAnswers')}</h2>
@@ -309,14 +304,12 @@ export default class ResultsView extends BaseView {
       });
     });
 
-    // Share button (only if feature is enabled)
-    if (isFeatureEnabled('SHARE_FEATURE')) {
-      const shareBtn = this.querySelector('#shareBtn');
-      if (shareBtn) {
-        this.addEventListener(shareBtn, 'click', () => {
-          this.handleShareClick();
-        });
-      }
+    // Share button
+    const shareBtn = this.querySelector('#shareBtn');
+    if (shareBtn) {
+      this.addEventListener(shareBtn, 'click', () => {
+        this.handleShareClick();
+      });
     }
 
     // Share Quiz button (only if feature is enabled)

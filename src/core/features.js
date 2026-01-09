@@ -12,10 +12,6 @@
       phase: 'ENABLED',
       description: 'New OpenRouter connection guide with step-by-step instructions'
     },
-    SHARE_FEATURE: {
-      phase: 'ENABLED',  // Share quiz results to social media
-      description: 'Share quiz results with text, link, and image'
-    },
     SHARE_QUIZ: {
       phase: 'ENABLED',  // Share quiz questions via URL
       description: 'Share quiz questions so friends can take the same quiz'
