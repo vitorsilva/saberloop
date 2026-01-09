@@ -62,6 +62,7 @@ export default class HomeView extends BaseView {
           <div class="flex gap-3">
             <button
               id="createPartyBtn"
+              data-testid="create-party-btn"
               class="flex-1 flex cursor-pointer items-center justify-center gap-2
                      overflow-hidden rounded-xl h-14 px-5 bg-purple-500 text-white text-base
                      font-bold leading-normal tracking-[0.015em] shadow-lg
@@ -71,6 +72,7 @@ export default class HomeView extends BaseView {
             </button>
             <button
               id="joinPartyBtn"
+              data-testid="join-party-btn"
               class="flex-1 flex cursor-pointer items-center justify-center gap-2
                      overflow-hidden rounded-xl h-14 px-5 bg-purple-500/20 text-purple-500
                      border-2 border-purple-500 text-base font-bold leading-normal

@@ -32,7 +32,7 @@ export default class JoinPartyView extends BaseView {
       <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
         <!-- Header -->
         <div class="flex items-center p-4 gap-4 bg-background-light dark:bg-background-dark">
-          <button id="backBtn" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+          <button id="backBtn" data-testid="back-btn" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
             <span class="material-symbols-outlined text-text-light dark:text-text-dark">arrow_back</span>
           </button>
           <h1 class="text-text-light dark:text-text-dark text-lg font-bold">${t('party.join')}</h1>
