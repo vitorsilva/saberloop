@@ -37,7 +37,7 @@ See [Installation Guide](./INSTALLATION.md) for details.
 ### How do I test with real API?
 
 1. Set `VITE_USE_REAL_API=true` in `.env`
-2. Run `npm run dev:php`
+2. Run `npm run dev`
 3. Go to Settings in the app and connect to OpenRouter
 4. Your OpenRouter account provides the API access
 

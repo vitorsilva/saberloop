@@ -177,13 +177,13 @@ IndexedDB settings in `src/core/db.js`:
 ### Development with Mock API
 
 1. Set `VITE_USE_REAL_API=false` in `.env`
-2. Run `npm run dev:php`
+2. Run `npm run dev`
 3. No API key needed - uses mock responses
 
 ### Development with Real API
 
 1. Set `VITE_USE_REAL_API=true` in `.env`
-2. Run `npm run dev:php`
+2. Run `npm run dev`
 3. Connect to OpenRouter via Settings page in the app
 
 ### Production Build

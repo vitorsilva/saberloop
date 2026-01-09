@@ -75,7 +75,7 @@ npx playwright install
 ### Development Mode
 
 ```bash
-npm run dev:php
+npm run dev
 ```
 
 Opens at `http://localhost:8888`

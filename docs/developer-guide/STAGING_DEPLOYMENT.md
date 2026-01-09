@@ -56,7 +56,7 @@ The `cross-env` package ensures this works on Windows, Mac, and Linux.
 
 In `vite.config.js`, the `getBasePath()` function determines the base path:
 
-- Development (`npm run dev:php`): `/`
+- Development (`npm run dev`): `/`
 - Production: `/app/`
 - Staging: `/app-staging/`
 
