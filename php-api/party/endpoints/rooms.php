@@ -101,6 +101,32 @@ try {
         ApiHelper::success(['ended' => true]);
     }
 
+    // Route: POST /rooms/{code}/answer - Submit answer
+    if ($method === 'POST' && count($segments) === 2 && $segments[1] === 'answer') {
+        $code = $segments[0];
+        $body = ApiHelper::getJsonBody();
+        $participantId = ApiHelper::requireField($body, 'participantId');
+        $questionIndex = (int) ApiHelper::requireField($body, 'questionIndex');
+        $answerIndex = (int) ($body['answerIndex'] ?? -1);
+        $timeMs = (int) ($body['timeMs'] ?? 0);
+
+        // MVP: Accept answer but scoring is calculated client-side
+        // TODO: Implement server-side answer validation and scoring
+        $room = $roomManager->getRoomByCode($code);
+
+        if (!$room) {
+            ApiHelper::error('Room not found', 404, 'ROOM_NOT_FOUND');
+        }
+
+        // For now, just acknowledge receipt
+        ApiHelper::success([
+            'accepted' => true,
+            'questionIndex' => $questionIndex,
+            'answerIndex' => $answerIndex,
+            'timeMs' => $timeMs,
+        ]);
+    }
+
     // No matching route
     ApiHelper::error('Not found', 404, 'NOT_FOUND');
 

@@ -391,14 +391,30 @@ test.describe('Capture Party Mode Demo', () => {
       await expect(guestPage.locator('text=Waiting for host to start')).toBeVisible({ timeout: 10000 });
       console.log('✅ Guest in lobby waiting');
 
-      // TODO: Start quiz and verify PartyQuizView when implemented
-      // For now, we've verified the core multi-user lobby flow works:
-      // - Host creates room
-      // - Guest joins room
-      // - Host sees guest in participant list
-      // - Guest is in lobby waiting for host
+      // HOST: Start the quiz
+      const startBtn = hostPage.locator('#startQuizBtn');
+      await expect(startBtn).toBeEnabled({ timeout: 5000 });
+      await startBtn.click();
+      console.log('✅ Host clicked Start Quiz');
 
-      console.log('✅ Real multi-user lobby test passed!');
+      // VERIFY: Both users navigate to PartyQuizView
+      await hostPage.waitForURL(/#\/party\/quiz\//, { timeout: 10000 });
+      console.log('✅ Host navigated to quiz view');
+
+      // Guest should also see quiz view (via polling in lobby)
+      await guestPage.waitForURL(/#\/party\/quiz\//, { timeout: 15000 });
+      console.log('✅ Guest navigated to quiz view');
+
+      // VERIFY: Both see the question
+      await expect(hostPage.locator('#questionText')).toBeVisible({ timeout: 10000 });
+      await expect(guestPage.locator('#questionText')).toBeVisible({ timeout: 10000 });
+      console.log('✅ Both users see the question');
+
+      // VERIFY: Timer is running
+      await expect(hostPage.locator('#timerText')).toBeVisible();
+      console.log('✅ Timer is visible');
+
+      console.log('✅ Real multi-user quiz test passed!');
 
     } finally {
       await hostContext.close();

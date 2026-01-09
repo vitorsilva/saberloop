@@ -16,6 +16,7 @@ import {
   createRoom,
   getRoom,
   endRoom,
+  startQuiz as startQuizApi,
   generateParticipantId,
 } from '../services/party-api.js';
 
@@ -334,19 +335,34 @@ export default class CreatePartyView extends BaseView {
     });
   }
 
-  startQuiz() {
+  async startQuiz() {
     if (this.participants.length < 2) {
       return;
     }
 
-    // TODO: Broadcast start to all participants
-    log.info('Starting quiz', {
-      roomCode: this.roomCode,
-      participants: this.participants.length,
-    });
+    try {
+      // Update room status to 'playing' via API
+      await startQuizApi(this.roomCode, this.hostId);
 
-    // Navigate to party quiz view
-    this.navigateTo(`/party/quiz/${this.roomCode}`);
+      log.info('Starting quiz', {
+        roomCode: this.roomCode,
+        participants: this.participants.length,
+      });
+
+      // Stop polling since we're leaving this view
+      this._stopPolling();
+
+      // Store host info for PartyQuizView
+      sessionStorage.setItem('partyParticipantId', this.hostId);
+      sessionStorage.setItem('partyRoomCode', this.roomCode);
+      sessionStorage.setItem('partyIsHost', 'true');
+
+      // Navigate to party quiz view
+      this.navigateTo(`/party/quiz/${this.roomCode}`);
+    } catch (error) {
+      log.error('Failed to start quiz', { error: error.message });
+      alert(t('errors.generic'));
+    }
   }
 
   async cancelParty() {

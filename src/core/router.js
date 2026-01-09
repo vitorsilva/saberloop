@@ -53,6 +53,13 @@
           return;
         }
 
+        // Check for party quiz with code: /party/quiz/<code>
+        if (hash.startsWith('/party/quiz/') && hash.length > 12) {
+          const code = hash.slice(12); // Remove '/party/quiz/' prefix
+          this.handlePartyQuiz(code);
+          return;
+        }
+
         // Find the view class for this route
         const ViewClass = this.routes.get(hash);
 
@@ -152,6 +159,36 @@
       getPartyLobbyCode() {
         const code = this.partyLobbyCode;
         this.partyLobbyCode = null;
+        return code;
+      }
+
+      /**
+       * Handle party quiz with room code
+       * @param {string} code - The room code from URL
+       */
+      handlePartyQuiz(code) {
+        logger.info('Detected party quiz URL', { code });
+
+        // Store the code for the quiz view to access
+        this.partyQuizCode = code;
+
+        // Render the quiz view
+        const PartyQuizView = this.routes.get('/party/quiz');
+        if (PartyQuizView) {
+          this.render(PartyQuizView, { roomCode: code });
+        } else {
+          logger.warn('PartyQuizView not registered, redirecting to home');
+          this.navigateTo('/');
+        }
+      }
+
+      /**
+       * Get and clear party quiz code (called by PartyQuizView)
+       * @returns {string|null} The room code or null
+       */
+      getPartyQuizCode() {
+        const code = this.partyQuizCode;
+        this.partyQuizCode = null;
         return code;
       }
 

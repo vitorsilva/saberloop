@@ -203,3 +203,40 @@ export async function endRoom(code, hostId) {
 
   log.info('Room ended', { code });
 }
+
+/**
+ * Submit an answer for the current question.
+ *
+ * @param {string} code - Room code
+ * @param {string} participantId - Participant's unique ID
+ * @param {number} questionIndex - Question index (0-based)
+ * @param {number} answerIndex - Answer index (0-based, -1 for no answer)
+ * @param {number} timeMs - Time taken to answer in milliseconds
+ * @returns {Promise<Object>} Updated participant data with score
+ */
+export async function submitAnswer(code, participantId, questionIndex, answerIndex, timeMs) {
+  const baseUrl = getSignalingBaseUrl();
+  const url = `${baseUrl}/endpoints/rooms.php/${code.toUpperCase()}/answer`;
+
+  log.info('Submitting answer', { code, participantId, questionIndex, answerIndex, timeMs });
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      participantId,
+      questionIndex,
+      answerIndex,
+      timeMs,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error?.message || `HTTP ${response.status}`);
+  }
+
+  const result = await response.json();
+  log.info('Answer submitted', { code, score: result.data?.score });
+  return result.data;
+}

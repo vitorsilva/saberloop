@@ -3,6 +3,8 @@
  *
  * Quiz playing screen for party sessions.
  * Shows question with timer and live scoreboard.
+ *
+ * MVP Implementation: Uses HTTP polling instead of WebRTC.
  */
 
 import BaseView from './BaseView.js';
@@ -10,34 +12,85 @@ import { t } from '../core/i18n.js';
 import { createLiveScoreboard } from '../components/LiveScoreboard.js';
 import { shuffleOptions } from '../utils/shuffle.js';
 import { logger } from '../utils/logger.js';
+import router from '../core/router.js';
+import { getRoom, submitAnswer as submitAnswerApi } from '../services/party-api.js';
 
 const log = logger.child({ module: 'PartyQuizView' });
+
+/** @type {number} Polling interval for room updates (ms) */
+const POLL_INTERVAL_MS = 1000;
 
 export default class PartyQuizView extends BaseView {
   /**
    * @param {Object} options
-   * @param {import('../services/party-session.js').PartySession} options.session - Party session
+   * @param {string} [options.roomCode] - Room code from URL
+   * @param {import('../services/party-session.js').PartySession} [options.session] - Party session (legacy)
    */
   constructor(options = {}) {
     super();
-    this.session = options.session;
+    // Support both new (roomCode) and legacy (session) approaches
+    this.roomCode = options.roomCode || router.getPartyQuizCode() || sessionStorage.getItem('partyRoomCode') || '';
+    this.participantId = sessionStorage.getItem('partyParticipantId') || '';
+    this.isHost = sessionStorage.getItem('partyIsHost') === 'true';
+    this.session = options.session; // Legacy support
+
+    this.quiz = null;
+    this.participants = [];
+    this.currentQuestion = 0;
+    this.secondsPerQuestion = 30;
+    this.questionStartTime = Date.now();
+
     this.selectedAnswer = null;
     this.hasAnswered = false;
     this.timerInterval = null;
+    this.pollInterval = null;
     this.shuffledOptions = null;
     this.shuffleMap = null; // Maps shuffled index to original index
   }
 
   async render() {
-    if (!this.session || !this.session.quiz) {
-      log.error('No session or quiz data');
+    // Legacy support: if session provided, use original behavior
+    if (this.session && this.session.quiz) {
+      return this._renderWithSession();
+    }
+
+    // New approach: fetch room data from API
+    if (!this.roomCode) {
+      log.error('No room code');
       this.navigateTo('/');
       return;
     }
 
-    const question = this.session.getCurrentQuestion();
-    const questionIndex = this.session.currentQuestion;
-    const totalQuestions = this.session.quiz.questions.length;
+    try {
+      const roomData = await getRoom(this.roomCode);
+      if (roomData.status !== 'playing') {
+        log.warn('Room not in playing state', { status: roomData.status });
+        this.navigateTo('/');
+        return;
+      }
+
+      this.quiz = roomData.quiz_data;
+      this.secondsPerQuestion = roomData.seconds_per_question || 30;
+      this.participants = this._mapParticipants(roomData.participants || []);
+      this.questionStartTime = Date.now();
+
+      log.info('Quiz loaded', { questions: this.quiz?.questions?.length, participants: this.participants.length });
+    } catch (error) {
+      log.error('Failed to load room', { error: error.message });
+      alert(t('party.roomNotFound'));
+      this.navigateTo('/');
+      return;
+    }
+
+    if (!this.quiz || !this.quiz.questions || this.quiz.questions.length === 0) {
+      log.error('No quiz data');
+      this.navigateTo('/');
+      return;
+    }
+
+    const question = this.quiz.questions[this.currentQuestion];
+    const totalQuestions = this.quiz.questions.length;
+    const questionIndex = this.currentQuestion;
 
     // Shuffle options for this question
     this._shuffleCurrentQuestion(question);
@@ -87,6 +140,84 @@ export default class PartyQuizView extends BaseView {
         </div>
 
         <!-- Status bar -->
+        <div id="statusBar" class="fixed bottom-0 left-0 right-0 py-3 bg-primary text-white text-center text-sm">
+          <span id="statusText">${t('party.waiting')}</span>
+        </div>
+      </div>
+    `);
+
+    this._renderScoreboard();
+    this.attachListeners();
+    this._startTimer();
+
+    // Only setup session callbacks if we have a session (legacy mode)
+    if (this.session) {
+      this._setupSessionCallbacks();
+    } else {
+      // MVP mode: poll for score updates
+      this._startPolling();
+    }
+  }
+
+  /**
+   * Map API participant data to UI format.
+   * @param {Array} apiParticipants - Participants from API
+   * @returns {Array} Formatted participants
+   */
+  _mapParticipants(apiParticipants) {
+    return apiParticipants.map((p) => ({
+      id: p.id,
+      name: p.name,
+      isHost: p.isHost === true,
+      isYou: p.id === this.participantId,
+      score: p.score || 0,
+      status: 'connected',
+    }));
+  }
+
+  /**
+   * Legacy render method for PartySession-based usage.
+   * @private
+   */
+  async _renderWithSession() {
+    const question = this.session.getCurrentQuestion();
+    const questionIndex = this.session.currentQuestion;
+    const totalQuestions = this.session.quiz.questions.length;
+
+    this._shuffleCurrentQuestion(question);
+
+    this.setHTML(`
+      <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+        <div class="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark">
+          <div class="text-text-light dark:text-text-dark text-sm font-medium">
+            ${t('party.question', { current: questionIndex + 1, total: totalQuestions })}
+          </div>
+          <div id="timer" class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">timer</span>
+            <span id="timerText" class="text-lg font-bold text-primary">--</span>
+          </div>
+        </div>
+        <div class="h-1 bg-gray-200 dark:bg-gray-700">
+          <div id="progressBar" class="h-full bg-primary transition-all duration-100" style="width: 100%"></div>
+        </div>
+        <div class="flex-grow px-4 pb-24">
+          <div class="py-6">
+            <h2 id="questionText" class="text-text-light dark:text-text-dark text-xl font-bold leading-tight">
+              ${question?.question || 'Loading...'}
+            </h2>
+          </div>
+          <div id="optionsContainer" class="flex flex-col gap-3">
+            ${this._renderOptions(question)}
+          </div>
+          <div class="mt-6">
+            <button id="toggleScoreboardBtn" class="flex items-center gap-2 text-primary text-sm font-medium mb-2">
+              <span class="material-symbols-outlined text-sm">leaderboard</span>
+              ${t('party.liveScores')}
+              <span id="toggleIcon" class="material-symbols-outlined text-sm">expand_more</span>
+            </button>
+            <div id="scoreboardContainer" class="hidden"></div>
+          </div>
+        </div>
         <div id="statusBar" class="fixed bottom-0 left-0 right-0 py-3 bg-primary text-white text-center text-sm">
           <span id="statusText">${t('party.waiting')}</span>
         </div>
@@ -155,15 +286,25 @@ export default class PartyQuizView extends BaseView {
     const container = this.querySelector('#scoreboardContainer');
     if (!container) return;
 
-    const participants = this.session.getParticipants().map(p => ({
-      ...p,
-      isYou: p.id === this.session.participantId,
-    }));
+    // Support both new (this.participants) and legacy (this.session) approaches
+    let participants;
+    let highlightId;
+
+    if (this.session) {
+      participants = this.session.getParticipants().map(p => ({
+        ...p,
+        isYou: p.id === this.session.participantId,
+      }));
+      highlightId = this.session.participantId;
+    } else {
+      participants = this.participants;
+      highlightId = this.participantId;
+    }
 
     container.innerHTML = '';
     const scoreboard = createLiveScoreboard(participants, {
       showStatus: true,
-      highlightId: this.session.participantId,
+      highlightId,
     });
     container.appendChild(scoreboard);
   }
@@ -276,7 +417,7 @@ export default class PartyQuizView extends BaseView {
    * @private
    * @param {number} shuffledIndex - Selected shuffled option index
    */
-  _selectOption(shuffledIndex) {
+  async _selectOption(shuffledIndex) {
     this.selectedAnswer = shuffledIndex;
     this.hasAnswered = true;
 
@@ -294,8 +435,25 @@ export default class PartyQuizView extends BaseView {
       }
     });
 
-    // Submit answer
-    this.session.submitAnswer(this.session.currentQuestion, originalIndex);
+    // Submit answer - support both session and API modes
+    if (this.session) {
+      this.session.submitAnswer(this.session.currentQuestion, originalIndex);
+    } else {
+      // MVP mode: submit via API
+      const timeMs = Date.now() - this.questionStartTime;
+      try {
+        await submitAnswerApi(
+          this.roomCode,
+          this.participantId,
+          this.currentQuestion,
+          originalIndex,
+          timeMs
+        );
+      } catch (error) {
+        log.error('Failed to submit answer', { error: error.message });
+        // Continue anyway - UI already updated
+      }
+    }
 
     this._updateStatus(t('party.answered'));
 
@@ -312,8 +470,20 @@ export default class PartyQuizView extends BaseView {
     const progressBar = this.querySelector('#progressBar');
 
     this.timerInterval = setInterval(() => {
-      const remaining = this.session.getTimeRemaining();
-      const total = this.session.secondsPerQuestion * 1000;
+      // Support both new (local state) and legacy (session) approaches
+      let remaining;
+      let total;
+
+      if (this.session) {
+        remaining = this.session.getTimeRemaining();
+        total = this.session.secondsPerQuestion * 1000;
+      } else {
+        // Calculate remaining time from questionStartTime
+        const elapsed = Date.now() - this.questionStartTime;
+        total = this.secondsPerQuestion * 1000;
+        remaining = Math.max(0, total - elapsed);
+      }
+
       const seconds = Math.ceil(remaining / 1000);
       const progress = (remaining / total) * 100;
 
@@ -341,7 +511,27 @@ export default class PartyQuizView extends BaseView {
           progressBar.classList.add('bg-primary');
         }
       }
+
+      // Handle timer expiration for non-session mode
+      if (!this.session && remaining <= 0) {
+        this._onTimerExpired();
+      }
     }, 100);
+  }
+
+  /**
+   * Handle timer expiration (MVP mode).
+   *
+   * @private
+   */
+  _onTimerExpired() {
+    if (this.hasAnswered) return;
+
+    log.info('Timer expired, auto-advancing');
+    this.hasAnswered = true;
+    this._updateStatus(t('party.timeUp'));
+
+    // TODO: Submit no-answer to API, wait for next question poll
   }
 
   /**
@@ -377,11 +567,60 @@ export default class PartyQuizView extends BaseView {
     this.navigateTo('/');
   }
 
+  /**
+   * Start polling for room updates (MVP mode).
+   *
+   * @private
+   */
+  _startPolling() {
+    if (this.session || this.pollInterval) return;
+
+    log.info('Starting poll for room updates');
+
+    this.pollInterval = setInterval(async () => {
+      try {
+        const roomData = await getRoom(this.roomCode);
+
+        // Check if quiz ended
+        if (roomData.status === 'ended') {
+          log.info('Quiz ended via poll');
+          this._onQuizEnd([]);
+          return;
+        }
+
+        // Update participants/scores
+        const newParticipants = this._mapParticipants(roomData.participants || []);
+        if (JSON.stringify(newParticipants) !== JSON.stringify(this.participants)) {
+          this.participants = newParticipants;
+          this._renderScoreboard();
+        }
+
+        // Check for question change (would need backend support)
+        // TODO: Backend needs to track currentQuestion per room
+      } catch (error) {
+        log.error('Poll failed', { error: error.message });
+      }
+    }, POLL_INTERVAL_MS);
+  }
+
+  /**
+   * Stop polling for room updates.
+   *
+   * @private
+   */
+  _stopPolling() {
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+      this.pollInterval = null;
+    }
+  }
+
   destroy() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
     }
+    this._stopPolling();
     super.destroy();
   }
 }

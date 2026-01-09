@@ -433,7 +433,81 @@ taskkill //F //PID <pid>
 
 #### Next Steps
 
-- [ ] Wire `startQuiz()` API in CreatePartyView when host clicks Start
-- [ ] Implement PartyQuizView to show questions
+- [x] Wire `startQuiz()` API in CreatePartyView when host clicks Start ✅
+- [x] Implement PartyQuizView to show questions ✅
 - [ ] Add WebRTC P2P connection (currently HTTP polling only)
 - [ ] Test edge cases (guest leaves, multiple guests)
+
+### Session: 2026-01-09 (Continued)
+
+#### Completed
+
+- ✅ Wired `startQuiz()` API in CreatePartyView
+- ✅ Added router handler for `/party/quiz/<code>`
+- ✅ Refactored PartyQuizView for HTTP polling MVP (supports both session and API modes)
+- ✅ Added `submitAnswer()` API function and PHP endpoint
+- ✅ Extended E2E test to verify quiz start flow
+- ✅ Test passing: Host + Guest both see quiz view with question and timer
+
+#### Key Changes
+
+##### CreatePartyView.js
+- Added `startQuiz as startQuizApi` import
+- Updated `startQuiz()` method to:
+  - Call API to update room status to 'playing'
+  - Store session info in sessionStorage (participantId, roomCode, isHost)
+  - Navigate to `/party/quiz/${roomCode}`
+
+##### router.js
+- Added `/party/quiz/<code>` route detection
+- Added `handlePartyQuiz(code)` method
+- Added `getPartyQuizCode()` getter
+
+##### PartyQuizView.js (Major Refactor)
+- Added MVP mode that uses HTTP polling instead of WebRTC PartySession
+- Updated constructor to support both approaches:
+  - New: roomCode from URL/sessionStorage, fetch quiz from API
+  - Legacy: PartySession object with WebRTC
+- Updated `_renderScoreboard()` to work with both modes
+- Updated `_startTimer()` to calculate time locally when no session
+- Updated `_selectOption()` to call API when no session
+- Added `_onTimerExpired()` for MVP mode
+- Added `_startPolling()` and `_stopPolling()` for score updates
+
+##### party-api.js
+- Added `submitAnswer()` function for answer submission
+
+##### rooms.php (PHP endpoint)
+- Added `/answer` endpoint (MVP: acknowledges receipt, no scoring yet)
+
+#### Learnings
+
+1. **Dual-mode pattern works well** - Supporting both legacy (WebRTC session) and new (HTTP polling MVP) approaches in the same view enables incremental migration.
+
+2. **Session storage for cross-view state** - Using sessionStorage to pass participantId, roomCode, and isHost between views is simple and effective.
+
+3. **Local timer calculation** - For MVP mode, calculating remaining time locally (`Date.now() - questionStartTime`) works well without needing server sync.
+
+4. **Test-first approach pays off** - Extending the E2E test before implementing helped catch issues early and verify the complete flow.
+
+#### Current Test Coverage
+
+```
+Multi-User Flow:
+✅ Host creates room
+✅ Guest joins room
+✅ Both see participant list
+✅ Host clicks Start Quiz
+✅ Host navigates to PartyQuizView
+✅ Guest auto-navigates via polling
+✅ Both see question text
+✅ Timer is visible
+```
+
+#### Remaining for Full P2P
+
+1. Answer submission with scoring (currently MVP placeholder)
+2. Score updates via polling
+3. Question sync across participants
+4. Results view after quiz ends
+5. WebRTC for real-time communication (optional enhancement)
