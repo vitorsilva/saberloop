@@ -205,6 +205,35 @@ export async function endRoom(code, hostId) {
 }
 
 /**
+ * Advance to the next question (host only).
+ *
+ * @param {string} code - Room code
+ * @param {string} hostId - Host's participant ID
+ * @returns {Promise<Object>} Updated room data
+ */
+export async function advanceQuestion(code, hostId) {
+  const baseUrl = getSignalingBaseUrl();
+  const url = `${baseUrl}/endpoints/rooms.php/${code.toUpperCase()}/next`;
+
+  log.info('Advancing question', { code, hostId });
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ hostId }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error?.message || `HTTP ${response.status}`);
+  }
+
+  const result = await response.json();
+  log.info('Question advanced', { code, currentQuestion: result.data?.current_question });
+  return result.data;
+}
+
+/**
  * Submit an answer for the current question.
  *
  * @param {string} code - Room code

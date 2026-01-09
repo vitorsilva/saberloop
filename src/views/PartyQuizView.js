@@ -13,7 +13,7 @@ import { createLiveScoreboard } from '../components/LiveScoreboard.js';
 import { shuffleOptions } from '../utils/shuffle.js';
 import { logger } from '../utils/logger.js';
 import router from '../core/router.js';
-import { getRoom, submitAnswer as submitAnswerApi } from '../services/party-api.js';
+import { getRoom, submitAnswer as submitAnswerApi, advanceQuestion as advanceQuestionApi } from '../services/party-api.js';
 
 const log = logger.child({ module: 'PartyQuizView' });
 
@@ -42,6 +42,7 @@ export default class PartyQuizView extends BaseView {
 
     this.selectedAnswer = null;
     this.hasAnswered = false;
+    this.timerExpiredHandled = false;
     this.timerInterval = null;
     this.pollInterval = null;
     this.shuffledOptions = null;
@@ -556,14 +557,131 @@ export default class PartyQuizView extends BaseView {
    *
    * @private
    */
-  _onTimerExpired() {
-    if (this.hasAnswered) return;
+  async _onTimerExpired() {
+    if (this.timerExpiredHandled) return;
+    this.timerExpiredHandled = true;
 
-    log.info('Timer expired, auto-advancing');
-    this.hasAnswered = true;
-    this._updateStatus(t('party.timeUp'));
+    log.info('Timer expired');
 
-    // TODO: Submit no-answer to API, wait for next question poll
+    // Mark as answered if not already
+    if (!this.hasAnswered) {
+      this.hasAnswered = true;
+      this._updateStatus(t('party.timeUp'));
+
+      // Submit no-answer (-1) to record the miss
+      try {
+        await submitAnswerApi(
+          this.roomCode,
+          this.participantId,
+          this.currentQuestion,
+          -1, // No answer
+          this.secondsPerQuestion * 1000 // Max time
+        );
+      } catch (error) {
+        log.error('Failed to submit no-answer', { error: error.message });
+      }
+    }
+
+    // Host advances to next question after a brief delay
+    if (this.isHost) {
+      this._updateStatus(t('party.loading') || 'Loading next question...');
+
+      // Wait 2 seconds for everyone to see feedback
+      setTimeout(async () => {
+        try {
+          const roomData = await advanceQuestionApi(this.roomCode, this.participantId);
+
+          if (roomData.status === 'ended') {
+            this._onQuizEnd([]);
+          } else {
+            // Move to next question
+            this._moveToQuestion(roomData.current_question, roomData);
+          }
+        } catch (error) {
+          log.error('Failed to advance question', { error: error.message });
+        }
+      }, 2000);
+    }
+  }
+
+  /**
+   * Move to a specific question.
+   *
+   * @private
+   * @param {number} questionIndex - Question index to move to
+   * @param {Object} roomData - Room data from API
+   */
+  _moveToQuestion(questionIndex, roomData) {
+    log.info('Moving to question', { questionIndex });
+
+    // Update state
+    this.currentQuestion = questionIndex;
+    this.hasAnswered = false;
+    this.timerExpiredHandled = false;
+    this.questionStartTime = Date.now();
+
+    // Get new question
+    const question = this.quiz.questions[questionIndex];
+    if (!question) {
+      log.error('Question not found', { questionIndex });
+      return;
+    }
+
+    // Shuffle new options
+    this._shuffleCurrentQuestion(question);
+
+    // Update UI
+    const questionText = this.querySelector('#questionText');
+    if (questionText) {
+      questionText.textContent = question.question;
+    }
+
+    const optionsContainer = this.querySelector('#optionsContainer');
+    if (optionsContainer) {
+      optionsContainer.innerHTML = this._renderOptions(question);
+
+      // Re-attach option listeners
+      const optionBtns = optionsContainer.querySelectorAll('.option-btn');
+      optionBtns.forEach((btn) => {
+        this.addEventListener(btn, 'click', () => {
+          if (this.hasAnswered) return;
+          const index = parseInt(/** @type {HTMLElement} */ (btn).dataset.index);
+          this._selectOption(index);
+        });
+      });
+    }
+
+    // Update header
+    const header = this.querySelector('.text-sm.font-medium');
+    if (header) {
+      header.textContent = t('party.question', {
+        current: questionIndex + 1,
+        total: this.quiz.questions.length,
+      });
+    }
+
+    // Update participants/scores
+    if (roomData.participants) {
+      this.participants = this._mapParticipants(roomData.participants);
+      this._renderScoreboard();
+    }
+
+    // Reset timer display
+    const timerText = this.querySelector('#timerText');
+    if (timerText) {
+      timerText.textContent = String(this.secondsPerQuestion);
+      timerText.classList.remove('text-red-500');
+      timerText.classList.add('text-primary');
+    }
+
+    const progressBar = this.querySelector('#progressBar');
+    if (progressBar) {
+      progressBar.style.width = '100%';
+      progressBar.classList.remove('bg-red-500');
+      progressBar.classList.add('bg-primary');
+    }
+
+    this._updateStatus(t('party.thinking'));
   }
 
   /**
@@ -620,15 +738,20 @@ export default class PartyQuizView extends BaseView {
           return;
         }
 
+        // Check for question change (non-host only, host controls advancement)
+        const serverQuestion = roomData.current_question ?? 0;
+        if (serverQuestion !== this.currentQuestion) {
+          log.info('Question changed via poll', { from: this.currentQuestion, to: serverQuestion });
+          this._moveToQuestion(serverQuestion, roomData);
+          return;
+        }
+
         // Update participants/scores
         const newParticipants = this._mapParticipants(roomData.participants || []);
         if (JSON.stringify(newParticipants) !== JSON.stringify(this.participants)) {
           this.participants = newParticipants;
           this._renderScoreboard();
         }
-
-        // Check for question change (would need backend support)
-        // TODO: Backend needs to track currentQuestion per room
       } catch (error) {
         log.error('Poll failed', { error: error.message });
       }

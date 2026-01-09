@@ -150,6 +150,7 @@ class RoomManager
         $room['id'] = (int) $room['id'];
         $room['max_participants'] = (int) $room['max_participants'];
         $room['seconds_per_question'] = (int) $room['seconds_per_question'];
+        $room['current_question'] = (int) ($room['current_question'] ?? 0);
         $room['quiz_data'] = $room['quiz_data'] ? json_decode($room['quiz_data'], true) : null;
         $room['participants'] = $this->getParticipants((int) $room['id']);
         return $room;
@@ -419,6 +420,51 @@ class RoomManager
         ');
 
         $stmt->execute([$ip, $action]);
+    }
+
+    /**
+     * Advance to the next question (host only).
+     *
+     * @param string $code Room code
+     * @param string $hostId Host UUID (for authorization)
+     * @return array Updated room data with new current_question
+     * @throws Exception If not authorized or no more questions
+     */
+    public function advanceQuestion(string $code, string $hostId): array
+    {
+        $room = $this->getRoomByCode($code);
+
+        if (!$room) {
+            throw new Exception('Room not found', 404);
+        }
+
+        if ($room['host_id'] !== $hostId) {
+            throw new Exception('Only the host can advance questions', 403);
+        }
+
+        if ($room['status'] !== 'playing') {
+            throw new Exception('Quiz is not active', 400);
+        }
+
+        $currentQuestion = (int) $room['current_question'];
+        $totalQuestions = count($room['quiz_data']['questions'] ?? []);
+        $nextQuestion = $currentQuestion + 1;
+
+        if ($nextQuestion >= $totalQuestions) {
+            // No more questions - end the quiz
+            $this->endRoom($code, $hostId);
+            return $this->getRoomById((int) $room['id']);
+        }
+
+        // Advance to next question
+        $stmt = $this->db->prepare('
+            UPDATE party_rooms
+            SET current_question = ?
+            WHERE id = ?
+        ');
+        $stmt->execute([$nextQuestion, (int) $room['id']]);
+
+        return $this->getRoomById((int) $room['id']);
     }
 
     /**

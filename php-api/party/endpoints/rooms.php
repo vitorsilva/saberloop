@@ -101,6 +101,16 @@ try {
         ApiHelper::success(['ended' => true]);
     }
 
+    // Route: POST /rooms/{code}/next - Advance to next question (host only)
+    if ($method === 'POST' && count($segments) === 2 && $segments[1] === 'next') {
+        $code = $segments[0];
+        $body = ApiHelper::getJsonBody();
+        $hostId = ApiHelper::requireField($body, 'hostId');
+
+        $room = $roomManager->advanceQuestion($code, $hostId);
+        ApiHelper::success($room);
+    }
+
     // Route: POST /rooms/{code}/answer - Submit answer
     if ($method === 'POST' && count($segments) === 2 && $segments[1] === 'answer') {
         $code = $segments[0];
