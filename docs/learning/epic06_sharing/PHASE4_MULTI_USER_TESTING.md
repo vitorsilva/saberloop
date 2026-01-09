@@ -691,6 +691,34 @@ No WebRTC required for basic functionality!
 3. **Consider automated migrations** - Add a `migrate.php` endpoint (protected) that can be called post-deploy
 4. **Document in deploy script** - At minimum, the deploy script should list any `.sql` files in migrations/ that may need to be run
 
+### ❌ Config Management Issue: Wrong Database Host on Production
+
+**What happened:** The `config.local.php` on the VPS had `host: 'mysql'` which is the Docker container hostname, not valid for production (should be `localhost`).
+
+**Error shown:**
+```
+❌ Connection failed!
+Error: SQLSTATE[HY000] [2005] Unknown MySQL server host 'mysql' (-2)
+```
+
+**Root cause unclear:** The wrong config was on the production VPS. Possible causes:
+1. Accidentally uploaded local Docker config to production
+2. Config created during earlier phase with wrong values
+3. Copy-paste error when setting up production
+
+**Fix applied:** Manually edited `config.local.php` on VPS via cPanel with correct production credentials:
+- `host: 'localhost'` (not 'mysql')
+- `dbname: 'mdemaria_saberloop_party'`
+- `username: 'mdemaria_party'`
+
+**Lesson:** Config files are environment-specific and gitignored for good reason. But this means they're also invisible to deployment scripts and easy to misconfigure.
+
+### Action Items for Config Management
+
+1. **Add config validation** - `test-db.php` or deploy script should validate config looks correct for environment
+2. **Document expected values** - Add comments in config.local.example.php showing production vs Docker examples
+3. **Consider environment detection** - Config could auto-detect environment and warn if values seem wrong
+
 ### Deployment Checklist (Manual for Now)
 
 When deploying party backend changes:
