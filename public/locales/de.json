@@ -284,5 +284,11 @@
       "go_home": "Zur Startseite",
       "try_again": "Erneut Versuchen"
     }
+  },
+  "mode": {
+    "learn": "Lernen",
+    "party": "Party",
+    "switchToLearn": "Zum Lernmodus wechseln",
+    "switchToParty": "Zum Partymodus wechseln"
   }
 }

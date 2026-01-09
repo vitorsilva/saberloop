@@ -8,6 +8,7 @@
   import { getStorageBreakdown } from '../utils/storage.js';
   import { showDeleteDataModal } from '../components/DeleteDataModal.js';
   import { deleteAllUserData } from '../services/data-service.js';
+  import { createModeToggle } from '../components/ModeToggle.js';
 
   export default class SettingsView extends BaseView {
     constructor() {
@@ -22,7 +23,8 @@
           <div class="flex items-center p-4 pb-2 justify-between
   bg-background-light dark:bg-background-dark">
             <h1 data-testid="settings-title" class="text-text-light dark:text-text-dark text-lg font-bold
-  leading-tight tracking-[-0.015em] flex-1">${t('common.settings')}</h1>
+  leading-tight tracking-[-0.015em]">${t('common.settings')}</h1>
+            <div id="modeToggleContainer"></div>
           </div>
 
           <div class="flex-grow px-4">
@@ -247,6 +249,14 @@
           </div>
         </div>
       `);
+
+      // Mount mode toggle (behind feature flag)
+      if (isFeatureEnabled('MODE_TOGGLE')) {
+        const toggleContainer = this.querySelector('#modeToggleContainer');
+        if (toggleContainer) {
+          toggleContainer.appendChild(createModeToggle());
+        }
+      }
 
       // Load saved settings into form fields
       this.loadSettings();

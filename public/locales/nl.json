@@ -284,5 +284,11 @@
       "go_home": "Naar Home",
       "try_again": "Opnieuw Proberen"
     }
+  },
+  "mode": {
+    "learn": "Leren",
+    "party": "Feest",
+    "switchToLearn": "Naar Leermodus",
+    "switchToParty": "Naar Feestmodus"
   }
 }

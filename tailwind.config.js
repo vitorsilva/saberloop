@@ -8,7 +8,8 @@
     theme: {
       extend: {
         colors: {
-          "primary": "#4A90E2",
+          "primary": "var(--color-primary)",  // Changed from "#4A90E2"
+          "primary-hover": "var(--color-primary-hover)",  // Add this new color
           "background-light": "#F8F9FA",
           "background-dark": "#121212",
           "card-light": "#FFFFFF",

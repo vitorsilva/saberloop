@@ -284,5 +284,11 @@
       "go_home": "Gå til Hjem",
       "try_again": "Prøv Igjen"
     }
+  },
+  "mode": {
+    "learn": "Lær",
+    "party": "Fest",
+    "switchToLearn": "Bytt til Læringsmodus",
+    "switchToParty": "Bytt til Festmodus"
   }
 }

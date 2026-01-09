@@ -284,5 +284,11 @@
       "go_home": "Aller à l'Accueil",
       "try_again": "Réessayer"
     }
+  },
+  "mode": {
+    "learn": "Apprendre",
+    "party": "Fête",
+    "switchToLearn": "Passer en Mode Apprentissage",
+    "switchToParty": "Passer en Mode Fête"
   }
 }

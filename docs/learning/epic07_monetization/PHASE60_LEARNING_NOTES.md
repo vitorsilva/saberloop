@@ -199,7 +199,7 @@ maestro test .maestro/flows/
 - [x] Check for existing AdSense account
 - [x] Complete AdSense sign-up
 - [x] Get publisher ID: `ca-pub-9849708569219157`
-- [ ] Complete payment info (PAGAMENTOS)
+- [x] Complete payment info (PAGAMENTOS) ✅ 2026-01-07
 - [x] Add verification script to index.html (app)
 - [x] Add verification script to landing/index.html (root) - **required for validation**
 - [x] Create ads.txt in public/ (app)

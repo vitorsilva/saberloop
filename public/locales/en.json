@@ -284,5 +284,11 @@
       "go_home": "Go to Home",
       "try_again": "Try Again"
     }
+  },
+  "mode": {
+    "learn": "Learn",
+    "party": "Party",
+    "switchToLearn": "Switch to Learning Mode",
+    "switchToParty": "Switch to Party Mode"
   }
 }

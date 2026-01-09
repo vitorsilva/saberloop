@@ -14,7 +14,8 @@
     defaultGradeLevel: 'middle school',
     questionsPerQuiz: '5',
     difficulty: 'mixed',
-    selectedModel: DEFAULT_MODEL
+    selectedModel: DEFAULT_MODEL,
+    appMode: 'learning'
   };
 
   // Export for use in other modules
