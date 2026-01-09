@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Saberloop Learning Blog - Evidence-based study techniques, learning science, and tips to learn anything faster.">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="robots" content="index, follow">
+    <title>Learning Blog - Saberloop</title>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://saberloop.com/blog/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://saberloop.com/blog/">
+    <meta property="og:title" content="Saberloop Learning Blog - Study Smarter, Not Harder">
+    <meta property="og:description" content="Evidence-based study techniques, learning science, and tips to learn anything faster.">
+    <meta property="og:image" content="https://saberloop.com/app/icons/og-image.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Saberloop Learning Blog">
+    <meta name="twitter:description" content="Evidence-based study techniques and learning science.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/app/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/app/icons/icon-192x192.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZP1TLMYBFM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ZP1TLMYBFM');
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9849708569219157"
+        crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #e55a2b;
+            --background: #1a1a2e;
+            --background-light: #252542;
+            --text: #ffffff;
+            --text-muted: #a0a0b0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .header-nav a:hover {
+            color: var(--primary);
+        }
+
+        .header-cta {
+            background: var(--primary);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .header-cta:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 140px 0 60px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Blog Posts Grid */
+        .blog-grid {
+            padding: 40px 0 80px;
+        }
+
+        .blog-card {
+            background: var(--background-light);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-card a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .blog-card-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .blog-card-category {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .blog-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .blog-card h2:hover {
+            color: var(--primary);
+        }
+
+        .blog-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 16px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--background-light);
+        }
+
+        footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 16px;
+        }
+
+        footer a:hover {
+            color: var(--primary);
+        }
+
+        .footer-links {
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .header-nav {
+                display: none;
+            }
+
+            .blog-card {
+                padding: 24px;
+            }
+
+            .blog-card h2 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/app/icons/icon-192x192.png" alt="Saberloop" width="40" height="40">
+                Saberloop
+            </a>
+            <nav class="header-nav">
+                <a href="/">Home</a>
+                <a href="/blog/" style="color: var(--primary);">Blog</a>
+                <a href="/app/" class="header-cta">Try Free</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>Learn <span>Smarter</span>, Not Harder</h1>
+            <p>Evidence-based study techniques, learning science insights, and practical tips to help you master any subject faster.</p>
+        </div>
+    </section>
+
+    <!-- Blog Posts -->
+    <section class="blog-grid">
+        <div class="container">
+            <article class="blog-card">
+                <a href="/blog/testing-effect/">
+                    <div class="blog-card-meta">
+                        <span class="blog-card-category">Learning Science</span>
+                        <span>8 min read</span>
+                    </div>
+                    <h2>Why Testing Beats Re-Reading: The Science of the Testing Effect</h2>
+                    <p>Research shows that testing yourself is one of the most effective ways to learn. Discover why taking quizzes helps you remember more than simply re-reading your notes, and how to apply this technique to your studies.</p>
+                    <span class="read-more">Read article &rarr;</span>
+                </a>
+            </article>
+
+            <article class="blog-card">
+                <a href="/blog/spaced-repetition/">
+                    <div class="blog-card-meta">
+                        <span class="blog-card-category">Study Techniques</span>
+                        <span>10 min read</span>
+                    </div>
+                    <h2>Spaced Repetition: The Memory Technique That Actually Works</h2>
+                    <p>Learn about the Ebbinghaus forgetting curve and how spacing out your review sessions can help transfer knowledge from short-term to long-term memory. Plus, practical schedules you can start using today.</p>
+                    <span class="read-more">Read article &rarr;</span>
+                </a>
+            </article>
+
+            <article class="blog-card">
+                <a href="/blog/active-recall/">
+                    <div class="blog-card-meta">
+                        <span class="blog-card-category">Study Techniques</span>
+                        <span>7 min read</span>
+                    </div>
+                    <h2>Active Recall: The Most Powerful Study Technique You're Not Using</h2>
+                    <p>Stop passively highlighting textbooks. Active recall forces your brain to retrieve information, strengthening neural pathways and dramatically improving retention. Here's how to implement it.</p>
+                    <span class="read-more">Read article &rarr;</span>
+                </a>
+            </article>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/app/">Try Saberloop</a>
+                <a href="https://github.com/vitorsilva/saberloop" target="_blank" rel="noopener">GitHub</a>
+                <a href="/privacy.html">Privacy Policy</a>
+            </div>
+            <p>&copy; 2025 Saberloop. Built with Claude AI.</p>
+        </div>
+    </footer>
+</body>
+</html>

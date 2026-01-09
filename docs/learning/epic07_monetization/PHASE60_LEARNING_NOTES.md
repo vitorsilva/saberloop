@@ -1,11 +1,90 @@
 # Phase 60: AdSense Monetization - Learning Notes
 
-**Status:** Awaiting AdSense Approval (implementation complete)
+**Status:** ❌ AdSense REJECTED - "Low value content" (2026-01-09)
 **Started:** 2026-01-07
 **Branch:** `feature/phase60-adsense`
 **Worktree:** `demo-pwa-app-phase60`
 
-**Summary:** All implementation and testing complete. Waiting 1-7 days for Google AdSense approval before adding real ad unit IDs (Phase 60.11).
+**Summary:** Implementation complete but AdSense rejected for "low value content". Landing page is a marketing brochure - Google wants sites with substantive original content (blog, articles, tutorials).
+
+---
+
+## AdSense Rejection: 2026-01-09
+
+### Rejection Details
+
+**Status:** Site ownership verified ✅, but policy violation detected ⚠️
+
+**Violation:** "Low value content"
+> O seu site ainda não cumpre os critérios de utilização na rede de publicadores da Google.
+
+**Google's feedback links:**
+- Minimum content requirements
+- High quality content and good user experience
+- Webmaster guidelines about thin content
+- Webmaster quality guidelines
+
+### Root Cause Analysis
+
+The landing page (`saberloop.com`) is a **marketing/promotional page** for the app:
+- Single-page design promoting the app features
+- CTA buttons to Play Store and web app
+- Screenshots and feature descriptions
+- No blog, articles, or educational content
+
+**Google's perspective:** This page exists to promote an app and show ads, not to provide valuable content that users come to read. It's "thin content" - a brochure, not a content destination.
+
+### Options to Fix
+
+| Option | Description | Effort | Success Rate |
+|--------|-------------|--------|--------------|
+| **Add blog/content** | Create articles about learning, study tips, quiz strategies | High | High |
+| **Add static pages** | FAQ, tutorials, how-to guides, about page | Medium | Medium |
+| **Wait & reapply** | Build traffic/history, reapply in months | Low | Low |
+| **Skip AdSense** | Focus on donations, premium features | Low | N/A |
+
+### What Would Help
+
+To get AdSense approved, the site needs **original, valuable content**:
+- Blog posts about effective study techniques
+- Articles about learning with AI
+- Quiz topic guides (history, science, math topics)
+- Educational resources
+- FAQ page with substantial answers
+
+### Decision: Add Educational Blog Content
+
+**Approach chosen:** Create a blog section with educational articles about learning science to provide substantive content that Google can index.
+
+**Implementation (branch: `feature/landing-blog-content`):**
+
+Created 3 educational blog posts based on the learning science from `docs/product-info/quiz-generator-exploration.md`:
+
+1. **The Testing Effect** (`/blog/testing-effect/`)
+   - Why testing yourself is more effective than re-reading
+   - Research by Roediger and Karpicke (2006)
+   - Practical applications
+
+2. **Spaced Repetition** (`/blog/spaced-repetition/`)
+   - The Ebbinghaus forgetting curve
+   - 1-3-7-14-30 day review schedule
+   - How to implement spaced practice
+
+3. **Active Recall** (`/blog/active-recall/`)
+   - Passive vs. active learning comparison
+   - Blank page method, Feynman technique
+   - Why effortful retrieval works
+
+**Why this should help:**
+- Provides genuine educational value (not just promotional content)
+- Aligns with Saberloop's mission (learning tools)
+- Content Google can index and recognize as valuable
+- Each article includes AdSense script
+
+**Next steps:**
+1. Deploy blog content
+2. Wait 1-2 weeks for Google to crawl
+3. Resubmit for AdSense review
 
 ---
 
@@ -208,7 +287,7 @@ maestro test .maestro/flows/
 - [x] Deploy landing page to production
 - [x] Validate site in AdSense dashboard ✅
 - [x] Set up GDPR consent banner (Google CMP with 2 options)
-- [ ] Wait for Google approval (site review) - **IN PROGRESS** (1-7 days typical)
+- [x] Wait for Google approval (site review) - **❌ REJECTED** (2026-01-09) - "Low value content"
 
 ### 60.2 Privacy Policy Update
 - [x] Added "Advertising" section to `landing/privacy.html`
@@ -292,7 +371,7 @@ generation (requires OpenRouter API key). Sample quizzes skip the loading view.
 Full ad container testing is covered by E2E tests which can mock the loading state.
 
 ### Remaining Phases
-- [ ] 60.11 (Post-approval) Add real ad unit IDs - waiting for Google approval (1-7 days)
+- [ ] 60.11 (Post-approval) Add real ad unit IDs - **BLOCKED** (AdSense rejected)
 
 ### Future Enhancements (Out of Scope)
 - **Ads on quiz replay:** Currently ads only show during NEW quiz generation. Users who only replay existing quizzes (from cache) never see ads. Consider adding a brief loading screen with ad when replaying cached quizzes.
