@@ -50,9 +50,6 @@ export default class ResultsView extends BaseView {
       message = t('results.keepPracticing');
     }
 
-    // Check if features are enabled
-    const showUsageCosts = isFeatureEnabled('SHOW_USAGE_COSTS');
-
     // Get usage data for cost display
     const usage = state.get('quizUsage');
     const model = state.get('quizModel');
@@ -139,7 +136,7 @@ export default class ResultsView extends BaseView {
           </div>
 
           <!-- Usage Cost Card -->
-          ${showUsageCosts && usageSummary ? `
+          ${usageSummary ? `
           <div data-testid="usage-cost-card" class="mt-4 p-4 rounded-xl bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark">
             <div class="flex items-start gap-3">
               <span class="material-symbols-outlined text-primary text-xl mt-0.5">info</span>

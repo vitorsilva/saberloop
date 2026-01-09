@@ -325,14 +325,12 @@
           const currentModel = getSelectedModel();
           const modelName = getModelDisplayName(currentModel);
 
-          // Fetch credits balance if feature is enabled
-          const showCredits = isFeatureEnabled('SHOW_USAGE_COSTS');
+          // Fetch credits balance
+          const credits = await getCreditsBalance();
           let creditsHtml = '';
-          if (showCredits) {
-            const credits = await getCreditsBalance();
-            if (credits) {
-              // Paid account with credits
-              creditsHtml = `
+          if (credits) {
+            // Paid account with credits
+            creditsHtml = `
             <!-- Credits Balance -->
             <a href="https://openrouter.ai/activity" target="_blank" rel="noopener noreferrer"
               class="bg-card-light dark:bg-card-dark rounded-xl p-4 flex items-center justify-between hover:bg-primary/10 transition-colors">
@@ -345,9 +343,9 @@
               </div>
               <span class="material-symbols-outlined text-subtext-light dark:text-subtext-dark">open_in_new</span>
             </a>`;
-            } else {
-              // Free tier account (no credits)
-              creditsHtml = `
+          } else {
+            // Free tier account (no credits)
+            creditsHtml = `
             <!-- Free Tier Status -->
             <a href="https://openrouter.ai/activity" target="_blank" rel="noopener noreferrer"
               class="bg-card-light dark:bg-card-dark rounded-xl p-4 flex items-center justify-between hover:bg-primary/10 transition-colors">
@@ -360,7 +358,6 @@
               </div>
               <span class="material-symbols-outlined text-subtext-light dark:text-subtext-dark">open_in_new</span>
             </a>`;
-            }
           }
 
           accountSection.innerHTML = `

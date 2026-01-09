@@ -122,7 +122,7 @@
       }
 
       // Format cost if available and feature enabled
-      const showCost = isFeatureEnabled('SHOW_USAGE_COSTS') && session.usage;
+      const showCost = session.usage;
       let costStr = '';
       if (showCost) {
         const isFree = isFreeModel(session.model);
