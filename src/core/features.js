@@ -16,10 +16,6 @@
       phase: 'ENABLED',  // Enabled for testing
       description: 'AI-generated explanations for incorrect answers'
     },
-    CONTINUE_TOPIC: {
-      phase: 'ENABLED',  // Enabled for E2E testing
-      description: 'Continue quiz on same topic with new questions'
-    },
     SHARE_FEATURE: {
       phase: 'ENABLED',  // Share quiz results to social media
       description: 'Share quiz results with text, link, and image'

@@ -52,7 +52,6 @@ export default class ResultsView extends BaseView {
 
     // Check if features are enabled
     const showExplanationButton = isFeatureEnabled('EXPLANATION_FEATURE');
-    const showContinueButton = isFeatureEnabled('CONTINUE_TOPIC');
     const showShareButton = isFeatureEnabled('SHARE_FEATURE');
     const showShareQuizButton = isFeatureEnabled('SHARE_QUIZ');
     const showUsageCosts = isFeatureEnabled('SHOW_USAGE_COSTS');
@@ -198,7 +197,6 @@ export default class ResultsView extends BaseView {
         <div class="fixed bottom-0 left-0 w-full bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark">
           <!-- CTA Buttons -->
           <div class="p-4 pb-0">
-            ${showContinueButton ? `
             <div class="flex gap-3">
               <button id="continueTopicBtn" class="flex-1 rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
                 ${t('results.continueOnTopic')}
@@ -208,11 +206,6 @@ export default class ResultsView extends BaseView {
                 ${t('results.tryAnother')}
               </button>
             </div>
-            ` : `
-            <button id="tryAnotherBtn" class="w-full rounded-xl bg-primary h-14 text-center text-base font-bold text-white hover:bg-primary/90 shadow-lg shadow-primary/30">
-              ${t('results.tryAnother')}
-            </button>
-            `}
           </div>
 
           <!-- Bottom Navigation Bar -->
@@ -304,14 +297,12 @@ export default class ResultsView extends BaseView {
       this.navigateTo('/topic-input');
     });
 
-    // Continue on topic button (only if feature is enabled)
-    if (isFeatureEnabled('CONTINUE_TOPIC')) {
-      const continueTopicBtn = this.querySelector('#continueTopicBtn');
-      if (continueTopicBtn) {
-        this.addEventListener(continueTopicBtn, 'click', () => {
-          this.handleContinueTopic();
-        });
-      }
+    // Continue on topic button
+    const continueTopicBtn = this.querySelector('#continueTopicBtn');
+    if (continueTopicBtn) {
+      this.addEventListener(continueTopicBtn, 'click', () => {
+        this.handleContinueTopic();
+      });
     }
 
     // Explanation buttons (only if feature is enabled)
