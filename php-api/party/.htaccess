@@ -1,0 +1,33 @@
+# Party Backend .htaccess
+# Security and CORS configuration
+
+# Block access to sensitive files
+<FilesMatch "^(config\.local\.php)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block access to migrations directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^migrations/ - [F,L]
+</IfModule>
+
+# CORS headers for API endpoints
+<IfModule mod_headers.c>
+    # Allow credentials
+    Header always set Access-Control-Allow-Credentials "true"
+
+    # Handle preflight requests
+    <If "%{REQUEST_METHOD} == 'OPTIONS'">
+        Header always set Access-Control-Allow-Methods "GET, POST, DELETE, OPTIONS"
+        Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+        Header always set Access-Control-Max-Age "86400"
+    </If>
+</IfModule>
+
+# PHP settings
+<IfModule mod_php.c>
+    php_value max_execution_time 30
+    php_value memory_limit 64M
+</IfModule>
