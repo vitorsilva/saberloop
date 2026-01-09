@@ -19,7 +19,7 @@ This is a learning-focused Progressive Web App (PWA) project that has evolved th
 
 The project follows a guided, incremental learning methodology with detailed documentation in `docs/learning/epic0X_*/` directories.
 
-**Current Status:** Epic 10 (Hygiene) | Feature Flag Cleanup - Planning
+**Current Status:** Epic 6 Complete | Party Mode Live in Production
 
 **Repository**: https://github.com/vitorsilva/saberloop
 
