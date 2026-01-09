@@ -122,15 +122,85 @@ curl .../signal.php/5LS54T/guest-456
 4. `feat(party-backend): add Database, RoomManager, SignalingManager`
 5. `feat(party-backend): add API endpoints and helpers`
 
-### Next Steps (Sub-Phase 3b: P2P Service)
+---
 
-- [ ] Create SignalingClient.js (frontend HTTP polling)
-- [ ] Create P2PService.js (WebRTC wrapper)
-- [ ] Implement WebRTC connection flow
-- [ ] Handle ICE candidates
-- [ ] Implement reconnection logic
-- [ ] Unit tests with WebRTC mocks
-- [ ] Integration test with VPS signaling
+## Session: 2026-01-09 (Sub-Phase 3b: P2P Service)
+
+### Completed
+
+- [x] Create SignalingClient.js (HTTP polling client)
+- [x] Create P2PService.js (WebRTC connection manager)
+- [x] Implement WebRTC offer/answer flow
+- [x] Handle ICE candidates
+- [x] Implement reconnection logic (max 3 attempts)
+- [x] Unit tests with WebRTC mocks (43 tests)
+- [x] Integration test with VPS signaling ✅
+
+### Implementation Details
+
+**SignalingClient.js** (`src/services/signaling-client.js`):
+- HTTP polling-based signaling for WebRTC setup
+- Methods: `sendOffer()`, `sendAnswer()`, `sendIceCandidate()`, `getPeers()`
+- Polling with configurable interval (default 500ms)
+- Auto-stop after 5 consecutive errors
+- Error handling with informative messages
+
+**P2PService.js** (`src/services/p2p-service.js`):
+- WebRTC connection management wrapper
+- ICE servers: Google STUN servers (free, public)
+- Data channel: ordered, labeled "party"
+- Connection states: new → connecting → connected → disconnected/failed
+- Automatic reconnection on failure (up to 3 attempts)
+- Event callbacks: `onMessage()`, `onPeerConnected()`, `onPeerDisconnected()`
+- Broadcast to all peers: `broadcast()`
+
+### Test Results
+
+**Unit Tests (43 total)**:
+- SignalingClient: 17 tests
+- P2PService: 26 tests
+
+All tests use mocked WebRTC APIs (RTCPeerConnection, RTCDataChannel, etc.)
+
+**VPS Integration Test**:
+```bash
+# Poll (empty)
+curl "https://saberloop.com/party/endpoints/signal.php/ABC123/user-1"
+# → {"success":true,"data":{"messages":[],"count":0}}
+
+# Send offer
+curl -X POST .../signal.php -d '{"roomCode":"ABC123","fromId":"user-1","toId":"user-2","type":"offer","payload":{"sdp":"test","type":"offer"}}'
+# → {"success":true,"data":{"messageId":2,"sent":true}}
+
+# Receive offer (as user-2)
+curl "https://saberloop.com/party/endpoints/signal.php/ABC123/user-2"
+# → {"success":true,"data":{"messages":[{...offer...}],"count":1}}
+```
+
+### Tips & Gotchas
+
+1. **Async test timing**: When testing async callbacks (like polling handlers), add a small delay with `await new Promise(r => setTimeout(r, 10))` before assertions.
+
+2. **JSON parse error fallback**: When server returns non-JSON error response, fall back to `HTTP ${status}` instead of "Unknown error" - more informative.
+
+3. **WebRTC mocking strategy**: Create MockRTCPeerConnection and MockRTCDataChannel classes with helper methods like `_setConnectionState()` and `_receiveMessage()` to simulate events.
+
+4. **ICE servers**: Using public Google STUN servers is fine for most cases. TURN servers (for relay) would require paid hosting.
+
+### Commits Made
+
+1. `feat(party): add SignalingClient for WebRTC signaling` - HTTP polling client
+2. `feat(party): add P2PService for WebRTC connections` - WebRTC wrapper
+3. `test: add unit tests for P2P and signaling services` - 43 tests + JSON error fix
+
+### Next Steps (Sub-Phase 3c: Party UI)
+
+- [ ] Create PartyLobbyView (host/join screens)
+- [ ] Create PartyGameView (in-game UI)
+- [ ] Create PartyResultsView (leaderboard)
+- [ ] Add party mode routing
+- [ ] Integrate with P2PService
+- [ ] Real-time participant list updates
 
 ---
 
