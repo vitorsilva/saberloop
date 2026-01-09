@@ -8,6 +8,7 @@
  */
 
 import { logger } from '../utils/logger.js';
+import { telemetry } from '../utils/telemetry.js';
 
 const log = logger.child({ module: 'party-session' });
 
@@ -300,6 +301,9 @@ export class PartySession {
 
     this._notifyParticipantsChange();
 
+    // Track telemetry
+    telemetry.track('party_room_created', { roomCode });
+
     log.info('Session created', { roomCode, quiz: quiz.topic });
   }
 
@@ -345,6 +349,12 @@ export class PartySession {
     this._notifyParticipantsChange();
     this._broadcastParticipants();
 
+    // Track telemetry
+    telemetry.track('party_room_joined', {
+      roomCode: this.roomCode,
+      participantCount: this.participants.size,
+    });
+
     log.info('Participant added', { peerId, name });
   }
 
@@ -380,6 +390,13 @@ export class PartySession {
     this._notifyStateChange();
     this._notifyParticipantsChange();
     this._startQuestionTimer();
+
+    // Track telemetry
+    telemetry.track('party_room_started', {
+      roomCode: this.roomCode,
+      participantCount: this.participants.size,
+      questionCount: this.quiz.questions.length,
+    });
 
     log.info('Quiz started', { startTime: this.startTime });
   }
@@ -425,6 +442,14 @@ export class PartySession {
 
     this._notifyParticipantsChange();
     this._broadcastScoreUpdate();
+
+    // Track telemetry
+    telemetry.track('party_answer_submitted', {
+      roomCode: this.roomCode,
+      questionIndex,
+      responseTime,
+      correct: isCorrect,
+    });
 
     log.info('Answer received', {
       peerId,
@@ -535,6 +560,14 @@ export class PartySession {
     if (this.onQuizEndCallback) {
       this.onQuizEndCallback(standings);
     }
+
+    // Track telemetry
+    const duration = Date.now() - this.startTime;
+    telemetry.track('party_room_ended', {
+      roomCode: this.roomCode,
+      participantCount: this.participants.size,
+      duration,
+    });
 
     log.info('Quiz ended', { standings: standings.map(p => ({ name: p.name, score: p.score })) });
   }
@@ -795,6 +828,12 @@ export class PartySession {
     this.state = SESSION_STATES.ENDED;
     this.p2p.destroy();
 
+    // Track telemetry
+    telemetry.track('party_room_left', {
+      roomCode: this.roomCode,
+      reason: 'user_left',
+    });
+
     log.info('Left session');
   }
 
@@ -812,6 +851,12 @@ export class PartySession {
       this._broadcastParticipants();
     }
 
+    // Track telemetry
+    telemetry.track('party_room_left', {
+      roomCode: this.roomCode,
+      reason: 'participant_left',
+    });
+
     log.info('Participant left', { peerId });
   }
 
@@ -826,6 +871,13 @@ export class PartySession {
     if (participant) {
       participant.status = 'disconnected';
       this._notifyParticipantsChange();
+
+      // Track telemetry
+      telemetry.track('p2p_disconnected', {
+        roomCode: this.roomCode,
+        peerId,
+        reason: 'connection_lost',
+      });
     }
   }
 
