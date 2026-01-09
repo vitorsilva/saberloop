@@ -318,4 +318,91 @@ test.describe('Capture Party Mode Demo', () => {
 
     console.log('🎬 Capture complete! Video saved to test-results/');
   });
+
+  test('Real Multi-User - Host and Guest in Lobby', async ({ browser }) => {
+    // Create two isolated browser contexts (separate sessions)
+    const hostContext = await browser.newContext();
+    const guestContext = await browser.newContext();
+
+    const hostPage = await hostContext.newPage();
+    const guestPage = await guestContext.newPage();
+
+    // Capture console errors from both pages for debugging
+    hostPage.on('console', msg => {
+      if (msg.type() === 'error') {
+        console.log(`HOST ERROR: ${msg.text()}`);
+      }
+    });
+    guestPage.on('console', msg => {
+      if (msg.type() === 'error') {
+        console.log(`GUEST ERROR: ${msg.text()}`);
+      }
+    });
+
+    try {
+      // Setup both users
+      await setupAuthenticatedState(hostPage);
+      await setupAuthenticatedState(guestPage);
+
+      // Enable party features for both
+      for (const page of [hostPage, guestPage]) {
+        await page.evaluate(() => {
+          localStorage.setItem('__test_feature_MODE_TOGGLE', 'ENABLED');
+          localStorage.setItem('__test_feature_PARTY_SESSION', 'ENABLED');
+        });
+        await page.reload();
+        await page.waitForSelector('[data-testid="welcome-heading"]', { timeout: 10000 });
+      }
+
+      // HOST: Switch to Party mode and create room
+      const hostPartyBtn = hostPage.locator('[data-mode="party"]');
+      await hostPartyBtn.click();
+      await hostPage.waitForSelector('[data-testid="create-party-btn"]');
+      await hostPage.click('[data-testid="create-party-btn"]');
+      await hostPage.waitForURL(/#\/party\/create/);
+
+      // HOST: Select quiz and create room
+      const quizItem = hostPage.locator('.quiz-select-item').first();
+      await quizItem.click();
+      await hostPage.click('#createRoomBtn');
+
+      // HOST: Get room code (strip spaces and dashes from display)
+      await hostPage.waitForSelector('[data-testid="room-code"]', { timeout: 10000 });
+      const roomCodeRaw = await hostPage.locator('[data-testid="room-code"]').textContent();
+      const roomCode = roomCodeRaw.replace(/[\s-]/g, ''); // Remove spaces and dashes
+      console.log(`Room created: ${roomCode}`);
+
+      // GUEST: Switch to Party mode
+      const guestPartyBtn = guestPage.locator('[data-mode="party"]');
+      await guestPartyBtn.click();
+      await guestPage.waitForSelector('[data-testid="join-party-btn"]');
+
+      // GUEST: Join room
+      await guestPage.click('[data-testid="join-party-btn"]');
+      await guestPage.fill('[data-testid="room-code-input"]', roomCode);
+      await guestPage.fill('[data-testid="player-name-input"]', 'TestGuest');
+      await guestPage.click('#joinBtn');
+
+      // VERIFY: Guest appears in host's lobby (wait for participant count to update)
+      await expect(hostPage.locator('text=Participants (2)')).toBeVisible({ timeout: 15000 });
+      console.log('✅ Host sees 2 participants');
+
+      // VERIFY: Guest is in lobby
+      await expect(guestPage.locator('text=Waiting for host to start')).toBeVisible({ timeout: 10000 });
+      console.log('✅ Guest in lobby waiting');
+
+      // TODO: Start quiz and verify PartyQuizView when implemented
+      // For now, we've verified the core multi-user lobby flow works:
+      // - Host creates room
+      // - Guest joins room
+      // - Host sees guest in participant list
+      // - Guest is in lobby waiting for host
+
+      console.log('✅ Real multi-user lobby test passed!');
+
+    } finally {
+      await hostContext.close();
+      await guestContext.close();
+    }
+  });
 });

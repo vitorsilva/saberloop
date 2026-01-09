@@ -1,6 +1,6 @@
 # Phase 4: Multi-User Testing (Real P2P)
 
-**Status:** Planning
+**Status:** In Progress (Lobby flow complete)
 **Priority:** P3 - Quality Assurance
 **Prerequisites:** Phase 3 (Party Session), Docker PHP stack
 
@@ -308,3 +308,132 @@ Phase 4 is complete when:
 - [Phase 3: Party Session](./PHASE3_PARTY_SESSION.md) - Core P2P implementation
 - [Party Mode Demo Video](./PARTY_MODE_DEMO_VIDEO.md) - Simulation approach
 - [Product Info README](../../product-info/README.md) - Asset generation
+
+---
+
+## Learning Notes
+
+### Session: 2026-01-09
+
+#### Completed
+
+- ✅ Wired `CreatePartyView.js` to real party-api
+- ✅ Wired `JoinPartyView.js` to real party-api
+- ✅ Wired `PartyLobbyView.js` to poll for participants
+- ✅ Multi-user lobby test passing (host + guest in same room)
+
+#### Critical Discovery: Integration Gap
+
+**Problem**: Views were built with mock data in Phase 3 but never wired to the real backend.
+
+- `CreatePartyView` had `generateMockRoomCode()` instead of calling real API
+- Views weren't importing from `party-api.js`
+- Phase 3d (UI wiring) was marked complete but implementation was missing
+
+**Fix**: Created `src/services/party-api.js` and wired all three views:
+- `CreatePartyView`: Calls `createRoom()`, polls with `getRoom()`
+- `JoinPartyView`: Calls `joinRoom()`, stores participantId in sessionStorage
+- `PartyLobbyView`: Polls `getRoom()` for participants and game start
+
+#### Difficulties & Solutions
+
+##### 1. Docker Container Name Conflicts
+
+**Problem**: Old containers with same names existed from previous sessions.
+```
+Error response from daemon: Conflict. The container name "/saberloop-mysql" is already in use
+```
+
+**Solution**: Stop and remove old containers before starting:
+```bash
+docker stop <container_id> && docker rm <container_id>
+docker-compose -f docker-compose.php.yml up -d php-api mysql
+```
+
+##### 2. MySQL Connection Error: "No such file or directory"
+
+**Problem**: PHP defaulted to `localhost` which uses socket file instead of TCP.
+
+**Cause**: `config.local.php` was missing, so PHP tried to connect to `localhost` instead of Docker service name `mysql`.
+
+**Solution**: Create `php-api/party/config.local.php`:
+```php
+return [
+    'db' => [
+        'host' => 'mysql',  // Docker service name, NOT localhost
+        'dbname' => 'saberloop',
+        'username' => 'saberloop',
+        'password' => 'saberloop_dev',
+    ],
+];
+```
+
+##### 3. Migration SQL Not Executing
+
+**Problem**: `migrate.php` has a bug that filters out SQL statements starting with comments.
+
+**Workaround**: Run SQL directly via PowerShell pipe:
+```powershell
+Get-Content php-api/party/migrations/001_create_tables.sql | docker-compose -f docker-compose.php.yml exec -T mysql mysql -u saberloop -psaberloop_dev saberloop
+```
+
+##### 4. Participant Mapping Bug (snake_case vs camelCase)
+
+**Problem**: API returns `{id, isHost}` but views expected `{participant_id, is_host}`.
+
+**Symptom**: Host created room, guest joined successfully, but host's polling never showed the guest.
+
+**Fix**: Updated `_mapParticipants()` in both views:
+```javascript
+// Before (wrong):
+{ id: p.participant_id, isHost: p.is_host === 1 }
+
+// After (correct):
+{ id: p.id, isHost: p.isHost === true }
+```
+
+##### 5. CORS Blocking API Requests
+
+**Problem**: Playwright test server runs on port 3000, but CORS only allowed 8888.
+```
+Access to fetch at 'http://localhost:8080/party/endpoints/rooms.php' from origin 'http://localhost:3000' has been blocked by CORS policy
+```
+
+**Solution**: Add `http://localhost:3000` to `config.local.php`:
+```php
+'allowed_origins' => [
+    'https://saberloop.com',
+    'http://localhost:8888',
+    'http://localhost:3000',  // Playwright test server
+],
+```
+
+##### 6. Vite Server Caching Old Code
+
+**Problem**: Test kept using old code despite file changes.
+
+**Cause**: Playwright's `reuseExistingServer: !process.env.CI` was reusing an old Vite server.
+
+**Solution**: Kill the existing server before running tests:
+```powershell
+taskkill //F //PID <pid>
+```
+
+#### Key Learnings
+
+1. **Always verify API response format** - Don't assume field names match between backend and frontend.
+
+2. **CORS for local dev** - When testing cross-origin, add ALL possible origins (both dev and test servers).
+
+3. **Docker service names** - Inside Docker network, use service name (`mysql`) not `localhost`.
+
+4. **Clear caches when debugging** - Kill old servers to ensure fresh code is served.
+
+5. **Integration testing reveals gaps** - Real multi-user testing exposed the mock data that "worked" in isolation.
+
+#### Next Steps
+
+- [ ] Wire `startQuiz()` API in CreatePartyView when host clicks Start
+- [ ] Implement PartyQuizView to show questions
+- [ ] Add WebRTC P2P connection (currently HTTP polling only)
+- [ ] Test edge cases (guest leaves, multiple guests)
