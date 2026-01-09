@@ -51,7 +51,6 @@ export default class ResultsView extends BaseView {
     }
 
     // Check if features are enabled
-    const showShareQuizButton = isFeatureEnabled('SHARE_QUIZ');
     const showUsageCosts = isFeatureEnabled('SHOW_USAGE_COSTS');
 
     // Get usage data for cost display
@@ -166,12 +165,10 @@ export default class ResultsView extends BaseView {
               <span class="material-symbols-outlined text-xl">share</span>
               ${t('share.button')}
             </button>
-            ${showShareQuizButton ? `
             <button id="shareQuizBtn" data-testid="share-quiz-btn" class="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors">
               <span class="material-symbols-outlined text-xl">link</span>
               ${t('shareQuiz.title')}
             </button>
-            ` : ''}
           </div>
 
           <!-- Section Header -->
@@ -312,14 +309,12 @@ export default class ResultsView extends BaseView {
       });
     }
 
-    // Share Quiz button (only if feature is enabled)
-    if (isFeatureEnabled('SHARE_QUIZ')) {
-      const shareQuizBtn = this.querySelector('#shareQuizBtn');
-      if (shareQuizBtn) {
-        this.addEventListener(shareQuizBtn, 'click', () => {
-          this.handleShareQuizClick();
-        });
-      }
+    // Share Quiz button
+    const shareQuizBtn = this.querySelector('#shareQuizBtn');
+    if (shareQuizBtn) {
+      this.addEventListener(shareQuizBtn, 'click', () => {
+        this.handleShareQuizClick();
+      });
     }
   }
 

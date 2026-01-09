@@ -12,10 +12,6 @@
       phase: 'ENABLED',
       description: 'New OpenRouter connection guide with step-by-step instructions'
     },
-    SHARE_QUIZ: {
-      phase: 'ENABLED',  // Share quiz questions via URL
-      description: 'Share quiz questions so friends can take the same quiz'
-    },
     SHOW_USAGE_COSTS: {
       phase: 'ENABLED',  // Show LLM usage costs on results
       description: 'Display token counts and costs after each quiz'
