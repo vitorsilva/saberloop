@@ -562,3 +562,40 @@ CREATE TABLE party_answers (
 ✅ Host answers question and sees feedback
 ✅ Guest answers question and sees feedback
 ```
+
+### Session: 2026-01-09 (Question Sync)
+
+#### Completed
+
+- ✅ Added `current_question` to room API response
+- ✅ Added `advanceQuestion()` method to RoomManager
+- ✅ Added `/next` endpoint to PHP API
+- ✅ Updated PartyQuizView with question progression:
+  - Host advances when timer expires
+  - Non-host detects changes via polling
+  - Quiz ends after last question
+
+#### Question Sync Flow
+
+```
+Timer expires (30 sec)
+    ↓
+Host: calls POST /rooms/{code}/next
+    ↓
+Server: increments current_question
+        (or ends quiz if last question)
+    ↓
+Non-host: polling detects current_question change
+    ↓
+All clients: _moveToQuestion() updates UI
+    - New question text
+    - Fresh options (re-shuffled)
+    - Reset timer
+    - Updated scoreboard
+```
+
+#### Remaining for Full MVP
+
+1. ~~Question sync across participants~~ ✅ Done
+2. Results view after quiz ends (currently redirects to home)
+3. WebRTC for real-time communication (optional)
