@@ -110,5 +110,23 @@
      */
     setLevel(level) {
       log.setLevel(level);
+    },
+
+    /**
+     * Create a child logger with a module prefix
+     * @param {Object} context - Context object with module name
+     * @param {string} context.module - Module name to prefix logs with
+     * @returns {Object} Child logger with same methods
+     */
+    child({ module }) {
+      const prefix = `[${module}]`;
+      return {
+        debug: (message, context = {}) => logger.debug(`${prefix} ${message}`, context),
+        info: (message, context = {}) => logger.info(`${prefix} ${message}`, context),
+        warn: (message, context = {}) => logger.warn(`${prefix} ${message}`, context),
+        error: (message, context = {}) => logger.error(`${prefix} ${message}`, context),
+        perf: (metric, data = {}) => logger.perf(`${prefix} ${metric}`, data),
+        action: (action, data = {}) => logger.action(`${prefix} ${action}`, data),
+      };
     }
   };

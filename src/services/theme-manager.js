@@ -29,6 +29,11 @@
         from: previousMode,
         to: mode
       });
+
+      // Dispatch event so views can respond to mode changes
+      window.dispatchEvent(new CustomEvent('modechange', {
+        detail: { mode, previousMode }
+      }));
     }
   }
 
