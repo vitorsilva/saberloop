@@ -12,6 +12,13 @@
     <coverage>
         <include>
             <directory suffix=".php">src</directory>
+            <directory suffix=".php">party</directory>
         </include>
+        <exclude>
+            <directory suffix=".php">party/endpoints</directory>
+            <directory suffix=".php">party/migrations</directory>
+            <file>party/cleanup.php</file>
+            <file>party/migrate.php</file>
+        </exclude>
     </coverage>
 </phpunit>
