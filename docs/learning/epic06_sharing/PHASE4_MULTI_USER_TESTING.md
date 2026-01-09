@@ -1,6 +1,6 @@
-# Phase 4: Multi-User Testing (Real P2P)
+# Phase 4: Multi-User Testing (HTTP Polling MVP)
 
-**Status:** In Progress (Lobby flow complete)
+**Status:** ✅ Complete
 **Priority:** P3 - Quality Assurance
 **Prerequisites:** Phase 3 (Party Session), Docker PHP stack
 
@@ -8,16 +8,23 @@
 
 ## Overview
 
-Phase 4 enables **real multi-user Party Mode testing** using actual WebRTC P2P connections through the local Docker signaling server, replacing the DOM injection simulation used for demo videos.
+Phase 4 enables **real multi-user Party Mode** using HTTP polling through the local Docker signaling server. Instead of WebRTC P2P (which adds complexity), we implemented a simpler HTTP polling approach that works well for the quiz use case.
 
-### Why This Matters
+### What Was Built
 
-The demo video (`capture-party-demo.spec.js`) used DOM injection to fake participants - no real P2P connections were established. With the local Docker setup (PHP + MySQL), we can now:
+- **Server-side answer scoring** with speed bonus (10 base + 0-5 speed points)
+- **Question synchronization** across all participants via polling
+- **Results view** showing winner, rankings, and medals
+- **Real multi-user E2E test** capturing demo video without mocks
 
-- Test actual WebRTC connections between browser tabs
-- Verify signaling message flow through the backend
-- Validate timing synchronization across participants
-- Catch real-world P2P issues before production
+### Why HTTP Polling Instead of WebRTC
+
+The demo video (`capture-party-demo.spec.js`) originally used DOM injection to fake participants. With the local Docker setup (PHP + MySQL), we now have real multi-user support via HTTP polling:
+
+- Simpler architecture (no STUN/TURN servers needed)
+- Works reliably across all network conditions
+- Sufficient for quiz timing (1-second polling interval)
+- WebRTC remains optional for future real-time enhancements
 
 ---
 
