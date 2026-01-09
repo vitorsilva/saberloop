@@ -8,6 +8,7 @@ import { isFeatureEnabled } from '../core/features.js';
 import { t } from '../core/i18n.js';
 import { formatRelativeDate } from '../utils/formatters.js';
 import { createModeToggle } from '../components/ModeToggle.js';
+import { getCurrentMode } from '../services/theme-manager.js';
 
 export default class HomeView extends BaseView {
   async render() {
@@ -48,12 +49,36 @@ export default class HomeView extends BaseView {
           <button
             id="startQuizBtn"
             class="flex cursor-pointer items-center justify-center
-        overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base       
+        overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base
         font-bold leading-normal tracking-[0.015em] w-full shadow-lg
         shadow-primary/30 hover:bg-primary/90 disabled:bg-gray-400
         disabled:cursor-not-allowed disabled:shadow-none">
             <span class="truncate">${t('home.startQuiz')}</span>
           </button>
+        </div>
+
+        <!-- Party Buttons (visible in Party mode only) -->
+        <div id="partyButtonsContainer" class="hidden py-3">
+          <div class="flex gap-3">
+            <button
+              id="createPartyBtn"
+              class="flex-1 flex cursor-pointer items-center justify-center gap-2
+                     overflow-hidden rounded-xl h-14 px-5 bg-purple-500 text-white text-base
+                     font-bold leading-normal tracking-[0.015em] shadow-lg
+                     shadow-purple-500/30 hover:bg-purple-600">
+              <span class="material-symbols-outlined">celebration</span>
+              <span class="truncate">${t('party.create')}</span>
+            </button>
+            <button
+              id="joinPartyBtn"
+              class="flex-1 flex cursor-pointer items-center justify-center gap-2
+                     overflow-hidden rounded-xl h-14 px-5 bg-purple-500/20 text-purple-500
+                     border-2 border-purple-500 text-base font-bold leading-normal
+                     tracking-[0.015em] hover:bg-purple-500/30">
+              <span class="material-symbols-outlined">group_add</span>
+              <span class="truncate">${t('party.join')}</span>
+            </button>
+          </div>
         </div>
 
           <!-- Section Header -->
@@ -96,6 +121,9 @@ export default class HomeView extends BaseView {
         toggleContainer.appendChild(createModeToggle());
       }
     }
+
+    // Show party buttons when in party mode
+    this.updatePartyButtonsVisibility();
 
     this.attachListeners();
 
@@ -183,6 +211,26 @@ export default class HomeView extends BaseView {
     this.navigateTo('/quiz');
   }  
 
+  /**
+   * Update visibility of party buttons based on mode.
+   */
+  updatePartyButtonsVisibility() {
+    const partyContainer = this.querySelector('#partyButtonsContainer');
+    if (!partyContainer) return;
+
+    // Show party buttons when PARTY_SESSION is enabled and mode is 'party'
+    const showPartyButtons =
+      isFeatureEnabled('PARTY_SESSION') &&
+      isFeatureEnabled('MODE_TOGGLE') &&
+      getCurrentMode() === 'party';
+
+    if (showPartyButtons) {
+      partyContainer.classList.remove('hidden');
+    } else {
+      partyContainer.classList.add('hidden');
+    }
+  }
+
   attachListeners() {
     const startQuizBtn = this.querySelector('#startQuizBtn');
 
@@ -211,5 +259,24 @@ export default class HomeView extends BaseView {
       });
     });
 
+    // Party button handlers
+    const createPartyBtn = this.querySelector('#createPartyBtn');
+    if (createPartyBtn) {
+      this.addEventListener(createPartyBtn, 'click', () => {
+        this.navigateTo('/party/create');
+      });
+    }
+
+    const joinPartyBtn = this.querySelector('#joinPartyBtn');
+    if (joinPartyBtn) {
+      this.addEventListener(joinPartyBtn, 'click', () => {
+        this.navigateTo('/party/join');
+      });
+    }
+
+    // Listen for mode changes to update party buttons visibility
+    window.addEventListener('modechange', () => {
+      this.updatePartyButtonsVisibility();
+    });
   }
 }

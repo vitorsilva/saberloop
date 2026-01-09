@@ -43,6 +43,10 @@
     MODE_TOGGLE: {
       phase: 'DISABLED',  // Learning/Party mode toggle
       description: 'Toggle between Learning and Party modes with different themes'
+    },
+    PARTY_SESSION: {
+      phase: 'DISABLED',  // Real-time party sessions (requires MODE_TOGGLE)
+      description: 'Create and join party sessions to play quizzes with friends in real-time'
     }
   };
 

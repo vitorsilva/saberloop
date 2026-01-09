@@ -16,6 +16,9 @@ import HelpView from './views/HelpView.js';
 import ImportView from './views/ImportView.js';
 import OpenRouterGuideView from './views/OpenRouterGuideView.js';
 import ConnectionConfirmedView from './views/ConnectionConfirmedView.js';
+import CreatePartyView from './views/CreatePartyView.js';
+import JoinPartyView from './views/JoinPartyView.js';
+import PartyLobbyView from './views/PartyLobbyView.js';
 import { loadSamplesIfNeeded } from './features/sample-loader.js';
 import { prefetchModelPricing } from './services/model-service.js';
 import { shouldShowWelcome, markWelcomeSeen } from './features/onboarding.js';
@@ -80,6 +83,11 @@ async function init() {
     router.addRoute('/setup-openrouter', OpenRouterGuideView);
     router.addRoute('/connection-confirmed', ConnectionConfirmedView);
     router.addRoute('/import', ImportView);
+
+    // Party routes (requires PARTY_SESSION feature flag)
+    router.addRoute('/party/create', CreatePartyView);
+    router.addRoute('/party/join', JoinPartyView);
+    router.addRoute('/party/lobby', PartyLobbyView);
 
     // Start the router
     router.init();
