@@ -111,6 +111,25 @@ npx playwright test tests/e2e/capture-party-demo.spec.js --headed
 - Screenshots are saved directly to their target directories
 - Videos are saved to `test-results/` then copied to `videos/`
 
+### Multi-User Testing (Real P2P)
+
+For testing Party Mode with actual P2P connections (not simulated):
+
+```bash
+# 1. Start Docker stack
+docker-compose -f docker-compose.php.yml up -d php-api mysql
+
+# 2. Ensure .env has: VITE_PARTY_API_URL=http://localhost:8080/party
+
+# 3. Start dev server
+npm run dev
+
+# 4. Run multi-user tests
+npx playwright test tests/e2e/party-multi-user.spec.js --headed
+```
+
+See [Phase 4: Multi-User Testing](../learning/epic06_sharing/PHASE4_MULTI_USER_TESTING.md) for details.
+
 ---
 
 ## Play Store Listing

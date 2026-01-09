@@ -25,6 +25,7 @@ Transform Saberloop from a solo learning tool into a social quiz platform with t
 | **1** | Share quiz via URL | P0 - Core enabler | [PHASE1_QUIZ_SHARING.md](./PHASE1_QUIZ_SHARING.md) |
 | **2** | Mode toggle + theming | P1 - Visual identity | [PHASE2_MODE_TOGGLE.md](./PHASE2_MODE_TOGGLE.md) |
 | **3** | Real-time party session | P2 - Synchronous play | [PHASE3_PARTY_SESSION.md](./PHASE3_PARTY_SESSION.md) |
+| **4** | Multi-user testing | P3 - Quality assurance | [PHASE4_MULTI_USER_TESTING.md](./PHASE4_MULTI_USER_TESTING.md) |
 
 ### What's OUT (Post-MVP)
 
