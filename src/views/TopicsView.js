@@ -122,7 +122,7 @@
       }
 
       // Format cost if available and feature enabled
-      const showCost = isFeatureEnabled('SHOW_USAGE_COSTS') && session.usage;
+      const showCost = session.usage;
       let costStr = '';
       if (showCost) {
         const isFree = isFreeModel(session.model);
@@ -130,7 +130,7 @@
       }
 
       const canReplay = !!session.questions;
-      const canShare = canReplay && isFeatureEnabled('SHARE_QUIZ');
+      const canShare = canReplay;  // Share quiz always available when replay is possible
 
       // Choose color based on score (gray for unplayed)
       let colorClass = 'text-subtext-light bg-gray-500';

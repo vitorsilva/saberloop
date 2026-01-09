@@ -241,11 +241,7 @@ export default class HomeView extends BaseView {
       const connected = await isConnected();
 
       if (!connected) {
-        if (isFeatureEnabled('OPENROUTER_GUIDE', 'home')) {
-          this.navigateTo('/setup-openrouter');
-        } else {
-          await showConnectModal(() => startAuth());
-        }
+        this.navigateTo('/setup-openrouter');
         return;
       }
 
