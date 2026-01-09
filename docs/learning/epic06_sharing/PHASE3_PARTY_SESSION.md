@@ -43,6 +43,61 @@ Each sub-phase has its own PR and can be tested independently.
 
 ---
 
+## Branch & Commit Strategy
+
+### Branch Naming
+
+```
+feature/phase3a-party-backend
+feature/phase3b-p2p-service
+feature/phase3c-party-ui
+feature/phase3d-party-gameplay
+```
+
+### Implementation Order
+
+```
+main
+  │
+  ├── feature/phase3a-party-backend
+  │     └── PR → merge to main
+  │
+  ├── feature/phase3b-p2p-service (branch from main after 3a merged)
+  │     └── PR → merge to main
+  │
+  ├── feature/phase3c-party-ui (can start in parallel with 3b)
+  │     └── PR → merge to main
+  │
+  └── feature/phase3d-party-gameplay (branch from main after 3b+3c merged)
+        └── PR → merge to main
+```
+
+### Commit Message Format
+
+```
+feat(party): add room creation endpoint
+
+- Implement POST /api/party/rooms
+- Generate 6-character alphanumeric room codes
+- Add rate limiting (10 rooms/hour/IP)
+- Store room in MySQL with expiry
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+```
+
+### Commit Prefixes by Sub-Phase
+
+| Sub-Phase | Scope | Example |
+|-----------|-------|---------|
+| 3a | `party-backend` | `feat(party-backend): add signaling endpoints` |
+| 3b | `p2p` | `feat(p2p): implement WebRTC connection handler` |
+| 3c | `party-ui` | `feat(party-ui): create join party view` |
+| 3d | `party` | `feat(party): implement live scoreboard` |
+
+---
+
 ## Architecture
 
 ```
@@ -193,16 +248,52 @@ POST   /api/party/signal          - Send signaling message
 GET    /api/party/signal/{code}/{participantId}  - Poll for messages
 ```
 
+### VPS Deployment
+
+Following the existing pattern from telemetry deployment:
+
+**Directory structure:**
+```
+php-api/
+└── party/
+    ├── config.php           # Configuration (log dir, allowed origins)
+    ├── config.local.php     # Local overrides (DB credentials, not committed)
+    ├── config.local.example.php
+    ├── .htaccess            # CORS, routing
+    ├── RoomManager.php      # Room CRUD operations
+    ├── SignalingManager.php # WebRTC signaling storage
+    ├── endpoints/
+    │   ├── rooms.php        # POST/GET/DELETE rooms
+    │   └── signal.php       # POST/GET signaling messages
+    └── migrations/
+        └── 001_create_tables.sql
+```
+
+**Deployment script:** `scripts/deploy-party.cjs`
+```javascript
+// Similar to deploy-telemetry.cjs
+const config = {
+    localRoot: './php-api/party',
+    remoteRoot: '/party',  // saberloop.com/party/
+    include: ['*.php', '*.example.php', '.htaccess', 'endpoints/*.php', 'migrations/*.sql'],
+};
+```
+
+**npm script:** `"deploy:party": "node scripts/deploy-party.cjs"`
+
 ### Phase 3a Deliverables
 
-- [ ] Create MySQL migration script
+- [ ] Create MySQL migration script (`php-api/party/migrations/001_create_tables.sql`)
+- [ ] Create config files (`config.php`, `config.local.example.php`)
 - [ ] Implement `RoomManager.php` class
 - [ ] Implement `SignalingManager.php` class
-- [ ] Create room endpoints (`php-api/src/endpoints/party/`)
-- [ ] Create signaling endpoints
+- [ ] Create room endpoints (`php-api/party/endpoints/rooms.php`)
+- [ ] Create signaling endpoints (`php-api/party/endpoints/signal.php`)
 - [ ] Add rate limiting (max 10 rooms/hour per IP)
 - [ ] Add cleanup cron job (delete rooms > 2 hours old)
 - [ ] Unit tests for PHP classes
+- [ ] Create `scripts/deploy-party.cjs`
+- [ ] Add `deploy:party` npm script
 - [ ] Deploy to staging VPS and test
 
 ---
@@ -269,7 +360,8 @@ export class SignalingClient {
 - [ ] Handle ICE candidates
 - [ ] Implement reconnection logic (3 retries)
 - [ ] Add connection timeout handling
-- [ ] Unit tests with WebRTC mocks
+- [ ] Unit tests with WebRTC mocks (≥80% coverage)
+- [ ] Mutation testing for SignalingClient and P2PService
 - [ ] Integration test with VPS signaling
 
 ---
@@ -306,16 +398,17 @@ if (isFeatureEnabled('MODE_TOGGLE') && getCurrentMode() === 'party') {
 
 ### Phase 3c Deliverables
 
-- [ ] Create `CreatePartyView` with room code display
+- [ ] Create `CreatePartyView` with room code display + QR code + share buttons
 - [ ] Create `JoinPartyView` with code input
 - [ ] Create `PartyLobbyView` with participant list
-- [ ] Add Party buttons to HomeView (conditional)
+- [ ] Add Party buttons to HomeView (conditional on MODE_TOGGLE + party mode)
 - [ ] Create `ParticipantList` component
-- [ ] Create `RoomCodeDisplay` component
+- [ ] Create `RoomCodeDisplay` component (reuse QR from ShareQuizModal)
 - [ ] Create `RoomCodeInput` component
 - [ ] Add i18n strings (all 9 locales)
 - [ ] Add PARTY_SESSION feature flag
-- [ ] Unit tests for components
+- [ ] Unit tests for components (≥80% coverage)
+- [ ] Mutation testing for new components
 - [ ] E2E tests for UI flows (with mocked P2P)
 
 ---
@@ -390,9 +483,12 @@ function getTimeRemaining(state) {
 - [ ] Handle mid-quiz disconnection (save progress locally)
 - [ ] Handle host leaving (end session gracefully)
 - [ ] Add all telemetry events
-- [ ] Unit tests for PartySession
+- [ ] Unit tests for PartySession (≥80% coverage)
+- [ ] Mutation testing for PartySession and scoring logic
 - [ ] E2E tests for full gameplay flow
 - [ ] Maestro tests for mobile
+- [ ] Deploy to staging and manual test
+- [ ] Deploy to production
 
 ---
 
@@ -408,10 +504,15 @@ function getTimeRemaining(state) {
 │  Room Code:                             │
 │                                         │
 │     ┌───────────────────┐               │
-│     │     ABC123        │  [📋 Copy]    │
+│     │     ABC123        │               │
 │     └───────────────────┘               │
 │                                         │
-│  Share this code with friends           │
+│  ┌───────┐ ┌───────┐ ┌─────────────┐   │
+│  │ 📋    │ │ 📱    │ │ 📤          │   │
+│  │ Copy  │ │ QR    │ │ Share...    │   │
+│  └───────┘ └───────┘ └─────────────┘   │
+│                                         │
+│  ─────────────────────────────────────  │
 │                                         │
 │  Participants (2):                      │
 │  • You (host)                           │
@@ -427,6 +528,9 @@ function getTimeRemaining(state) {
 │                                         │
 └─────────────────────────────────────────┘
 ```
+
+**Note:** QR code and Share buttons reuse existing functionality from Phase 1 (ShareQuizModal).
+The QR code encodes: `https://saberloop.com/app/#/party/join/ABC123`
 
 ### Screen 2: Join Party (Guest Entry)
 
@@ -701,7 +805,9 @@ const PARTY_CONFIG = {
 "party.code": "Room Code",
 "party.copyCode": "Copy Code",
 "party.codeCopied": "Code copied!",
+"party.showQR": "QR Code",
 "party.shareCode": "Share this code with friends",
+"party.shareNative": "Share...",
 "party.yourName": "Your name",
 "party.enterCode": "Enter room code",
 "party.invalidCode": "Invalid room code",
@@ -859,6 +965,7 @@ party-gameplay.spec.js (with mocked P2P):
 ### Phase 3a: VPS Backend
 
 - [ ] Create MySQL migration script
+- [ ] Create config files (config.php, config.local.example.php)
 - [ ] Implement RoomManager.php
 - [ ] Implement SignalingManager.php
 - [ ] Create room endpoints
@@ -866,6 +973,7 @@ party-gameplay.spec.js (with mocked P2P):
 - [ ] Add rate limiting
 - [ ] Add cleanup cron job
 - [ ] PHP unit tests
+- [ ] Create deploy-party.cjs script
 - [ ] Deploy to staging VPS
 - [ ] Test endpoints manually
 
@@ -876,21 +984,23 @@ party-gameplay.spec.js (with mocked P2P):
 - [ ] Implement WebRTC connection flow
 - [ ] Handle ICE candidates
 - [ ] Implement reconnection logic
-- [ ] Unit tests with mocks
+- [ ] Unit tests with mocks (≥80% coverage)
+- [ ] Mutation testing for business logic
 - [ ] Integration test with staging VPS
 
 ### Phase 3c: Party UI
 
 - [ ] Add PARTY_SESSION feature flag
-- [ ] Add Party buttons to HomeView (conditional)
-- [ ] Create CreatePartyView
+- [ ] Add Party buttons to HomeView (conditional on MODE_TOGGLE)
+- [ ] Create CreatePartyView (with QR code + share buttons)
 - [ ] Create JoinPartyView
 - [ ] Create PartyLobbyView
 - [ ] Create RoomCodeDisplay component
 - [ ] Create RoomCodeInput component
 - [ ] Create ParticipantList component
 - [ ] Add i18n strings (all 9 locales)
-- [ ] Unit tests for components
+- [ ] Unit tests for components (≥80% coverage)
+- [ ] Mutation testing for components
 - [ ] E2E tests for UI flows
 
 ### Phase 3d: Live Gameplay
@@ -904,7 +1014,8 @@ party-gameplay.spec.js (with mocked P2P):
 - [ ] Handle disconnections
 - [ ] Handle host leaving
 - [ ] Add telemetry events
-- [ ] Unit tests for PartySession
+- [ ] Unit tests for PartySession (≥80% coverage)
+- [ ] Mutation testing for scoring logic
 - [ ] E2E tests for gameplay
 - [ ] Maestro tests
 - [ ] Deploy to staging
