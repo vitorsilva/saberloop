@@ -231,4 +231,46 @@ test.describe('Quiz Sharing Feature', () => {
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardText).toContain('/#/quiz/');
   });
+
+  test('should not duplicate imported quiz when completed via Play Now (issue #102)', async ({ page }) => {
+    // Pre-generated encoded quiz data for "Test Quiz" with 2 questions
+    const encodedData = 'N4IgLiBcICoKYGcwAICKBXAlgLxAGhAHMoQBbTAEwoBs5kEBjACwHsXr8QBHKAbVB7QA6kwCGKTAmQAmANTSA-JxZ8QAZk4AWTgFZOANhABdAgygBGAL54BJEeOSTka2WqUEVkXiD0FDBAHZOAA5jUwtLI0sgA';
+
+    // Navigate to shared quiz URL
+    await page.goto(`/#/quiz/${encodedData}`);
+
+    // Wait for import preview
+    await expect(page.locator('text=Play Now')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('text=Test Quiz')).toBeVisible();
+
+    // Click Play Now (this saves the quiz to IndexedDB)
+    await page.click('text=Play Now');
+
+    // Should navigate to quiz view
+    await expect(page).toHaveURL(/#\/quiz$/);
+    await expect(page.getByTestId('quiz-title')).toBeVisible();
+
+    // Answer both questions (the test quiz has 2 questions)
+    for (let i = 0; i < 2; i++) {
+      await page.locator('.option-btn').nth(0).click();
+      await page.waitForTimeout(200);
+      await page.click('#submitBtn');
+      await page.waitForTimeout(300);
+    }
+
+    // Should be on results page
+    await expect(page).toHaveURL(/#\/results/);
+
+    // Navigate to history page
+    await page.goto('/#/history');
+    await expect(page.getByTestId('topics-title')).toBeVisible();
+
+    // Count quiz entries with "Test Quiz" title
+    // BUG: Without fix, there will be 2 entries (duplicate)
+    // EXPECTED: Only 1 entry
+    const quizEntries = page.locator('text=Test Quiz');
+    const count = await quizEntries.count();
+
+    expect(count).toBe(1);
+  });
 });

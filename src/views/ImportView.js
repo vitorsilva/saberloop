@@ -252,7 +252,8 @@
       state.set('currentTopic', this.quiz.topic);
       state.set('currentGradeLevel', this.quiz.gradeLevel || 'middle school');
       state.set('generatedQuestions', this.quiz.questions);
-      state.set('lastSessionId', this.savedSessionId);
+      // Use replaySessionId so ResultsView updates this session instead of creating a duplicate
+      state.set('replaySessionId', this.savedSessionId);
 
       this.navigateTo('/quiz');
     }
