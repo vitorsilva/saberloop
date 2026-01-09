@@ -442,4 +442,207 @@ test.describe('Capture Party Mode Demo', () => {
       await guestContext.close();
     }
   });
+
+  /**
+   * Real Multi-User Demo Video - Full Party Flow
+   *
+   * Captures a demo video showing real multi-user party mode with the local Docker backend.
+   * This test goes through the complete flow: create, join, play all questions, and results.
+   *
+   * Prerequisites:
+   *   - Docker containers running: docker-compose -f docker-compose.php.yml up -d
+   *   - VITE_PARTY_API_URL=http://localhost:8080/party in .env
+   *
+   * Run with:
+   *   npx playwright test capture-party-demo --grep "Real Multi-User Demo Video" --headed --project=chromium
+   */
+  test('Real Multi-User Demo Video - Full Party Flow', async ({ browser }) => {
+    // Increase timeout for full demo
+    test.setTimeout(180000); // 3 minutes
+
+    // Create contexts with video recording
+    const hostContext = await browser.newContext({
+      viewport: MOBILE_VIEWPORT,
+      recordVideo: {
+        dir: 'test-results/party-demo-videos/',
+        size: MOBILE_VIEWPORT,
+      },
+    });
+    const guestContext = await browser.newContext({
+      viewport: MOBILE_VIEWPORT,
+      recordVideo: {
+        dir: 'test-results/party-demo-videos/',
+        size: MOBILE_VIEWPORT,
+      },
+    });
+
+    const hostPage = await hostContext.newPage();
+    const guestPage = await guestContext.newPage();
+
+    // Log errors for debugging
+    hostPage.on('console', msg => {
+      if (msg.type() === 'error') console.log(`HOST: ${msg.text()}`);
+    });
+    guestPage.on('console', msg => {
+      if (msg.type() === 'error') console.log(`GUEST: ${msg.text()}`);
+    });
+
+    try {
+      console.log('🎬 Starting Real Multi-User Demo Video Capture');
+      console.log('📍 Using local Docker backend at localhost:8080');
+
+      // ========================================
+      // SETUP: Both users authenticated
+      // ========================================
+      await setupAuthenticatedState(hostPage);
+      await setupAuthenticatedState(guestPage);
+
+      for (const page of [hostPage, guestPage]) {
+        await page.evaluate(() => {
+          localStorage.setItem('__test_feature_MODE_TOGGLE', 'ENABLED');
+          localStorage.setItem('__test_feature_PARTY_SESSION', 'ENABLED');
+        });
+        await page.reload();
+        await page.waitForSelector('[data-testid="welcome-heading"]', { timeout: 10000 });
+      }
+
+      // ========================================
+      // ACT 1: Host creates party
+      // ========================================
+      console.log('🎬 Act 1: Host Creates Party');
+
+      // Host switches to party mode
+      await hostPage.locator('[data-mode="party"]').click();
+      await hostPage.waitForSelector('[data-testid="create-party-btn"]');
+      await hostPage.waitForTimeout(500);
+
+      // Host creates party
+      await hostPage.click('[data-testid="create-party-btn"]');
+      await hostPage.waitForURL(/#\/party\/create/);
+      await hostPage.waitForTimeout(800);
+
+      // Select first quiz
+      const quizItem = hostPage.locator('.quiz-select-item').first();
+      await quizItem.click();
+      await hostPage.waitForTimeout(500);
+
+      // Create room
+      await hostPage.click('#createRoomBtn');
+      await hostPage.waitForSelector('[data-testid="room-code"]', { timeout: 15000 });
+      await hostPage.waitForTimeout(1000);
+
+      // Get room code
+      const roomCodeRaw = await hostPage.locator('[data-testid="room-code"]').textContent();
+      const roomCode = roomCodeRaw.replace(/[\s-]/g, '');
+      console.log(`✅ Room created: ${roomCode}`);
+
+      // ========================================
+      // ACT 2: Guest joins party
+      // ========================================
+      console.log('🎬 Act 2: Guest Joins Party');
+
+      // Guest switches to party mode
+      await guestPage.locator('[data-mode="party"]').click();
+      await guestPage.waitForSelector('[data-testid="join-party-btn"]');
+      await guestPage.waitForTimeout(500);
+
+      // Guest joins
+      await guestPage.click('[data-testid="join-party-btn"]');
+      await guestPage.waitForTimeout(500);
+      await guestPage.fill('[data-testid="room-code-input"]', roomCode);
+      await guestPage.fill('[data-testid="player-name-input"]', 'Alex');
+      await guestPage.waitForTimeout(300);
+      await guestPage.click('#joinBtn');
+
+      // Wait for both to be in lobby
+      await expect(hostPage.locator('text=Participants (2)')).toBeVisible({ timeout: 15000 });
+      await expect(guestPage.locator('text=Waiting for host to start')).toBeVisible({ timeout: 10000 });
+      console.log('✅ Both in lobby');
+      await hostPage.waitForTimeout(1500);
+
+      // ========================================
+      // ACT 3: Quiz gameplay
+      // ========================================
+      console.log('🎬 Act 3: Quiz Gameplay');
+
+      // Host starts quiz
+      await hostPage.click('#startQuizBtn');
+      console.log('✅ Quiz started');
+
+      // Both navigate to quiz view
+      await hostPage.waitForURL(/#\/party\/quiz\//, { timeout: 10000 });
+      await guestPage.waitForURL(/#\/party\/quiz\//, { timeout: 15000 });
+      console.log('✅ Both in quiz view');
+
+      // Play through questions (up to 3 questions or until quiz ends)
+      for (let q = 0; q < 3; q++) {
+        console.log(`📝 Question ${q + 1}`);
+
+        // Wait for question to be visible
+        await expect(hostPage.locator('#questionText')).toBeVisible({ timeout: 10000 });
+        await expect(guestPage.locator('#questionText')).toBeVisible({ timeout: 10000 });
+        await hostPage.waitForTimeout(1000);
+
+        // Both answer (different options for variety)
+        const hostOption = hostPage.locator(`[data-testid="option-${q % 4}"]`);
+        const guestOption = guestPage.locator(`[data-testid="option-${(q + 1) % 4}"]`);
+
+        if (await hostOption.isVisible()) {
+          await hostOption.click();
+          console.log('  ✅ Host answered');
+        }
+
+        await hostPage.waitForTimeout(500);
+
+        if (await guestOption.isVisible()) {
+          await guestOption.click();
+          console.log('  ✅ Guest answered');
+        }
+
+        // Wait for timer to expire and next question (or quiz end)
+        // The host advances after timer expires
+        await hostPage.waitForTimeout(3000);
+
+        // Check if we're still in quiz or moved to results
+        const currentUrl = hostPage.url();
+        if (currentUrl.includes('/party/results/')) {
+          console.log('✅ Quiz ended - moved to results');
+          break;
+        }
+
+        // Wait for potential question change
+        await hostPage.waitForTimeout(2000);
+      }
+
+      // ========================================
+      // ACT 4: Results
+      // ========================================
+      console.log('🎬 Act 4: Results');
+
+      // Wait for results view (either already there or wait for quiz to complete)
+      try {
+        await hostPage.waitForURL(/#\/party\/results\//, { timeout: 60000 });
+        console.log('✅ Host at results');
+      } catch {
+        console.log('⏳ Waiting for quiz to finish...');
+        // Quiz might still be going - wait longer
+        await hostPage.waitForURL(/#\/party\/results\//, { timeout: 120000 });
+      }
+
+      // Guest should also be at results (via polling)
+      await guestPage.waitForURL(/#\/party\/results\//, { timeout: 30000 });
+      console.log('✅ Guest at results');
+
+      // Let results be visible for video
+      await hostPage.waitForTimeout(3000);
+
+      console.log('🎬 Demo video capture complete!');
+
+    } finally {
+      // Close contexts to save videos
+      await hostContext.close();
+      await guestContext.close();
+      console.log('📹 Videos saved to test-results/party-demo-videos/');
+    }
+  });
 });
