@@ -663,3 +663,43 @@ The full party quiz flow now works with HTTP polling:
 6. Quiz ends → Results shown → API
 
 No WebRTC required for basic functionality!
+
+---
+
+## Deployment Lessons Learned
+
+### ❌ Critical Gap: Database Migrations Not Deployed
+
+**What happened:** When deploying Party Mode to production (2026-01-09), the PHP files were deployed but the database migration `002_add_answers.sql` was NOT run. This caused the production backend to fail because:
+- `party_participants.score` column was missing
+- `party_rooms.current_question` column was missing
+- `party_answers` table didn't exist
+
+**Root cause:** The `npm run deploy:party` script only deploys PHP files via FTP. It has no mechanism to:
+1. Detect pending migrations
+2. Run migrations automatically
+3. Even warn about pending migrations
+
+**How it was discovered:** After enabling feature flags and deploying, testing the production site revealed database errors.
+
+**Fix applied:** Manually ran the migration SQL in phpMyAdmin.
+
+### Action Items for Future
+
+1. **Add migration tracking** - Create a `party_migrations` table to track which migrations have been applied
+2. **Add deploy checklist** - `deploy:party` should output a checklist of manual steps including migrations
+3. **Consider automated migrations** - Add a `migrate.php` endpoint (protected) that can be called post-deploy
+4. **Document in deploy script** - At minimum, the deploy script should list any `.sql` files in migrations/ that may need to be run
+
+### Deployment Checklist (Manual for Now)
+
+When deploying party backend changes:
+
+```
+□ Run npm run deploy:party
+□ Check php-api/party/migrations/ for new .sql files
+□ Run any new migrations in phpMyAdmin
+□ Test https://saberloop.com/party/test-db.php
+□ Delete test-db.php after verification
+□ Test party flow end-to-end on production
+```
