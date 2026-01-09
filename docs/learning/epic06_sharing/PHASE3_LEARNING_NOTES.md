@@ -193,14 +193,121 @@ curl "https://saberloop.com/party/endpoints/signal.php/ABC123/user-2"
 2. `feat(party): add P2PService for WebRTC connections` - WebRTC wrapper
 3. `test: add unit tests for P2P and signaling services` - 43 tests + JSON error fix
 
-### Next Steps (Sub-Phase 3c: Party UI)
+---
 
-- [ ] Create PartyLobbyView (host/join screens)
-- [ ] Create PartyGameView (in-game UI)
-- [ ] Create PartyResultsView (leaderboard)
-- [ ] Add party mode routing
-- [ ] Integrate with P2PService
-- [ ] Real-time participant list updates
+## Session: 2026-01-09 (Sub-Phase 3c: Party UI - Bug Fixes)
+
+### Problems Encountered
+
+During E2E test development for Phase 3c, multiple issues were discovered that prevented tests from running:
+
+#### Issue 1: App fails to load - blank screen
+
+**Symptom**: All E2E tests timeout waiting for `[data-testid="welcome-heading"]`. Screenshot shows completely blank/dark page.
+
+**Root Cause**: `logger.child()` method was being called in `JoinPartyView.js` and `CreatePartyView.js`, but the logger utility didn't implement this method.
+
+```javascript
+// JoinPartyView.js:13
+const log = logger.child({ module: 'JoinPartyView' });
+// TypeError: logger.child is not a function
+```
+
+**Fix**: Added `child()` method to `src/utils/logger.js`:
+```javascript
+child({ module }) {
+  const prefix = `[${module}]`;
+  return {
+    debug: (message, context = {}) => logger.debug(`${prefix} ${message}`, context),
+    info: (message, context = {}) => logger.info(`${prefix} ${message}`, context),
+    // ... other methods
+  };
+}
+```
+
+**Learning**: When adding new logging patterns like `logger.child()`, ensure the logger utility implements the method. Check browser console for JavaScript errors when app shows blank screen.
+
+---
+
+#### Issue 2: Party buttons not visible after switching to Party mode
+
+**Symptom**: Test "should show party buttons in party mode" times out. Screenshot shows mode toggle with "Party" selected, but Create Party / Join Party buttons are not visible.
+
+**Root Cause**: `setMode()` in theme-manager.js wasn't dispatching a 'modechange' event, so HomeView's listener never fired to update party buttons visibility.
+
+```javascript
+// HomeView.js:280 - listening for event that was never dispatched
+window.addEventListener('modechange', () => {
+  this.updatePartyButtonsVisibility();
+});
+```
+
+**Fix**: Added event dispatch to `src/services/theme-manager.js`:
+```javascript
+if (previousMode !== mode) {
+  // ... telemetry tracking ...
+
+  // Dispatch event so views can respond to mode changes
+  window.dispatchEvent(new CustomEvent('modechange', {
+    detail: { mode, previousMode }
+  }));
+}
+```
+
+**Learning**: When adding event listeners, verify the corresponding event is being dispatched somewhere. Check the event flow end-to-end.
+
+---
+
+#### Issue 3: E2E tests missing PARTY_SESSION feature flag
+
+**Symptom**: Party button tests timeout because party buttons require `PARTY_SESSION` feature flag, but tests only enabled `MODE_TOGGLE`.
+
+**Root Cause**: HomeView requires BOTH flags:
+```javascript
+const showPartyButtons =
+  isFeatureEnabled('PARTY_SESSION') &&
+  isFeatureEnabled('MODE_TOGGLE') &&
+  getCurrentMode() === 'party';
+```
+
+**Fix**: Updated `tests/e2e/party-mode.spec.js` to enable both flags:
+```javascript
+await page.evaluate(() => {
+  localStorage.setItem('__test_feature_MODE_TOGGLE', 'ENABLED');
+  localStorage.setItem('__test_feature_PARTY_SESSION', 'ENABLED');
+});
+```
+
+**Learning**: When writing E2E tests for features behind multiple flags, ensure ALL required flags are enabled. Check feature flag dependencies in the source code.
+
+---
+
+### Files Modified
+
+1. `src/utils/logger.js` - Added `child()` method
+2. `src/services/theme-manager.js` - Added `modechange` event dispatch
+3. `tests/e2e/party-mode.spec.js` - Added `PARTY_SESSION` feature flag
+
+### Test Results After Fixes
+
+- **Unit tests**: 726 passed (all pass)
+- **E2E party-mode tests**: 11/11 passed
+- **Full E2E suite**: 114/119 passed (1 pre-existing dark mode failure, 1 flaky, 3 skipped)
+
+### Key Takeaways
+
+1. **Check browser console FIRST** when app shows blank screen - JavaScript errors are usually the cause
+2. **Event-driven architecture requires both sides**: listener AND dispatcher
+3. **Feature flags compound**: features depending on other features need ALL flags enabled
+4. **Use Playwright's browser tools** to quickly identify runtime errors
+
+---
+
+### Next Steps
+
+- [ ] Continue with Sub-Phase 3c remaining tasks
+- [ ] Review and commit the bug fixes
+- [ ] Proceed to Sub-Phase 3d if 3c is complete
 
 ---
 
