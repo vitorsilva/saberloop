@@ -5,6 +5,7 @@
 
   import { logger } from '../utils/logger.js';
   import { getSelectedModel } from '../services/model-service.js';
+  import { withRetry, isRetryableError } from '../utils/retry.js';
 
   const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -24,29 +25,63 @@
 
     logger.debug('Calling OpenRouter', { model, maxTokens, temperature });
 
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'SaberLoop'
+    // Wrap fetch with retry logic for transient failures
+    const response = await withRetry(
+      async () => {
+        const res = await fetch(OPENROUTER_API_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': window.location.origin,
+            'X-Title': 'SaberLoop'
+          },
+          body: JSON.stringify({
+            model,
+            max_tokens: maxTokens,
+            temperature,
+            messages: [{ role: 'user', content: prompt }],
+            usage: { include: true }
+          })
+        });
+
+        // If response is not ok, throw an error with status for retry logic
+        if (!res.ok) {
+          const error = new Error(`HTTP ${res.status}`);
+          error.status = res.status;
+          error.response = res;
+          throw error;
+        }
+
+        return res;
       },
-      body: JSON.stringify({
-        model,
-        max_tokens: maxTokens,
-        temperature,
-        messages: [{ role: 'user', content: prompt }],
-        usage: { include: true }
-      })
+      {
+        maxRetries: 3,
+        shouldRetry: (error) => {
+          // Don't retry client errors (except 429 rate limit)
+          if (error.status === 401 || error.status === 402 || error.status === 400) {
+            return false;
+          }
+          return isRetryableError(error);
+        },
+        onRetry: ({ attempt, error, delay }) => {
+          logger.info('API call retry', {
+            attempt,
+            delay,
+            status: error.status,
+            error: error.message
+          });
+        }
+      }
+    ).catch(async (error) => {
+      // If error has a response, handle it with proper error messages
+      if (error.response) {
+        await handleApiError(error.response);
+      }
+      throw error;
     });
 
     logger.debug('OpenRouter response', { status: response.status });
-
-    // Handle errors
-    if (!response.ok) {
-      await handleApiError(response);
-    }
 
     const data = await response.json();
 
@@ -127,17 +162,28 @@
    */
   export async function getCreditsBalance(apiKey) {
     try {
-      const response = await fetch('https://openrouter.ai/api/v1/auth/key', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`
-        }
-      });
+      const response = await withRetry(
+        async () => {
+          const res = await fetch('https://openrouter.ai/api/v1/auth/key', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`
+            }
+          });
 
-      if (!response.ok) {
-        logger.debug('Failed to fetch credits', { status: response.status });
-        return null;
-      }
+          if (!res.ok) {
+            const error = new Error(`HTTP ${res.status}`);
+            error.status = res.status;
+            throw error;
+          }
+
+          return res;
+        },
+        {
+          maxRetries: 2, // Fewer retries for balance check (less critical)
+          shouldRetry: isRetryableError
+        }
+      );
 
       const data = await response.json();
       // OpenRouter returns limit_remaining in credits (1 credit = $1)
