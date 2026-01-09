@@ -119,3 +119,43 @@ export function shuffleAllQuestions(questions) {
 
   return questions.map(q => shuffleQuestionOptions(q));
 }
+
+/**
+ * Shuffle options and return mapping for answer tracking.
+ * Used by PartyQuizView to shuffle options while tracking original indices.
+ *
+ * @param {Array<string>} options - Array of answer options
+ * @param {number} correctIndex - Index of correct answer in original array
+ * @returns {{shuffledOptions: Array<string>, shuffleMap: Array<number>, newCorrectIndex: number}}
+ */
+export function shuffleOptions(options, correctIndex) {
+  if (!options || options.length === 0) {
+    return {
+      shuffledOptions: options || [],
+      shuffleMap: [],
+      newCorrectIndex: correctIndex
+    };
+  }
+
+  // Strip existing prefixes to get clean answer text
+  const cleanOptions = options.map(opt => stripPrefix(opt));
+
+  // Create indices array and shuffle it
+  const indices = options.map((_, i) => i);
+  const shuffledIndices = fisherYatesShuffle(indices);
+
+  // Reorder clean options based on shuffled indices, then add sequential labels
+  const shuffledOptions = shuffledIndices.map((originalIndex, newIndex) =>
+    addPrefix(cleanOptions[originalIndex], newIndex)
+  );
+
+  // shuffleMap[newIndex] = originalIndex
+  // Find new position of correct answer
+  const newCorrectIndex = shuffledIndices.indexOf(correctIndex);
+
+  return {
+    shuffledOptions,
+    shuffleMap: shuffledIndices,
+    newCorrectIndex
+  };
+}
