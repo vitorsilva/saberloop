@@ -21,6 +21,84 @@ The demo video (`capture-party-demo.spec.js`) used DOM injection to fake partici
 
 ---
 
+## Git Worktree Strategy
+
+**Use a separate worktree for Phase 4 implementation.** This allows parallel work while keeping main clean.
+
+**Setup:**
+```bash
+# From main repo directory
+git worktree add -b feature/phase4-multi-user-testing ../saberloop-phase4 main
+
+# Navigate to worktree
+cd ../saberloop-phase4
+
+# Install dependencies (not shared between worktrees)
+npm install
+
+# Copy .env (gitignored, not present in new worktree)
+cp ../demo-pwa-app/.env .env
+```
+
+**Directory structure:**
+```
+source/repos/
+├── demo-pwa-app/           # Main worktree (main branch)
+└── saberloop-phase4/       # Phase 4 worktree (feature branch)
+```
+
+**Cleanup after merge:**
+```bash
+# From main repo
+git worktree remove ../saberloop-phase4
+git branch -d feature/phase4-multi-user-testing  # If merged
+```
+
+---
+
+## Branch & Commit Strategy
+
+### Branch Naming
+
+```
+feature/phase4-multi-user-testing
+```
+
+### Commit Message Format
+
+```
+test(party): add multi-user E2E test for happy path
+
+- Create party-multi-user.spec.js with Playwright multi-context
+- Test host creates room, guest joins, both complete quiz
+- Verify P2P connections through local Docker signaling
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+```
+
+### Commit Prefixes
+
+| Change Type | Scope | Example |
+|-------------|-------|---------|
+| Test file | `party` | `test(party): add multi-user E2E test` |
+| Config | `config` | `chore(config): add VITE_PARTY_API_URL for local testing` |
+| Docs | `docs` | `docs(party): update Phase 4 with learnings` |
+
+### Implementation Order
+
+```
+main
+  │
+  └── feature/phase4-multi-user-testing
+        ├── Add env variable for local signaling
+        ├── Create happy path test
+        ├── Add edge case tests
+        ├── Document learnings
+        └── PR → merge to main
+```
+
+---
+
 ## Technical Setup
 
 ### Docker Stack
