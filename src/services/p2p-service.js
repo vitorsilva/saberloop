@@ -8,6 +8,7 @@
  */
 
 import { logger } from '../utils/logger.js';
+import { telemetry } from '../utils/telemetry.js';
 
 const log = logger.child({ module: 'p2p-service' });
 
@@ -17,6 +18,7 @@ const log = logger.child({ module: 'p2p-service' });
  * @property {RTCDataChannel|null} dataChannel - The data channel
  * @property {'new'|'connecting'|'connected'|'disconnected'|'failed'} state - Connection state
  * @property {number} reconnectAttempts - Number of reconnection attempts
+ * @property {number} connectionStartTime - Timestamp when connection was initiated
  */
 
 /**
@@ -123,6 +125,12 @@ export class P2PService {
     }
 
     log.info('Creating connection to peer', { peerId });
+
+    // Track telemetry
+    telemetry.track('p2p_connection_attempt', {
+      peerId,
+      role: 'initiator',
+    });
 
     const peerConnection = this._createPeerConnection(peerId);
 
@@ -240,6 +248,7 @@ export class P2PService {
       dataChannel: null,
       state: 'new',
       reconnectAttempts: 0,
+      connectionStartTime: Date.now(),
     };
 
     this.peers.set(peerId, peerConnection);
@@ -260,6 +269,13 @@ export class P2PService {
         case 'connected':
           peerConnection.state = 'connected';
           peerConnection.reconnectAttempts = 0;
+
+          // Track telemetry
+          telemetry.track('p2p_connection_success', {
+            peerId,
+            connectionTime: Date.now() - peerConnection.connectionStartTime,
+          });
+
           if (this.onPeerConnectedCallback) {
             this.onPeerConnectedCallback(peerId);
           }
@@ -272,6 +288,13 @@ export class P2PService {
 
         case 'failed':
           peerConnection.state = 'failed';
+
+          // Track telemetry
+          telemetry.track('p2p_connection_failed', {
+            peerId,
+            error: 'connection_failed',
+          });
+
           this._handleConnectionFailure(peerId);
           break;
       }
@@ -346,6 +369,12 @@ export class P2PService {
     if (peerConnection.reconnectAttempts < this.maxReconnectAttempts) {
       peerConnection.reconnectAttempts++;
       log.info('Attempting reconnection', { peerId, attempt: peerConnection.reconnectAttempts });
+
+      // Track telemetry
+      telemetry.track('p2p_reconnect_attempt', {
+        peerId,
+        attempt: peerConnection.reconnectAttempts,
+      });
 
       // Clean up old connection
       this._cleanupPeerConnection(peerId);
