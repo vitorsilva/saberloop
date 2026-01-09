@@ -506,8 +506,59 @@ Multi-User Flow:
 
 #### Remaining for Full P2P
 
-1. Answer submission with scoring (currently MVP placeholder)
-2. Score updates via polling
+1. ~~Answer submission with scoring (currently MVP placeholder)~~ ✅ Done
+2. ~~Score updates via polling~~ ✅ Done (participants sorted by score)
 3. Question sync across participants
 4. Results view after quiz ends
 5. WebRTC for real-time communication (optional enhancement)
+
+### Session: 2026-01-09 (Answer Scoring)
+
+#### Completed
+
+- ✅ Created migration 002_add_answers.sql (party_answers table, score column)
+- ✅ Implemented submitAnswer() in RoomManager with full scoring logic
+- ✅ Updated getParticipants() to include scores, sorted by score descending
+- ✅ Added correct/incorrect visual feedback in PartyQuizView
+- ✅ Added i18n keys for feedback messages
+- ✅ E2E test extended and passing
+
+#### Scoring Formula
+
+```
+Correct answer: 10 pts base + 0-5 pts speed bonus
+Speed bonus calculation:
+  - If answered in <20% of time: 5 pts
+  - If answered in 20-100% of time: scales linearly 5→0 pts
+  - If time expired: 0 pts
+Incorrect answer: 0 pts
+```
+
+#### Database Changes
+
+```sql
+-- New columns
+ALTER TABLE party_participants ADD COLUMN score INT DEFAULT 0;
+ALTER TABLE party_rooms ADD COLUMN current_question INT DEFAULT 0;
+
+-- New table
+CREATE TABLE party_answers (
+    id, room_id, participant_id, question_index, answer_index,
+    is_correct, time_ms, points, created_at
+);
+```
+
+#### Test Coverage
+
+```
+✅ Host creates room
+✅ Guest joins room
+✅ Both see participant list
+✅ Host clicks Start Quiz
+✅ Host navigates to PartyQuizView
+✅ Guest auto-navigates via polling
+✅ Both see question text
+✅ Timer is visible
+✅ Host answers question and sees feedback
+✅ Guest answers question and sees feedback
+```
