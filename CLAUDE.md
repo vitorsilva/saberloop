@@ -354,7 +354,7 @@ demo-pwa-app/
 │   ├── utils/                 # Utilities (logger, network, etc.)
 │   ├── styles/                # CSS (Tailwind)
 │   └── main.js                # Entry point
-├── php-api/                   # PHP backend (alternative to client-side)
+├── php-api/                   # PHP backend (Party Mode signaling, telemetry)
 ├── scripts/                   # Build and deploy scripts
 ├── tests/e2e/                 # E2E tests (Playwright)
 ├── public/                    # Static assets
@@ -377,12 +377,20 @@ demo-pwa-app/
 - **public/**: Static assets and PWA manifest
 - **Build tools**: Vite for bundling and development
 
-**Backend** - Client-side API architecture (Epic 03+):
+**Backend** - Hybrid architecture (Epic 03+):
 - **OpenRouter OAuth**: User authenticates and stores their own API key
 - **src/api/openrouter-client.js**: Direct calls to OpenRouter from browser
 - **src/api/api.real.js**: Quiz generation and explanation using OpenRouter
-- **php-api/** (optional): PHP backend for server-side API key scenarios
 - **API Key**: Stored client-side via OAuth (user's own key)
+
+**PHP Backend** (`php-api/`) - Server-side services:
+- **php-api/src/**: Quiz API handlers (AnthropicClient, GenerateQuestions, GenerateExplanation)
+- **php-api/party/**: Party Mode signaling server (WebRTC coordination, room management)
+  - `Database.php`, `RoomManager.php`, `SignalingManager.php`
+  - `endpoints/rooms.php`, `endpoints/signal.php`
+  - Requires MySQL database
+- **Production**: Deployed to VPS (PHP 7.4)
+- **Local development**: Docker containers (see Docker Development section)
 
 ### Service Worker Pattern
 
@@ -426,6 +434,39 @@ npm run dev
 - Restart dev server after changing `.env`
 
 **Note**: PWA features like `beforeinstallprompt` require HTTPS. For local HTTPS testing, see `docs/epic01_infrastructure/PHASE4.1_LOCAL_HTTPS.md`.
+
+### Docker Development (PHP + MySQL)
+
+For local PHP backend development (Party Mode, telemetry), use Docker:
+
+```bash
+# Start PHP + MySQL stack
+docker-compose -f docker-compose.php.yml up -d php-api mysql
+
+# Check containers are running
+docker-compose -f docker-compose.php.yml ps
+
+# Run Party Mode database migrations (first time)
+docker-compose -f docker-compose.php.yml exec php-api php /var/www/html/party/migrate.php
+
+# View PHP logs
+docker-compose -f docker-compose.php.yml logs -f php-api
+
+# Stop the stack
+docker-compose -f docker-compose.php.yml down
+```
+
+**Access points:**
+- PHP API: http://localhost:8080
+- MySQL: localhost:3306 (user: `saberloop`, pass: `saberloop_dev`)
+
+**Docker Compose files:**
+- `docker-compose.php.yml` - PHP + MySQL development stack
+- `docker-compose.telemetry.yml` - Loki + Grafana for telemetry analysis
+
+**Configuration:**
+- `php-api/party/config.local.php` - Local database credentials (gitignored)
+- Copy from `config.local.example.php` if missing
 
 ### Testing Service Worker Changes
 

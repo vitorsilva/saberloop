@@ -1,0 +1,58 @@
+version: '3.8'
+
+# PHP Development Stack
+# Usage: docker-compose -f docker-compose.php.yml up -d
+#
+# This stack provides local PHP + MySQL development environment.
+# Services:
+#   - pwa: nginx serving the PWA (HTTPS :443)
+#   - php-api: PHP 7.4 + Apache (:8080)
+#   - mysql: MySQL 5.7 (:3306)
+#
+# After starting, run migrations:
+#   docker-compose -f docker-compose.php.yml exec php-api php /var/www/html/party/migrate.php
+
+services:
+  pwa:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: saberloop
+    ports:
+      - "443:443"
+    restart: unless-stopped
+
+  php-api:
+    build:
+      context: ./php-api
+      dockerfile: Dockerfile
+    container_name: quiz-php-api
+    ports:
+      - "8080:80"
+    volumes:
+      - ./php-api:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=saberloop
+      - DB_USER=saberloop
+      - DB_PASSWORD=saberloop_dev
+
+  mysql:
+    image: mysql:5.7
+    container_name: saberloop-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_dev
+      - MYSQL_DATABASE=saberloop
+      - MYSQL_USER=saberloop
+      - MYSQL_PASSWORD=saberloop_dev
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mysql-data:

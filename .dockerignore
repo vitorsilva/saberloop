@@ -12,7 +12,7 @@ start-https.sh
 
 # Docker files
 Dockerfile
-docker-compose.yml
+docker-compose*.yml
 .dockerignore
 
 # Node (if added later)
