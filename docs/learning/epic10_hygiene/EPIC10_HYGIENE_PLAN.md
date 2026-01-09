@@ -22,13 +22,13 @@ Unlike other epics, Epic 10 is an **ongoing container** for project hygiene task
 
 | Task | Status | Document |
 |------|--------|----------|
-| Feature Flag Cleanup (Wave 1) | Planning | [PHASE1_FEATURE_FLAG_CLEANUP.md](./PHASE1_FEATURE_FLAG_CLEANUP.md) |
+| (none) | | |
 
 ## Completed Tasks
 
 | Task | Completed | Document |
 |------|-----------|----------|
-| (none yet) | | |
+| Feature Flag Cleanup (Wave 1) | 2026-01-09 | [PHASE1_FEATURE_FLAG_CLEANUP.md](./PHASE1_FEATURE_FLAG_CLEANUP.md) |
 
 ## Backlog
 
