@@ -60,6 +60,13 @@
           return;
         }
 
+        // Check for party results with code: /party/results/<code>
+        if (hash.startsWith('/party/results/') && hash.length > 15) {
+          const code = hash.slice(15); // Remove '/party/results/' prefix
+          this.handlePartyResults(code);
+          return;
+        }
+
         // Find the view class for this route
         const ViewClass = this.routes.get(hash);
 
@@ -189,6 +196,36 @@
       getPartyQuizCode() {
         const code = this.partyQuizCode;
         this.partyQuizCode = null;
+        return code;
+      }
+
+      /**
+       * Handle party results with room code
+       * @param {string} code - The room code from URL
+       */
+      handlePartyResults(code) {
+        logger.info('Detected party results URL', { code });
+
+        // Store the code for the results view to access
+        this.partyResultsCode = code;
+
+        // Render the results view
+        const PartyResultsView = this.routes.get('/party/results');
+        if (PartyResultsView) {
+          this.render(PartyResultsView, { roomCode: code });
+        } else {
+          logger.warn('PartyResultsView not registered, redirecting to home');
+          this.navigateTo('/');
+        }
+      }
+
+      /**
+       * Get and clear party results code (called by PartyResultsView)
+       * @returns {string|null} The room code or null
+       */
+      getPartyResultsCode() {
+        const code = this.partyResultsCode;
+        this.partyResultsCode = null;
         return code;
       }
 

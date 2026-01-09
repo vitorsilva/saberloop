@@ -706,15 +706,21 @@ export default class PartyQuizView extends BaseView {
   _onQuizEnd(standings) {
     log.info('Quiz ended, navigating to results');
 
-    // Stop timer
+    // Stop timer and polling
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
+    this._stopPolling();
 
-    // Navigate to results (pass standings via state)
-    // For now, just navigate to home
-    // TODO: Create PartyResultsView and navigate there
-    this.navigateTo('/');
+    // Navigate to results view with room code
+    if (this.roomCode) {
+      this.navigateTo(`/party/results/${this.roomCode}`);
+    } else if (this.session) {
+      // Legacy mode: navigate with standings
+      this.navigateTo('/');
+    } else {
+      this.navigateTo('/');
+    }
   }
 
   /**

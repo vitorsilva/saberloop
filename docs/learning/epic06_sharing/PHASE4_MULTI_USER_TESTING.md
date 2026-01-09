@@ -597,5 +597,62 @@ All clients: _moveToQuestion() updates UI
 #### Remaining for Full MVP
 
 1. ~~Question sync across participants~~ ✅ Done
-2. Results view after quiz ends (currently redirects to home)
+2. ~~Results view after quiz ends~~ ✅ Done
 3. WebRTC for real-time communication (optional)
+
+### Session: 2026-01-09 (Results View)
+
+#### Completed
+
+- ✅ Added `_mapParticipants()` method to PartyResultsView
+- ✅ Added `/party/results/<code>` route handler to router.js
+- ✅ Added `handlePartyResults()` and `getPartyResultsCode()` to router
+- ✅ Updated PartyQuizView `_onQuizEnd()` to navigate to results
+
+#### Results View Flow
+
+```
+Quiz ends (all questions answered)
+    ↓
+Host: POST /rooms/{code}/next returns status: 'ended'
+    ↓
+PartyQuizView._onQuizEnd() called
+    ↓
+Navigates to /party/results/<code>
+    ↓
+PartyResultsView:
+    - Fetches final standings from API
+    - Shows winner with trophy
+    - Shows personal rank ("You're #2 of 4")
+    - Shows medal standings (🥇🥈🥉)
+    - Actions: Share, Play Again (host), Save, Home
+```
+
+#### Key Implementation Details
+
+**PartyResultsView** (`src/views/PartyResultsView.js`):
+- Dual-mode support: legacy (options.standings) and API (fetch via roomCode)
+- Gets roomCode from: options → URL → sessionStorage
+- `_mapParticipants()` transforms API data to UI format
+- Sorted by score descending for standings
+
+**Router** (`src/core/router.js`):
+- Pattern match for `/party/results/<code>` (line 63-68)
+- `handlePartyResults()` stores code and renders view
+- `getPartyResultsCode()` for view to retrieve code
+
+**PartyQuizView** (`src/views/PartyQuizView.js`):
+- `_onQuizEnd()` stops polling and navigates to results
+- Navigation uses room code from session context
+
+#### HTTP Polling MVP Complete ✅
+
+The full party quiz flow now works with HTTP polling:
+1. Host creates room → API
+2. Guests join → API
+3. Host starts quiz → API
+4. Questions answered → API (with scoring)
+5. Timer expires → Host advances → API
+6. Quiz ends → Results shown → API
+
+No WebRTC required for basic functionality!

@@ -3,35 +3,58 @@
  *
  * Final standings screen after party quiz completion.
  * Shows winner, rankings, and options to play again or save.
+ *
+ * MVP Implementation: Fetches final standings from API.
  */
 
 import BaseView from './BaseView.js';
 import { t } from '../core/i18n.js';
 import { shareContent } from '../utils/share.js';
 import { logger } from '../utils/logger.js';
+import router from '../core/router.js';
+import { getRoom } from '../services/party-api.js';
 
 const log = logger.child({ module: 'PartyResultsView' });
 
 export default class PartyResultsView extends BaseView {
   /**
    * @param {Object} options
-   * @param {Array} options.standings - Final standings array
-   * @param {Object} options.quiz - Quiz data
-   * @param {string} options.participantId - Current user's participant ID
+   * @param {string} [options.roomCode] - Room code from URL
+   * @param {Array} [options.standings] - Final standings array (legacy)
+   * @param {Object} [options.quiz] - Quiz data (legacy)
+   * @param {string} [options.participantId] - Current user's participant ID (legacy)
    * @param {boolean} [options.isHost=false] - Whether current user is host
    */
   constructor(options = {}) {
     super();
+    // Support both new (roomCode) and legacy (standings) approaches
+    this.roomCode = options.roomCode || router.getPartyResultsCode() || sessionStorage.getItem('partyRoomCode') || '';
     this.standings = options.standings || [];
     this.quiz = options.quiz;
-    this.participantId = options.participantId;
-    this.isHost = options.isHost || false;
+    this.participantId = options.participantId || sessionStorage.getItem('partyParticipantId') || '';
+    this.isHost = options.isHost || sessionStorage.getItem('partyIsHost') === 'true';
   }
 
   async render() {
+    // If no standings provided, fetch from API
+    if (this.standings.length === 0 && this.roomCode) {
+      try {
+        const roomData = await getRoom(this.roomCode);
+        this.standings = this._mapParticipants(roomData.participants || []);
+        this.quiz = roomData.quiz_data;
+        log.info('Results loaded from API', { participants: this.standings.length });
+      } catch (error) {
+        log.error('Failed to load results', { error: error.message });
+        // Continue with empty standings
+      }
+    }
+
+    // Sort by score descending
+    this.standings.sort((a, b) => b.score - a.score);
+
     const winner = this.standings[0];
-    const myStanding = this.standings.find(p => p.id === this.participantId);
-    const myRank = this.standings.findIndex(p => p.id === this.participantId) + 1;
+    const myStanding = this.standings.find(p => p.id === this.participantId || p.isYou);
+    const myRank = this.standings.findIndex(p => p.id === this.participantId || p.isYou) + 1;
     const isWinner = myRank === 1;
 
     this.setHTML(`
@@ -133,6 +156,23 @@ export default class PartyResultsView extends BaseView {
     `);
 
     this.attachListeners();
+  }
+
+  /**
+   * Map API participants to standings format.
+   *
+   * @private
+   * @param {Array} participants - Participants from API
+   * @returns {Array} Standings array
+   */
+  _mapParticipants(participants) {
+    return participants.map(p => ({
+      id: p.id,
+      name: p.name,
+      score: p.score || 0,
+      answers: p.answers || [],
+      isYou: p.id === this.participantId,
+    }));
   }
 
   /**
