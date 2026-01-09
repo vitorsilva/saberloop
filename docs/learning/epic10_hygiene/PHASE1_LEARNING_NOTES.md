@@ -1,8 +1,8 @@
 # Phase 1: Feature Flag Cleanup - Learning Notes
 
 **Phase:** Feature Flag Cleanup (Wave 1)
-**Status:** Planning
-**Started:** [Date]
+**Status:** In Progress
+**Started:** 2026-01-09
 
 ---
 
@@ -23,9 +23,11 @@
 ## Baseline
 
 **Before starting cleanup:**
-- Unit tests: ___ passing
-- E2E tests: ___ passing
+- Unit tests: 726 passing
+- E2E tests: 116 passed, 1 failed (pre-existing dark mode flaky test), 3 skipped
 - Flags in features.js: 10
+
+**Note:** Copied `.env` to worktree (gitignored file)
 
 ---
 
